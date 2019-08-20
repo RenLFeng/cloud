@@ -1,0 +1,193 @@
+<template>
+    <div>
+
+        <mt-header :title="bankename">
+
+            <mt-button icon="back"  slot="left" @click="$router.go(-1)">返回</mt-button>
+
+        </mt-header>
+
+
+        <div class="noheadercontainer page-wrap">
+            <mt-tab-container class="page-tabbar-container" v-model="selected">
+                <mt-tab-container-item id="ziyuan">
+                    <BankeZiyuan :bankeid="id" v-if="showziyuan"></BankeZiyuan>
+                </mt-tab-container-item>
+                <mt-tab-container-item id="chengyuan">
+                    <BankeChengyuan :bankeid="id" v-if="showchengyuan"></BankeChengyuan>
+                </mt-tab-container-item>
+
+                <mt-tab-container-item id="zuoye">
+                    <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
+                </mt-tab-container-item>
+                <mt-tab-container-item id="hudong">
+                    互动
+                </mt-tab-container-item>
+
+                <mt-tab-container-item id="tongzhi">
+                    详情
+                </mt-tab-container-item>
+            </mt-tab-container>
+        </div>
+
+        <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}">
+            <mt-tab-item id="ziyuan">
+                <img slot="icon" src="../assets/100x100.png">
+                <span class="fontnormal">资源</span>
+            </mt-tab-item>
+            <mt-tab-item id="chengyuan">
+                <img slot="icon" src="../assets/100x100.png">
+                <span class="fontnormal">成员</span>
+            </mt-tab-item>
+            <mt-tab-item id="zuoye" >
+
+                <img v-if='itemzuoyenormal' slot="icon" src="../assets/100x100.png">
+                <span v-if='itemzuoyenormal' class="fontnormal" >作业</span>
+                <img v-if="!itemzuoyenormal" slot="icon" src="../assets/zuoye_add.png" class="tabitemmid" @click="onclickzuoye">
+
+            </mt-tab-item>
+            <mt-tab-item id="hudong">
+                <img slot="icon" src="../assets/100x100.png">
+                <span class="fontnormal">互动</span>
+            </mt-tab-item>
+            <mt-tab-item id="tongzhi">
+                <img slot="icon" src="../assets/100x100.png">
+                <span class="fontnormal">详情</span>
+            </mt-tab-item>
+        </mt-tabbar>
+
+
+        <mt-actionsheet
+        :actions="addmenudata"
+        v-model="addmenuvisible"
+        >
+        </mt-actionsheet>
+    </div>
+</template>
+
+<script>
+
+    import {Indicator, Toast,MessageBox } from 'mint-ui';
+
+    import BankeZiyuan from './BankeZiyuan'
+    import BankeChengyuan from './BankeChengyuan'
+    import BankeZuoye from './BankeZuoye'
+
+    export default {
+        name: "BankeHome",
+        data(){
+            return {
+                selected:'ziyuan',
+                curbanke:{
+                    name:'未知班课',
+                    avatar:''
+                },
+                showziyuan:false,
+                showchengyuan:false,
+                showzuoye:false,
+                addmenudata:[
+                    {name:'新增 作业',
+                        method:this.onAddZuoye
+                    }
+                ]
+                ,addmenuvisible:false
+                ,tabbarhide:false
+            }
+        }
+        ,props:{
+            id:{
+                default:0
+            }
+        }
+        ,watch:{
+            selected(){
+                this.checkNeedShow();
+            }
+        }
+        ,computed:{
+            bankename(){
+                return this.curbanke.name;
+            }
+            ,itemzuoyenormal(){
+
+                if (!this.$store.getters.isteacher){
+                    return true;
+                }
+
+                if (this.selected == 'zuoye'){
+                    return false;
+                }
+                return true;
+            }
+        }
+        ,methods:{
+            onclickzuoye(){
+                if (this.selected == 'zuoye'){
+                    //Toast('新增作业， 暂未实现');
+                    this.addmenuvisible = true;
+                }
+            }
+            ,ontabshowmenu(bshow){
+                this.tabbarhide = bshow;
+            }
+            ,onAddZuoye(){
+                //Toast('暂未实现');
+                this.$store.commit('setRouterForward', true);
+                var url = '/zuoyenew/' + this.id;
+                this.$router.push(url);
+            }
+            ,checkNeedShow(){
+                if (!this.showziyuan && this.selected == 'ziyuan'){
+                    this.showziyuan = true;
+                }
+                else if (!this.showchengyuan && this.selected == 'chengyuan'){
+                    this.showchengyuan = true;
+                }
+                else if (!this.showzuoye && this.selected == 'zuoye'){
+                    this.showzuoye = true;
+                }
+            }
+        }
+        ,created(){
+            // console.log(this.id);
+            //console.log(this.$store.getters);
+            var u = this.$store.getters['banke/getBankeById'](this.id);//this.$store.getters.getBankeById(this.id);
+            if (u){
+                this.curbanke = u;
+            }
+            var ss = this.$store.state.bhomeselected;
+            if (ss){
+                this.selected = ss;
+            }
+            this.checkNeedShow();
+        }
+        ,destroyed(){
+            this.$store.commit('setBHomeSelected', this.selected);
+        }
+        ,components:{
+            BankeZiyuan,
+            BankeChengyuan,
+            BankeZuoye
+        }
+
+    }
+</script>
+
+<style scoped>
+
+    .page-tabbar-container{
+
+    }
+
+    .tabitemmid{
+        margin-top:10px;
+
+        /*cjy: old size: 24px;*/
+        width:40px;
+        height:40px;
+        transform:translate(-8px, -8px);
+
+
+    }
+
+</style>
