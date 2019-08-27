@@ -19,7 +19,6 @@
 <script>
     import {Indicator, Toast,MessageBox } from 'mint-ui';
 
-
     export default {
         name: "Login"
         ,data(){
