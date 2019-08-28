@@ -70,7 +70,7 @@ const actions = {
 
     checkout ({ commit, state }, products) {
 
-        const savedCartItems = [...state.items]
+        const savedCartItems = [state.items]
 
         commit('setCheckoutStatus', null)
 

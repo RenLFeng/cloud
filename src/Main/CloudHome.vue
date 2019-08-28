@@ -140,6 +140,7 @@
             }
         }
         ,created:function(){
+            console.log("cloud main!");
             var osel = this.$store.state.homeselected;
             if (osel){
                 this.selected = osel;

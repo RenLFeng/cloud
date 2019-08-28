@@ -14,9 +14,7 @@
     export default {
         name: "NavOther",
         computed:{
-            ...mapState({
-                oldmsg: state => state.test.msg
-            })
+
         },
     }
 </script>

@@ -47,9 +47,7 @@
 
         },
         computed:{
-            ...mapState({
-                oldmsg: state => state.test.msg
-             })
+
         },
         data(){  //! 生成局部变量， 避免全局污染
             return {

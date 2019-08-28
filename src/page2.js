@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Page2 from './Page2.vue'
+
 
 import VueRouter from 'vue-router'
 
@@ -25,7 +25,6 @@ Vue.config.productionTip = false
 
 //! ---- routers
 import Home from './Home.vue'
-import ExamMain from './Exam/ExamHome.vue'
 import NavOther from './NavOther.vue'
 import NavEdit from './NavEdit.vue'
 import examitemhome from './Exam/examitem/examitemhome'
@@ -43,7 +42,6 @@ import zuoyedetailedit from './Main/ZuoyeDetailEdit'
 import zuoyenew from './Main/ZuoyeNew'
 import zuoyeresult from './Main/ZuoyeResult'
 const routes = [
-    { path: '/bar', component: Page2 },
     {path:'/', component:cloudmain},
     {path:'/navother', component:NavOther},
     {path:'/navedit', component:NavEdit},
@@ -59,7 +57,7 @@ const routes = [
     {path:"/bankehome/:id", component:bankehome, props:true},
     {path:'/zuoyedetailedit', component:zuoyedetailedit},
     {path:'/zuoyenew/:bankeid', component:zuoyenew, props:true},
-    {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true},
+    {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true}
 ]
 
 
