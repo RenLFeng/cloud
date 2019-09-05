@@ -65,8 +65,11 @@
                 this.$emit('commentClicked',data);
             }
             ,onclickscore(){
-        
-                this.$emit('scoreClicked', this.resultitem);
+                 let data={
+                state:true,
+                info:this.resultitem
+            }
+                this.$emit('scoreClicked', data);
             }
         }
         ,computed:{
@@ -206,5 +209,9 @@
         float:right;
 
     }
+    .tc {
+    padding: 6px 0;
+    height: auto;
+}
 
 </style>

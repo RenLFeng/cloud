@@ -22,19 +22,25 @@
           </div>
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
         </div>
+        <div>
+             <mt-cell title="作业详情" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
+        </div>
+     
 
-        <mt-cell title="作业详情" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
-
-        <mt-cell title="本次作业所有人得分" is-link v-if="pagemode=='result'"></mt-cell>
-        <mt-cell title="信息" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
+        <div @click="syudentsMark">
+          <mt-cell title="本次作业所有人得分" is-link v-if="pagemode=='result'"></mt-cell>
+        </div>
+        <div @click="showZYinfo">
+          <mt-cell title="信息" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
+        </div>
 
         <div class="devide zashowbtnpart">
           <div v-if="pagemode=='submit'">
             <div class="zashowbtn zashowbtnactive">我的提交</div>
           </div>
           <div v-if="pagemode=='result'">
-            <div class="zashowbtn zashowbtnactive">全部({{submitnum}})</div>
-            <div class="zashowbtn">未评分({{uncommentnum}})</div>
+            <div @click="selectPF(1)" :class="zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' ">全部({{submitnum}})</div>
+            <div @click="selectPF(0)" :class="!zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' ">未评分({{uncommentnum}})</div>
           </div>
         </div>
 
@@ -78,12 +84,62 @@
 
       <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly"></zuoyedetailedit>
     </mt-popup>
-
+ <!-- 评论 -->
     <mt-popup v-model="popupZuoyePL" position="right" class="mint-popup-3" :modal="false">
       <mt-header title="作业结果列表   评论区">
-        <mt-button slot="left" icon="back" @click="studentInfoFn">返回</mt-button>
+        <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
       </mt-header>
       <Discuss :itemInfo="studentInfo" :teacher="commentQueryInfo"></Discuss>
+    </mt-popup>
+    <!-- 评分 -->
+    <mt-popup v-model="popupZuoyePF" position="bottom" class="pf-container-popup">
+      <div class="pf-container">
+        <p class="tit border-bottom-e5 text-center">
+          <span class="close-mode float-l" @click="goBacks">取消</span>
+          给{{studentName}}&nbsp;{{mark}}评分
+          <span
+            class="close-mode float-r"
+            @click="submiMark"
+          >评分</span>
+        </p>
+        <p class="mark-input border-bottom-e5">
+          <input class="text-center" type="number" v-model="mark" @change="changeMark" />总体评分（10分）
+        </p>
+        <ul class="clearIt">
+          <li
+            class="float-l text-center"
+            v-for="i in 10"
+            :key="i"
+            @click="seleMarkFn(i)"
+          >{{i>9?'满分':i}}</li>
+        </ul>
+      </div>
+    </mt-popup>
+    <!-- 作业信息 -->
+    <mt-popup
+      v-model="popuPzouyeInfo"
+      position="right"
+      class="mint-popup-3"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header :title="zuoyeitem.name">
+        <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
+      </mt-header>
+      <zouYeInfo :itemInfo="zuoyeitem"></zouYeInfo>
+    </mt-popup>
+    <!-- 所有人得分 -->
+    <mt-popup
+      v-model="popuPzouyeAllMark"
+      position="right"
+      class="mint-popup-3"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="作业结果列表  本次作业所有人得分">
+        <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
+      </mt-header>
+      <studentsMark :itemInfo="zuoyeitem"></studentsMark>
     </mt-popup>
   </div>
 </template>
@@ -100,30 +156,9 @@ import commontools from "../commontools";
 import TextEllipsis from "./components/TextEllipsis";
 import FileAttachList from "./components/FileAttachList";
 import dispic from "../assets/dis.jpg";
-let commentQueryInfo = [
-  {
-    pic: dispic,
-    name: "name",
-    textPic: "",
-    text: "刚没电了父母给的来干嘛的老股民",
-    date: "2019-12-10 09：20：10",
-    students: [
-      {
-        pic: dispic,
-        text: "刚没电了父母给的来干嘛的老股民",
-        date: "2019-12-10 09：20：10"
-      }
-    ]
-  },
-  {
-    pic: dispic,
-    name: name,
-    textPic: "",
-    text: "看到了什么跟领导搞没了没了没了",
-    date: "2019-12-10 09：20：10",
-    students: []
-  }
-];
+import zouYeInfo from "./banKeZuoye/info";
+import studentsMark from "./banKeZuoye/studentsMark";
+
 export default {
   name: "ZuoyeResult",
   props: {
@@ -141,6 +176,11 @@ export default {
       popupSubmit: false,
       popupZDetail: false,
       popupZuoyePL: false,
+      popupZuoyePF: false,
+      popuPzouyeInfo: false,
+      popuPzouyeAllMark: false,
+      mark: "",
+      studentName: "",
       zreadonly: true,
       topStatus: "",
       bottomStatus: "",
@@ -164,7 +204,8 @@ export default {
       results: [],
       showfilter: "all",
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
-      submitok: false
+      submitok: false,
+      zashowbtnactive:true
     };
   },
   computed: {
@@ -263,8 +304,11 @@ export default {
       this.loadAll();
     },
     loadBottom() {},
-    studentInfoFn() {
-      this.popupZuoyePL = false;
+    goBacks() {
+      if (this.popupZuoyePL) this.popupZuoyePL = false;
+      if (this.popupZuoyePF) this.popupZuoyePF = false;
+      if (this.popuPzouyeInfo) this.popuPzouyeInfo = false;
+      if (this.popuPzouyeAllMark) this.popuPzouyeAllMark = false;
     },
     onCommentClick(ritem) {
       console.log("作业 item", ritem);
@@ -272,7 +316,7 @@ export default {
     },
     commentQuery(item) {
       this.$http
-        .post("/api/comment/query?taboutid=1&tabout=0", {})
+        .post("/api/comment/query?taboutid="+item.info.id+"&tabout=0", {})
         .then(res => {
           console.log("查询成功", res);
           let serveData = res.data.data;
@@ -293,7 +337,17 @@ export default {
           console.log("查询失败");
         });
     },
-    onScoreClick(ritem) {},
+    onScoreClick(ritem) {
+      this.popupZuoyePF = ritem.state;
+      this.studentName = ritem.info.username;
+    },
+    seleMarkFn(val) {
+      this.mark = val;
+    },
+    submiMark() {
+      alert(this.mark);
+    },
+    changeMark() {},
     goback() {
       if (this.pagemode == "submit") {
         var btip = false;
@@ -415,6 +469,16 @@ export default {
           Indicator.close();
           Toast("异常");
         });
+    },
+    showZYinfo() {
+      console.log("zuoyeitemzuoyeitem", this.zuoyeitem);
+      this.popuPzouyeInfo = true;
+    },
+    syudentsMark() {
+      this.popuPzouyeAllMark = true;
+    },
+    selectPF(active){
+      this.zashowbtnactive=active;
     }
   },
   created() {
@@ -428,11 +492,49 @@ export default {
   components: {
     ZuoyeAnswerItem,
     zuoyedetailedit,
-    Discuss
+    Discuss,
+    zouYeInfo,
+    studentsMark
   }
 };
 </script>
-
+<style lang="less">
+.pf-container-popup {
+  width: 100%;
+  height: auto;
+  .pf-container {
+    p {
+      padding: 20px;
+      color: #000;
+    }
+    .close-mode {
+      color: #0089ff;
+    }
+    .mark-input {
+      height: 5rem;
+      input {
+        width: 20%;
+        border: 1px solid #0089ff;
+        border-radius: 5px;
+        margin-right: 1.25rem;
+        height: 100%;
+      }
+    }
+    ul {
+      padding: 20px;
+      li {
+        background: #e5e5e5;
+        border-radius: 15%;
+        padding: 8px 0px;
+        width: 16%;
+        margin-bottom: 15px;
+        margin-left: 2%;
+        margin-right: 2%;
+      }
+    }
+  }
+}
+</style>
 <style scoped>
 .mint-popup-3 {
   width: 100%;
@@ -494,5 +596,11 @@ export default {
 
 .submitheader {
   background-color: green;
+}
+.noheaderscroll .mint-cell:last-child{
+  background: none;
+}
+.noheaderscroll .mint-cell:last-child{
+  background: none;
 }
 </style>

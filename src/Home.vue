@@ -11,6 +11,7 @@
 
 <script>
 // import rem from './rem/rem.js'
+import "./styles/common.less";
 export default {
   name: "Home",
   computed: {
@@ -121,14 +122,33 @@ export default {
   transform: translate(100%);
   transition: all 0.2s ease-in-out;
 }
+
 .color9 {
   color: #999;
 }
 .border-bottom {
   border-bottom: 1px solid #f0f0f0;
 }
+.border-top {
+  border-top: 1px solid #f0f0f0;
+}
+.border-c-bottom {
+  border-bottom: 1px solid #ccc;
+}
+.border-c-top {
+  border-top: 1px solid #ccc;
+}
 .border-bottom-e5 {
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid #dcdbdb;
+}
+.text-center {
+  text-align: center;
+}
+.float-l {
+  float: left;
+}
+.float-r {
+  float: right;
 }
 .clearIt:after {
   content: ".";
@@ -136,5 +156,19 @@ export default {
   height: 0;
   visibility: hidden;
   clear: both;
+}
+.my-color {
+  color: #0089ff;
+}
+.popup-right {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+.botton-96 {
+  border: 1px solid #26a2ff !important;
+  width: 96%;
+  margin: 0 2%;
+  color: #26a2ff !important;
 }
 </style>

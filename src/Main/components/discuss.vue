@@ -3,6 +3,7 @@
     <div class="tit-info">
       <mt-cell :title="itemInfo.username+'      的作业'" :label="itemInfo.ztext"></mt-cell>
     </div>
+    <img :src="image" alt />
     <div class="discuss-list-content">
       <p class="discuss-number color9">评论（10）</p>
       <div class="list-content" v-if="teacherInfo.length">
@@ -43,24 +44,26 @@
                   <span class="hui-fu" @click="studentHF(item,tindex)">回复</span>
                 </li>
                 <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
-                
+
                 <li v-if="item.useravatar">
-                  <img
-                    :src="item.useravatar"
-                    class="pic-sub"
-                  />
+                  <img :src="item.useravatar" class="pic-sub" />
                   <!-- <img
                     v-for="(item,index) in item.useravatar"
                     :key="index"
                     :src="item.src"
                     class="pic-sub"
-                  /> -->
+                  />-->
                 </li>
-         
+
                 <li class="dade color9">{{item.createtime}}</li>
               </ul>
             </li>
           </ul>
+          <span
+            v-if="lists.replynum>3"
+            class="more"
+            @click="learnMoreFn(lists,tindex)"
+          >{{lists.more?'收起':'查看更多'}}</span>
         </div>
       </div>
     </div>
@@ -104,7 +107,7 @@
 </template>
 
 <script>
-import { Cell, Badge, Field, Toast,Indicator  } from "mint-ui";
+import { Cell, Badge, Field, Toast, Indicator } from "mint-ui";
 import dispic from "../../assets/dis.jpg";
 import dispic2 from "../../assets/dis.jpg";
 import mimgcrop from "../../common/m-image-crop";
@@ -113,7 +116,7 @@ import { formateTime } from "../../util";
 import FileAttachList from "./FileAttachList";
 import maintools from "../maintools";
 const _URL = window.URL || window.webkitURL;
-const name = "张伟";
+import commontools from "../../commontools";
 export default {
   name: "",
   props: {
@@ -130,6 +133,7 @@ export default {
   },
   data() {
     return {
+      image: "",
       textareaMsg: "",
       show: false,
       index: "",
@@ -143,15 +147,14 @@ export default {
       imgSrc: [],
       files: [],
       ItemInfo: {},
-      indexItem: {}
+      indexItem: {},
+      inDestroy: false
     };
   },
   watch: {
     teacher(newValue, oldValue) {
       this.teacherInfo = newValue;
-      console.log('gfdgfdgfdgdgdgdgd',newValue);
-      // JSON.parse(this.teacherInfo[0].lastreplydata)
-      // console.log(JSON.parse(this.teacherInfo[0].lastreplydata) );
+      console.log("watchwatch", newValue);
     }
   },
   created() {},
@@ -159,7 +162,7 @@ export default {
   methods: {
     //提交评论
     submit() {
-      if (!this.discussMsg) return;
+      // if (!this.discussMsg && !this.files.length) return;
       this.$http
         .post("/api/comment/addcomment", {
           taboutid: this.itemInfo.id,
@@ -169,10 +172,10 @@ export default {
         .then(res => {
           console.log("提交成功", res);
           let submitMsgData = {
-            useravatar: dispic,
-            username: res.data.username,
-            content: res.data.content,
-            createtime: res.data.createtime,
+            useravatar: res.data.data.useravatar,
+            username: res.datadata.data.username,
+            content: res.datadata.data.content,
+            createtime: res.datadata.data.createtime,
             lastreplydata: []
           };
           this.teacher.unshift(submitMsgData);
@@ -186,41 +189,48 @@ export default {
       this.$refs.uploadPic.click();
     },
     uploadChange(e) {
-      if (this.imgSrc.length > 2) return;
+      let that = this;
       let file = e.target.files[0];
-      this.files.push(file);
-      this.imgSrc.push({
-        src: _URL.createObjectURL(file)
-      });
-      if (!this.index && this.index != "0") {
-        let submitMsgData = {
-          useravatar: dispic,
-          username: name,
-          content: "",
-          createtime: formateTime(),
-          lastreplydata: []
-        };
-        this.teacher.unshift(submitMsgData);
-        this.imgSrc = [];
-      }
+      let formdata = new FormData();
+      this.uploadImg(file);
       this.$refs.uploadPic.value = "";
+    },
+    uploadImg(file) {
+      let formdata = new FormData();
+      formdata.append("file", file);
+      let url = this.urlinfo.urlupload;
+      this.$http
+        .post(url, formdata)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.image = res.data.data.filepath;
+            console.log("成功", res.data.data);
+          } else {
+            console.log("失败", res.data.data);
+          }
+        })
+        .catch(() => {
+          console.log("catch", res.data.data);
+        });
     },
     //回复button
     studentHF(item, index) {
-      console.log('回复回复',item);
+      console.log("回复回复", item);
       this.indexItem = item;
       this.index = index;
       this.show = true;
+      console.log("item  data", item);
     },
     //回复评论
     HFSubmit() {
       if (!this.textareaMsg && this.imgSrc.length == 0) return;
       Indicator.open();
-      let item =this.indexItem;
+      let item = this.indexItem;
+      let id = item.tcommentid || item.id;
       this.$http
         .post("/api/comment/addreply", {
-          tcommentid: item.id,
-          touserid: item.userid || item.touserid,
+          tcommentid: id,
+          touserid: item.userid || item.nomtouserid,
           tousername: item.username || item.tousername,
           content: this.textareaMsg,
           files: ""
@@ -228,23 +238,36 @@ export default {
         .then(res => {
           Indicator.close();
           console.log("提交成功", res);
-         let Data = {
-           useravatar:dispic,
-        fromusername: item.username,
-        content: this.textareaMsg,
-        createtime: formateTime()
-      };
-      this.teacher[this.index].lastreplydata.push(Data);
-      this.init();
+          let Data = res.data.data;
+          this.teacher[this.index].lastreplydata.push(Data);
+          this.init();
         })
         .catch(() => {
           Indicator.close();
           console.log("提交失败");
         });
-
-
-
-     
+    },
+    learnMoreFn(item, index) {
+      item.more = !item.more;
+      if (item.more) {
+        this.$http
+          .get(
+            "/api/comment/queryreply?tcommentid=" +
+              item.id +
+              "&topid=&pagesize=",
+            {}
+          )
+          .then(res => {
+            let Data = res.data.data;
+            this.teacher[index].lastreplydata = Data;
+          })
+          .catch(() => {});
+      } else {
+        this.teacher[index].lastreplydata.splice(
+          3,
+          this.teacher[index].lastreplydata.length
+        );
+      }
     },
     qx() {
       this.init();
@@ -290,8 +313,8 @@ export default {
       padding: 10px;
       .item {
         position: relative;
-        margin-bottom: 3vw;
-        padding-bottom: 10px;
+        margin-bottom: 5vw;
+        // padding-bottom: 10px;
         img.tit-pic {
           width: 18%;
           position: absolute;
@@ -319,6 +342,13 @@ export default {
           .pic-sub {
             width: 100%;
           }
+        }
+        .more {
+          position: absolute;
+          bottom: -15px;
+          width: 100%;
+          text-align: center;
+          color: #57a4de;
         }
       }
     }
