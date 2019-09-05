@@ -66,6 +66,7 @@ export default {
       editBkState: false
     };
   },
+  
 
   methods: {
     editBkFn() {
