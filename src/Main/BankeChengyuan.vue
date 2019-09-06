@@ -4,14 +4,16 @@
             <mt-tabbar class="uploadtabbar">
                 <mt-tab-item id="1" @click.native="onMemberSign">
                     <div>
-                        <img slot="icon" src="../assets/100x100.png" class="uploadimgsize">
+                        <!-- <img slot="icon" src="../assets/100x100.png" class="uploadimgsize"> -->
+                          <i class="iconfont iconfont-big iconqiandao0101"></i>
                         <div>签到</div>
                     </div>
 
                 </mt-tab-item>
                 <mt-tab-item id="2" @click.native="onMemberGroup">
                     <div>
-                    <img slot="icon" src="../assets/100x100.png" class="uploadimgsize">
+                    <!-- <img slot="icon" src="../assets/100x100.png" class="uploadimgsize"> -->
+                      <i class="iconfont iconfont-big iconfanganzhizuo_huaban"></i>
                     <div>小组方案</div>
                     </div>
                 </mt-tab-item>

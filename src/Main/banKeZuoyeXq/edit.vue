@@ -14,7 +14,7 @@
         </li>
       </ul>
     </div>
-    <div class="submit">
+    <div class="submit-fixed">
       <mt-button class="botton-96" type="default" @click="submit">保存</mt-button>
     </div>
     <input
@@ -116,12 +116,6 @@ export default {
   }
   .mint-field-core {
     text-align: right;
-  }
-  .submit {
-    position: fixed;
-    width: 100%;
-    bottom: 10px;
-    left: 0;
   }
   .mint-cell .mint-cell-wrapper {
     padding-right: 10px;

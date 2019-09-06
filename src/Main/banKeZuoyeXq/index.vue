@@ -7,12 +7,12 @@
           <div class="float-l po">
             <div class="top">
               <span class>{{bankeInfo.name}}</span>
-              <span class>二年级</span>
+              <!-- <span class>二年级</span> -->
             </div>
-            <div class="bottom color9">
+            <!-- <div class="bottom color9">
               <span class>物理</span>
               <span class>{{bankeInfo.userupdatetime}}</span>
-            </div>
+            </div> -->
           </div>
         </li>
       </ul>
@@ -130,10 +130,12 @@ export default {
         }
         div.po {
           position: absolute;
-          padding-left: 15px;
-          width: 100%;
-          height: 100%;
-          left: 23%;
+    padding-left: 15px;
+    width: 100%;
+    height: 100%;
+    left: 25%;
+    top: 50%;
+    transform: translate(0, -7px);
           div {
             position: absolute;
             width: 100%;

@@ -4,6 +4,7 @@ import Home from './Home.vue'
 import {createRouter} from './router'
 import './plugins/element.js'
 import axios from 'axios'
+import './assets/iconfont/iconfont.css'
 
 Vue.prototype.$http= axios
 Vue.config.productionTip = false

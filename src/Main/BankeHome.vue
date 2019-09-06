@@ -7,7 +7,7 @@
     <div class="noheadercontainer page-wrap" :class="selected=='tongzhi'?'tongzhi':''">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="ziyuan">
-          <BankeZiyuan :bankeid="id" v-if="showziyuan"></BankeZiyuan>
+          <BankeZiyuan :bankeid="id" v-if="showziyuan" @UploadLinkSelectEd="onUploadLinkSelectEd"></BankeZiyuan>
         </mt-tab-container-item>
         <mt-tab-container-item id="chengyuan">
           <BankeChengyuan :bankeid="id" v-if="showchengyuan"></BankeChengyuan>
@@ -24,17 +24,17 @@
       </mt-tab-container>
     </div>
 
-    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState">
+    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState || zYLinkSelectEd!='2'">
       <mt-tab-item id="ziyuan">
-        <img slot="icon" src="../assets/100x100.png" />
+        <i class="iconfont iconwenjianjiai"></i>
         <span class="fontnormal">资源</span>
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
-        <img slot="icon" src="../assets/100x100.png" />
+         <i class="iconfont iconuser"></i>
         <span class="fontnormal">成员</span>
       </mt-tab-item>
       <mt-tab-item id="zuoye">
-        <img v-if="itemzuoyenormal" slot="icon" src="../assets/100x100.png" />
+         <i v-if="itemzuoyenormal" class="iconfont iconhuodong"></i>
         <span v-if="itemzuoyenormal" class="fontnormal">作业</span>
         <img
           v-if="!itemzuoyenormal"
@@ -45,11 +45,11 @@
         />
       </mt-tab-item>
       <mt-tab-item id="hudong">
-        <img slot="icon" src="../assets/100x100.png" />
+         <i class="iconfont iconwenjianjiai"></i>
         <span class="fontnormal">互动</span>
       </mt-tab-item>
       <mt-tab-item id="tongzhi">
-        <img slot="icon" src="../assets/100x100.png" />
+         <i class="iconfont iconxiangqing"></i>
         <span class="fontnormal">详情</span>
       </mt-tab-item>
     </mt-tabbar>
@@ -83,7 +83,8 @@ export default {
       addmenudata: [{ name: "新增 作业", method: this.onAddZuoye }],
       addmenuvisible: false,
       tabbarhide: false,
-      tongzhiState:false
+      tongzhiState:false,
+      zYLinkSelectEd:''
     };
   },
   props: {
@@ -138,6 +139,11 @@ export default {
     },
     tongzhiOpenState(data){
         this.tongzhiState=data;
+    },
+    onUploadLinkSelectEd(data){
+       this.tongzhiState=true;
+      this.zYLinkSelectEd=data;
+     
     }
   },
   created() {
@@ -161,12 +167,17 @@ export default {
     BankeZiyuan,
     BankeChengyuan,
     BankeZuoye,
-    bankeZouyeXq
+    bankeZouyeXq,
   }
 };
 </script>
 
 <style scoped>
+.iconfont{
+      display: block;
+    padding-bottom: 10px;
+    font-size: 26px;
+}
 .page-wrap.tongzhi{
     background: #f0f0f0;
 }

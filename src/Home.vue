@@ -100,7 +100,9 @@ export default {
 
   background-color: white;
 }
-
+.noheadercontainer-bg{
+  background: #f1f1f1;
+}
 .slide-forward-enter {
   transform: translate(100%);
 }
@@ -141,6 +143,9 @@ export default {
 .border-bottom-e5 {
   border-bottom: 1px solid #dcdbdb;
 }
+.border-e5-bottom {
+  border-bottom: 1px solid #dcdbdb;
+}
 .text-center {
   text-align: center;
 }
@@ -165,10 +170,21 @@ export default {
   height: 100%;
   background: #fff;
 }
+  .submit-fixed {
+    position: fixed;
+    width: 100%;
+    bottom: 10px;
+    left: 0;
+  }
 .botton-96 {
   border: 1px solid #26a2ff !important;
   width: 96%;
   margin: 0 2%;
   color: #26a2ff !important;
+}
+.iconfont-big{
+ display: block;
+  padding-bottom: 7px;
+    font-size: 60px !important;
 }
 </style>
