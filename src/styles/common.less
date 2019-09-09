@@ -1,0 +1,44 @@
+.lists-container-icon {
+    li {
+      a {
+        .mint-cell-wrapper {
+          padding: 10px;
+
+          .mint-cell-title {
+            position: relative;
+            img {
+              width: 20%;
+            }
+            .mint-cell-text {
+              vertical-align: middle;
+              position: absolute;
+              top: 20%;
+            }
+          }
+          .mint-cell-label {
+            position: absolute;
+            left: 20%;
+            bottom: 20%;
+          }
+        }
+      }
+      .mint-cell:last-child {
+        background-image: none;
+      }
+    }
+    li:first-child {
+      .mint-cell-wrapper {
+        background-image: none;
+      }
+    }
+    li:last-child {
+      .mint-cell:last-child {
+        background-image: linear-gradient(
+          180deg,
+          #d9d9d9,
+          #d9d9d9 50%,
+          transparent 50%
+        );
+      }
+    }
+  }
