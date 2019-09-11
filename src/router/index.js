@@ -20,13 +20,14 @@ import bankehome from '../Main/BankeHome'
 import zuoyedetailedit from '../Main/ZuoyeDetailEdit'
 import zuoyenew from '../Main/ZuoyeNew'
 import zuoyeresult from '../Main/ZuoyeResult'
+import ZuoyeComment from '../Main/banKeZuoye/comment.vue'
 
 Vue.use(Router)
 export function createRouter() {
   let routers = new Router({
     routes: [
         { path: '/bar',component: Page2,},
-        {path:'/', component:cloudmain},
+        {path:'/', name:'cloudmain',component:cloudmain},
         {path:'/navother', component:NavOther},
         {path:'/navedit', component:NavEdit},
         {path:'/examitemhome', component:examitemhome},
@@ -42,6 +43,7 @@ export function createRouter() {
         {path:'/zuoyedetailedit', component:zuoyedetailedit},
         {path:'/zuoyenew/:bankeid', component:zuoyenew, props:true},
         {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true},
+        // {path:'/ZuoyeDiss', component:ZuoyeComment},
     ]
   });
   routers.beforeEach((to, from, next) => {

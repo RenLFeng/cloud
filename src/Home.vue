@@ -187,4 +187,9 @@ export default {
   padding-bottom: 7px;
     font-size: 60px !important;
 }
+.no-more{
+    text-align: center;
+    color: #999;
+    padding-bottom: 35px;
+}
 </style>

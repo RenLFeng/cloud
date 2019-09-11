@@ -1,18 +1,29 @@
 <template>
   <div class="all-mark">
-    <p class="color9">
+    <p
+      v-if="statedesc"
+      class="color9 title-back"
+      style="border-bottom:1px solid #e5e5e5;    margin-bottom: 15px;"
+    >
       <mt-cell title="活动尚未结束，以下得分可能不是最终得分"></mt-cell>
     </p>
-    <div class="">
-      <p @click="selectTextFn" class="my-color border-c-bottom">切换为按({{selectText?'得分':'学号'}})显示</p>
-      <lists  :listsData="Data"/>
+    <p
+      v-if="!statedesc"
+      class="color9 title-back"
+      style="border-bottom:1px solid #e5e5e5;    margin-bottom: 15px;"
+    >
+      <mt-cell title="活动已结束"></mt-cell>
+    </p>
+    <div class>
+      <!-- <p @click="selectTextFn" class="my-color border-c-bottom">切换为按({{selectText?'得分':'学号'}})显示</p> -->
+      <lists :listsData="allInfo" />
     </div>
   </div>
 </template>
 
 <script>
 import lists from "../../common/lists-icon";
-import pic from "../../assets/dis.jpg"
+import pic from "../../assets/dis.jpg";
 export default {
   name: "",
   props: {
@@ -20,6 +31,17 @@ export default {
       default() {
         return {};
       }
+    },
+    allZuoyeitem: {
+      default() {
+        return [];
+      }
+    }
+  },
+  watch: {
+    allZuoyeitem: function(newValue, oldValue) {
+      this.allInfo = newValue;
+      this.state = this.itemInfo.state;
     }
   },
   components: {
@@ -28,14 +50,18 @@ export default {
   data() {
     return {
       selectText: false,
-      Data: [
-        { title: "标题", label: "描述信息", value: "尚无评分",icon:pic },
-        { title: "标题", label: "描述信息", value: "尚无评分",icon:pic },
-        { title: "标题", label: "描述信息", value: "尚无评分",icon:pic }
-      ]
+      allInfo: [],
+      state: 10
     };
   },
-
+  computed: {
+    statedesc() {
+      if (this.state == 100) {
+        return true;
+      }
+      return false;
+    }
+  },
   methods: {
     selectTextFn() {
       this.selectText = !this.selectText;
@@ -49,6 +75,10 @@ export default {
   .my-color {
     font-size: 18px;
     padding: 10px;
+  }
+  .lists-container-icon {
+    border-bottom: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
   }
 }
 </style>

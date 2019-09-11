@@ -1,16 +1,16 @@
 <template>
   <div class="bk-edit-container">
-    <div class="pic-container">
-      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt @click="unloadFn" />
+    <div class="pic-container" @click="unloadFn">
+      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt />
       <p>班课封面</p>
     </div>
     <div class="bk-info-lists">
       <ul class="border-bottom-e5">
-        <li>
+        <!-- <li>
           <mt-field label="班级" placeholder v-model="banji"></mt-field>
-        </li>
+        </li>-->
         <li>
-          <mt-field label="课程" placeholder v-model="kecheng"></mt-field>
+          <mt-field label="课程" placeholder v-model="bankeNmae"></mt-field>
         </li>
       </ul>
     </div>
@@ -29,6 +29,8 @@
   </div>
 </template>
 <script>
+import defaultPic from "../../assets/avatar-default.png";
+import { Cell, Button, MessageBox, Field } from "mint-ui";
 export default {
   name: "",
   props: {
@@ -48,31 +50,57 @@ export default {
       this.bankeInfoData = newValue;
     },
     editBkState(newValue, oldValue) {
-    //   if (!newValue) {
-        this.banji = this.bankeInfo.id;
-        this.kecheng =this.bankeInfo.name;
-    //   }
+      //   if (!newValue) {
+      this.banji = this.bankeInfo.id;
+      this.bankeNmae = this.bankeInfo.name;
+      //   }
     }
   },
   data() {
     return {
+      defaultPic: defaultPic,
       banji: "",
-      kecheng: "",
+      bankeNmae: "",
       bankeInfoData: {},
       urlinfo: {
         urlupload: "/api/api/zuoyefileupload",
         urldel: "/api/api/zuoyefiledelete"
       },
-      imgSrc: ""
+      imgSrc: "",
+      BankeData: []
     };
   },
   created() {},
+  computed: {},
   methods: {
     unloadFn() {
       this.$refs.uploadPic.click();
     },
     submit() {
-      alert("保存");
+      let BankeData = this.$store.state.banke.curbankes;
+      this.$http
+        .post("/api/banke/updateinfo", {
+          id: this.bankeInfo.id,
+          name: this.bankeNmae,
+          states: this.bankeInfo.states,
+          avatar: this.imgSrc ? this.imgSrc : this.bankeInfo.avatar
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            MessageBox.alert("操作成功").then(() => {
+              for (let item of BankeData) {
+                if (item.id == res.data.data.id) {
+                  item.name = res.data.data.name;
+                  item.avatar = this.imgSrc;
+                }
+              }
+              this.$store.commit("banke/appendBankes", BankeData);
+            });
+          } else {
+            MessageBox.alert(res.data.msg).then(() => {});
+          }
+        })
+        .catch(() => {});
     },
     uploadChange(e) {
       let file = e.target.files[0];

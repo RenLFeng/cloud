@@ -1,12 +1,17 @@
 <template>
   <div class="discuss-container">
     <div class="tit-info">
-      <mt-cell :title="itemInfo.username+'      的作业'" :label="itemInfo.ztext"></mt-cell>
+      <mt-cell :title="ItemInfo.username+'      的作业'" :label="ItemInfo.ztext"></mt-cell>
     </div>
-    <img :src="image" alt />
     <div class="discuss-list-content">
-      <p class="discuss-number color9">评论（10）</p>
-      <div class="list-content" v-if="teacherInfo.length">
+      <p class="discuss-number color9">评论（{{ItemInfo.commentnum}}）</p>
+      <div
+        class="list-content"
+        v-if="teacherInfo.length"
+        v-infinite-scroll="loadMore"
+        infinite-scroll-disabled="loading"
+        infinite-scroll-distance="100"
+      >
         <div class="item clearIt" v-for="(lists ,tindex) in teacherInfo" :key="tindex">
           <img class="tit-pic" :src="lists.useravatar" alt />
           <ul class="teacher-content">
@@ -66,6 +71,7 @@
           >{{lists.more?'收起':'查看更多'}}</span>
         </div>
       </div>
+      <div class="no-more" v-if="loading && teacherInfo.length>'10'">我是有底线的~~</div>
     </div>
     <mt-popup v-model="show" position="bottom" class="mint-popup-3" :closeOnClickModal="false">
       <div style class="hf-box">
@@ -77,7 +83,6 @@
         <div class="add-pic">
           <div class="attachdesc border-bottom-e5">添加附件</div>
           <div class="listc">
-            <!-- <FileAttachList :urlinfo="urlinfo" :localfiles="localfiles" ></FileAttachList> -->
             <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
             <a v-for="(item,index) in imgSrc" :key="index">
               <img class="hf-Submit-pic" :src="item.src" alt />
@@ -107,7 +112,7 @@
 </template>
 
 <script>
-import { Cell, Badge, Field, Toast, Indicator } from "mint-ui";
+import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
 import dispic from "../../assets/dis.jpg";
 import dispic2 from "../../assets/dis.jpg";
 import mimgcrop from "../../common/m-image-crop";
@@ -124,16 +129,11 @@ export default {
       default() {
         return {};
       }
-    },
-    teacher: {
-      default() {
-        return [];
-      }
     }
   },
   data() {
     return {
-      image: "",
+      loading: false,
       textareaMsg: "",
       show: false,
       index: "",
@@ -143,35 +143,73 @@ export default {
         urlupload: "/api/api/zuoyefileupload",
         urldel: "/api/api/zuoyefiledelete"
       },
-      localfiles: [],
       imgSrc: [],
-      files: [],
       ItemInfo: {},
       indexItem: {},
-      inDestroy: false,
-      imgFileJson: ""
+      imgFileJson: "",
+      topid: ""
     };
   },
   watch: {
-    teacher:function(newValue, oldValue) {
-      this.teacherInfo = newValue;
-      for (let list of this.teacherInfo) {
-        if ( list.files && typeof(list.files)=='string') {
-          list.files = JSON.parse(list.files);
-        }
-        for (let item of list.lastreplydata) {
-          if (item.files) {
-            item.files = JSON.parse(item.files);
-          }
-        }
-      }
-      console.log("watchwatch", this.teacherInfo);
+    itemInfo: function(newValue, oldValue) {
+      this.backInit();
+      this.ItemInfo = newValue;
+      this.commentQuery(this.ItemInfo);
     }
   },
   computed: {},
   created() {},
   mounted() {},
   methods: {
+    commentQuery(item) {
+      let url = "";
+      if (this.topid) {
+        url =
+          "/api/comment/query?taboutid=" +
+          item.id +
+          "&tabout=0&topid=" +
+          this.topid +
+          "&pagesize=10";
+      } else {
+        url =
+          "/api/comment/query?taboutid=" + item.id + "&tabout=0&pagesize=10";
+      }
+      this.$http
+        .post(url, {})
+        .then(res => {
+          console.log("查询成功", res);
+          let serveData = res.data.data;
+          if (serveData.length < 10) {
+            this.loading = true;
+          }
+            for (let lists of serveData) {
+            if (lists.files && typeof lists.files == "string") {
+              lists.files = JSON.parse(lists.files);
+            }
+            if (lists.lastreplydata == "") {
+              lists.lastreplydata = [];
+            } else {
+              lists.lastreplydata = JSON.parse(
+                lists.lastreplydata
+
+              );
+              for (let item of lists.lastreplydata) {
+                if (item.files) {
+                  item.files = JSON.parse(item.files);
+                }
+              }
+            }
+          }
+          this.topid = serveData[serveData.length - 1].id;
+          this.teacherInfo = [...this.teacherInfo, ...serveData];
+        })
+        .catch(() => {
+          console.log("查询失败");
+        });
+    },
+    loadMore() {
+      this.commentQuery(this.ItemInfo);
+    },
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
@@ -183,18 +221,12 @@ export default {
         })
         .then(res => {
           console.log("提交成功", res);
-          // let src=res.data.data.files?(JSON.parse(res.data.data.files)).filepath:''
-          let submitMsgData = {
-            useravatar: res.data.data.useravatar,
-            username: res.data.data.username,
-            content: res.data.data.content,
-            createtime: res.data.data.createtime,
-            lastreplydata: [],
-            files: res.data.data.files
-          };
-          this.teacherInfo.unshift(submitMsgData);
+          let Data = res.data.data;
+          if (Data.files) {
+            Data.files = JSON.parse(Data.files);
+          }
+          this.teacherInfo.unshift(Data);
           this.init();
-          s;
         })
         .catch(() => {
           console.log("提交失败");
@@ -212,7 +244,7 @@ export default {
       this.$refs.uploadPic.value = "";
     },
     uploadImg(file) {
-      let that =this;
+      let that = this;
       let formdata = new FormData();
       formdata.append("file", file);
       let url = this.urlinfo.urlupload;
@@ -221,8 +253,7 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             this.imgFileJson = JSON.stringify(res.data.data);
-            // console.log( ' this.imgFileJson this.imgFileJson',this.imgFileJson);
-            if (that.index >='0') {
+            if (that.index >= "0") {
               this.HFSubmit();
             } else {
               this.submit();
@@ -247,21 +278,22 @@ export default {
     HFSubmit() {
       if (!this.textareaMsg && !this.imgFileJson) return;
       Indicator.open();
+      let subData = {};
       let item = this.indexItem;
-      let id = item.tcommentid || item.id;
+      subData.tcommentid = item.tcommentid || item.id;
+      subData.touserid = item.touserid || item.userid;
+      subData.tousername = item.tousername || item.username;
+      subData.content = this.textareaMsg;
+      subData.files = this.imgFileJson;
       this.$http
-        .post("/api/comment/addreply", {
-          tcommentid: id,
-          touserid: item.userid || item.touserid,
-          tousername: item.username || item.tousername,
-          content: this.textareaMsg,
-          files: this.imgFileJson
-        })
+        .post("/api/comment/addreply", subData)
         .then(res => {
           Indicator.close();
           console.log("提交成功", res);
           let Data = res.data.data;
-          Data.files = JSON.parse(this.imgFileJson);
+          if (this.imgFileJson) {
+            Data.files = JSON.parse(this.imgFileJson);
+          }
           this.teacherInfo[this.index].lastreplydata.push(Data);
           this.init();
         })
@@ -282,9 +314,9 @@ export default {
           )
           .then(res => {
             let Data = res.data.data;
-            for( let item of Data){
-              if(item.files){
-                item.files=JSON.parse(item.files);
+            for (let item of Data) {
+              if (item.files) {
+                item.files = JSON.parse(item.files);
               }
             }
             this.teacherInfo[index].lastreplydata = Data;
@@ -308,6 +340,14 @@ export default {
       this.indexItem = {};
       this.discussMsg = "";
       this.imgFileJson = "";
+    },
+    backInit() {
+      this.teacherInfo = [];
+      this.topid = "";
+      this.imgSrc = [];
+      this.ItemInfo = {};
+      this.indexItem = {};
+      this.loading = false;
     },
     dele(index) {
       this.imgSrc.splice(index, 1);
@@ -370,7 +410,7 @@ export default {
         .teacher-content {
           width: 80%;
           .pic-sub {
-            width: 100%;
+            width: 60% !important;
           }
         }
         .more {

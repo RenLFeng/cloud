@@ -12,7 +12,7 @@
             <!-- <div class="bottom color9">
               <span class>物理</span>
               <span class>{{bankeInfo.userupdatetime}}</span>
-            </div> -->
+            </div>-->
           </div>
         </li>
       </ul>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { Cell, Button, MessageBox ,Field  } from "mint-ui";
+import { Cell, Button, MessageBox, Field } from "mint-ui";
 import edit from "./edit";
 export default {
   name: "",
@@ -61,56 +61,100 @@ export default {
   },
   data() {
     return {
-        imgfilepath:'',
+      imgfilepath: "",
       bankeInfoData: {},
       editBkState: false
     };
   },
-  
 
+  computed: {
+    isteacher() {
+      let isteacher = this.$store.getters.isteacher;
+      return isteacher;
+    }
+  },
+  created() {
+    var newarr = [
+      { num: 1, val: "ceshi", flag: "aa" },
+      { num: 2, val: "ceshi2", flag: "aa2" },
+      { num: 3, val: "ceshi3", flag: "aa3" }
+    ];
+    console.log(newarr.filter(item => item.num !== 1));
+  },
   methods: {
     editBkFn() {
+      if (!this.isteacher) return;
       this.editBkState = true;
       this.$emit("editBkFn", this.editBkState);
     },
     edBk() {
-      MessageBox.confirm('',{
+      if (!this.isteacher) return;
+      MessageBox.confirm("", {
         title: "提示",
         message: "确定要结束班课吗?",
         showCancelButton: true
       })
         .then(res => {
-          MessageBox.alert("操作成功");
+          this.$http
+            .post("/api/banke/delete", { id: this.bankeInfo.id })
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("操作成功").then(() => {
+                  // this.$router.push({
+                  //   name: "cloudmain",
+                  //   params: { state: true }
+                  // });
+                });
+              } else {
+                MessageBox.alert(res.data.msg).then(() => {});
+              }
+            })
+            .catch(() => {});
         })
-        .catch(err => {
-         
-        });
+        .catch(err => {});
     },
 
     closeBk() {
-      MessageBox.confirm('',{
+      if (!this.isteacher) return;
+      let BankeData = this.$store.state.banke.curbankes;
+      console.log("BankeDa", BankeData);
+      MessageBox.confirm("", {
         title: "提示",
         message: "确定要删除班课吗?",
         showCancelButton: true
       })
         .then(res => {
-          MessageBox.alert("删除成功");
+          this.$http
+            .post("/api/banke/delete", { id: this.bankeInfo.id })
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("删除成功").then(() => {
+                  let newBankeData = BankeData.filter(item => item.id !== this.bankeInfo.id);
+                  this.$store.commit("banke/appendBankes", newBankeData);
+                  // this.$router.push({
+                  //   name: "cloudmain",
+                  //   params: { state: true }
+                  // });
+                });
+              } else {
+                MessageBox.alert(res.data.msg).then(() => {});
+              }
+            })
+            .catch(() => {});
         })
-        .catch(err => {
-        
-        });
+        .catch(err => {});
     },
-    onImgSrcLoad(data){
-        this.imgfilepath=data
+    onImgSrcLoad(data) {
+      this.imgfilepath = data;
     },
     goBack() {
       this.editBkState = !this.editBkState;
       this.$emit("editBkFn", this.editBkState);
     }
   },
-   destroyed() {
-    this.imgfilepath='';
-  },
+  destroyed() {
+    this.imgfilepath = "";
+  }
 };
 </script>
 
@@ -130,12 +174,12 @@ export default {
         }
         div.po {
           position: absolute;
-    padding-left: 15px;
-    width: 100%;
-    height: 100%;
-    left: 25%;
-    top: 50%;
-    transform: translate(0, -7px);
+          padding-left: 15px;
+          width: 100%;
+          height: 100%;
+          left: 25%;
+          top: 50%;
+          transform: translate(0, -7px);
           div {
             position: absolute;
             width: 100%;
@@ -163,8 +207,8 @@ export default {
 }
 </style>
 <style>
-.mint-cell{
-    background-image: none !important;
+.mint-cell {
+  background-image: none !important;
 }
 .mint-cell .mint-cell-wrapper {
   text-indent: 10px;
