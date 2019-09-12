@@ -99,6 +99,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 
   background-color: white;
+  font-size: 14px;
 }
 .noheadercontainer-bg{
   background: #f1f1f1;

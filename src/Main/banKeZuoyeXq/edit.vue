@@ -141,6 +141,10 @@ export default {
     img {
       width: 20%;
     }
+    p{
+      font-size: 14px;
+      margin-top: 5px;
+    }
   }
   .mint-field-core {
     text-align: right;

@@ -1,5 +1,5 @@
 <template>
-  <div class="url-wrap">
+  <div class="url-wrap fontsmall">
     <div v-if="showupload" class="uploadpart">
       <mt-tabbar v-model="selected" class="uploadtabbar">
         <mt-tab-item id="1" @click.native="onUploadLocal">
@@ -44,7 +44,7 @@
             <div
               v-infinite-scroll="loadMoreFile"
               infinite-scroll-disabled="loadingState"
-              infinite-scroll-distance="10"
+              infinite-scroll-distance="100"
             >
               <div v-for="(fitem,selindex) in files" v-bind:key="selindex">
                 <BankeFileSimple
@@ -146,19 +146,23 @@ export default {
       }
     },
     loadMoreFile() {
-      this.loadingState = true;
-      var url = "/api/api/bankefilequery?bankeid=" + this.bankeid;
+      var url = "/api/bankefile/query?bankeid=" + this.bankeid;
       if (this.files.length) {
-        url += "&fileid=" + this.files[this.files.length - 1].id;
+        url += "&topid=" + this.files[this.files.length - 1].id;
       }
       this.$http
-        .post(url)
+        .get(url)
         .then(res => {
           if (res.data.code == 0) {
+            for( let item of res.data.data){
+              if(item.info){
+                item.info=JSON.parse(item.info);
+              }
+            }
             commontools.arrayMergeAsIds(this.files, res.data.data);
-
             if (this.filesempty) {
               this.liststatedesc = "当前没有文件";
+               this.loadingState = true;
             } else {
               if (res.data.data.length) {
                 this.loadingState = false; //! 还可继续加载
@@ -189,10 +193,10 @@ export default {
     },
     onUploadLink() {
         // this.$emit('UploadLinkSelectEd',this.selected)
-      Toast("暂未实现");
+      // Toast("暂未实现");
     },
     onUploadServer() {
-      Toast("暂未实现");
+      // Toast("暂未实现");
     },
     uploadChange(event) {
       if (event.target.files.length > 0) {
@@ -204,7 +208,7 @@ export default {
         var formdata = new FormData();
         formdata.append("file", file);
 
-        var url = "/api/api/bankeupload?";
+        var url = "/api/bankefile/fileupload?";
         url += "bankeid=" + this.bankeid;
 
         Indicator.open("上传中");
@@ -233,6 +237,9 @@ export default {
 </script>
 
 <style scoped>
+.mint-tabbar > .mint-tab-item.is-selected{
+  background: none;
+}
 .loadmore {
   min-height: 200px;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fontsmall">
     <mt-header title="云平台">
       <mt-button icon="back" slot="left">返回</mt-button>
 
@@ -24,9 +24,8 @@
         <mt-tab-container-item id="mine">
           <MineAbout></MineAbout>
         </mt-tab-container-item>
-      </mt-tab-container>
+        </mt-tab-container>
     </div>
-
     <mt-tabbar v-model="selected" fixed class="cloud">
       <mt-tab-item id="banke">
         <i class="iconfont iconfont-big iconbianzu"></i>

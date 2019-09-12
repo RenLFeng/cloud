@@ -104,3 +104,9 @@ textarea{resize:none;overflow:auto}
 .fonttiny{
     font-size:12px;
 }
+.button-worp{
+    text-align: center;
+}
+.button-auto-96{
+    width: 96%;
+}

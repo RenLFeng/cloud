@@ -5,14 +5,17 @@ import {createRouter} from './router'
 import './plugins/element.js'
 import axios from 'axios'
 import './assets/iconfont/iconfont.css'
-
+import 'amfe-flexible';
 Vue.prototype.$http= axios
 Vue.config.productionTip = false
+
 // import VueRouter from 'vue-router'
 // Vue.use(VueRouter)
 
 
 // import RouterTrans from './RouterTrans'
+
+
 
 
 

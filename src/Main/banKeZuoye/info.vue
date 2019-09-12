@@ -8,7 +8,7 @@
         <mt-cell title="最后一次开始时间" :value="itemInfo.starttime"></mt-cell>
       </div>
     </div>
-    <p class="submit-info text-center border-bottom border-top">
+    <p class="submit-info text-center border-bottom border-top fontsmall">
       <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">未提交（{{noSubMit.length}}人）</span>
       <span @click="subMit(1)" :class="isTrue?'my-color':''">已提交（{{isSubMit.length}}人）</span>
     </p>

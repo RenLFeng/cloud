@@ -1,10 +1,10 @@
 <template>
   <div class="discuss-container">
-    <div class="tit-info">
-      <mt-cell :title="ItemInfo.username+'      的作业'" :label="ItemInfo.ztext"></mt-cell>
+    <div class="tit-info ">
+      <mt-cell :title="ItemInfo.username+'的作业'" :label="ItemInfo.ztext"></mt-cell>
     </div>
     <div class="discuss-list-content">
-      <p class="discuss-number color9">评论（{{ItemInfo.commentnum}}）</p>
+      <p class="discuss-number color9 fontnormal">评论（{{ItemInfo.commentnum}}）</p>
       <div
         class="list-content"
         v-if="teacherInfo.length"
@@ -182,17 +182,14 @@ export default {
           if (serveData.length < 10) {
             this.loading = true;
           }
-            for (let lists of serveData) {
+          for (let lists of serveData) {
             if (lists.files && typeof lists.files == "string") {
               lists.files = JSON.parse(lists.files);
             }
             if (lists.lastreplydata == "") {
               lists.lastreplydata = [];
             } else {
-              lists.lastreplydata = JSON.parse(
-                lists.lastreplydata
-
-              );
+              lists.lastreplydata = JSON.parse(lists.lastreplydata);
               for (let item of lists.lastreplydata) {
                 if (item.files) {
                   item.files = JSON.parse(item.files);
@@ -365,8 +362,10 @@ export default {
 
 <style lang="less">
 .discuss-container {
+  font-size: 14px;
   .tit-info {
     .mint-cell-wrapper {
+       font-size: 18px;
       padding: 15px 10px;
     }
   }
@@ -377,7 +376,6 @@ export default {
     .discuss-number {
       padding: 20px 10px;
       background: #f0f0f0;
-      font-size: 1.125rem;
     }
     .list-content {
       padding: 10px;
@@ -434,12 +432,12 @@ export default {
     .upload-content {
       position: absolute;
       img {
-        width: 3.125rem;
-        height: 3.125rem;
-        border-radius: 20%;
-        left: 50%;
-        top: 0;
-        transform: translate(8%, -8%);
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 20% !important;
+        left: 55px !important;
+        top: 0 !important;
+        transform: translate(0, -11%) !important;
         .upload {
           display: none;
         }

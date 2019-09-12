@@ -73,14 +73,7 @@ export default {
       return isteacher;
     }
   },
-  created() {
-    var newarr = [
-      { num: 1, val: "ceshi", flag: "aa" },
-      { num: 2, val: "ceshi2", flag: "aa2" },
-      { num: 3, val: "ceshi3", flag: "aa3" }
-    ];
-    console.log(newarr.filter(item => item.num !== 1));
-  },
+  created() {},
   methods: {
     editBkFn() {
       if (!this.isteacher) return;
@@ -89,21 +82,32 @@ export default {
     },
     edBk() {
       if (!this.isteacher) return;
+      let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: "提示",
         message: "确定要结束班课吗?",
         showCancelButton: true
       })
-        .then(res => {
+        .then(() => {
           this.$http
-            .post("/api/banke/delete", { id: this.bankeInfo.id })
+            .post("/api/banke/updateinfo", {
+              id: this.bankeInfo.id,
+              name: this.bankeInfo.name || "",
+              states: 0,
+              avatar: this.imgfilepath
+                ? this.imgfilepath
+                : this.bankeInfo.avatar
+            })
             .then(res => {
               if (res.data.code == 0) {
                 MessageBox.alert("操作成功").then(() => {
-                  // this.$router.push({
-                  //   name: "cloudmain",
-                  //   params: { state: true }
-                  // });
+                  for (let item of BankeData) {
+                    if (item.id == res.data.data.id) {
+                      item.states = 0;
+                    }
+                  }
+                  this.$store.commit("banke/appendBankes", BankeData);
+                  this.$router.go(-1);
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});
@@ -129,12 +133,11 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 MessageBox.alert("删除成功").then(() => {
-                  let newBankeData = BankeData.filter(item => item.id !== this.bankeInfo.id);
+                  let newBankeData = BankeData.filter(
+                    item => item.id !== this.bankeInfo.id
+                  );
                   this.$store.commit("banke/appendBankes", newBankeData);
-                  // this.$router.push({
-                  //   name: "cloudmain",
-                  //   params: { state: true }
-                  // });
+                  this.$router.go(-1);
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});
