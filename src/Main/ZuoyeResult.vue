@@ -333,7 +333,10 @@ export default {
     },
     loadBottom() {},
     goBacks() {
-      if (this.popupZuoyePL) this.popupZuoyePL = false;
+      if (this.popupZuoyePL) {
+        this.popupZuoyePL = false;
+         this.loadAll();
+      }
       if (this.popupZuoyePF) {
         this.popupZuoyePF = false;
         this.mark = "";

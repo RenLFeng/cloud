@@ -225,7 +225,7 @@ export default {
       if (!this.discussMsg && !this.imgFileJson) return;
       this.$http
         .post("/api/comment/addcomment", {
-          taboutid: this.itemInfo.id,
+          taboutid: this.itemInfo.submitid,
           content: this.discussMsg,
           files: this.imgFileJson
         })
@@ -237,6 +237,7 @@ export default {
               Data.files = JSON.parse(Data.files);
             }
             this.teacherInfo.unshift(Data);
+            this.ItemInfo.commentnum++;
             this.noComment = false;
             this.init();
           } else {
@@ -472,14 +473,15 @@ export default {
     }
 
     .submit {
-      width: 2.5rem;
+      width: 13%;
       height: 100%;
       position: absolute;
-      right: 5px;
+      right: 0;
       top: 50%;
       margin-top: -20px;
       line-height: 40px;
       font-size: 18px;
+      text-align: center;
     }
   }
   .mint-popup-bottom {
