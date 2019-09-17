@@ -1,7 +1,7 @@
 <template>
   <div class="bk-edit-container">
     <div class="pic-container" @click="unloadFn">
-      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt />
+      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt :onerror="defaultimg"/>
       <p>班课封面</p>
     </div>
     <div class="bk-info-lists">
@@ -58,6 +58,7 @@ export default {
   },
   data() {
     return {
+      pic:'',
       defaultPic: defaultPic,
       banji: "",
       bankeNmae: "",
@@ -71,7 +72,14 @@ export default {
     };
   },
   created() {},
-  computed: {},
+  computed: {
+     defaultimg() {
+      var srcstr = 'this.src="';
+      srcstr += require("../../assets/banke-default.png");
+      srcstr += '"';
+      return srcstr;
+    }
+  },
   methods: {
     unloadFn() {
       this.$refs.uploadPic.click();
@@ -88,6 +96,9 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             MessageBox.alert("操作成功").then(() => {
+              this.imgSrc=res.data.data.avatar;
+              this.$emit("imgSrcLoad", this.imgSrc);
+               this.pic=res.data.data.avatar;
               for (let item of BankeData) {
                 if (item.id == res.data.data.id) {
                   item.name = res.data.data.name;
@@ -116,9 +127,8 @@ export default {
         .post(url, formdata)
         .then(res => {
           if (res.data.code == 0) {
-            this.imgSrc = res.data.data.filepath;
-            this.$emit("imgSrcLoad", this.imgSrc);
-            console.log("成功", res);
+            this.imgSrc=res.data.data.filepath;
+            console.log("成功", res)
           } else {
             console.log("失败", res);
           }

@@ -110,3 +110,10 @@ textarea{resize:none;overflow:auto}
 .button-auto-96{
     width: 96%;
 }
+.popup-right{
+
+    width: 100%;
+    height:100% ;
+    /* top: 75% !important; */
+    background-color: white;
+}

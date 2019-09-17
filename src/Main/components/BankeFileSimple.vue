@@ -1,11 +1,11 @@
 <template>
   <div class="mainpart" @click="onclick">
-    <img :src="fileimg" class="mainimg mainleft" />
+    <img :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
     <div class="mainright" v-if="hasedit">
-      <i class="iconfont icon-bianji eicotrigger" @click="icoclick"></i>
+      <i class="iconfont icon-shanchu2 eicotrigger" @click="icoclick"></i>
     </div>
     <div class="maincontent">
-      <div class="mainctitle ellipse ">{{fileitem.name}}</div>
+      <div class="mainctitle ellipse">{{fileitem.name}}</div>
       <div class="maincsubtitle">{{filesizedesc}}</div>
       <div class="maincsubtitle">{{filetimedesc}}</div>
     </div>
@@ -14,12 +14,18 @@
 
 <script>
 import commontools from "../../commontools";
-
+import errorImg from '../../assets/100x100.png';
 export default {
   name: "BankeFileSimple",
   computed: {
+    errorImg() {
+      var srcstr = 'this.src="';
+      srcstr += require("../../assets/100x100.png");
+      srcstr += '"';
+      return srcstr;
+    },
     fileimg() {
-      var r = this.fileitem.info.filepath;
+      var r = this.fileitem.info ? this.fileitem.info.filepath : errorImg ;
       return r;
     },
     filesizedesc() {
@@ -27,7 +33,7 @@ export default {
     },
     filetimedesc() {
       // return '11';
-      var str = this.fileitem.info.uploadtime;
+      var str = this.fileitem.createtime;
       str += " 发布";
       return str;
     }
@@ -60,7 +66,7 @@ export default {
           filename: "++",
           filepath: "",
           filesize: 0,
-          uploadtime: ""
+          uploadtime: "",
         };
       },
       required: false

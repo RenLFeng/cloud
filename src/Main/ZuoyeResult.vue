@@ -32,6 +32,12 @@
         <div @click="showZYinfo">
           <mt-cell title="信息" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
         </div>
+        <mt-cell
+          title="答案"
+          is-link
+          v-if="pagemode=='result'"
+          @click.native="popupAnswer=true"
+        >{{answerdesc}}</mt-cell>
 
         <div class="devide zashowbtnpart">
           <div v-if="pagemode=='submit'">
@@ -146,6 +152,13 @@
       </mt-header>
       <studentsMark :itemInfo="zuoyeitem" :allZuoyeitem="allInitData"></studentsMark>
     </mt-popup>
+    <!-- 答案 -->
+    <mt-popup v-model="popupAnswer" position="right" class="mint-popup-3" :modal="false">
+      <mt-header title="作业答案">
+        <mt-button icon="back" slot="left" @click="goBacks">返回</mt-button>
+      </mt-header>
+      <Answer :zuoyeitem="zuoyeitem" :states="true" />
+    </mt-popup>
   </div>
 </template>
 
@@ -163,7 +176,7 @@ import FileAttachList from "./components/FileAttachList";
 import dispic from "../assets/dis.jpg";
 import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
-
+import Answer from "./banKeZuoye/answer";
 export default {
   name: "ZuoyeResult",
   props: {
@@ -184,6 +197,7 @@ export default {
       popupZuoyePF: false,
       popuPzouyeInfo: false,
       popuPzouyeAllMark: false,
+      popupAnswer: false,
       mark: "",
       studentName: "",
       zreadonly: true,
@@ -209,7 +223,7 @@ export default {
         localfiles: []
       },
       results: [],
-       resultsTemp: [],
+      resultsTemp: [],
       noPingFengStudentInfo: [],
       showfilter: "all",
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
@@ -218,6 +232,11 @@ export default {
     };
   },
   computed: {
+    answerdesc() {
+      return this.zuoyeitem.answerdesc 
+        ? this.zuoyeitem.answerdesc 
+        : "未设置答案";
+    },
     submitdisabled() {
       if (this.zdetailsubmit.ztext) {
         return false;
@@ -321,6 +340,7 @@ export default {
       }
       if (this.popuPzouyeInfo) this.popuPzouyeInfo = false;
       if (this.popuPzouyeAllMark) this.popuPzouyeAllMark = false;
+      if (this.popupAnswer) this.popupAnswer = false;
     },
     onCommentClick(ritem) {
       this.studentInfo = ritem.info;
@@ -328,24 +348,23 @@ export default {
       console.log("作业 info", ritem);
     },
     onScoreClick(ritem) {
-       let isteacher = this.$store.getters.isteacher;
+      let isteacher = this.$store.getters.isteacher;
       this.ScoreItemInfo = ritem.info;
-      console.log("评分info", ritem);
-      if(!isteacher){
-        if(ritem.info.score > "0"){
+      console.log("作业 info", ritem);
+      if (!isteacher) {
+        if (ritem.info.score > "0") {
           MessageBox("已经评过分啦~~");
-        }else{
-           MessageBox("等待老师评分哦 ~");
+        } else {
+          MessageBox("等待老师评分哦 ~");
         }
-      }else{
-         if (ritem.info.score > "0") {
-        MessageBox("不能重复评分~~");
       } else {
-        this.popupZuoyePF = ritem.state;
-        this.studentName = ritem.info.username;
+        if (ritem.info.score > "0") {
+          MessageBox("不能重复评分~~");
+        } else {
+          this.popupZuoyePF = ritem.state;
+          this.studentName = ritem.info.username;
+        }
       }
-      }
-     
     },
     seleMarkFn(val) {
       this.mark = val;
@@ -355,7 +374,7 @@ export default {
       this.$http
         .get(
           "/api/Azuoye/setScore?submitid=" +
-            this.ScoreItemInfo.id +
+            this.ScoreItemInfo.submitid +
             "&score=" +
             this.mark,
           {}
@@ -439,7 +458,7 @@ export default {
     onHttpData(data) {
       this.zuoyeitem = data["zuoye"];
       this.allZuoyeitem = data.results;
-        for (let item of this.allZuoyeitem) {
+      for (let item of this.allZuoyeitem) {
         if (item.score < 0) {
           this.noPingFengStudentInfo.push(item);
         }
@@ -511,13 +530,13 @@ export default {
     },
     selectPF(active) {
       this.zashowbtnactive = active;
-      if(!active){
-        this.resultsTemp=this.results;
-        this.results=this.noPingFengStudentInfo;
-      }else{
-        this.results=this.resultsTemp
+      if (!active) {
+        this.resultsTemp = this.results;
+        this.results = this.noPingFengStudentInfo;
+      } else {
+        this.results = this.resultsTemp;
       }
-    },
+    }
   },
   created() {
     var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
@@ -532,7 +551,8 @@ export default {
     zuoyedetailedit,
     Discuss,
     zouYeInfo,
-    studentsMark
+    studentsMark,
+    Answer
   }
 };
 </script>
@@ -549,12 +569,12 @@ export default {
       color: #0089ff;
     }
     .mark-input {
-      height: 5rem;
+      height: 75px;
       input {
         width: 20%;
         border: 1px solid #0089ff;
         border-radius: 5px;
-        margin-right: 1.25rem;
+        margin-right: 15px;
         height: 100%;
       }
     }

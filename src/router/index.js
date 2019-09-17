@@ -20,7 +20,7 @@ import bankehome from '../Main/BankeHome'
 import zuoyedetailedit from '../Main/ZuoyeDetailEdit'
 import zuoyenew from '../Main/ZuoyeNew'
 import zuoyeresult from '../Main/ZuoyeResult'
-import ZuoyeComment from '../Main/banKeZuoye/comment.vue'
+// import ZuoyeComment from '../Main/banKeZuoye/comment.vue'
 
 Vue.use(Router)
 export function createRouter() {

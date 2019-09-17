@@ -3,7 +3,11 @@
     <div class="curbanke-info">
       <ul>
         <li class="clearIt">
-          <img class="float-l" :src="imgfilepath?imgfilepath:bankeInfo.avatar" />
+          <img
+            class="float-l"
+            :src="imgfilepath?imgfilepath:bankeInfo.avatar"
+            :onerror="defaultimg"
+          />
           <div class="float-l po">
             <div class="top">
               <span class>{{bankeInfo.name}}</span>
@@ -71,6 +75,12 @@ export default {
     isteacher() {
       let isteacher = this.$store.getters.isteacher;
       return isteacher;
+    },
+    defaultimg() {
+      var srcstr = 'this.src="';
+      srcstr += require("../../assets/banke-default.png");
+      srcstr += '"';
+      return srcstr;
     }
   },
   created() {},
@@ -107,7 +117,7 @@ export default {
                     }
                   }
                   this.$store.commit("banke/appendBankes", BankeData);
-                  this.$router.go(-1);
+                  // this.$router.go(-1);
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});
@@ -121,7 +131,6 @@ export default {
     closeBk() {
       if (!this.isteacher) return;
       let BankeData = this.$store.state.banke.curbankes;
-      console.log("BankeDa", BankeData);
       MessageBox.confirm("", {
         title: "提示",
         message: "确定要删除班课吗?",
@@ -136,7 +145,7 @@ export default {
                   let newBankeData = BankeData.filter(
                     item => item.id !== this.bankeInfo.id
                   );
-                  this.$store.commit("banke/appendBankes", newBankeData);
+                  this.$store.state.banke.curbankes = newBankeData;
                   this.$router.go(-1);
                 });
               } else {
@@ -149,6 +158,7 @@ export default {
     },
     onImgSrcLoad(data) {
       this.imgfilepath = data;
+      this.editBkState = false;
     },
     goBack() {
       this.editBkState = !this.editBkState;

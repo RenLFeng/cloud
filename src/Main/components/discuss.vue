@@ -1,6 +1,6 @@
 <template>
   <div class="discuss-container">
-    <div class="tit-info ">
+    <div class="tit-info">
       <mt-cell :title="ItemInfo.username+'的作业'" :label="ItemInfo.ztext"></mt-cell>
     </div>
     <div class="discuss-list-content">
@@ -10,7 +10,7 @@
         v-if="teacherInfo.length"
         v-infinite-scroll="loadMore"
         infinite-scroll-disabled="loading"
-        infinite-scroll-distance="100"
+        infinite-scroll-distance="50"
       >
         <div class="item clearIt" v-for="(lists ,tindex) in teacherInfo" :key="tindex">
           <img class="tit-pic" :src="lists.useravatar" alt />
@@ -72,6 +72,7 @@
         </div>
       </div>
       <div class="no-more" v-if="loading && teacherInfo.length>'10'">我是有底线的~~</div>
+      <div class="no-more" v-if="noComment">暂未评论~~</div>
     </div>
     <mt-popup v-model="show" position="bottom" class="mint-popup-3" :closeOnClickModal="false">
       <div style class="hf-box">
@@ -147,7 +148,8 @@ export default {
       ItemInfo: {},
       indexItem: {},
       imgFileJson: "",
-      topid: ""
+      topid: "",
+      noComment: false
     };
   },
   watch: {
@@ -166,46 +168,57 @@ export default {
       if (this.topid) {
         url =
           "/api/comment/query?taboutid=" +
-          item.id +
+          item.submitid +
           "&tabout=0&topid=" +
           this.topid +
           "&pagesize=10";
       } else {
         url =
-          "/api/comment/query?taboutid=" + item.id + "&tabout=0&pagesize=10";
+          "/api/comment/query?taboutid=" +
+          item.submitid +
+          "&tabout=0&pagesize=10";
       }
       this.$http
         .post(url, {})
         .then(res => {
           console.log("查询成功", res);
-          let serveData = res.data.data;
-          if (serveData.length < 10) {
-            this.loading = true;
-          }
-          for (let lists of serveData) {
-            if (lists.files && typeof lists.files == "string") {
-              lists.files = JSON.parse(lists.files);
-            }
-            if (lists.lastreplydata == "") {
-              lists.lastreplydata = [];
+          if (res.data.code == "0") {
+            let serveData = res.data.data;
+            if (!serveData.length && !this.teacherInfo.length) {
+              this.noComment = true;
             } else {
-              lists.lastreplydata = JSON.parse(lists.lastreplydata);
-              for (let item of lists.lastreplydata) {
-                if (item.files) {
-                  item.files = JSON.parse(item.files);
+              if (serveData.length < 10) {
+                this.loading = true;
+              }
+              for (let lists of serveData) {
+                if (lists.files && typeof lists.files == "string") {
+                  lists.files = JSON.parse(lists.files);
+                }
+                if (lists.lastreplydata == "") {
+                  lists.lastreplydata = [];
+                } else {
+                  lists.lastreplydata = JSON.parse(lists.lastreplydata);
+                  for (let item of lists.lastreplydata) {
+                    if (item.files) {
+                      item.files = JSON.parse(item.files);
+                    }
+                  }
                 }
               }
+              this.topid = serveData[serveData.length - 1].id;
+              this.teacherInfo = [...this.teacherInfo, ...serveData];
             }
+          } else {
           }
-          this.topid = serveData[serveData.length - 1].id;
-          this.teacherInfo = [...this.teacherInfo, ...serveData];
         })
         .catch(() => {
           console.log("查询失败");
         });
     },
     loadMore() {
-      this.commentQuery(this.ItemInfo);
+      if (this.teacherInfo.length >= "10") {
+        this.commentQuery(this.ItemInfo);
+      }
     },
     //提交评论
     submit() {
@@ -218,12 +231,16 @@ export default {
         })
         .then(res => {
           console.log("提交成功", res);
-          let Data = res.data.data;
-          if (Data.files) {
-            Data.files = JSON.parse(Data.files);
+          if (res.data.code == "0") {
+            let Data = res.data.data;
+            if (Data.files) {
+              Data.files = JSON.parse(Data.files);
+            }
+            this.teacherInfo.unshift(Data);
+            this.noComment = false;
+            this.init();
+          } else {
           }
-          this.teacherInfo.unshift(Data);
-          this.init();
         })
         .catch(() => {
           console.log("提交失败");
@@ -345,6 +362,7 @@ export default {
       this.ItemInfo = {};
       this.indexItem = {};
       this.loading = false;
+      this.noComment = false;
     },
     dele(index) {
       this.imgSrc.splice(index, 1);
@@ -365,7 +383,7 @@ export default {
   font-size: 14px;
   .tit-info {
     .mint-cell-wrapper {
-       font-size: 18px;
+      font-size: 18px;
       padding: 15px 10px;
     }
   }

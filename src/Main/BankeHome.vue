@@ -192,4 +192,5 @@ export default {
   height: 40px;
   transform: translate(-8px, -8px);
 }
+
 </style>

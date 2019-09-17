@@ -57,5 +57,8 @@ export default {
   .button-worp {
     margin-top: 10px;
   }
+  .popup-right{
+    height: 60%;
+  }
 }
 </style>

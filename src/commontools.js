@@ -92,7 +92,6 @@ commontools.timeJsDateToTimedate=function(datestr)
     second = second < 10 ? ('0' + second) : second;
     return y + '-' + m + '-' + d+' '+h+':'+minute+':'+ second;
 }
-
 commontools.timeIsValidTimedate = function(datestr)
 {
     if (!datestr){
@@ -255,8 +254,17 @@ commontools.fileGetType = function(mimetype)
 commontools.sprintf  = require('sprintf-js').sprintf;
 
 
+commontools.maxLength=function(v){
+    const temp=v;
+    let maxlen=6;
+    if( temp && typeof temp == "string" && temp.length>maxlen ){
+        let subV=temp.substr(0, maxlen);
+        subV+='...';
+        return subV;
+    }else{
+    return temp;
+    }
 
-
-
+}
 
 export default commontools;

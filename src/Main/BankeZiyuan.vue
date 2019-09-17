@@ -4,13 +4,14 @@
       <mt-tabbar v-model="selected" class="uploadtabbar">
         <mt-tab-item id="1" @click.native="onUploadLocal">
           <div>
-          <i class="iconfont iconfont-big iconicon---copy"></i>
+            <i class="iconfont iconfont-big iconicon---copy"></i>
             <div>从本地上传</div>
           </div>
         </mt-tab-item>
+
         <mt-tab-item id="2" @click.native="onUploadLink">
           <div>
-           <i class="iconfont iconfont-big icon80"></i>
+            <i class="iconfont iconfont-big icon80"></i>
             <div>网页链接</div>
           </div>
         </mt-tab-item>
@@ -26,21 +27,6 @@
       <mt-tab-container class v-model="selected">
         <mt-tab-container-item id="1">
           <div class="listcontainer">
-            <!--
-            -- todo. 更换为 loadmore  ， infite-scroll 操作不当（网络不好时，很容易无限循环请求）
-            <mt-loadmore :top-method="loadTop" @top-status-change="handleTopChange" ref="loadmore" class="loadmore"
-            >
-                <ul>
-                    <li v-for="item in list">{{ item }}</li>
-                </ul>
-            <div slot="top" class="mint-loadmore-top">-->
-            <!-- <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span> -->
-            <!-- <span v-show="topStatus !== 'loading'" >下拉刷新全部</span>
-                    <span v-show="topStatus === 'loading'">Loading...</span>
-                </div>
-            </mt-loadmore>
-            -->
-
             <div
               v-infinite-scroll="loadMoreFile"
               infinite-scroll-disabled="loadingState"
@@ -57,11 +43,13 @@
             <div v-if="filesempty" class="tc emptydesc">{{liststatedesc}}</div>
           </div>
         </mt-tab-container-item>
-        <mt-tab-container-item id="2">
-          <URL/>
-        </mt-tab-container-item>
-
         <mt-tab-container-item id="3" class="text-center">尽请期待...</mt-tab-container-item>
+        <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false">
+          <mt-header title="添加网页链接">
+            <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+          </mt-header>
+          <URL />
+        </mt-popup>
       </mt-tab-container>
     </div>
 
@@ -77,11 +65,12 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox ,Cell } from "mint-ui";
+import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
 import commontools from "../commontools";
+import { constants } from "crypto";
 
 export default {
   name: "BankeZiyuan",
@@ -99,12 +88,15 @@ export default {
       liststatedesc: "加载中",
       list: ["11", "22"],
       topStatus: "",
-      loadingState: false
+      loadingState: false,
+      popupUploadLink: false,
+      popupUploadZhiYuan: false,
+      popupUploadFile: true
     };
   },
-  watch:{
-       selected() {
-      this.$emit('UploadLinkSelectEd',this.selected)
+  watch: {
+    selected() {
+      this.$emit("UploadLinkSelectEd", this.selected);
     }
   },
   computed: {
@@ -119,7 +111,7 @@ export default {
         return false;
       }
       return true;
-    },
+    }
   },
   created() {},
   components: {
@@ -128,7 +120,7 @@ export default {
   },
   methods: {
     oneditclick(fileitem) {
-      Toast("编辑文件, 例如：删除等功能");
+      MessageBox.confirm(fileitem.id, "您确定要删除吗？");
     },
     onviewfile(fileitem) {
       //console.log(document.URL);
@@ -154,18 +146,21 @@ export default {
         .get(url)
         .then(res => {
           if (res.data.code == 0) {
-            for( let item of res.data.data){
-              if(item.info){
-                item.info=JSON.parse(item.info);
+            if (res.data.data.length < 10) {
+              this.loadingState = true;
+            }
+            for (let item of res.data.data) {
+              if (item.info) {
+                item.info = JSON.parse(item.info);
               }
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
             if (this.filesempty) {
               this.liststatedesc = "当前没有文件";
-               this.loadingState = true;
+              this.loadingState = true;
             } else {
               if (res.data.data.length) {
-                this.loadingState = false; //! 还可继续加载
+                // this.loadingState = false; //! 还可继续加载
               }
             }
           } else {
@@ -175,7 +170,7 @@ export default {
           console.log(res);
           //! cjy: 这里server 的http code 非200 页会走这里。
           //! 因此不能继续加载
-          // this.loadingState = true;
+          this.loadingState = true;
         });
     },
     loadTop() {
@@ -187,15 +182,18 @@ export default {
       this.topStatus = status;
     },
     onUploadLocal() {
+      this.popupUploadFile = true;
       //  Toast('暂未实现');
       this.$refs.uploadfilebtn.value = "";
       this.$refs.uploadfilebtn.click();
     },
     onUploadLink() {
-        // this.$emit('UploadLinkSelectEd',this.selected)
+      this.popupUploadLink = true;
+      // this.$emit('UploadLinkSelectEd',this.selected)
       // Toast("暂未实现");
     },
     onUploadServer() {
+      this.popupUploadZhiYuan = true;
       // Toast("暂未实现");
     },
     uploadChange(event) {
@@ -231,13 +229,26 @@ export default {
             console.log(err);
           });
       }
+    },
+    goBack() {
+      if (this.popupUploadLink) {
+        this.popupUploadLink = false;
+        this.selected = '1';
+      }
+      if (this.popupUploadZhiYuan) {
+        this.popupUploadZhiYuan = false;
+      }
+      if (this.popupUploadFile) {
+        this.popupUploadFile = false;
+      }
+      // this.popupUploadFile=true;
     }
   }
 };
 </script>
 
 <style scoped>
-.mint-tabbar > .mint-tab-item.is-selected{
+.mint-tabbar > .mint-tab-item.is-selected {
   background: none;
 }
 .loadmore {
@@ -268,11 +279,14 @@ export default {
 .listcontainer {
   border-top: 1px solid #eaeaea;
 }
+.url-wrap .items-container {
+  margin-bottom: 17px;
+}
 </style>
 <style lang="less" scoped>
-.url-wrap{
-    .items-container{
-        margin-top: 20px;
-    }
+.url-wrap {
+  .items-container {
+    margin-top: 20px;
+  }
 }
 </style>
