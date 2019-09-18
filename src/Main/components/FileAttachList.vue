@@ -3,7 +3,7 @@
 
 
         <ul class="flist-ul">
-            <li v-for="(fitem, findex) in localfiles" class="imgblock" :class="{'liupload':isupload,'imgblocksmall':!isupload}">
+            <li v-for="(fitem, findex) in localfiles" :key="findex" class="imgblock" :class="{'liupload':isupload,'imgblocksmall':!isupload}">
                 <div class="imgcontainer blockborder" @click="onItemClick(fitem)">
 
                     <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)">

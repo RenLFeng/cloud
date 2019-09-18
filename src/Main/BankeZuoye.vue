@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="controlpart tc">
-            <div class="controlbtn"  v-for="(bitem, sindex) in btnlist" :class="{controlbtnactive:curbtnindex==sindex, 'controlbtnthree':!hasedit}"
+            <div class="controlbtn"  v-for="(bitem, sindex) in btnlist" :key="sindex" :class="{controlbtnactive:curbtnindex==sindex, 'controlbtnthree':!hasedit}"
             @click="onbtnclick(sindex)">
                 {{bitem.name}}
             </div>
@@ -13,7 +13,7 @@
             <mt-loadmore :top-method="loadTop" @top-status-change="handleTopChange" ref="loadmore" class="zyloadmore"
                 :bottom-method="loadBottom" @bottom-status-change="handleBottomChange" :auto-fill="autofill"
             >
-                <div v-for="(zitem, sindex) in zuoyelist">
+                <div v-for="(zitem, sindex) in zuoyelist" :key="sindex">
                     <BankeZuoyeSimple :zuoyeitem='zuoyelist[sindex]' :hasedit="hasedit" v-if="showitem(zitem)" @editclick="onitemedit" @normalclick="onnormalclick"></BankeZuoyeSimple>
                 </div>
 

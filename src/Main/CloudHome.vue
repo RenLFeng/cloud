@@ -9,7 +9,7 @@
         </mt-header>
 
 
-        <div class="noheadercontainer page-wrap">
+        <div class="noheadercontainer page-wrap cloud">
             <mt-tab-container class="page-tabbar-container" v-model="selected">
                 <mt-tab-container-item id="banke">
                     <div class="bankecontainer">
@@ -33,17 +33,17 @@
             </mt-tab-container>
         </div>
 
-        <mt-tabbar v-model="selected" fixed>
+        <mt-tabbar v-model="selected" fixed class="cloud">
             <mt-tab-item id="banke">
-                <img slot="icon" src="../assets/100x100.png">
+                <i class="iconfont iconfont-big iconbianzu"></i>
                 <span class="fontnormal">班课</span>
             </mt-tab-item>
             <mt-tab-item id="exam">
-                <img slot="icon" src="../assets/100x100.png">
+               <i class="iconfont iconfont-big iconkaoshizhongxinoff"></i>
                 <span class="fontnormal">考试</span>
             </mt-tab-item>
             <mt-tab-item id="mine">
-                <img slot="icon" src="../assets/100x100.png">
+               <i class="iconfont iconfont-big iconuser"></i>
                 <span class="fontnormal">我的</span>
             </mt-tab-item>
         </mt-tabbar>
@@ -163,7 +163,9 @@
 </script>
 
 <style scoped>
-
+.cloud .iconfont-big {
+    font-size: 33px !important;
+}
     .btnadd{
         font-size:30px;
     }

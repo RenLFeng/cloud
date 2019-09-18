@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="zy-info">
     <div class="text-info">
-      <div>
+      <div class="padding-right">
         <mt-cell title="创建时间" :value="itemInfo.starttime"></mt-cell>
       </div>
-      <div class="no-border">
+      <div class="no-border padding-right">
         <mt-cell title="最后一次开始时间" :value="itemInfo.starttime"></mt-cell>
       </div>
     </div>
@@ -54,7 +54,11 @@ export default {
 </script>
 
 <style lang='less'>
-.hh{
+.zy-info{
+    .mint-cell .mint-cell-wrapper{
+    padding-right: 10px;
+  }
+  .hh{
   height: 300px;
   width: 100%;
   overflow: scroll;
@@ -103,5 +107,6 @@ export default {
       );
     }
   }
+}
 }
 </style>

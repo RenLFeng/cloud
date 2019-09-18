@@ -58,12 +58,18 @@
         }
         ,methods:{
             onclickcomment(){
-                //console.log('onclickcomment');
-                this.$emit('commentClicked', this.resultitem);
+            let data={
+                state:true,
+                info:this.resultitem
+            }
+                this.$emit('commentClicked',data);
             }
             ,onclickscore(){
-              //  console.log('onclickscore');
-                this.$emit('scoreClicked', this.resultitem);
+                 let data={
+                state:true,
+                info:this.resultitem
+            }
+                this.$emit('scoreClicked', data);
             }
         }
         ,computed:{
@@ -203,5 +209,9 @@
         float:right;
 
     }
+    .tc {
+    padding: 6px 0;
+    height: auto;
+}
 
 </style>

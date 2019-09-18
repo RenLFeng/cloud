@@ -17,8 +17,8 @@
               <span class="hui-fu" @click="studentHF(lists,tindex)">回复</span>
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
-            <li v-if="lists.useravatar">
-              <img :src="lists.useravatar" class="pic-sub" />
+            <li v-if="lists.files">
+              <img :src="lists.files.filepath" class="pic-sub" />
               <!-- <img
                 v-for="(item,index) in lists.useravatar"
                 :key="index"
@@ -45,8 +45,8 @@
                 </li>
                 <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
 
-                <li v-if="item.useravatar">
-                  <img :src="item.useravatar" class="pic-sub" />
+                <li v-if="item.files">
+                  <img :src="item.files.filepath" class="pic-sub" />
                   <!-- <img
                     v-for="(item,index) in item.useravatar"
                     :key="index"
@@ -148,41 +148,57 @@ export default {
       files: [],
       ItemInfo: {},
       indexItem: {},
-      inDestroy: false
+      inDestroy: false,
+      imgFileJson: ""
     };
   },
   watch: {
-    teacher(newValue, oldValue) {
+    teacher:function(newValue, oldValue) {
       this.teacherInfo = newValue;
-      console.log("watchwatch", newValue);
+      for (let list of this.teacherInfo) {
+        if ( list.files && typeof(list.files)=='string') {
+          list.files = JSON.parse(list.files);
+        }
+        for (let item of list.lastreplydata) {
+          if (item.files) {
+            item.files = JSON.parse(item.files);
+          }
+        }
+      }
+      console.log("watchwatch", this.teacherInfo);
     }
   },
+  computed: {},
   created() {},
   mounted() {},
   methods: {
     //提交评论
     submit() {
-      // if (!this.discussMsg && !this.files.length) return;
+      if (!this.discussMsg && !this.imgFileJson) return;
       this.$http
         .post("/api/comment/addcomment", {
           taboutid: this.itemInfo.id,
           content: this.discussMsg,
-          files: ""
+          files: this.imgFileJson
         })
         .then(res => {
           console.log("提交成功", res);
+          // let src=res.data.data.files?(JSON.parse(res.data.data.files)).filepath:''
           let submitMsgData = {
             useravatar: res.data.data.useravatar,
-            username: res.datadata.data.username,
-            content: res.datadata.data.content,
-            createtime: res.datadata.data.createtime,
-            lastreplydata: []
+            username: res.data.data.username,
+            content: res.data.data.content,
+            createtime: res.data.data.createtime,
+            lastreplydata: [],
+            files: res.data.data.files
           };
-          this.teacher.unshift(submitMsgData);
-          this.discussMsg = "";
+          this.teacherInfo.unshift(submitMsgData);
+          this.init();
+          s;
         })
         .catch(() => {
           console.log("提交失败");
+          this.init();
         });
     },
     unloadFn() {
@@ -196,6 +212,7 @@ export default {
       this.$refs.uploadPic.value = "";
     },
     uploadImg(file) {
+      let that =this;
       let formdata = new FormData();
       formdata.append("file", file);
       let url = this.urlinfo.urlupload;
@@ -203,7 +220,13 @@ export default {
         .post(url, formdata)
         .then(res => {
           if (res.data.code == 0) {
-            this.image = res.data.data.filepath;
+            this.imgFileJson = JSON.stringify(res.data.data);
+            // console.log( ' this.imgFileJson this.imgFileJson',this.imgFileJson);
+            if (that.index >='0') {
+              this.HFSubmit();
+            } else {
+              this.submit();
+            }
             console.log("成功", res.data.data);
           } else {
             console.log("失败", res.data.data);
@@ -219,27 +242,27 @@ export default {
       this.indexItem = item;
       this.index = index;
       this.show = true;
-      console.log("item  data", item);
     },
     //回复评论
     HFSubmit() {
-      if (!this.textareaMsg && this.imgSrc.length == 0) return;
+      if (!this.textareaMsg && !this.imgFileJson) return;
       Indicator.open();
       let item = this.indexItem;
       let id = item.tcommentid || item.id;
       this.$http
         .post("/api/comment/addreply", {
           tcommentid: id,
-          touserid: item.userid || item.nomtouserid,
+          touserid: item.userid || item.touserid,
           tousername: item.username || item.tousername,
           content: this.textareaMsg,
-          files: ""
+          files: this.imgFileJson
         })
         .then(res => {
           Indicator.close();
           console.log("提交成功", res);
           let Data = res.data.data;
-          this.teacher[this.index].lastreplydata.push(Data);
+          Data.files = JSON.parse(this.imgFileJson);
+          this.teacherInfo[this.index].lastreplydata.push(Data);
           this.init();
         })
         .catch(() => {
@@ -259,13 +282,18 @@ export default {
           )
           .then(res => {
             let Data = res.data.data;
-            this.teacher[index].lastreplydata = Data;
+            for( let item of Data){
+              if(item.files){
+                item.files=JSON.parse(item.files);
+              }
+            }
+            this.teacherInfo[index].lastreplydata = Data;
           })
           .catch(() => {});
       } else {
-        this.teacher[index].lastreplydata.splice(
+        this.teacherInfo[index].lastreplydata.splice(
           3,
-          this.teacher[index].lastreplydata.length
+          this.teacherInfo[index].lastreplydata.length
         );
       }
     },
@@ -278,6 +306,8 @@ export default {
       this.textareaMsg = "";
       this.imgSrc = [];
       this.indexItem = {};
+      this.discussMsg = "";
+      this.imgFileJson = "";
     },
     dele(index) {
       this.imgSrc.splice(index, 1);
