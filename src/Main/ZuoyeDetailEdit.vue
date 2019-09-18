@@ -31,7 +31,7 @@
             ></textarea>
 
             <div class="attachdesc">
-                添加附件r5645
+                添加附件
             </div>
             <div class="listc">
                 <FileAttachList :urlinfo="urlinfo" :localfiles="zdetail.localfiles"></FileAttachList>
