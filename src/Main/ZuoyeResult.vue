@@ -114,15 +114,15 @@
           >评分</span>
         </p>
         <p class="mark-input border-bottom-e5">
-          <input class="text-center" type="number" v-model="mark" @change="changeMark" />总体评分（10分）
+          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />总体评分（100分）
         </p>
         <ul class="clearIt">
           <li
             class="float-l text-center"
-            v-for="i in 10"
+            v-for="i in markArr"
             :key="i"
             @click="seleMarkFn(i)"
-          >{{i>9?'满分':i}}</li>
+          >{{i>90?'满分':i}}</li>
         </ul>
       </div>
     </mt-popup>
@@ -228,7 +228,8 @@ export default {
       showfilter: "all",
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
       submitok: false,
-      zashowbtnactive: true
+      zashowbtnactive: true,
+      markArr:[10,20,30,40,50,60,70,80,90,100]
     };
   },
   computed: {
@@ -394,7 +395,9 @@ export default {
           console.log("评分失败");
         });
     },
-    changeMark() {},
+    changeMark() {
+      
+    },
     goback() {
       if (this.pagemode == "submit") {
         var btip = false;

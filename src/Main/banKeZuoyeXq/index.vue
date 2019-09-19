@@ -180,10 +180,10 @@ export default {
       li {
         position: relative;
         img {
-          width: 25%;
-          height: 20%;
-          min-width: 20%;
-          min-height: 20%;
+          width: 88px;
+          height: 88px;
+          min-width: 88px;
+          min-height: 88px;
         }
         div.po {
           position: absolute;
@@ -198,7 +198,7 @@ export default {
             width: 100%;
             span {
               display: block;
-              font-size: 3.5vw;
+              // font-size: 3.5vw;
             }
             &.top {
               top: 0;

@@ -1,5 +1,5 @@
 <template>
-  <div class="url-container">
+  <div class="url-container fontsmall">
     <div class="border-e5-bottom">
       <mt-field label="链接:" placeholder="请输入链接" v-model="url"></mt-field>
       <mt-field label="标题:" placeholder="请输入标题" v-model="urlTitle"></mt-field>
@@ -12,13 +12,12 @@
 
 <script>
 import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
+import {mapState,mapMutations} from 'vuex';
 export default {
   name: "",
   props: {
     bankeid: {
-      default() {
-        return 0;
-      }
+      default: 0
     }
   },
   data() {
@@ -27,7 +26,9 @@ export default {
       urlTitle: ""
     };
   },
-  computed: {},
+  computed: {
+      ...mapState(["bankeZhiYuanLinkItem"])
+  },
   methods: {
     submit() {
       if (!this.urlTitle || !this.url) {
@@ -39,15 +40,21 @@ export default {
           name: this.urlTitle
         })
         .then(res => {
-          if(res.data.code==0){
-            MessageBox.alert("添加成功");
-          }else{
-             MessageBox.alert(res.data.msg);
+          if (res.data.code == 0) {
+            MessageBox.alert("添加成功").then(() => {
+              let arr=[];
+              arr[0]=res.data.data
+               this.SET_BANKEZHIYUANLINKITEM(arr);
+              this.$emit("addLinkState", true);
+            });
+          } else {
+            MessageBox.alert(res.data.msg);
           }
           console.log(res);
         })
         .catch(() => {});
     },
+    ...mapMutations(['SET_BANKEZHIYUANLINKITEM']),
   }
 };
 </script>
@@ -57,7 +64,7 @@ export default {
   .button-worp {
     margin-top: 10px;
   }
-  .popup-right{
+  .popup-right {
     height: 60%;
   }
 }

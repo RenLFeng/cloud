@@ -397,16 +397,18 @@ export default {
       background: #f0f0f0;
     }
     .list-content {
-      padding: 10px;
+      // padding: 10px;
       .item {
         position: relative;
-        margin-bottom: 5vw;
-        // padding-bottom: 10px;
+        // margin-bottom: 5vw;
+        border-bottom: 1px solid #cccccc94;
+        padding: 10px;
+        padding-bottom: 20px;
         img.tit-pic {
-          width: 18%;
+          width: 63px;
           position: absolute;
           left: 0;
-          top: 0;
+          top: 10px;
         }
         ul {
           width: 90%;
@@ -425,14 +427,15 @@ export default {
           }
         }
         .teacher-content {
-          width: 80%;
+          width: calc(100% - 63px);
           .pic-sub {
-            width: 60% !important;
+            width: 131px !important;
+            // height: 127px!important;
           }
         }
         .more {
           position: absolute;
-          bottom: -15px;
+          bottom: 3px;
           width: 100%;
           text-align: center;
           color: #57a4de;
@@ -448,6 +451,7 @@ export default {
     border: 1px solid #ccc;
     padding: 10px 0;
     border-radius: 8px;
+    background: #fff;
     .upload-content {
       position: absolute;
       img {

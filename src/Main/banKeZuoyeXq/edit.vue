@@ -149,7 +149,8 @@ export default {
     text-align: center;
     padding: 30px 0;
     img {
-      width: 20%;
+        width: 88px;
+          height: 88px;
     }
     p{
       font-size: 14px;

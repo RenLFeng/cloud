@@ -6,8 +6,8 @@
     </div>
     <div class="maincontent">
       <div class="mainctitle ellipse">{{fileitem.name}}</div>
-      <div class="maincsubtitle">{{filesizedesc}}</div>
-      <div class="maincsubtitle">{{filetimedesc}}</div>
+      <div class="maincsubtitle text-ellipsis">{{filesizedesc}}</div>
+      <div class="maincsubtitle text-ellipsis">{{filetimedesc}}</div>
     </div>
   </div>
 </template>
@@ -29,7 +29,12 @@ export default {
       return r;
     },
     filesizedesc() {
-      return commontools.renderFileSizeDesc(this.fileitem.info.filesize);
+      if(this.fileitem.info){
+        return commontools.renderFileSizeDesc(this.fileitem.info.filesize);
+      }else{
+        return this.fileitem.url;
+      }
+      
     },
     filetimedesc() {
       // return '11';

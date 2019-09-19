@@ -12,7 +12,7 @@
         <mt-tab-item id="2" @click.native="onUploadLink">
           <div>
             <i class="iconfont iconfont-big icon80"></i>
-            <div>网页链接</div>
+            <div>网页链接 {{bankeZhiYuanLinkItem.id}}</div>
           </div>
         </mt-tab-item>
         <mt-tab-item id="3" @click.native="onUploadServer">
@@ -26,15 +26,16 @@
     <div class="items-container">
       <mt-tab-container class v-model="selected">
         <mt-tab-container-item id="1">
-          <div class="listcontainer">
-            <div
-              v-infinite-scroll="loadMoreFile"
-              infinite-scroll-disabled="loadingState"
-              infinite-scroll-distance="100"
-            >
-              <div v-for="(fitem,selindex) in files" v-bind:key="selindex">
+          <div
+            class="listcontainer"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="loadingState"
+            infinite-scroll-distance="50"
+          >
+            <div>
+              <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
                 <BankeFileSimple
-                  :fileitem="files[selindex]"
+                  :fileitem="bankeZhiYuanLinkItem[selindex]"
                   @editclick="oneditclick"
                   @normalclick="onviewfile"
                 ></BankeFileSimple>
@@ -48,11 +49,10 @@
           <mt-header title="添加网页链接">
             <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
           </mt-header>
-          <URL />
+          <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
         </mt-popup>
       </mt-tab-container>
     </div>
-
     <input
       ref="uploadfilebtn"
       type="file"
@@ -71,14 +71,12 @@ import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
-
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "BankeZiyuan",
   props: {
     bankeid: {
-      default() {
-        return 0;
-      }
+      default: 0
     }
   },
   data() {
@@ -91,7 +89,8 @@ export default {
       loadingState: false,
       popupUploadLink: false,
       popupUploadZhiYuan: false,
-      popupUploadFile: true
+      popupUploadFile: true,
+      topid: ""
     };
   },
   watch: {
@@ -109,11 +108,20 @@ export default {
     filesempty() {
       if (this.files.length) {
         return false;
+      } else {
+        if (this.bankeZhiYuanLinkItem.length) {
+          return false;
+        } else {
+          return true;
+        }
       }
-      return true;
-    }
+    },
+    ...mapState(["bankeZhiYuanLinkItem"])
   },
-  created() {},
+  created() {
+    this.SET_BANKEZHIYUANLINKITEM();
+    this.loadMoreFile();
+  },
   components: {
     BankeFileSimple,
     URL
@@ -137,10 +145,21 @@ export default {
         window.exsoftTest(fileitem.filepath, fileitem.filename1);
       }
     },
+    loadMore() {
+      if (this.files.length >= 10) {
+        this.loadMoreFile();
+      }
+    },
     loadMoreFile() {
-      var url = "/api/bankefile/query?bankeid=" + this.bankeid;
-      if (this.files.length) {
-        url += "&topid=" + this.files[this.files.length - 1].id;
+      let url = "";
+      if (this.topid) {
+        url =
+          "/api/bankefile/query?bankeid=" +
+          this.bankeid +
+          "&topid=" +
+          this.topid;
+      } else {
+        url = "/api/bankefile/query?bankeid=" + this.bankeid;
       }
       this.$http
         .get(url)
@@ -155,12 +174,13 @@ export default {
               }
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
+            this.SET_BANKEZHIYUANLINKITEM(this.files);
             if (this.filesempty) {
               this.liststatedesc = "当前没有文件";
               this.loadingState = true;
             } else {
               if (res.data.data.length) {
-                // this.loadingState = false; //! 还可继续加载
+                this.topid = this.files[this.files.length - 1].id;
               }
             }
           } else {
@@ -230,10 +250,16 @@ export default {
           });
       }
     },
+    onAddLinkState(state) {
+      if (state) {
+        this.popupUploadLink = false;
+        this.selected = "1";
+      }
+    },
     goBack() {
       if (this.popupUploadLink) {
         this.popupUploadLink = false;
-        this.selected = '1';
+        this.selected = "1";
       }
       if (this.popupUploadZhiYuan) {
         this.popupUploadZhiYuan = false;
@@ -242,7 +268,8 @@ export default {
         this.popupUploadFile = false;
       }
       // this.popupUploadFile=true;
-    }
+    },
+    ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
   }
 };
 </script>

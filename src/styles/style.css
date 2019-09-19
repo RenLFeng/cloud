@@ -90,19 +90,19 @@ textarea{resize:none;overflow:auto}
     color:#E6A23C!important;
 }
 .fontmaintitle{
-    font-size:35px;
+    font-size:37px;
 }
 .fontlarge{
-    font-size:20px!important;
+    font-size:22px!important;
 }
 .fontnormal{
-    font-size:18px!important;
+    font-size:20px!important;
 }
 .fontsmall{
-    font-size:16px;
+    font-size:18px;
 }
 .fonttiny{
-    font-size:12px;
+    font-size:14px;
 }
 .button-worp{
     text-align: center;
@@ -116,4 +116,16 @@ textarea{resize:none;overflow:auto}
     height:100% ;
     /* top: 75% !important; */
     background-color: white;
+}
+.mint-cell .mint-cell-wrapper {
+    font-size: 13px !important;
+}
+.text-ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 400;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
 }

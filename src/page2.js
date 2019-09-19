@@ -80,9 +80,14 @@ Vue.config.productionTip = false
 //         next() // 确保一定要调用 next()
 //     }
 // })
-
-
-
+    
+    window.onresize = function(){
+    let clientWidth = window.innerWidth;
+                if (!clientWidth) return;
+                if(clientWidth>=640){
+                    document.documentElement.style.fontSize = '2.5rem';
+                }
+}
 new Vue({
     router:createRouter(),
     store,
