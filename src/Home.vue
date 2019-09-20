@@ -101,7 +101,7 @@ export default {
   background-color: white;
   font-size: 14px;
 }
-.noheadercontainer-bg{
+.noheadercontainer-bg {
   background: #f1f1f1;
 }
 .slide-forward-enter {
@@ -171,26 +171,26 @@ export default {
   height: 100%;
   background: #fff;
 }
-  .submit-fixed {
-    position: fixed;
-    width: 100%;
-    bottom: 10px;
-    left: 0;
-  }
+.submit-fixed {
+  position: fixed;
+  width: 100%;
+  bottom: 10px;
+  left: 0;
+}
 .botton-96 {
   border: 1px solid #26a2ff !important;
   width: 96%;
   margin: 0 2%;
   color: #26a2ff !important;
 }
-.iconfont-big{
- display: block;
+.iconfont-big {
+  display: block;
   padding-bottom: 7px;
-    font-size: 60px !important;
+  font-size: 60px !important;
 }
-.no-more{
-    text-align: center;
-    color: #999;
-    padding-bottom: 35px;
+.no-more {
+  text-align: center;
+  color: #999;
+  padding: 10px 0 20px 0;
 }
 </style>

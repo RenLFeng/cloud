@@ -157,9 +157,10 @@ export default {
           "/api/bankefile/query?bankeid=" +
           this.bankeid +
           "&topid=" +
-          this.topid;
+          this.topid+
+           "&pagesize=10";
       } else {
-        url = "/api/bankefile/query?bankeid=" + this.bankeid;
+        url = "/api/bankefile/query?bankeid=" + this.bankeid+"&pagesize=10";
       }
       this.$http
         .get(url)

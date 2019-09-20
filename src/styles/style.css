@@ -129,3 +129,9 @@ textarea{resize:none;overflow:auto}
     -ms-flex: 1;
     flex: 1;
 }
+.mint-indicator-wrapper{
+    z-index: 99999;
+}
+.mint-indicator-mask{
+    z-index: 99999;
+}

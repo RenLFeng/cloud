@@ -159,11 +159,16 @@ export default {
       this.commentQuery(this.ItemInfo);
     }
   },
-  computed: {},
+  computed: {
+    isTeacher(){
+      return this.$store.getters.isteacher;
+    }
+  },
   created() {},
   mounted() {},
   methods: {
     commentQuery(item) {
+      Indicator.open("加载中");
       let url = "";
       if (this.topid) {
         url =
@@ -210,8 +215,10 @@ export default {
             }
           } else {
           }
+             Indicator.close();
         })
         .catch(() => {
+             Indicator.close();
           console.log("查询失败");
         });
     },
@@ -223,6 +230,7 @@ export default {
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
+       Indicator.open("提交中");
       this.$http
         .post("/api/comment/addcomment", {
           taboutid: this.itemInfo.submitid,
@@ -242,11 +250,78 @@ export default {
             this.init();
           } else {
           }
+            Indicator.close();
         })
         .catch(() => {
+             Indicator.close();
           console.log("提交失败");
           this.init();
         });
+    },
+    //回复button
+    studentHF(item, index) {
+      console.log("回复回复", item);
+      this.indexItem = item;
+      this.index = index;
+      this.show = true;
+    },
+    //回复评论
+    HFSubmit() {
+      if (!this.textareaMsg && !this.imgFileJson) return;
+      Indicator.open('提交中');
+      let subData = {};
+      let item = this.indexItem;
+      subData.tcommentid = item.tcommentid || item.id;
+      subData.touserid = item.touserid || item.userid;
+      subData.tousername = item.tousername || item.username;
+      subData.content = this.textareaMsg;
+      subData.files = this.imgFileJson;
+      this.$http
+        .post("/api/comment/addreply", subData)
+        .then(res => {
+          Indicator.close();
+          console.log("提交成功", res);
+          let Data = res.data.data;
+          if (this.imgFileJson) {
+            Data.files = JSON.parse(this.imgFileJson);
+          }
+          this.teacherInfo[this.index].lastreplydata.push(Data);
+          this.init();
+        })
+        .catch(() => {
+          Indicator.close();
+          console.log("提交失败");
+        });
+    },
+    // 查看更多
+    learnMoreFn(item, index) {
+       Indicator.open('加载中');
+      item.more = !item.more;
+      if (item.more) {
+        this.$http
+          .get(
+            "/api/comment/queryreply?tcommentid=" +
+              item.id +
+              "&topid=&pagesize=",
+            {}
+          )
+          .then(res => {
+            let Data = res.data.data;
+            for (let item of Data) {
+              if (item.files) {
+                item.files = JSON.parse(item.files);
+              }
+            }
+            this.teacherInfo[index].lastreplydata = Data;
+             Indicator.close();
+          })
+          .catch(() => { Indicator.close();});
+      } else {
+        this.teacherInfo[index].lastreplydata.splice(
+          3,
+          this.teacherInfo[index].lastreplydata.length
+        );
+      }
     },
     unloadFn() {
       this.$refs.uploadPic.click();
@@ -281,68 +356,6 @@ export default {
         .catch(() => {
           console.log("catch", res.data.data);
         });
-    },
-    //回复button
-    studentHF(item, index) {
-      console.log("回复回复", item);
-      this.indexItem = item;
-      this.index = index;
-      this.show = true;
-    },
-    //回复评论
-    HFSubmit() {
-      if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open();
-      let subData = {};
-      let item = this.indexItem;
-      subData.tcommentid = item.tcommentid || item.id;
-      subData.touserid = item.touserid || item.userid;
-      subData.tousername = item.tousername || item.username;
-      subData.content = this.textareaMsg;
-      subData.files = this.imgFileJson;
-      this.$http
-        .post("/api/comment/addreply", subData)
-        .then(res => {
-          Indicator.close();
-          console.log("提交成功", res);
-          let Data = res.data.data;
-          if (this.imgFileJson) {
-            Data.files = JSON.parse(this.imgFileJson);
-          }
-          this.teacherInfo[this.index].lastreplydata.push(Data);
-          this.init();
-        })
-        .catch(() => {
-          Indicator.close();
-          console.log("提交失败");
-        });
-    },
-    learnMoreFn(item, index) {
-      item.more = !item.more;
-      if (item.more) {
-        this.$http
-          .get(
-            "/api/comment/queryreply?tcommentid=" +
-              item.id +
-              "&topid=&pagesize=",
-            {}
-          )
-          .then(res => {
-            let Data = res.data.data;
-            for (let item of Data) {
-              if (item.files) {
-                item.files = JSON.parse(item.files);
-              }
-            }
-            this.teacherInfo[index].lastreplydata = Data;
-          })
-          .catch(() => {});
-      } else {
-        this.teacherInfo[index].lastreplydata.splice(
-          3,
-          this.teacherInfo[index].lastreplydata.length
-        );
-      }
     },
     qx() {
       this.init();
