@@ -75,7 +75,7 @@ export default {
       phoneCode: "",
       state: 1,
       codeTime: 0,
-      Times:null
+      Times: null
     };
   },
   methods: {
@@ -142,8 +142,6 @@ export default {
   color: white;
   top: 15%;
   left: 0;
-  width: 100%;
-
   position: absolute;
 }
 .loginpart {
@@ -212,9 +210,9 @@ textarea::-webkit-input-placeholder {
 .loginbg {
   .maintitle {
     width: 100%;
-    height: 3.9375rem;
-    background: url("../assets/login_logo.png") no-repeat 50% 50%;
-    background-size: 50%;
+    height: 100vh;
+    background: url(../assets/login_logo.png) no-repeat 50% 0;
+    background-size: 5rem;
   }
   .loginpart {
     padding: 20px;

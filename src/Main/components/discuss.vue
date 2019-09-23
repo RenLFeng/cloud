@@ -160,7 +160,7 @@ export default {
     }
   },
   computed: {
-    isTeacher(){
+    isTeacher() {
       return this.$store.getters.isteacher;
     }
   },
@@ -211,14 +211,15 @@ export default {
                 }
               }
               this.topid = serveData[serveData.length - 1].id;
-              this.teacherInfo = [...this.teacherInfo, ...serveData];
+              this.teacherInfo = this.teacherInfo.concat(serveData);
+              // this.teacherInfo = [...this.teacherInfo, ...serveData];
             }
           } else {
           }
-             Indicator.close();
+          Indicator.close();
         })
         .catch(() => {
-             Indicator.close();
+          Indicator.close();
           console.log("查询失败");
         });
     },
@@ -230,7 +231,7 @@ export default {
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
-       Indicator.open("提交中");
+      Indicator.open("提交中");
       this.$http
         .post("/api/comment/addcomment", {
           taboutid: this.itemInfo.submitid,
@@ -250,10 +251,10 @@ export default {
             this.init();
           } else {
           }
-            Indicator.close();
+          Indicator.close();
         })
         .catch(() => {
-             Indicator.close();
+          Indicator.close();
           console.log("提交失败");
           this.init();
         });
@@ -268,7 +269,7 @@ export default {
     //回复评论
     HFSubmit() {
       if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open('提交中');
+      Indicator.open("提交中");
       let subData = {};
       let item = this.indexItem;
       subData.tcommentid = item.tcommentid || item.id;
@@ -295,7 +296,7 @@ export default {
     },
     // 查看更多
     learnMoreFn(item, index) {
-       Indicator.open('加载中');
+      Indicator.open("加载中");
       item.more = !item.more;
       if (item.more) {
         this.$http
@@ -313,9 +314,11 @@ export default {
               }
             }
             this.teacherInfo[index].lastreplydata = Data;
-             Indicator.close();
+            Indicator.close();
           })
-          .catch(() => { Indicator.close();});
+          .catch(() => {
+            Indicator.close();
+          });
       } else {
         this.teacherInfo[index].lastreplydata.splice(
           3,
