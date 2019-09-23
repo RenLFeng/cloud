@@ -151,7 +151,8 @@ export default {
     onviewfile(fileitem) {
       if (fileitem.ftype == "file") {
         let down = document.createElement("a");
-        down.href = "http://192.168.0.2:81" + fileitem.url;
+        let prefix = process.env.VUE_APP_HOST || 'http://192.168.0.2:81'
+        down.href = prefix + fileitem.url;
         down.download = fileitem.name;
         document.body.appendChild(down);
         down.click();
