@@ -27,7 +27,7 @@ export default {
     };
   },
   computed: {
-      ...mapState(["bankeZhiYuanLinkItem"])
+      // ...mapState(["bankeZhiYuanLinkItem"])
   },
   methods: {
     submit() {
@@ -44,7 +44,7 @@ export default {
             MessageBox.alert("添加成功").then(() => {
               let arr=[];
               arr[0]=res.data.data
-               this.SET_BANKEZHIYUANLINKITEM(arr);
+               this.$store.commit('SET_BANKEZHIYUANLINKITEM', arr);
               this.$emit("addLinkState", true);
             });
           } else {
@@ -54,7 +54,7 @@ export default {
         })
         .catch(() => {});
     },
-    ...mapMutations(['SET_BANKEZHIYUANLINKITEM']),
+    // ...mapMutations(['SET_BANKEZHIYUANLINKITEM']),
   }
 };
 </script>

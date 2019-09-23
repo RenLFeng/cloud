@@ -116,10 +116,13 @@ export default {
         }
       }
     },
-    ...mapState(["bankeZhiYuanLinkItem"])
+    bankeZhiYuanLinkItem(){
+      return this.$store.state.bankeZhiYuanLinkItem
+    }
+    // ...mapState(["bankeZhiYuanLinkItem"])
   },
   created() {
-    this.SET_BANKEZHIYUANLINKITEM();
+    this.$store.commit('SET_BANKEZHIYUANLINKITEM');
     this.loadMoreFile();
   },
   components: {
@@ -175,7 +178,7 @@ export default {
               }
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
-            this.SET_BANKEZHIYUANLINKITEM(this.files);
+             this.$store.commit('SET_BANKEZHIYUANLINKITEM', this.files);
             if (this.filesempty) {
               this.liststatedesc = "当前没有文件";
               this.loadingState = true;
@@ -270,7 +273,7 @@ export default {
       }
       // this.popupUploadFile=true;
     },
-    ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
+    // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
   }
 };
 </script>

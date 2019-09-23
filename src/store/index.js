@@ -115,7 +115,6 @@ const mutations =
         SET_BANKEZHIYUANLINKITEM(state,item){
             if(item){
                 state.bankeZhiYuanLinkItem=item.concat(state.bankeZhiYuanLinkItem);
-                // state.bankeZhiYuanLinkItem=[...item,...state.bankeZhiYuanLinkItem]
             }else{
                 state.bankeZhiYuanLinkItem=[]
             }
