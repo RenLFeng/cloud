@@ -119,6 +119,13 @@ const mutations =
                 state.bankeZhiYuanLinkItem=[]
             }
            
+        },
+        DELECT_BANKEZHIYUANLINKITEM(state,id){
+            for(let i=0;i<state.bankeZhiYuanLinkItem.length;i++){
+                if(state.bankeZhiYuanLinkItem[i].id==id){
+                    state.bankeZhiYuanLinkItem.splice(i,1);
+            }
+            }
         }
     }
 

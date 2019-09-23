@@ -131,7 +131,22 @@ export default {
   },
   methods: {
     oneditclick(fileitem) {
-      MessageBox.confirm(fileitem.id, "您确定要删除吗？");
+      MessageBox.confirm("您确定要删除吗？").then(res=>{
+ this.$http
+        .get("/api/Bankefile/delete?id=" + fileitem.id, {
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            MessageBox.alert("删除成功").then(() => {
+               this.$store.commit('DELECT_BANKEZHIYUANLINKITEM', fileitem.id);
+            });
+          } else {
+            MessageBox.alert(res.data.msg);
+          }
+          console.log(res);
+        })
+        .catch(() => {});
+      });
     },
     onviewfile(fileitem) {
       if (fileitem.ftype == "file") {
