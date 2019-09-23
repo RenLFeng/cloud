@@ -50,7 +50,6 @@ export default {
   },
   methods: {
     icoclick() {
-      // console.log('bankefilesimple icoclick');
       this.pendclick = true;
       this.$emit("editclick", this.fileitem);
     },

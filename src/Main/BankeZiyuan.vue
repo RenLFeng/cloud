@@ -116,13 +116,13 @@ export default {
         }
       }
     },
-    bankeZhiYuanLinkItem(){
-      return this.$store.state.bankeZhiYuanLinkItem
+    bankeZhiYuanLinkItem() {
+      return this.$store.state.bankeZhiYuanLinkItem;
     }
     // ...mapState(["bankeZhiYuanLinkItem"])
   },
   created() {
-    this.$store.commit('SET_BANKEZHIYUANLINKITEM');
+    this.$store.commit("SET_BANKEZHIYUANLINKITEM");
     this.loadMoreFile();
   },
   components: {
@@ -134,19 +134,26 @@ export default {
       MessageBox.confirm(fileitem.id, "您确定要删除吗？");
     },
     onviewfile(fileitem) {
-      //console.log(document.URL);
+      if (fileitem.ftype == "file") {
+        let down = document.createElement("a");
+        down.href = "http://192.168.0.2:81" + fileitem.url;
+        down.download = fileitem.name;
+        document.body.appendChild(down);
+        down.click();
+        down.remove();
+      }
       //   console.log(document.location);
       //  console.log(window.location.href);
       //   console.log(self.location.href);
-      var url = document.location.origin;
-      url += fileitem.filepath;
-      var desc = "浏览文件，请使用原生实现:";
-      desc += url;
-      Toast(desc);
+      // var url = document.location.origin;
+      // url += fileitem.filepath;
+      // var desc = "浏览文件，请使用原生实现:";
+      // desc += url;
+      // Toast(desc);
 
-      if (window.exsoftTest) {
-        window.exsoftTest(fileitem.filepath, fileitem.filename1);
-      }
+      // if (window.exsoftTest) {
+      //   window.exsoftTest(fileitem.filepath, fileitem.filename1);
+      // }
     },
     loadMore() {
       if (this.files.length >= 10) {
@@ -160,10 +167,10 @@ export default {
           "/api/bankefile/query?bankeid=" +
           this.bankeid +
           "&topid=" +
-          this.topid+
-           "&pagesize=10";
+          this.topid +
+          "&pagesize=10";
       } else {
-        url = "/api/bankefile/query?bankeid=" + this.bankeid+"&pagesize=10";
+        url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=10";
       }
       this.$http
         .get(url)
@@ -178,7 +185,7 @@ export default {
               }
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
-             this.$store.commit('SET_BANKEZHIYUANLINKITEM', this.files);
+            this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
             if (this.filesempty) {
               this.liststatedesc = "当前没有文件";
               this.loadingState = true;
@@ -242,10 +249,13 @@ export default {
           headers: { "Content-Type": "application/x-www-form-urlencoded" }
         })
           .then(res => {
-            console.log(res);
             Indicator.close();
             if (res.data.code == 0) {
               commontools.arrayMergeAsIds(this.files, res.data.data);
+              res.data.data.info = JSON.parse(res.data.data.info);
+              let arr = [];
+              arr[0] = res.data.data;
+              this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
             }
           })
           .catch(err => {
@@ -272,7 +282,7 @@ export default {
         this.popupUploadFile = false;
       }
       // this.popupUploadFile=true;
-    },
+    }
     // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
   }
 };

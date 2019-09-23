@@ -23,13 +23,17 @@
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
             <li v-if="lists.files">
-              <img :src="lists.files.filepath" class="pic-sub" />
-              <!-- <img
-                v-for="(item,index) in lists.useravatar"
-                :key="index"
-                :src="item.src"
-                class="pic-sub"
-              />-->
+              <viewer>
+                <img :src="lists.files.filepath" class="pic-sub" />
+              </viewer>
+              <!-- <viewer>
+                <img
+                  v-for="(item,index) in lists.files"
+                  :key="index"
+                  :src="item.filepath"
+                  class="pic-sub"
+                />
+              </!--> 
             </li>
             <li
               class="dade color9"
@@ -51,13 +55,17 @@
                 <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
 
                 <li v-if="item.files">
-                  <img :src="item.files.filepath" class="pic-sub" />
-                  <!-- <img
-                    v-for="(item,index) in item.useravatar"
-                    :key="index"
-                    :src="item.src"
-                    class="pic-sub"
-                  />-->
+                  <viewer>
+                    <img :src="item.files.filepath" class="pic-sub" />
+                  </viewer>
+                  <!-- <viewer>
+                    <img
+                      v-for="(item,index) in item.files"
+                      :key="index"
+                      :src="item.filepath"
+                      class="pic-sub"
+                    />
+                  </!-->             
                 </li>
 
                 <li class="dade color9">{{item.createtime}}</li>
@@ -85,9 +93,9 @@
           <div class="attachdesc border-bottom-e5">添加附件</div>
           <div class="listc">
             <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
-            <a v-for="(item,index) in imgSrc" :key="index">
-              <img class="hf-Submit-pic" :src="item.src" alt />
-              <i @click="dele(index)">x</i>
+            <a v-for="(v,i) in commentPicSrc" :key="i" >
+              <img :src="v" alt="">
+              <i @click="dele(i)">x</i>
             </a>
           </div>
         </div>
@@ -123,6 +131,8 @@ import FileAttachList from "./FileAttachList";
 import maintools from "../maintools";
 const _URL = window.URL || window.webkitURL;
 import commontools from "../../commontools";
+import Viewer from "v-viewer";
+import "viewerjs/dist/viewer.css";
 export default {
   name: "",
   props: {
@@ -149,7 +159,9 @@ export default {
       indexItem: {},
       imgFileJson: "",
       topid: "",
-      noComment: false
+      noComment: false,
+      commentPic:[],
+      commentPicSrc:[]
     };
   },
   watch: {
@@ -332,7 +344,8 @@ export default {
     uploadChange(e) {
       let that = this;
       let file = e.target.files[0];
-      let formdata = new FormData();
+      // this.commentPic.push(file);
+      // this.commentPicSrc.push(_URL.createObjectURL(file))
       this.uploadImg(file);
       this.$refs.uploadPic.value = "";
     },

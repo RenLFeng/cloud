@@ -135,3 +135,6 @@ textarea{resize:none;overflow:auto}
 .mint-indicator-mask{
     z-index: 99999;
 }
+.viewer-backdrop {
+    background-color: rgba(0, 0, 0, 0.8)!important;
+}
