@@ -37,7 +37,7 @@ module.exports = {
         page2: 'src/page2.js'
     },
     devServer: {
-        proxy: 'http://192.168.0.2:81'
-
+      //  proxy: 'http://192.168.0.2:81'
+        proxy: 'http://localhost'
     }
 }

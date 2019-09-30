@@ -72,6 +72,9 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
+
+import nativecode from '../nativecode'
+
 export default {
   name: "BankeZiyuan",
   props: {
@@ -134,22 +137,31 @@ export default {
       MessageBox.confirm(fileitem.id, "您确定要删除吗？");
     },
     onviewfile(fileitem) {
+        if (fileitem.ftype == "file"){
+
+            fileitem.downurl = nativecode.getDownUrl(fileitem.url);
+        }
+        if (nativecode.ncall('jsFileLink', fileitem)){
+            return;
+        }
       if (fileitem.ftype == "file") {
         let down = document.createElement("a");
-        down.href = "http://192.168.0.2:81" + fileitem.url;
+
+        down.href = fileitem.downurl;
         down.download = fileitem.name;
         document.body.appendChild(down);
         down.click();
         down.remove();
+        return ;
       }
       //   console.log(document.location);
       //  console.log(window.location.href);
       //   console.log(self.location.href);
       // var url = document.location.origin;
       // url += fileitem.filepath;
-      // var desc = "浏览文件，请使用原生实现:";
+       var desc = "请在正式环境查看";
       // desc += url;
-      // Toast(desc);
+       Toast(desc);
 
       // if (window.exsoftTest) {
       //   window.exsoftTest(fileitem.filepath, fileitem.filename1);

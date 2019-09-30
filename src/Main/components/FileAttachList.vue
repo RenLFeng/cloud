@@ -59,6 +59,8 @@
 
     import {Indicator, Toast,MessageBox } from 'mint-ui';
 
+    import nativecode from '../../nativecode'
+
 
 
     export default {
@@ -113,7 +115,11 @@
         ,methods:{
             onItemClick(fitem){
                 if (!this.isupload){
-                    Toast('文件浏览请使用原生实现:' + fitem.filepath);
+                   // Toast('文件浏览请使用原生实现:' + fitem.filepath);
+                    fitem.name = fitem.filename;
+                    fitem.downurl = nativecode.getDownUrl(fitem.filepath);
+                    fitem.ftype = 'file';
+                    nativecode.ncall('jsFileLink', fitem);
                 }
 
             },

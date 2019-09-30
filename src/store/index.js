@@ -97,12 +97,16 @@ const mutations =
         ,setLoginUser(state, user){
             state.loginuser = user;
             state.usercookiereaded = true;
-            cookie.set('user', user);
+            //！ cjy: ios 的localcookie 如果不设置 expires，则wkwebview的cookie不会被持久化(sessiononly 为true)
+            //!  cjy: 不再使用cookie保存user信息; cookie 会随请求一并提交 ---- 保存简短信息
+            cookie.set('user',
+                {id:user.id, account:user.account, name:user.name, role:user.role},
+                {expires:360});
         }
         ,setUserAvatar(state, avatar){
             if (state.loginuser){
                 state.loginuser.avatar = avatar;
-                cookie.set('user', state.loginuser);
+               // cookie.set('user', state.loginuser, {expires:360});
             }
         }
 
