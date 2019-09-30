@@ -3,7 +3,11 @@
     <div class="curbanke-info">
       <ul>
         <li class="clearIt">
-          <img class="float-l" :src="imgfilepath?imgfilepath:bankeInfo.avatar" />
+          <img
+            class="float-l"
+            :src="imgfilepath?imgfilepath:bankeInfo.avatar"
+            :onerror="defaultimg"
+          />
           <div class="float-l po">
             <div class="top">
               <span class>{{bankeInfo.name}}</span>
@@ -12,7 +16,7 @@
             <!-- <div class="bottom color9">
               <span class>物理</span>
               <span class>{{bankeInfo.userupdatetime}}</span>
-            </div> -->
+            </div>-->
           </div>
         </li>
       </ul>
@@ -40,7 +44,7 @@
 </template>
 
 <script>
-import { Cell, Button, MessageBox ,Field  } from "mint-ui";
+import { Cell, Button, MessageBox, Field } from "mint-ui";
 import edit from "./edit";
 export default {
   name: "",
@@ -61,56 +65,109 @@ export default {
   },
   data() {
     return {
-        imgfilepath:'',
+      imgfilepath: "",
       bankeInfoData: {},
       editBkState: false
     };
   },
-  
 
+  computed: {
+    isteacher() {
+      let isteacher = this.$store.getters.isteacher;
+      return isteacher;
+    },
+    defaultimg() {
+      var srcstr = 'this.src="';
+      srcstr += require("../../assets/banke-default.png");
+      srcstr += '"';
+      return srcstr;
+    }
+  },
+  created() {},
   methods: {
     editBkFn() {
+      if (!this.isteacher) return;
       this.editBkState = true;
       this.$emit("editBkFn", this.editBkState);
     },
     edBk() {
-      MessageBox.confirm('',{
+      if (!this.isteacher) return;
+      let BankeData = this.$store.state.banke.curbankes;
+      MessageBox.confirm("", {
         title: "提示",
         message: "确定要结束班课吗?",
         showCancelButton: true
       })
-        .then(res => {
-          MessageBox.alert("操作成功");
+        .then(() => {
+          this.$http
+            .post("/api/banke/updateinfo", {
+              id: this.bankeInfo.id,
+              name: this.bankeInfo.name || "",
+              states: 0,
+              avatar: this.imgfilepath
+                ? this.imgfilepath
+                : this.bankeInfo.avatar
+            })
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("操作成功").then(() => {
+                  for (let item of BankeData) {
+                    if (item.id == res.data.data.id) {
+                      item.states = 0;
+                    }
+                  }
+                  this.$store.commit("banke/appendBankes", BankeData);
+                  // this.$router.go(-1);
+                });
+              } else {
+                MessageBox.alert(res.data.msg).then(() => {});
+              }
+            })
+            .catch(() => {});
         })
-        .catch(err => {
-         
-        });
+        .catch(err => {});
     },
 
     closeBk() {
-      MessageBox.confirm('',{
+      if (!this.isteacher) return;
+      let BankeData = this.$store.state.banke.curbankes;
+      MessageBox.confirm("", {
         title: "提示",
         message: "确定要删除班课吗?",
         showCancelButton: true
       })
         .then(res => {
-          MessageBox.alert("删除成功");
+          this.$http
+            .post("/api/banke/delete", { id: this.bankeInfo.id })
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("删除成功").then(() => {
+                  let newBankeData = BankeData.filter(
+                    item => item.id !== this.bankeInfo.id
+                  );
+                  this.$store.state.banke.curbankes = newBankeData;
+                  this.$router.go(-1);
+                });
+              } else {
+                MessageBox.alert(res.data.msg).then(() => {});
+              }
+            })
+            .catch(() => {});
         })
-        .catch(err => {
-        
-        });
+        .catch(err => {});
     },
-    onImgSrcLoad(data){
-        this.imgfilepath=data
+    onImgSrcLoad(data) {
+      this.imgfilepath = data;
+      this.editBkState = false;
     },
     goBack() {
       this.editBkState = !this.editBkState;
       this.$emit("editBkFn", this.editBkState);
     }
   },
-   destroyed() {
-    this.imgfilepath='';
-  },
+  destroyed() {
+    this.imgfilepath = "";
+  }
 };
 </script>
 
@@ -123,25 +180,25 @@ export default {
       li {
         position: relative;
         img {
-          width: 25%;
-          height: 20%;
-          min-width: 20%;
-          min-height: 20%;
+          width: 88px;
+          height: 88px;
+          min-width: 88px;
+          min-height: 88px;
         }
         div.po {
           position: absolute;
-    padding-left: 15px;
-    width: 100%;
-    height: 100%;
-    left: 25%;
-    top: 50%;
-    transform: translate(0, -7px);
+          padding-left: 15px;
+          width: 100%;
+          height: 100%;
+          left: 25%;
+          top: 50%;
+          transform: translate(0, -7px);
           div {
             position: absolute;
             width: 100%;
             span {
               display: block;
-              font-size: 3.5vw;
+              // font-size: 3.5vw;
             }
             &.top {
               top: 0;
@@ -163,8 +220,8 @@ export default {
 }
 </style>
 <style>
-.mint-cell{
-    background-image: none !important;
+.mint-cell {
+  background-image: none !important;
 }
 .mint-cell .mint-cell-wrapper {
   text-indent: 10px;

@@ -8,19 +8,25 @@
         <mt-cell title="最后一次开始时间" :value="itemInfo.starttime"></mt-cell>
       </div>
     </div>
-    <p class="submit-info text-center border-bottom border-top">
-      <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">未提交（0人）</span>
-      <span @click="subMit(1)" :class="isTrue?'my-color':''">已提交（0人）</span>
+    <p class="submit-info text-center border-bottom border-top fontsmall">
+      <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">未提交（{{noSubMit.length}}人）</span>
+      <span @click="subMit(1)" :class="isTrue?'my-color':''">已提交（{{isSubMit.length}}人）</span>
     </p>
-    <ul v-if="lists.length" class="lists-container">
-      <li v-for="(item,index) in lists" :key="index">
-        <mt-cell :title="item.title" :label="item.label" :value="item.time+'  首次提交'"></mt-cell>
+
+    <ul v-if="isTrue">
+      <li v-for="(item,index) in isSubMit" :key="index">
+        <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime+'  首次提交'"></mt-cell>
+      </li>
+    </ul>
+    <ul v-if="!isTrue">
+      <li v-for="(item,index) in noSubMit" :key="index">
+        <mt-cell :title="item.username" :label="item.ztext" value="未提交作业"></mt-cell>
       </li>
     </ul>
   </div>
 </template>
 <script>
-import { Cell,InfiniteScroll  } from "mint-ui";
+import { Cell, InfiniteScroll } from "mint-ui";
 export default {
   name: "",
   props: {
@@ -28,20 +34,38 @@ export default {
       default() {
         return {};
       }
+    },
+    allZuoyeitem: {
+      default() {
+        return [];
+      }
+    }
+  },
+  watch: {
+    allZuoyeitem: function(newValue, oldValue) {
+      this.allInfo = newValue;
+      for (let item of this.allInfo) {
+        if (item.submitid) {
+          this.isSubMit.push(item);
+        } else {
+          this.noSubMit.push(item);
+        }
+      }
+      console.log("isSubMit", this.isSubMit);
+      console.log("noSubMit", this.noSubMit);
     }
   },
   data() {
     return {
-       loading:true,
+      allInfo: [],
+      loading: true,
       isTrue: false,
-      lists: [
-        { title: "标题", label: "描述信息", time: "2019-03-02  12:20" },
-        { title: "标题", label: "描述信息", time: "2019-03-02  12:20" },
-        { title: "标题", label: "描述信息", time: "2019-03-02  12:20" }
-      ]
+      isSubMit: [],
+      noSubMit: [],
     };
   },
-
+  created() {},
+  created() {},
   methods: {
     subMit(val) {
       this.isTrue = val;
@@ -54,59 +78,59 @@ export default {
 </script>
 
 <style lang='less'>
-.zy-info{
-    .mint-cell .mint-cell-wrapper{
+.zy-info {
+  .mint-cell .mint-cell-wrapper {
     padding-right: 10px;
   }
-  .hh{
-  height: 300px;
-  width: 100%;
-  overflow: scroll;
-  text-align: center;
-}
-.text-info {
-  .no-border {
-    .mint-cell-wrapper {
-      background-image: none;
+  .hh {
+    height: 300px;
+    width: 100%;
+    overflow: scroll;
+    text-align: center;
+  }
+  .text-info {
+    .no-border {
+      .mint-cell-wrapper {
+        background-image: none;
+      }
     }
   }
-}
-.submit-info {
-  margin-top: 20px;
-  border-bottom: 1px solid #ccc;
-  border-top: 1px solid #ccc;
-  background: #fff;
-  span {
-    display: inline-block;
-    width: 50%;
-    height: 50px;
-    line-height: 50px;
-  }
-  .border-right {
-    border-right: 1px solid #ccc;
-  }
-}
-.lists-container {
-  li {
-    .mint-cell:last-child {
-      background-image: none;
+  .submit-info {
+    margin-top: 20px;
+    // border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    background: #fff;
+    span {
+      display: inline-block;
+      width: 50%;
+      height: 50px;
+      line-height: 50px;
+    }
+    .border-right {
+      border-right: 1px solid #ccc;
     }
   }
-  li:first-child {
-    .mint-cell-wrapper {
-      background-image: none;
+  .lists-container {
+    li {
+      .mint-cell:last-child {
+        background-image: none;
+      }
+    }
+    li:first-child {
+      .mint-cell-wrapper {
+        background-image: none;
+      }
+    }
+    li:last-child {
+      .mint-cell:last-child {
+        background-image: linear-gradient(
+          180deg,
+          #d9d9d9,
+          #d9d9d9 50%,
+          transparent 50%
+        );
+      }
     }
   }
-  li:last-child {
-    .mint-cell:last-child {
-      background-image: linear-gradient(
-        180deg,
-        #d9d9d9,
-        #d9d9d9 50%,
-        transparent 50%
-      );
-    }
-  }
-}
 }
 </style>

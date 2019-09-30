@@ -372,6 +372,8 @@
 
          border-radius:13px;
      }
-
+.mint-actionsheet{
+    bottom: 68px;
+}
 
  </style>

@@ -34,7 +34,7 @@
         ,computed:{
             defaultimg() {
                 var srcstr = 'this.src="';
-                srcstr += require('../../assets/banke-default.png');
+                srcstr += require('../../assets/100x100.png');
                 srcstr += '"';
                 return srcstr;
 
@@ -51,12 +51,12 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
 
         border-radius:8px;
-        height:87px;
+        height:72px;
 
     }
 
     .itemtitle{
-        font-size:20px;
+        font-size:16px;
     }
 
 
@@ -65,8 +65,8 @@
         height:55px;
         border-radius:3px;
 
-        margin-top:16px;
-        margin-left:16px;
+        margin-top:8px;
+        margin-left:12px;
         float:left;
 
         background-color:white;
@@ -74,15 +74,15 @@
 
 
     .itempart{
-        margin-left:87px;
+        margin-left:77px;
         margin-right:40px;
 
-        padding-top:30px;
+        padding-top:22px;
     }
 
     .itemright{
         float:right;
-        margin-top:28px;
+        margin-top:24px;
     }
 
 

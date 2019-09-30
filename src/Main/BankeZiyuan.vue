@@ -1,17 +1,18 @@
 <template>
-  <div class="url-wrap">
+  <div class="url-wrap fontsmall">
     <div v-if="showupload" class="uploadpart">
       <mt-tabbar v-model="selected" class="uploadtabbar">
         <mt-tab-item id="1" @click.native="onUploadLocal">
           <div>
-          <i class="iconfont iconfont-big iconicon---copy"></i>
+            <i class="iconfont iconfont-big iconicon---copy"></i>
             <div>从本地上传</div>
           </div>
         </mt-tab-item>
+
         <mt-tab-item id="2" @click.native="onUploadLink">
           <div>
-           <i class="iconfont iconfont-big icon80"></i>
-            <div>网页链接</div>
+            <i class="iconfont iconfont-big icon80"></i>
+            <div>网页链接 {{bankeZhiYuanLinkItem.id}}</div>
           </div>
         </mt-tab-item>
         <mt-tab-item id="3" @click.native="onUploadServer">
@@ -25,30 +26,16 @@
     <div class="items-container">
       <mt-tab-container class v-model="selected">
         <mt-tab-container-item id="1">
-          <div class="listcontainer">
-            <!--
-            -- todo. 更换为 loadmore  ， infite-scroll 操作不当（网络不好时，很容易无限循环请求）
-            <mt-loadmore :top-method="loadTop" @top-status-change="handleTopChange" ref="loadmore" class="loadmore"
-            >
-                <ul>
-                    <li v-for="item in list">{{ item }}</li>
-                </ul>
-            <div slot="top" class="mint-loadmore-top">-->
-            <!-- <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span> -->
-            <!-- <span v-show="topStatus !== 'loading'" >下拉刷新全部</span>
-                    <span v-show="topStatus === 'loading'">Loading...</span>
-                </div>
-            </mt-loadmore>
-            -->
-
-            <div
-              v-infinite-scroll="loadMoreFile"
-              infinite-scroll-disabled="loadingState"
-              infinite-scroll-distance="10"
-            >
-              <div v-for="(fitem,selindex) in files" v-bind:key="selindex">
+          <div
+            class="listcontainer"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="loadingState"
+            infinite-scroll-distance="50"
+          >
+            <div>
+              <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
                 <BankeFileSimple
-                  :fileitem="files[selindex]"
+                  :fileitem="bankeZhiYuanLinkItem[selindex]"
                   @editclick="oneditclick"
                   @normalclick="onviewfile"
                 ></BankeFileSimple>
@@ -57,14 +44,15 @@
             <div v-if="filesempty" class="tc emptydesc">{{liststatedesc}}</div>
           </div>
         </mt-tab-container-item>
-        <mt-tab-container-item id="2">
-          <URL/>
-        </mt-tab-container-item>
-
         <mt-tab-container-item id="3" class="text-center">尽请期待...</mt-tab-container-item>
+        <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false">
+          <mt-header title="添加网页链接">
+            <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+          </mt-header>
+          <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
+        </mt-popup>
       </mt-tab-container>
     </div>
-
     <input
       ref="uploadfilebtn"
       type="file"
@@ -77,19 +65,18 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox ,Cell } from "mint-ui";
+import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
 import commontools from "../commontools";
-
+import { constants } from "crypto";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "BankeZiyuan",
   props: {
     bankeid: {
-      default() {
-        return 0;
-      }
+      default: 0
     }
   },
   data() {
@@ -99,12 +86,16 @@ export default {
       liststatedesc: "加载中",
       list: ["11", "22"],
       topStatus: "",
-      loadingState: false
+      loadingState: false,
+      popupUploadLink: false,
+      popupUploadZhiYuan: false,
+      popupUploadFile: true,
+      topid: ""
     };
   },
-  watch:{
-       selected() {
-      this.$emit('UploadLinkSelectEd',this.selected)
+  watch: {
+    selected() {
+      this.$emit("UploadLinkSelectEd", this.selected);
     }
   },
   computed: {
@@ -117,51 +108,90 @@ export default {
     filesempty() {
       if (this.files.length) {
         return false;
+      } else {
+        if (this.bankeZhiYuanLinkItem.length) {
+          return false;
+        } else {
+          return true;
+        }
       }
-      return true;
     },
+    bankeZhiYuanLinkItem() {
+      return this.$store.state.bankeZhiYuanLinkItem;
+    }
+    // ...mapState(["bankeZhiYuanLinkItem"])
   },
-  created() {},
+  created() {
+    this.$store.commit("SET_BANKEZHIYUANLINKITEM");
+    this.loadMoreFile();
+  },
   components: {
     BankeFileSimple,
     URL
   },
   methods: {
     oneditclick(fileitem) {
-      Toast("编辑文件, 例如：删除等功能");
+      MessageBox.confirm(fileitem.id, "您确定要删除吗？");
     },
     onviewfile(fileitem) {
-      //console.log(document.URL);
+      if (fileitem.ftype == "file") {
+        let down = document.createElement("a");
+        down.href = "http://192.168.0.2:81" + fileitem.url;
+        down.download = fileitem.name;
+        document.body.appendChild(down);
+        down.click();
+        down.remove();
+      }
       //   console.log(document.location);
       //  console.log(window.location.href);
       //   console.log(self.location.href);
-      var url = document.location.origin;
-      url += fileitem.filepath;
-      var desc = "浏览文件，请使用原生实现:";
-      desc += url;
-      Toast(desc);
+      // var url = document.location.origin;
+      // url += fileitem.filepath;
+      // var desc = "浏览文件，请使用原生实现:";
+      // desc += url;
+      // Toast(desc);
 
-      if (window.exsoftTest) {
-        window.exsoftTest(fileitem.filepath, fileitem.filename1);
+      // if (window.exsoftTest) {
+      //   window.exsoftTest(fileitem.filepath, fileitem.filename1);
+      // }
+    },
+    loadMore() {
+      if (this.files.length >= 10) {
+        this.loadMoreFile();
       }
     },
     loadMoreFile() {
-      this.loadingState = true;
-      var url = "/api/api/bankefilequery?bankeid=" + this.bankeid;
-      if (this.files.length) {
-        url += "&fileid=" + this.files[this.files.length - 1].id;
+      let url = "";
+      if (this.topid) {
+        url =
+          "/api/bankefile/query?bankeid=" +
+          this.bankeid +
+          "&topid=" +
+          this.topid +
+          "&pagesize=10";
+      } else {
+        url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=10";
       }
       this.$http
-        .post(url)
+        .get(url)
         .then(res => {
           if (res.data.code == 0) {
+            if (res.data.data.length < 10) {
+              this.loadingState = true;
+            }
+            for (let item of res.data.data) {
+              if (item.info) {
+                item.info = JSON.parse(item.info);
+              }
+            }
             commontools.arrayMergeAsIds(this.files, res.data.data);
-
+            this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
             if (this.filesempty) {
               this.liststatedesc = "当前没有文件";
+              this.loadingState = true;
             } else {
               if (res.data.data.length) {
-                this.loadingState = false; //! 还可继续加载
+                this.topid = this.files[this.files.length - 1].id;
               }
             }
           } else {
@@ -171,7 +201,7 @@ export default {
           console.log(res);
           //! cjy: 这里server 的http code 非200 页会走这里。
           //! 因此不能继续加载
-          // this.loadingState = true;
+          this.loadingState = true;
         });
     },
     loadTop() {
@@ -183,16 +213,19 @@ export default {
       this.topStatus = status;
     },
     onUploadLocal() {
+      this.popupUploadFile = true;
       //  Toast('暂未实现');
       this.$refs.uploadfilebtn.value = "";
       this.$refs.uploadfilebtn.click();
     },
     onUploadLink() {
-        // this.$emit('UploadLinkSelectEd',this.selected)
-      Toast("暂未实现");
+      this.popupUploadLink = true;
+      // this.$emit('UploadLinkSelectEd',this.selected)
+      // Toast("暂未实现");
     },
     onUploadServer() {
-      Toast("暂未实现");
+      this.popupUploadZhiYuan = true;
+      // Toast("暂未实现");
     },
     uploadChange(event) {
       if (event.target.files.length > 0) {
@@ -204,7 +237,7 @@ export default {
         var formdata = new FormData();
         formdata.append("file", file);
 
-        var url = "/api/api/bankeupload?";
+        var url = "/api/bankefile/fileupload?";
         url += "bankeid=" + this.bankeid;
 
         Indicator.open("上传中");
@@ -216,10 +249,13 @@ export default {
           headers: { "Content-Type": "application/x-www-form-urlencoded" }
         })
           .then(res => {
-            console.log(res);
             Indicator.close();
             if (res.data.code == 0) {
               commontools.arrayMergeAsIds(this.files, res.data.data);
+              res.data.data.info = JSON.parse(res.data.data.info);
+              let arr = [];
+              arr[0] = res.data.data;
+              this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
             }
           })
           .catch(err => {
@@ -227,12 +263,35 @@ export default {
             console.log(err);
           });
       }
+    },
+    onAddLinkState(state) {
+      if (state) {
+        this.popupUploadLink = false;
+        this.selected = "1";
+      }
+    },
+    goBack() {
+      if (this.popupUploadLink) {
+        this.popupUploadLink = false;
+        this.selected = "1";
+      }
+      if (this.popupUploadZhiYuan) {
+        this.popupUploadZhiYuan = false;
+      }
+      if (this.popupUploadFile) {
+        this.popupUploadFile = false;
+      }
+      // this.popupUploadFile=true;
     }
+    // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
   }
 };
 </script>
 
 <style scoped>
+.mint-tabbar > .mint-tab-item.is-selected {
+  background: none;
+}
 .loadmore {
   min-height: 200px;
 }
@@ -261,11 +320,14 @@ export default {
 .listcontainer {
   border-top: 1px solid #eaeaea;
 }
+.url-wrap .items-container {
+  margin-bottom: 17px;
+}
 </style>
 <style lang="less" scoped>
-.url-wrap{
-    .items-container{
-        margin-top: 20px;
-    }
+.url-wrap {
+  .items-container {
+    margin-top: 20px;
+  }
 }
 </style>

@@ -24,7 +24,7 @@
       </mt-tab-container>
     </div>
 
-    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState || zYLinkSelectEd!='2'">
+    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState">
       <mt-tab-item id="ziyuan">
         <i class="iconfont iconwenjianjiai"></i>
         <span class="fontnormal">资源</span>
@@ -141,7 +141,7 @@ export default {
         this.tongzhiState=data;
     },
     onUploadLinkSelectEd(data){
-       this.tongzhiState=true;
+      //  this.tongzhiState=true;
       this.zYLinkSelectEd=data;
      
     }
@@ -192,4 +192,5 @@ export default {
   height: 40px;
   transform: translate(-8px, -8px);
 }
+
 </style>

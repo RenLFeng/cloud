@@ -1,18 +1,27 @@
 import Vue from 'vue'
 import store from './store'
 import Home from './Home.vue'
-import {createRouter} from './router'
+import {
+    createRouter
+} from './router'
 import './plugins/element.js'
 import axios from 'axios'
 import './assets/iconfont/iconfont.css'
+import 'amfe-flexible';
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+Vue.use(Viewer);
 
-Vue.prototype.$http= axios
+Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
 // import VueRouter from 'vue-router'
 // Vue.use(VueRouter)
 
 
 // import RouterTrans from './RouterTrans'
+
+
 
 
 
@@ -78,10 +87,15 @@ Vue.config.productionTip = false
 //     }
 // })
 
-
-
+window.onresize = function () {
+    let clientWidth = window.innerWidth;
+    if (!clientWidth) return;
+    if (clientWidth >= 640) {
+        document.documentElement.style.fontSize = '2.5rem';
+    }
+}
 new Vue({
-    router:createRouter(),
+    router: createRouter(),
     store,
     render: h => h(Home)
 }).$mount('#app')

@@ -1,12 +1,17 @@
 <template>
   <div class="discuss-container">
     <div class="tit-info">
-      <mt-cell :title="itemInfo.username+'      的作业'" :label="itemInfo.ztext"></mt-cell>
+      <mt-cell :title="ItemInfo.username+'的作业'" :label="ItemInfo.ztext"></mt-cell>
     </div>
-    <img :src="image" alt />
     <div class="discuss-list-content">
-      <p class="discuss-number color9">评论（10）</p>
-      <div class="list-content" v-if="teacherInfo.length">
+      <p class="discuss-number color9 fontnormal">评论（{{ItemInfo.commentnum}}）</p>
+      <div
+        class="list-content"
+        v-if="teacherInfo.length"
+        v-infinite-scroll="loadMore"
+        infinite-scroll-disabled="loading"
+        infinite-scroll-distance="50"
+      >
         <div class="item clearIt" v-for="(lists ,tindex) in teacherInfo" :key="tindex">
           <img class="tit-pic" :src="lists.useravatar" alt />
           <ul class="teacher-content">
@@ -18,13 +23,17 @@
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
             <li v-if="lists.files">
-              <img :src="lists.files.filepath" class="pic-sub" />
-              <!-- <img
-                v-for="(item,index) in lists.useravatar"
-                :key="index"
-                :src="item.src"
-                class="pic-sub"
-              />-->
+              <viewer>
+                <img :src="lists.files.filepath" class="pic-sub" />
+              </viewer>
+              <!-- <viewer>
+                <img
+                  v-for="(item,index) in lists.files"
+                  :key="index"
+                  :src="item.filepath"
+                  class="pic-sub"
+                />
+              </!--> 
             </li>
             <li
               class="dade color9"
@@ -46,13 +55,17 @@
                 <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
 
                 <li v-if="item.files">
-                  <img :src="item.files.filepath" class="pic-sub" />
-                  <!-- <img
-                    v-for="(item,index) in item.useravatar"
-                    :key="index"
-                    :src="item.src"
-                    class="pic-sub"
-                  />-->
+                  <viewer>
+                    <img :src="item.files.filepath" class="pic-sub" />
+                  </viewer>
+                  <!-- <viewer>
+                    <img
+                      v-for="(item,index) in item.files"
+                      :key="index"
+                      :src="item.filepath"
+                      class="pic-sub"
+                    />
+                  </!-->             
                 </li>
 
                 <li class="dade color9">{{item.createtime}}</li>
@@ -66,6 +79,8 @@
           >{{lists.more?'收起':'查看更多'}}</span>
         </div>
       </div>
+      <div class="no-more" v-if="loading && teacherInfo.length>'10'">我是有底线的~~</div>
+      <div class="no-more" v-if="noComment">暂未评论~~</div>
     </div>
     <mt-popup v-model="show" position="bottom" class="mint-popup-3" :closeOnClickModal="false">
       <div style class="hf-box">
@@ -77,11 +92,10 @@
         <div class="add-pic">
           <div class="attachdesc border-bottom-e5">添加附件</div>
           <div class="listc">
-            <!-- <FileAttachList :urlinfo="urlinfo" :localfiles="localfiles" ></FileAttachList> -->
             <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
-            <a v-for="(item,index) in imgSrc" :key="index">
-              <img class="hf-Submit-pic" :src="item.src" alt />
-              <i @click="dele(index)">x</i>
+            <a v-for="(v,i) in commentPicSrc" :key="i" >
+              <img :src="v" alt="">
+              <i @click="dele(i)">x</i>
             </a>
           </div>
         </div>
@@ -107,7 +121,7 @@
 </template>
 
 <script>
-import { Cell, Badge, Field, Toast, Indicator } from "mint-ui";
+import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
 import dispic from "../../assets/dis.jpg";
 import dispic2 from "../../assets/dis.jpg";
 import mimgcrop from "../../common/m-image-crop";
@@ -117,6 +131,8 @@ import FileAttachList from "./FileAttachList";
 import maintools from "../maintools";
 const _URL = window.URL || window.webkitURL;
 import commontools from "../../commontools";
+import Viewer from "v-viewer";
+import "viewerjs/dist/viewer.css";
 export default {
   name: "",
   props: {
@@ -124,16 +140,11 @@ export default {
       default() {
         return {};
       }
-    },
-    teacher: {
-      default() {
-        return [];
-      }
     }
   },
   data() {
     return {
-      image: "",
+      loading: false,
       textareaMsg: "",
       show: false,
       index: "",
@@ -143,63 +154,189 @@ export default {
         urlupload: "/api/api/zuoyefileupload",
         urldel: "/api/api/zuoyefiledelete"
       },
-      localfiles: [],
       imgSrc: [],
-      files: [],
       ItemInfo: {},
       indexItem: {},
-      inDestroy: false,
-      imgFileJson: ""
+      imgFileJson: "",
+      topid: "",
+      noComment: false,
+      commentPic:[],
+      commentPicSrc:[]
     };
   },
   watch: {
-    teacher:function(newValue, oldValue) {
-      this.teacherInfo = newValue;
-      for (let list of this.teacherInfo) {
-        if ( list.files && typeof(list.files)=='string') {
-          list.files = JSON.parse(list.files);
-        }
-        for (let item of list.lastreplydata) {
-          if (item.files) {
-            item.files = JSON.parse(item.files);
-          }
-        }
-      }
-      console.log("watchwatch", this.teacherInfo);
+    itemInfo: function(newValue, oldValue) {
+      this.backInit();
+      this.ItemInfo = newValue;
+      this.commentQuery(this.ItemInfo);
     }
   },
-  computed: {},
+  computed: {
+    isTeacher() {
+      return this.$store.getters.isteacher;
+    }
+  },
   created() {},
   mounted() {},
   methods: {
+    commentQuery(item) {
+      Indicator.open("加载中");
+      let url = "";
+      if (this.topid) {
+        url =
+          "/api/comment/query?taboutid=" +
+          item.submitid +
+          "&tabout=0&topid=" +
+          this.topid +
+          "&pagesize=10";
+      } else {
+        url =
+          "/api/comment/query?taboutid=" +
+          item.submitid +
+          "&tabout=0&pagesize=10";
+      }
+      this.$http
+        .post(url, {})
+        .then(res => {
+          console.log("查询成功", res);
+          if (res.data.code == "0") {
+            let serveData = res.data.data;
+            if (!serveData.length && !this.teacherInfo.length) {
+              this.noComment = true;
+            } else {
+              if (serveData.length < 10) {
+                this.loading = true;
+              }
+              for (let lists of serveData) {
+                if (lists.files && typeof lists.files == "string") {
+                  lists.files = JSON.parse(lists.files);
+                }
+                if (lists.lastreplydata == "") {
+                  lists.lastreplydata = [];
+                } else {
+                  lists.lastreplydata = JSON.parse(lists.lastreplydata);
+                  for (let item of lists.lastreplydata) {
+                    if (item.files) {
+                      item.files = JSON.parse(item.files);
+                    }
+                  }
+                }
+              }
+              this.topid = serveData[serveData.length - 1].id;
+              this.teacherInfo = this.teacherInfo.concat(serveData);
+              // this.teacherInfo = [...this.teacherInfo, ...serveData];
+            }
+          } else {
+          }
+          Indicator.close();
+        })
+        .catch(() => {
+          Indicator.close();
+          console.log("查询失败");
+        });
+    },
+    loadMore() {
+      if (this.teacherInfo.length >= "10") {
+        this.commentQuery(this.ItemInfo);
+      }
+    },
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
+      Indicator.open("提交中");
       this.$http
         .post("/api/comment/addcomment", {
-          taboutid: this.itemInfo.id,
+          taboutid: this.itemInfo.submitid,
           content: this.discussMsg,
           files: this.imgFileJson
         })
         .then(res => {
           console.log("提交成功", res);
-          // let src=res.data.data.files?(JSON.parse(res.data.data.files)).filepath:''
-          let submitMsgData = {
-            useravatar: res.data.data.useravatar,
-            username: res.data.data.username,
-            content: res.data.data.content,
-            createtime: res.data.data.createtime,
-            lastreplydata: [],
-            files: res.data.data.files
-          };
-          this.teacherInfo.unshift(submitMsgData);
-          this.init();
-          s;
+          if (res.data.code == "0") {
+            let Data = res.data.data;
+            if (Data.files) {
+              Data.files = JSON.parse(Data.files);
+            }
+            this.teacherInfo.unshift(Data);
+            this.ItemInfo.commentnum++;
+            this.noComment = false;
+            this.init();
+          } else {
+          }
+          Indicator.close();
         })
         .catch(() => {
+          Indicator.close();
           console.log("提交失败");
           this.init();
         });
+    },
+    //回复button
+    studentHF(item, index) {
+      console.log("回复回复", item);
+      this.indexItem = item;
+      this.index = index;
+      this.show = true;
+    },
+    //回复评论
+    HFSubmit() {
+      if (!this.textareaMsg && !this.imgFileJson) return;
+      Indicator.open("提交中");
+      let subData = {};
+      let item = this.indexItem;
+      subData.tcommentid = item.tcommentid || item.id;
+      subData.touserid = item.touserid || item.userid;
+      subData.tousername = item.tousername || item.username;
+      subData.content = this.textareaMsg;
+      subData.files = this.imgFileJson;
+      this.$http
+        .post("/api/comment/addreply", subData)
+        .then(res => {
+          Indicator.close();
+          console.log("提交成功", res);
+          let Data = res.data.data;
+          if (this.imgFileJson) {
+            Data.files = JSON.parse(this.imgFileJson);
+          }
+          this.teacherInfo[this.index].lastreplydata.push(Data);
+          this.init();
+        })
+        .catch(() => {
+          Indicator.close();
+          console.log("提交失败");
+        });
+    },
+    // 查看更多
+    learnMoreFn(item, index) {
+      Indicator.open("加载中");
+      item.more = !item.more;
+      if (item.more) {
+        this.$http
+          .get(
+            "/api/comment/queryreply?tcommentid=" +
+              item.id +
+              "&topid=&pagesize=",
+            {}
+          )
+          .then(res => {
+            let Data = res.data.data;
+            for (let item of Data) {
+              if (item.files) {
+                item.files = JSON.parse(item.files);
+              }
+            }
+            this.teacherInfo[index].lastreplydata = Data;
+            Indicator.close();
+          })
+          .catch(() => {
+            Indicator.close();
+          });
+      } else {
+        this.teacherInfo[index].lastreplydata.splice(
+          3,
+          this.teacherInfo[index].lastreplydata.length
+        );
+      }
     },
     unloadFn() {
       this.$refs.uploadPic.click();
@@ -207,12 +344,13 @@ export default {
     uploadChange(e) {
       let that = this;
       let file = e.target.files[0];
-      let formdata = new FormData();
+      // this.commentPic.push(file);
+      // this.commentPicSrc.push(_URL.createObjectURL(file))
       this.uploadImg(file);
       this.$refs.uploadPic.value = "";
     },
     uploadImg(file) {
-      let that =this;
+      let that = this;
       let formdata = new FormData();
       formdata.append("file", file);
       let url = this.urlinfo.urlupload;
@@ -221,8 +359,7 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             this.imgFileJson = JSON.stringify(res.data.data);
-            // console.log( ' this.imgFileJson this.imgFileJson',this.imgFileJson);
-            if (that.index >='0') {
+            if (that.index >= "0") {
               this.HFSubmit();
             } else {
               this.submit();
@@ -236,67 +373,6 @@ export default {
           console.log("catch", res.data.data);
         });
     },
-    //回复button
-    studentHF(item, index) {
-      console.log("回复回复", item);
-      this.indexItem = item;
-      this.index = index;
-      this.show = true;
-    },
-    //回复评论
-    HFSubmit() {
-      if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open();
-      let item = this.indexItem;
-      let id = item.tcommentid || item.id;
-      this.$http
-        .post("/api/comment/addreply", {
-          tcommentid: id,
-          touserid: item.userid || item.touserid,
-          tousername: item.username || item.tousername,
-          content: this.textareaMsg,
-          files: this.imgFileJson
-        })
-        .then(res => {
-          Indicator.close();
-          console.log("提交成功", res);
-          let Data = res.data.data;
-          Data.files = JSON.parse(this.imgFileJson);
-          this.teacherInfo[this.index].lastreplydata.push(Data);
-          this.init();
-        })
-        .catch(() => {
-          Indicator.close();
-          console.log("提交失败");
-        });
-    },
-    learnMoreFn(item, index) {
-      item.more = !item.more;
-      if (item.more) {
-        this.$http
-          .get(
-            "/api/comment/queryreply?tcommentid=" +
-              item.id +
-              "&topid=&pagesize=",
-            {}
-          )
-          .then(res => {
-            let Data = res.data.data;
-            for( let item of Data){
-              if(item.files){
-                item.files=JSON.parse(item.files);
-              }
-            }
-            this.teacherInfo[index].lastreplydata = Data;
-          })
-          .catch(() => {});
-      } else {
-        this.teacherInfo[index].lastreplydata.splice(
-          3,
-          this.teacherInfo[index].lastreplydata.length
-        );
-      }
-    },
     qx() {
       this.init();
     },
@@ -308,6 +384,15 @@ export default {
       this.indexItem = {};
       this.discussMsg = "";
       this.imgFileJson = "";
+    },
+    backInit() {
+      this.teacherInfo = [];
+      this.topid = "";
+      this.imgSrc = [];
+      this.ItemInfo = {};
+      this.indexItem = {};
+      this.loading = false;
+      this.noComment = false;
     },
     dele(index) {
       this.imgSrc.splice(index, 1);
@@ -325,8 +410,10 @@ export default {
 
 <style lang="less">
 .discuss-container {
+  font-size: 14px;
   .tit-info {
     .mint-cell-wrapper {
+      font-size: 18px;
       padding: 15px 10px;
     }
   }
@@ -337,19 +424,20 @@ export default {
     .discuss-number {
       padding: 20px 10px;
       background: #f0f0f0;
-      font-size: 1.125rem;
     }
     .list-content {
-      padding: 10px;
+      // padding: 10px;
       .item {
         position: relative;
-        margin-bottom: 5vw;
-        // padding-bottom: 10px;
+        // margin-bottom: 5vw;
+        border-bottom: 1px solid #cccccc94;
+        padding: 10px;
+        padding-bottom: 20px;
         img.tit-pic {
-          width: 18%;
+          width: 63px;
           position: absolute;
           left: 0;
-          top: 0;
+          top: 10px;
         }
         ul {
           width: 90%;
@@ -368,14 +456,15 @@ export default {
           }
         }
         .teacher-content {
-          width: 80%;
+          width: calc(100% - 63px);
           .pic-sub {
-            width: 100%;
+            width: 131px !important;
+            // height: 127px!important;
           }
         }
         .more {
           position: absolute;
-          bottom: -15px;
+          bottom: 3px;
           width: 100%;
           text-align: center;
           color: #57a4de;
@@ -391,15 +480,16 @@ export default {
     border: 1px solid #ccc;
     padding: 10px 0;
     border-radius: 8px;
+    background: #fff;
     .upload-content {
       position: absolute;
       img {
-        width: 3.125rem;
-        height: 3.125rem;
-        border-radius: 20%;
-        left: 50%;
-        top: 0;
-        transform: translate(8%, -8%);
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 20% !important;
+        left: 55px !important;
+        top: 0 !important;
+        transform: translate(0, -11%) !important;
         .upload {
           display: none;
         }
@@ -416,14 +506,15 @@ export default {
     }
 
     .submit {
-      width: 2.5rem;
+      width: 13%;
       height: 100%;
       position: absolute;
-      right: 5px;
+      right: 0;
       top: 50%;
       margin-top: -20px;
       line-height: 40px;
       font-size: 18px;
+      text-align: center;
     }
   }
   .mint-popup-bottom {

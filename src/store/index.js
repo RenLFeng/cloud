@@ -30,6 +30,7 @@ const state = {
         return cookie.getJSON('user');
     })(),  //! 当前登录用户
     usercookiereaded:false,
+    bankeZhiYuanLinkItem:[],
 }
 
 const getters =
@@ -110,6 +111,14 @@ const mutations =
         }
         ,setBHomeSelected(state, strsel){
             state.bhomeselected = strsel;
+        },
+        SET_BANKEZHIYUANLINKITEM(state,item){
+            if(item){
+                state.bankeZhiYuanLinkItem=item.concat(state.bankeZhiYuanLinkItem);
+            }else{
+                state.bankeZhiYuanLinkItem=[]
+            }
+           
         }
     }
 

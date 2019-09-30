@@ -23,9 +23,8 @@
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
         </div>
         <div>
-             <mt-cell title="作业详情" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
+          <mt-cell title="作业详情" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
         </div>
-     
 
         <div @click="syudentsMark">
           <mt-cell title="本次作业所有人得分" is-link v-if="pagemode=='result'"></mt-cell>
@@ -33,14 +32,26 @@
         <div @click="showZYinfo">
           <mt-cell title="信息" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
         </div>
+        <mt-cell
+          title="答案"
+          is-link
+          v-if="pagemode=='result'"
+          @click.native="popupAnswer=true"
+        >{{answerdesc}}</mt-cell>
 
         <div class="devide zashowbtnpart">
           <div v-if="pagemode=='submit'">
             <div class="zashowbtn zashowbtnactive">我的提交</div>
           </div>
           <div v-if="pagemode=='result'">
-            <div @click="selectPF(1)" :class="zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' ">全部({{submitnum}})</div>
-            <div @click="selectPF(0)" :class="!zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' ">未评分({{uncommentnum}})</div>
+            <div
+              @click="selectPF(1)"
+              :class="zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' "
+            >全部({{submitnum}})</div>
+            <div
+              @click="selectPF(0)"
+              :class="!zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' "
+            >未评分({{uncommentnum}})</div>
           </div>
         </div>
 
@@ -84,12 +95,12 @@
 
       <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly"></zuoyedetailedit>
     </mt-popup>
- <!-- 评论 -->
+    <!-- 评论 -->
     <mt-popup v-model="popupZuoyePL" position="right" class="mint-popup-3" :modal="false">
       <mt-header title="作业结果列表   评论区">
         <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
       </mt-header>
-      <Discuss :itemInfo="studentInfo" :teacher="commentQueryInfo"></Discuss>
+      <Discuss :itemInfo="studentInfo" :popupZuoyePL="popupZuoyePL"></Discuss>
     </mt-popup>
     <!-- 评分 -->
     <mt-popup v-model="popupZuoyePF" position="bottom" class="pf-container-popup">
@@ -103,15 +114,15 @@
           >评分</span>
         </p>
         <p class="mark-input border-bottom-e5">
-          <input class="text-center" type="number" v-model="mark" @change="changeMark" />总体评分（10分）
+          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />总体评分（100分）
         </p>
         <ul class="clearIt">
           <li
             class="float-l text-center"
-            v-for="i in 10"
+            v-for="i in markArr"
             :key="i"
             @click="seleMarkFn(i)"
-          >{{i>9?'满分':i}}</li>
+          >{{i>90?'满分':i}}</li>
         </ul>
       </div>
     </mt-popup>
@@ -126,7 +137,7 @@
       <mt-header :title="zuoyeitem.name">
         <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
       </mt-header>
-      <zouYeInfo :itemInfo="zuoyeitem"></zouYeInfo>
+      <zouYeInfo :itemInfo="zuoyeitem" :allZuoyeitem="allInitData"></zouYeInfo>
     </mt-popup>
     <!-- 所有人得分 -->
     <mt-popup
@@ -139,7 +150,14 @@
       <mt-header title="作业结果列表  本次作业所有人得分">
         <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
       </mt-header>
-      <studentsMark :itemInfo="zuoyeitem"></studentsMark>
+      <studentsMark :itemInfo="zuoyeitem" :allZuoyeitem="allInitData"></studentsMark>
+    </mt-popup>
+    <!-- 答案 -->
+    <mt-popup v-model="popupAnswer" position="right" class="mint-popup-3" :modal="false">
+      <mt-header title="作业答案">
+        <mt-button icon="back" slot="left" @click="goBacks">返回</mt-button>
+      </mt-header>
+      <Answer :zuoyeitem="zuoyeitem" :states="true" />
     </mt-popup>
   </div>
 </template>
@@ -158,7 +176,7 @@ import FileAttachList from "./components/FileAttachList";
 import dispic from "../assets/dis.jpg";
 import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
-
+import Answer from "./banKeZuoye/answer";
 export default {
   name: "ZuoyeResult",
   props: {
@@ -170,8 +188,8 @@ export default {
   },
   data() {
     return {
-      commentQueryInfo: [],
       studentInfo: {},
+      ScoreItemInfo: {},
       isLimitHeight: true,
       popupSubmit: false,
       popupZDetail: false,
@@ -179,6 +197,7 @@ export default {
       popupZuoyePF: false,
       popuPzouyeInfo: false,
       popuPzouyeAllMark: false,
+      popupAnswer: false,
       mark: "",
       studentName: "",
       zreadonly: true,
@@ -193,6 +212,8 @@ export default {
         detaildesc: "",
         submittime: ""
       },
+      allZuoyeitem: [],
+      allInitData: [],
       zdetail: {
         ztext: "",
         localfiles: []
@@ -202,13 +223,21 @@ export default {
         localfiles: []
       },
       results: [],
+      resultsTemp: [],
+      noPingFengStudentInfo: [],
       showfilter: "all",
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
       submitok: false,
-      zashowbtnactive:true
+      zashowbtnactive: true,
+      markArr:[10,20,30,40,50,60,70,80,90,100]
     };
   },
   computed: {
+    answerdesc() {
+      return this.zuoyeitem.answerdesc 
+        ? this.zuoyeitem.answerdesc 
+        : "未设置答案";
+    },
     submitdisabled() {
       if (this.zdetailsubmit.ztext) {
         return false;
@@ -305,49 +334,70 @@ export default {
     },
     loadBottom() {},
     goBacks() {
-      if (this.popupZuoyePL) this.popupZuoyePL = false;
-      if (this.popupZuoyePF) this.popupZuoyePF = false;
+      if (this.popupZuoyePL) {
+        this.popupZuoyePL = false;
+         this.loadAll();
+      }
+      if (this.popupZuoyePF) {
+        this.popupZuoyePF = false;
+        this.mark = "";
+      }
       if (this.popuPzouyeInfo) this.popuPzouyeInfo = false;
       if (this.popuPzouyeAllMark) this.popuPzouyeAllMark = false;
+      if (this.popupAnswer) this.popupAnswer = false;
     },
     onCommentClick(ritem) {
-      console.log("作业 item", ritem);
-      this.commentQuery(ritem);
-    },
-    commentQuery(item) {
-      this.$http
-        .post("/api/comment/query?taboutid="+item.info.id+"&tabout=0", {})
-        .then(res => {
-          console.log("查询成功", res);
-          let serveData = res.data.data;
-          for (let i = 0; i < serveData.length; i++) {
-            if (serveData[i].lastreplydata == "") {
-              serveData[i].lastreplydata = [];
-            } else {
-              serveData[i].lastreplydata = JSON.parse(
-                serveData[i].lastreplydata
-              );
-            }
-          }
-          this.studentInfo = item.info;
-          this.popupZuoyePL = item.state;
-          this.commentQueryInfo = serveData;
-        })
-        .catch(() => {
-          console.log("查询失败");
-        });
+      this.studentInfo = ritem.info;
+      this.popupZuoyePL = ritem.state;
+      console.log("作业 info", ritem);
     },
     onScoreClick(ritem) {
-      this.popupZuoyePF = ritem.state;
-      this.studentName = ritem.info.username;
+      let isteacher = this.$store.getters.isteacher;
+      this.ScoreItemInfo = ritem.info;
+      console.log("作业 info", ritem);
+      if (!isteacher) {
+        if (ritem.info.score > "0") {
+          MessageBox("已经评过分啦~~");
+        } else {
+          MessageBox("等待老师评分哦 ~");
+        }
+      } else {
+        if (ritem.info.score > "0") {
+          MessageBox("不能重复评分~~");
+        } else {
+          this.popupZuoyePF = ritem.state;
+          this.studentName = ritem.info.username;
+        }
+      }
     },
     seleMarkFn(val) {
       this.mark = val;
     },
     submiMark() {
-      alert(this.mark);
+      if (this.mark == "") return;
+      this.$http
+        .get(
+          "/api/Azuoye/setScore?submitid=" +
+            this.ScoreItemInfo.submitid +
+            "&score=" +
+            this.mark,
+          {}
+        )
+        .then(res => {
+          this.popupZuoyePF = false;
+          this.loadAll();
+          this.mark = "";
+          console.log("评分成功", res);
+        })
+        .catch(() => {
+          this.popupZuoyePF = false;
+          this.mark = "";
+          console.log("评分失败");
+        });
     },
-    changeMark() {},
+    changeMark() {
+      
+    },
     goback() {
       if (this.pagemode == "submit") {
         var btip = false;
@@ -399,6 +449,7 @@ export default {
           this.$refs.loadmore.onTopLoaded();
           if (res.data.code == 0) {
             //! ok
+            this.allZuoyeitem = res.data.data.results;
             this.onHttpData(res.data.data);
             //  console.log(this.results);
           } else {
@@ -412,7 +463,12 @@ export default {
     },
     onHttpData(data) {
       this.zuoyeitem = data["zuoye"];
-
+      this.allZuoyeitem = data.results;
+      for (let item of this.allZuoyeitem) {
+        if (item.score < 0) {
+          this.noPingFengStudentInfo.push(item);
+        }
+      }
       if (this.zuoyeitem.state == 100 && !this.$store.getters.isteacher) {
         //! 提交模式
         this.pagemode = "submit";
@@ -471,14 +527,21 @@ export default {
         });
     },
     showZYinfo() {
-      console.log("zuoyeitemzuoyeitem", this.zuoyeitem);
+      this.allInitData = this.allZuoyeitem;
       this.popuPzouyeInfo = true;
     },
     syudentsMark() {
+      this.allInitData = this.allZuoyeitem;
       this.popuPzouyeAllMark = true;
     },
-    selectPF(active){
-      this.zashowbtnactive=active;
+    selectPF(active) {
+      this.zashowbtnactive = active;
+      if (!active) {
+        this.resultsTemp = this.results;
+        this.results = this.noPingFengStudentInfo;
+      } else {
+        this.results = this.resultsTemp;
+      }
     }
   },
   created() {
@@ -494,7 +557,8 @@ export default {
     zuoyedetailedit,
     Discuss,
     zouYeInfo,
-    studentsMark
+    studentsMark,
+    Answer
   }
 };
 </script>
@@ -511,12 +575,12 @@ export default {
       color: #0089ff;
     }
     .mark-input {
-      height: 5rem;
+      height: 75px;
       input {
         width: 20%;
         border: 1px solid #0089ff;
         border-radius: 5px;
-        margin-right: 1.25rem;
+        margin-right: 15px;
         height: 100%;
       }
     }
@@ -597,10 +661,10 @@ export default {
 .submitheader {
   background-color: green;
 }
-.noheaderscroll .mint-cell:last-child{
+.noheaderscroll .mint-cell:last-child {
   background: none;
 }
-.noheaderscroll .mint-cell:last-child{
+.noheaderscroll .mint-cell:last-child {
   background: none;
 }
 </style>

@@ -6,7 +6,7 @@
     <div class="fontlarge loginpart">
       <p class="login-tit">
         <span :class="state==1?'act':''" @click="selectFn(1)">密码登录</span>
-        <span :class="state==0?'act':''" @click="selectFn(0)">快速注册</span>
+        <!-- <span :class="state==0?'act':''" @click="selectFn(0)">快速注册</span> -->
       </p>
       <div class="login-box" v-if="state">
         <div class="loginline">
@@ -75,7 +75,7 @@ export default {
       phoneCode: "",
       state: 1,
       codeTime: 0,
-      Times:null
+      Times: null
     };
   },
   methods: {
@@ -142,8 +142,6 @@ export default {
   color: white;
   top: 15%;
   left: 0;
-  width: 100%;
-
   position: absolute;
 }
 .loginpart {
@@ -212,24 +210,24 @@ textarea::-webkit-input-placeholder {
 .loginbg {
   .maintitle {
     width: 100%;
-    height: 3.9375rem;
-    background: url("../assets/login_logo.png") no-repeat 50% 50%;
-    background-size: 50%;
+    height: 100vh;
+    background: url(../assets/login_logo.png) no-repeat 50% 0;
+    background-size: 5rem;
   }
   .loginpart {
     padding: 20px;
     .login-tit {
       text-align: left;
-      padding-bottom: 3.125rem;
+      // padding-bottom: 3.125rem;
       span {
         color: #939393;
         display: inline-block;
         width: 33%;
-        font-size: 1rem;
+        // font-size: 1rem;
       }
       span.act {
         color: #0089ff;
-        font-size: 1.125rem;
+        // font-size: 1.125rem;
       }
     }
   }
