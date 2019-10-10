@@ -24,7 +24,7 @@ export default {
         showmsg:false,
         msg:{},
         textindex:0,
-        tipmsg:'',
+        tipmsg:''
     },
  mounted() {
 

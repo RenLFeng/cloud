@@ -49,7 +49,7 @@ tools.localfilesFromFilelist = function(filelist)
         fobj.serverData = filelist[i];
         if (fobj.serverData.metainfo){
             //! 有缩略图
-            if (fitem.filepath && fitem.metainfo.snapsuffix){
+            if (fitem.filepath && fitem.metainfo &&  fitem.metainfo.snapsuffix){
                 fobj.imgsrc = fitem.filepath + fitem.metainfo.snapsuffix;
                 fobj.w = fitem.metainfo.w;
                 fobj.h = fitem.metainfo.h;

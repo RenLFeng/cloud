@@ -79,6 +79,9 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
+
+import nativecode from "../nativecode";
+
 export default {
   name: "BankeZiyuan",
   props: {
@@ -172,16 +175,19 @@ export default {
       });
     },
     onviewfile(fileitem) {
-      console.log(fileitem);
       if (fileitem.ftype == "file") {
         MessageBox.confirm("您可以下载当前文件!").then(res => {
+          fileitem.downurl = nativecode.getDownUrl(fileitem.url);
+          if (nativecode.ncall("jsFileLink", fileitem)) {
+            return;
+          }
           let down = document.createElement("a");
-          let prefix = process.env.VUE_APP_HOST || "http://192.168.0.2:81";
-          down.href = prefix + fileitem.url;
+          down.href =  fileitem.downurl;
           down.download = fileitem.name;
           document.body.appendChild(down);
           down.click();
           down.remove();
+          return;
         });
       }
       //   console.log(document.location);
@@ -189,9 +195,9 @@ export default {
       //   console.log(self.location.href);
       // var url = document.location.origin;
       // url += fileitem.filepath;
-      // var desc = "浏览文件，请使用原生实现:";
+      var desc = "请在正式环境查看";
       // desc += url;
-      // Toast(desc);
+      Toast(desc);
 
       if (window.exsoftTest) {
         window.exsoftTest(fileitem.filepath, fileitem.filename1);

@@ -30,6 +30,10 @@ export default {
     },
     fileimg() {
         let r= this.fileitem.url;
+         var fitem = this.fileitem.info;
+          if (fitem.filepath && fitem.metainfo && fitem.metainfo.snapsuffix){
+            r = fitem.filepath + fitem.metainfo.snapsuffix;
+        }
       for (let item of fileType) {
         if (this.fileitem.name.includes(item)) {
           r = require(`../../assets/file_icon/${item}.svg`);
@@ -43,6 +47,15 @@ export default {
             r = require(`../../assets/file_icon/xlsx.svg`);
         }
       }
+
+
+
+      // var r = errorImg; //this.fileitem.info ? this.fileitem.info.filepath : errorImg ;
+      // //！ cjy： 对于图片使用缩略图； 否则根据文件类型返回对应img
+      //   var fitem = this.fileitem.info;
+      //   if (fitem.filepath && fitem.metainfo && fitem.metainfo.snapsuffix){
+      //       r = fitem.filepath + fitem.metainfo.snapsuffix;
+      //   }
       return r;
     },
     filesizedesc() {

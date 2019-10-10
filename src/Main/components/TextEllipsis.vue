@@ -51,7 +51,7 @@
             init() {
                 this.oversize = false;
                 this.keyIndex += 1;
-                let more = this.$el.querySelector('.h-text-ellipsis-more');
+                var more = this.$el.querySelector('.h-text-ellipsis-more');
                 more.style.display = 'none';
                 if (this.isLimitHeight) {
                     this.limitShow();
@@ -59,14 +59,14 @@
             },
             limitShow() {
                 this.$nextTick(() => {
-                    let textDom = this.$el.querySelector('.h-text-ellipsis-limit-text');
-                    let title = this.$el;
-                    let more = this.$el.querySelector('.h-text-ellipsis-more');
-                    let n = 1000;
+                    var textDom = this.$el.querySelector('.h-text-ellipsis-limit-text');
+                    var title = this.$el;
+                    var more = this.$el.querySelector('.h-text-ellipsis-more');
+                    var n = 1000;
                     if (textDom) {
                         if (title.offsetHeight > this.height) {
                             more.style.display = 'inline-block';
-                            let text = this.text;
+                            var text = this.text;
                             while (title.offsetHeight > this.height && n > 0) {
                                 if (title.offsetHeight > this.height * 3) {
                                     textDom.innerText = text = text.substring(0, Math.floor(text.length / 2));

@@ -1,7 +1,7 @@
 <template>
   <div class="fontsmall">
     <mt-header title="云平台">
-      <mt-button icon="back" slot="left">返回</mt-button>
+      <mt-button icon="back" slot="left" @click="onbackmain">返回</mt-button>
 
       <mt-button slot="right" class="btnadd" v-if="showadd" @click="onadd">+</mt-button>
     </mt-header>
@@ -50,6 +50,8 @@ import BankeSimple from "./components/BankeSimple";
 
 import MineAbout from "./MineAbout";
 
+import nativecode from "../nativecode";
+
 import { Indicator, Toast, MessageBox } from "mint-ui";
 
 export default {
@@ -91,6 +93,9 @@ export default {
     }
   },
   methods: {
+      onbackmain(){
+          nativecode.ncall("jsBackMain", {});
+      },
     onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
