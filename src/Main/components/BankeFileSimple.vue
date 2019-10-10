@@ -13,28 +13,44 @@
 </template>
 
 <script>
+const fileType = ["txt", "rar", "xlsx","docx","ppt","pdf"];
 import commontools from "../../commontools";
-import errorImg from '../../assets/100x100.png';
 export default {
   name: "BankeFileSimple",
   computed: {
     errorImg() {
       var srcstr = 'this.src="';
-      srcstr += require("../../assets/100x100.png");
+      if (this.fileitem.ftype == "file") {
+        srcstr += require("../../assets/file_icon/file.svg");
+      } else {
+        srcstr += require("../../assets/file_icon/IT.svg");
+      }
       srcstr += '"';
       return srcstr;
     },
     fileimg() {
-      var r = this.fileitem.info ? this.fileitem.info.filepath : errorImg ;
+        let r= this.fileitem.url;
+      for (let item of fileType) {
+        if (this.fileitem.name.includes(item)) {
+          r = require(`../../assets/file_icon/${item}.svg`);
+        }
+        if(this.fileitem.name.includes('doc')||this.fileitem.name.includes('rtf')){
+            r = require(`../../assets/file_icon/docx.svg`);
+        }
+         if(this.fileitem.name.includes('zip')){
+            r = require(`../../assets/file_icon/rar.svg`);
+        } if(this.fileitem.name.includes('xls')){
+            r = require(`../../assets/file_icon/xlsx.svg`);
+        }
+      }
       return r;
     },
     filesizedesc() {
-      if(this.fileitem.info){
+      if (this.fileitem.info) {
         return commontools.renderFileSizeDesc(this.fileitem.info.filesize);
-      }else{
+      } else {
         return this.fileitem.url;
       }
-      
     },
     filetimedesc() {
       // return '11';
@@ -45,7 +61,7 @@ export default {
   },
   data() {
     return {
-      pendclick: false
+      pendclick: false,
     };
   },
   methods: {
@@ -70,7 +86,7 @@ export default {
           filename: "++",
           filepath: "",
           filesize: 0,
-          uploadtime: "",
+          uploadtime: ""
         };
       },
       required: false

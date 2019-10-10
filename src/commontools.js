@@ -266,5 +266,23 @@ commontools.maxLength=function(v){
     }
 
 }
-
+commontools.fileType=function(fitem){
+    const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
+    var r = require("../src/assets/file_icon/file.svg");
+    for (let v of fileType) {
+      if (fitem.filename.includes(v)) {
+        r = require(`../src/assets/file_icon/${v}.svg`);
+      }
+      if (fitem.filename.includes("doc") || fitem.filename.includes("rtf")) {
+        r = require(`../src/assets/file_icon/docx.svg`);
+      }
+      if (fitem.filename.includes("zip")) {
+        r = require(`../src/assets/file_icon/rar.svg`);
+      }
+      if (fitem.filename.includes("xls")) {
+        r = require(`../src/assets/file_icon/xlsx.svg`);
+      }
+    }
+      return r;
+}
 export default commontools;

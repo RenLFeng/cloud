@@ -26,7 +26,9 @@ export default {
         textindex:0,
         tipmsg:'',
     },
+ mounted() {
 
+    },
     methods:{
       tealogin:function(){
         this.tipmsg = 'tea 登录中';

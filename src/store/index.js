@@ -118,7 +118,6 @@ const mutations =
             }else{
                 state.bankeZhiYuanLinkItem=[]
             }
-           
         },
         DELECT_BANKEZHIYUANLINKITEM(state,id){
             for(let i=0;i<state.bankeZhiYuanLinkItem.length;i++){

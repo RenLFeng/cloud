@@ -10,11 +10,13 @@ import './assets/iconfont/iconfont.css'
 import 'amfe-flexible';
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
-Vue.use(Viewer);
-
 Vue.prototype.$http = axios
-Vue.config.productionTip = false
-
+Vue.config.productionTip = false;
+Vue.use(Viewer, {
+    defaultOptions: {
+      navbar: false,
+    }
+  })
 // import VueRouter from 'vue-router'
 // Vue.use(VueRouter)
 

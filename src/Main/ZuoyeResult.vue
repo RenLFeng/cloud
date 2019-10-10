@@ -79,7 +79,7 @@
     </div>
 
     <mt-popup v-model="popupSubmit" position="right" class="mint-popup-3" :modal="false">
-      <mt-header title class="作业提交">
+      <mt-header title="作业提交">
         <mt-button slot="right" @click="onbtnsubmit" :disabled="submitdisabled">提交</mt-button>
 
         <mt-button slot="left" @click="popupSubmit = false">关闭</mt-button>
