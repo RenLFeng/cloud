@@ -16,10 +16,11 @@
         <mt-tab-container-item id="zuoye">
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
-        <mt-tab-container-item id="hudong">互动</mt-tab-container-item>
-
+        <mt-tab-container-item id="hudong">
+          <BankeHuDong :bankeid="id"/>
+        </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
-            <bankeZouyeXq :bankeInfo="curbanke" @editBkFn="tongzhiOpenState"/>
+          <bankeZouyeXq :bankeInfo="curbanke" @editBkFn="tongzhiOpenState" />
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
@@ -30,11 +31,11 @@
         <span class="fontnormal">资源</span>
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
-         <i class="iconfont iconuser"></i>
+        <i class="iconfont iconuser"></i>
         <span class="fontnormal">成员</span>
       </mt-tab-item>
       <mt-tab-item id="zuoye">
-         <i v-if="itemzuoyenormal" class="iconfont iconhuodong"></i>
+        <i v-if="itemzuoyenormal" class="iconfont iconhuodong"></i>
         <span v-if="itemzuoyenormal" class="fontnormal">作业</span>
         <img
           v-if="!itemzuoyenormal"
@@ -45,11 +46,11 @@
         />
       </mt-tab-item>
       <mt-tab-item id="hudong">
-         <i class="iconfont iconwenjianjiai"></i>
+        <i class="iconfont iconwenjianjiai"></i>
         <span class="fontnormal">互动</span>
       </mt-tab-item>
       <mt-tab-item id="tongzhi">
-         <i class="iconfont iconxiangqing"></i>
+        <i class="iconfont iconxiangqing"></i>
         <span class="fontnormal">详情</span>
       </mt-tab-item>
     </mt-tabbar>
@@ -62,11 +63,12 @@
 import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import BankeZiyuan from "./BankeZiyuan";
+import BankeHuDong from "./bankehudong";
 import BankeChengyuan from "./BankeChengyuan";
 import BankeZuoye from "./BankeZuoye";
 import listIcon from "../common/lists-icon";
 import pic from "../assets/dis.jpg";
-import bankeZouyeXq from'./banKeZuoyeXq/index'
+import bankeZouyeXq from "./banKeZuoyeXq/index";
 
 export default {
   name: "BankeHome",
@@ -83,8 +85,8 @@ export default {
       addmenudata: [{ name: "新增 作业", method: this.onAddZuoye }],
       addmenuvisible: false,
       tabbarhide: false,
-      tongzhiState:false,
-      zYLinkSelectEd:''
+      tongzhiState: false,
+      zYLinkSelectEd: ""
     };
   },
   props: {
@@ -137,13 +139,12 @@ export default {
         this.showzuoye = true;
       }
     },
-    tongzhiOpenState(data){
-        this.tongzhiState=data;
+    tongzhiOpenState(data) {
+      this.tongzhiState = data;
     },
-    onUploadLinkSelectEd(data){
+    onUploadLinkSelectEd(data) {
       //  this.tongzhiState=true;
-      this.zYLinkSelectEd=data;
-     
+      this.zYLinkSelectEd = data;
     }
   },
   created() {
@@ -168,18 +169,19 @@ export default {
     BankeChengyuan,
     BankeZuoye,
     bankeZouyeXq,
+    BankeHuDong
   }
 };
 </script>
 
 <style scoped>
-.iconfont{
-      display: block;
-    padding-bottom: 10px;
-    font-size: 26px;
+.iconfont {
+  display: block;
+  padding-bottom: 10px;
+  font-size: 26px;
 }
-.page-wrap.tongzhi{
-    background: #f0f0f0;
+.page-wrap.tongzhi {
+  background: #f0f0f0;
 }
 .page-tabbar-container {
 }
@@ -192,5 +194,4 @@ export default {
   height: 40px;
   transform: translate(-8px, -8px);
 }
-
 </style>

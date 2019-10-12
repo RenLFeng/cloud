@@ -111,7 +111,7 @@
           class="upload"
           @change="uploadChange"
           style="display:none"
-          multiple
+          accept="image/*"
         />
       </div>
       <input class="msg" type="text" v-model="discussMsg" placeholder="在此发表评论" />
@@ -343,7 +343,7 @@ export default {
     },
     uploadChange(e) {
       let that = this;
-      let file = e.target.files;
+      let file = e.target.files[0];
       // this.commentPic.push(file);
       // this.commentPicSrc.push(_URL.createObjectURL(file))
       this.uploadImg(file);

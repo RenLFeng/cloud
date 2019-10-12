@@ -4,7 +4,7 @@
       <div class="zaavatar">
           <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="defaultImage" />
         <div class="zabtnmore zatopmargin" v-if="showsubmitnum">
-          <div class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
+          <div @click="onseeAllSubmit(resultitem)" class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
         </div>
         <div class="zaavatartext zatopmargin">{{resultitem.username}}</div>
       </div>
@@ -62,6 +62,9 @@ export default {
   mounted(){
   },
   methods: {
+    onseeAllSubmit(item){
+      this.$emit("seeAllSubmit",item)
+    },
     onclickcomment() {
       let data = {
         state: true,

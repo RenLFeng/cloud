@@ -175,14 +175,14 @@ export default {
       });
     },
     onviewfile(fileitem) {
+      fileitem.downurl = nativecode.getDownUrl(fileitem.url);
+      if (nativecode.ncall("jsFileLink", fileitem)) {
+        return;
+      }
       if (fileitem.ftype == "file") {
         MessageBox.confirm("您可以下载当前文件!").then(res => {
-          fileitem.downurl = nativecode.getDownUrl(fileitem.url);
-          if (nativecode.ncall("jsFileLink", fileitem)) {
-            return;
-          }
           let down = document.createElement("a");
-          down.href =  fileitem.downurl;
+          down.href = fileitem.downurl;
           down.download = fileitem.name;
           document.body.appendChild(down);
           down.click();
@@ -218,6 +218,8 @@ export default {
           this.topid +
           "&pagesize=10";
       } else {
+        this.files = [];
+         this.loadingState = false;
         url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=10";
       }
       this.$http
@@ -248,6 +250,7 @@ export default {
               }
             }
           } else {
+            this.loadingState = true;
           }
         })
         .catch(res => {

@@ -61,6 +61,7 @@
               :resultitem="ritem"
               @commentClicked="onCommentClick"
               @scoreClicked="onScoreClick"
+              @seeAllSubmit="onSeeAllSubmit"
             ></ZuoyeAnswerItem>
             <div class="devide"></div>
           </div>
@@ -159,6 +160,28 @@
       </mt-header>
       <Answer :zuoyeitem="zuoyeitem" :states="true" />
     </mt-popup>
+    <!-- 所有提交 -->
+    <mt-popup
+      v-model="popupAllsubmit"
+      position="right"
+      class="mint-popup-3"
+      :modal="false"
+      style="  overflow:scroll;"
+    >
+      <mt-header title="所有提交">
+        <mt-button icon="back" slot="left" @click="goBacks">返回</mt-button>
+      </mt-header>
+      <div v-for="(ritem,selindex) in popupAllsubmitItem" v-bind:key="selindex">
+        <div v-if="showitem(ritem)">
+          <ZuoyeAnswerItem
+            :resultitem="ritem"
+            @commentClicked="onCommentClick"
+            @scoreClicked="onScoreClick"
+          ></ZuoyeAnswerItem>
+          <div class="devide"></div>
+        </div>
+      </div>
+    </mt-popup>
   </div>
 </template>
 
@@ -198,6 +221,8 @@ export default {
       popuPzouyeInfo: false,
       popuPzouyeAllMark: false,
       popupAnswer: false,
+      popupAllsubmit: false,
+      popupAllsubmitItem: {},
       mark: "",
       studentName: "",
       zreadonly: true,
@@ -229,13 +254,13 @@ export default {
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
       submitok: false,
       zashowbtnactive: true,
-      markArr:[10,20,30,40,50,60,70,80,90,100]
+      markArr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     };
   },
   computed: {
     answerdesc() {
-      return this.zuoyeitem.answerdesc 
-        ? this.zuoyeitem.answerdesc 
+      return this.zuoyeitem.answerdesc
+        ? this.zuoyeitem.answerdesc
         : "未设置答案";
     },
     submitdisabled() {
@@ -334,9 +359,11 @@ export default {
     },
     loadBottom() {},
     goBacks() {
+      if (this.popupAllsubmit && !this.popupZuoyePL)
+        this.popupAllsubmit = false;
       if (this.popupZuoyePL) {
         this.popupZuoyePL = false;
-         this.loadAll();
+        this.loadAll();
       }
       if (this.popupZuoyePF) {
         this.popupZuoyePF = false;
@@ -370,6 +397,40 @@ export default {
         }
       }
     },
+    onSeeAllSubmit(item) {
+      // console.log( item);
+      if (item) {
+        this.popupAllsubmit = true;
+        var url =
+          "/api/api/zuoyeresultquery?zuoyeid=" +
+          this.zuoyeid +
+          "&userid=" +
+          item.userid;
+        Indicator.open("加载中");
+        this.$http
+          .post(url)
+          .then(res => {
+            Indicator.close();
+            // this.$refs.loadmore.onTopLoaded();
+            if (res.data.code == 0) {
+              this.popupAllsubmitItem = res.data.data.results;
+              for (var i = 0; i < this.popupAllsubmitItem.length; i++) {
+                this.popupAllsubmitItem[
+                  i
+                ].localfiles = maintools.localfilesFromFilelist(
+                  this.popupAllsubmitItem[i].files
+                );
+              }
+            } else {
+              Toast(res.data.msg);
+            }
+          })
+          .catch(() => {
+            Indicator.close();
+            // this.$refs.loadmore.onTopLoaded();
+          });
+      }
+    },
     seleMarkFn(val) {
       this.mark = val;
     },
@@ -395,9 +456,7 @@ export default {
           console.log("评分失败");
         });
     },
-    changeMark() {
-      
-    },
+    changeMark() {},
     goback() {
       if (this.pagemode == "submit") {
         var btip = false;
