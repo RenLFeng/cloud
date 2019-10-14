@@ -49,7 +49,9 @@ export default {
         msg:{},
         textindex:0
     },
+created(){
 
+},
     methods:{
       textinc:function(){
 

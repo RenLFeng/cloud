@@ -1,5 +1,6 @@
 /* 时间戳转换 */
 export const formateTime = dataTime => {
+
     if (!dataTime){
         dataTime = new Date().getTime();
     }

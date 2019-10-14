@@ -140,6 +140,11 @@ export default {
       default() {
         return {};
       }
+    },
+    zuoyeitem: {
+      default() {
+        return {};
+      }
     }
   },
   data() {

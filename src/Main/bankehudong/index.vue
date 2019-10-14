@@ -1,42 +1,61 @@
 <template>
-  <div class="hu-dong-container">
-    <div class="el-worp">
-      <div v-if="isTeacher" class="classState button-worp">
-        <mt-button @click="signClass()" class type="primary">{{classState}}</mt-button>
-      </div>
+  <div class="hu-dong-container" v-if="isOpen">
+    <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill">
+      <div class="el-worp">
+        <div v-if="isTeacher" class="classState button-worp">
+          <mt-button @click="signClass()" class type="primary">{{classState}}</mt-button>
+        </div>
 
-      <div v-else class="classState button-worp">
-        <mt-button v-if="signqueryStudentData.state=='0'" class type="primary" @click="signdo">点击签到</mt-button>
-        <mt-button v-else :plain="true" :disabled="true" class type="primary">{{studentClassState}}</mt-button>
-      </div>
-      <p>
-        <mt-cell :title="pointOut"></mt-cell>
-      </p>
-
-      <div v-if="isTeacher">
-        <p v-if="signClassState=='0'">
-          <mt-cell :title="`上课时间:${sign.starttime}`" value></mt-cell>
+        <div v-else class="classState button-worp">
+          <mt-button
+            v-if="signqueryStudentData.state=='0'"
+            class
+            type="primary"
+            @click="signdo"
+          >点击签到</mt-button>
+          <mt-button
+            v-else
+            :plain="true"
+            :disabled="true"
+            class
+            type="primary"
+          >{{studentClassState}}</mt-button>
+        </div>
+        <p v-if="isTeacher">
+          <mt-cell :title="pointOut"></mt-cell>
         </p>
-        <p v-if="signClassState=='1'">
-          <mt-cell :title="`下课时间:${sign.endtime}`" value></mt-cell>
+        <p v-else>
+          <mt-cell :title="pointOutStudent"></mt-cell>
+        </p>
+
+        <div v-if="isTeacher">
+          <p v-if="signClassState=='0'">
+            <mt-cell :title="`上课时间:${sign.starttime}`" value></mt-cell>
+          </p>
+          <p v-if="signClassState=='1'">
+            <mt-cell :title="`下课时间:${sign.endtime}`" value></mt-cell>
+          </p>
+        </div>
+        <p v-if="signClassState =='1' && !isTeacher">
+          <mt-cell :title="`签到时间:${signqueryStudentData.signtime}`" value></mt-cell>
+        </p>
+
+        <p class="button-worp">
+          <mt-button class type="default" size="small" @click="signquerymember()">查看所有上课记录</mt-button>
         </p>
       </div>
-      <p v-if="signClassState =='2' && !isTeacher">
-        <mt-cell :title="`签到时间:${signqueryStudentData.signtime}`" value></mt-cell>
-      </p>
-
-      <p class="button-worp" v-if="signClassState=='0' || signClassState=='2'">
-        <mt-button class type="default" size="small" @click="signquerymember()">查看所有上课记录</mt-button>
-      </p>
-    </div>
+    </mt-loadmore>
 
     <mt-popup v-model="popuQuerymember" position="right" class="mint-popup" :modal="false">
       <mt-header title="所有上课记录">
         <mt-button icon="back" slot="left" @click="goBacks">返回</mt-button>
       </mt-header>
-      <div v-for="(item,index) in signqueryhistoryData" :key="index">
-        <allSignInfo @signquerymemberFn="onSignquerymemberFn" :item="item" :role="isTeacher" />
+      <div v-if="signqueryhistoryData.length">
+        <div v-for="(item,index) in signqueryhistoryData" :key="index">
+          <allSignInfo @signquerymemberFn="onSignquerymemberFn" :item="item" :role="isTeacher" />
+        </div>
       </div>
+      <p v-else class="text-center">暂无上课记录</p>
     </mt-popup>
     <mt-popup v-model="popuSignquerymember" position="right" class="mint-popup" :modal="false">
       <mt-header title="所有学生上课记录">
@@ -51,6 +70,7 @@
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
 import allSignInfo from "./allSignInfo";
 import allSignStudent from "./allSignrymember";
+import commontools from "../../commontools";
 export default {
   name: "",
   props: {
@@ -75,7 +95,9 @@ export default {
       popuSignquerymember: false,
       page: 0,
       signqueryhistoryData: [],
-      studentSignInfo: []
+      studentSignInfo: [],
+      autofill: true,
+      isOpen: false
     };
   },
   computed: {
@@ -91,19 +113,35 @@ export default {
         case "":
           return "当前未开课";
         case 0:
-        case 2:
           return "当前已开课";
         case 1:
           return "当前已下课";
       }
     },
+    pointOutStudent() {
+      switch (this.signClassState) {
+        case "":
+          return "当前未开课";
+        case 0:
+          return "当前已开课";
+        case 1:
+          return "签到成功";
+        case 2:
+          return "你迟到了哦...";
+        case 3:
+          return "已经过了签到时间了";
+      }
+    },
     studentClassState() {
-      if (this.signqueryStudentData.state) {
-        if (this.signqueryStudentData.state == "2") {
+      switch (this.signClassState) {
+        case "":
+          return "当前无课";
+        case 1:
           return "已签到";
-        }
-      } else {
-        return "当前无课";
+        case 2:
+          return "迟到";
+        case 3:
+          return "超时";
       }
     },
     isTeacher() {
@@ -114,8 +152,11 @@ export default {
     this.signquery();
   },
   methods: {
-    //教师打卡查询   OR  学生签到查询
+    loadTop() {
+      this.signquery();
+    },
     signquery() {
+      Indicator.open("加载中");
       let url, data;
       if (this.isTeacher) {
         url = "/api/sign/signquery";
@@ -136,21 +177,27 @@ export default {
                 this.signClassState = this.sign.state;
                 console.log("教师打卡查询", this.signqueryData);
               } else {
-                if (res.data.data.length) {
-                  this.signqueryStudentData = res.data.data[0];
+                if (res.data.data &&res.data.data.signdata.length) {
+                  this.signqueryStudentData = res.data.data.signdata[0];
                   this.signClassState = this.signqueryStudentData.state;
                 }
               }
             }
           } else {
           }
+          this.isOpen = true;
+          this.$refs.loadmore.onTopLoaded();
+          Indicator.close();
         })
-        .catch(() => {});
+        .catch(() => {
+          this.isOpen = true;
+          this.$refs.loadmore.onTopLoaded();
+          Indicator.close();
+        });
     },
     //教师打卡历史
     signquerymember() {
-      this.popuQuerymember = true;
-      Indicator.open();
+      Indicator.open("加载中");
       this.$http
         .post("api/sign/signqueryhistory", {
           bankeid: this.bankeid,
@@ -166,16 +213,17 @@ export default {
             }
           } else {
           }
+          this.popuQuerymember = true;
           Indicator.close();
         })
         .catch(() => {
+          this.popuQuerymember = true;
           Indicator.close();
         });
     },
     //学生打卡记录
     onSignquerymemberFn(data) {
-      this.popuSignquerymember = true;
-      Indicator.open();
+      Indicator.open("加载中");
       this.$http
         .post("api/sign/signquerymember", {
           id: data.id
@@ -196,9 +244,11 @@ export default {
             }
           } else {
           }
+          this.popuSignquerymember = true;
           Indicator.close();
         })
         .catch(() => {
+          this.popuSignquerymember = true;
           Indicator.close();
         });
     },
@@ -244,9 +294,12 @@ export default {
                 this.sign = this.signqueryData.sign;
                 this.signClassState = this.sign.state;
               } else if (this.signClassState == "0") {
-                this.signqueryData = res.data.data;
-                this.sign = this.signqueryData;
-                this.signClassState = this.sign.state;
+                this.signqueryData = {};
+                this.sign = {};
+                this.signClassState = "";
+                // this.signqueryData = res.data.data;
+                // this.sign = this.signqueryData;
+                // this.signClassState = this.sign.state;
               }
             } else {
             }
