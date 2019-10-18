@@ -307,7 +307,7 @@ export default {
     //回复评论
     HFSubmit() {
       if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open();
+      Indicator.open(this.$t('Indicator.Loading'));
       let subData = {};
       let item = this.indexItem;
       subData.tcommentid = item.tcommentid || item.id;

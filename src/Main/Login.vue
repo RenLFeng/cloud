@@ -89,7 +89,7 @@ export default {
       }
     },
     login() {
-      Indicator.open("登录中");
+      Indicator.open(this.$t('Indicator.Logon'));
       var url = "/api/api/login";
       var othis = this;
       this.$http

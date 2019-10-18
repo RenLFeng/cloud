@@ -14,7 +14,7 @@
             <p class="zdetailrl">{{zdetail.ztext}}</p>
             <div v-if="hasattach">
                 <div class="attachdesc">
-                    附件
+                    {{$t('bankeTask.Enclosure')}}
                 </div>
                 <div class="listc">
                     <FileAttachList :localfiles="zdetail.localfiles" :isupload="!readonly"></FileAttachList>
@@ -25,12 +25,12 @@
         <div v-else style="height:100%;">
             <textarea
                     v-model="zdetail.ztext"
-                    placeholder="输入详细内容"
+                    :placeholder="$t('bankeTask.Enter_details')"
                     class="zdetail"
             ></textarea>
 
             <div class="attachdesc">
-                添加附件
+               {{$t('bankeTask.Add_Enclosure')}}
             </div>
             <div class="listc">
                 <FileAttachList :urlinfo="urlinfo" :localfiles="zdetail.localfiles"></FileAttachList>

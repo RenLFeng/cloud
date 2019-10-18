@@ -31,6 +31,7 @@ const state = {
     })(),  //! 当前登录用户
     usercookiereaded:false,
     bankeZhiYuanLinkItem:[],
+    lang:localStorage.getItem('lang') ||'zh',
 }
 
 const getters =
@@ -129,6 +130,9 @@ const mutations =
                     state.bankeZhiYuanLinkItem.splice(i,1);
             }
             }
+        },
+        SET_LANG(state,lang){
+            state.lang=lang;
         }
     }
 

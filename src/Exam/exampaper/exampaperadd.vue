@@ -118,7 +118,7 @@
                 //! 试卷首次加载，需要载入试题详细
                 if (localep.itemids && localep.itemdetaillist.length==0 && localep.itemids.length > 0){
                     doqueryitem = true;
-                    Indicator.open('加载中...');
+                    Indicator.open(this.$t('Indicator.Loading'));
                     //var othis = this;
                     this.$http.post('/index/index/apiExamItemQuery',
                         {
@@ -274,7 +274,7 @@
                 var postobj = this.buildSaveItem();
                 if (!silent){
                     Indicator.open({
-                        text: '保存中...',
+                        text: this.$t('Indicator.Saving'),
                         spinnerType: 'fading-circle'
                     });
                 }

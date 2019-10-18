@@ -1,11 +1,11 @@
 <template>
   <div class="url-container fontsmall">
     <div class="border-e5-bottom">
-      <mt-field label="链接:" placeholder="请输入链接" v-model="url"></mt-field>
-      <mt-field label="标题:" placeholder="请输入标题" v-model="urlTitle"></mt-field>
+      <mt-field :label="$t('common.Title')+':'" :placeholder="$t('common.Please_entry')+$t('common.Title')" v-model="url"></mt-field>
+      <mt-field :label="$t('common.Url')+':'" :placeholder="$t('common.Please_entry')+$t('common.Url')" v-model="urlTitle"></mt-field>
     </div>
     <div class="button-worp">
-      <mt-button class="button-auto-96" type="primary" @click="submit">提交</mt-button>
+      <mt-button class="button-auto-96" type="primary" @click="submit">{{$t('common.Submit')}}</mt-button>
     </div>
   </div>
 </template>

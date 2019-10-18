@@ -249,7 +249,7 @@ export default {
       //! serverData
       var url = "/api/api/bankezuoyeadd?bankeid=" + this.bankeid;
 
-      Indicator.open(this.isEditMode ? "保存中" : "创建中");
+      Indicator.open(this.isEditMode ? this.$t('Indicator.Saving') : this.$t('Indicator.Set_up'));
 
       var zitem = {};
       zitem = this.zuoyeitem;
@@ -316,7 +316,7 @@ export default {
       this.isEditMode = true;
 
       //! 拉取zdetail 和zanswer 信息
-      Indicator.open("加载中");
+      Indicator.open(this.$t('Indicator.Loading'));
       this.$http
         .post("/api/api/bankezuoyedetail", { zuoyeid: this.zuoyeitem.id })
         .then(res => {

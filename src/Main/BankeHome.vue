@@ -1,7 +1,7 @@
 <template>
   <div>
     <mt-header :title="bankename">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">返回</mt-button>
+      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div class="noheadercontainer page-wrap" :class="selected=='tongzhi'?'tongzhi':''">
@@ -17,26 +17,28 @@
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
-          <BankeHuDong :bankeid="id"/>
+          <BankeHuDong :bankeid="id" />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
-          <bankeZouyeXq :bankeInfo="curbanke" @editBkFn="tongzhiOpenState" />
+          <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-
     <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState">
       <mt-tab-item id="ziyuan">
         <i class="iconfont iconwenjianjiai"></i>
-        <span class="fontnormal">资源</span>
+        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
         <i class="iconfont iconuser"></i>
-        <span class="fontnormal">成员</span>
+        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Member')}}</span>
       </mt-tab-item>
       <mt-tab-item id="zuoye">
         <i v-if="itemzuoyenormal" class="iconfont iconhuodong"></i>
-        <span v-if="itemzuoyenormal" class="fontnormal">作业</span>
+        <span
+          v-if="itemzuoyenormal"
+          :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
+        >{{$t('bankeZiYuan.Task')}}</span>
         <img
           v-if="!itemzuoyenormal"
           slot="icon"
@@ -47,11 +49,11 @@
       </mt-tab-item>
       <mt-tab-item id="hudong">
         <i class="iconfont iconwenjianjiai"></i>
-        <span class="fontnormal">互动</span>
+        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Interaction')}}</span>
       </mt-tab-item>
       <mt-tab-item id="tongzhi">
         <i class="iconfont iconxiangqing"></i>
-        <span class="fontnormal">详情</span>
+        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Details')}}</span>
       </mt-tab-item>
     </mt-tabbar>
 
@@ -75,14 +77,20 @@ export default {
   data() {
     return {
       selected: "ziyuan",
-      curbanke: {
-        name: "未知班课",
-        avatar: ""
-      },
+      curbanke: "common.Curbanke",
+      //    Curbanke: {
+      //   name: '未知班课',
+      //   avatar: ""
+      // }
       showziyuan: false,
       showchengyuan: false,
       showzuoye: false,
-      addmenudata: [{ name: "新增 作业", method: this.onAddZuoye }],
+      addmenudata: [
+        {
+          name:'新增 作业',
+          method: this.onAddZuoye
+        }
+      ],
       addmenuvisible: false,
       tabbarhide: false,
       tongzhiState: false,
@@ -100,6 +108,9 @@ export default {
     }
   },
   computed: {
+    isEN() {
+      return this.$store.state.lang;
+    },
     bankename() {
       return this.curbanke.name;
     },
@@ -151,9 +162,13 @@ export default {
     // console.log(this.id);
     //console.log(this.$store.getters);
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
+
     if (u) {
       this.curbanke = u;
+    } else {
+      this.curbanke = this.$t("common.Curbanke");
     }
+    // console.log('uuuuuuu',u)
     var ss = this.$store.state.bhomeselected;
     if (ss) {
       this.selected = ss;

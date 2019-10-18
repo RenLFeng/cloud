@@ -1,16 +1,16 @@
 <template>
     <div>
 
-        <mt-header title="昵称">
+        <mt-header :title="$t('personal.Nickname')">
 
-            <mt-button icon="back" @click="$router.go(-1)" slot="left">返回</mt-button>
+            <mt-button icon="back" @click="$router.go(-1)" slot="left">{{$t('common.Back')}}</mt-button>
 
-            <mt-button slot="right" :disabled="savedisable" @click="dosave">保存</mt-button>
+            <mt-button slot="right" :disabled="savedisable" @click="dosave">{{$t('common.Keep')}}</mt-button>
         </mt-header>
 
         <div class="textline tc">
-            <input v-model="myname" placeholder="填写您的个人昵称" autocomplete="off" class="textinput fontnormal"></input>
-            <div class="tl" style="margin-top:5px;">设置您的个人昵称</div>
+            <input v-model="myname" :placeholder="$t('personal.Nickname_entry')" autocomplete="off" class="textinput fontnormal">
+            <div class="tl" style="margin-top:5px;">{{$t('personal.Nickname_tips')}}</div>
         </div>
     </div>
 </template>
@@ -49,7 +49,7 @@
             }
             ,dosave(){
                 var url = '/api/api/userUpdateInfo';
-                Indicator.open('保存中');
+                Indicator.open(this.$t('Indicator.Saving'));
                 this.$http.post(url,{
                     name:this.myname
                 })

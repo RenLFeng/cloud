@@ -1,32 +1,32 @@
 <template>
     <div>
 
-        <mt-header title="个人信息">
+        <mt-header :title="$t('personal.Personal_information')">
 
-            <mt-button icon="back" @click="$router.go(-1)" slot="left">返回</mt-button>
+            <mt-button icon="back" @click="$router.go(-1)" slot="left">{{$t('common.Back')}}</mt-button>
         </mt-header>
 
-        <mt-cell title="头像" is-link @click.native="onavatarset">
+        <mt-cell :title="$t('personal.Head_portrait')" is-link @click.native="onavatarset">
             <img :src="user.avatar" class="avatar avatarimgpart">
         </mt-cell>
 
-        <mt-cell title="昵称" is-link @click.native="onnameset">
+        <mt-cell :title="$t('personal.Nickname')" is-link @click.native="onnameset">
             <span>{{user.name}}</span>
         </mt-cell>
 
-        <mt-cell title="账户" >
+        <mt-cell :title="$t('personal.Account')" >
             <span>{{user.account}}</span>
         </mt-cell>
 
-        <mt-cell title="角色">
+        <mt-cell :title="$t('personal.Role')">
             <span>{{userrole}}</span>
         </mt-cell>
 
 
         <mt-popup v-model="popupVisible3" position="right" class="mint-popup-3" :modal="false">
-            <mt-header title="编辑头像">
+            <mt-header :title="$t('personal.Edit_head')">
 
-                <mt-button icon="back" slot="left" @click="popupVisible3 = false">返回</mt-button>
+                <mt-button icon="back" slot="left" @click="popupVisible3 = false">{{$t('common.Back')}}</mt-button>
 
                 <!--<mt-button slot="right" @click="avatarsave">使用</mt-button>  -->
             </mt-header>
@@ -117,7 +117,7 @@
             }
             ,uploadimagedata(base64str){
                 var url = '/api/api/userUpdateAvatar';
-                Indicator.open('上传中');
+                Indicator.open(this.$t('Indicator.Uploading'));
                 this.$http.post(url,
                     {
                         jpeg:base64str

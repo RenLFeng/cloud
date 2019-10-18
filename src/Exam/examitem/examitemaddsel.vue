@@ -162,7 +162,7 @@
                 var othis = this;
                 this.preparePost();
                 Indicator.open({
-                    text: '保存中...',
+                    text: this.$t('Indicator.Saving'),
                     spinnerType: 'fading-circle'
                 });
                 this.$http.post('/index/index/apiExamItemAdd',

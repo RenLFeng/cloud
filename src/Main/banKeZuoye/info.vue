@@ -2,25 +2,25 @@
   <div class="zy-info">
     <div class="text-info">
       <div class="padding-right">
-        <mt-cell title="创建时间" :value="itemInfo.starttime"></mt-cell>
+        <mt-cell :title="$t('bankeTask.Create_time')" :value="itemInfo.starttime"></mt-cell>
       </div>
       <div class="no-border padding-right">
-        <mt-cell title="最后一次开始时间" :value="itemInfo.starttime"></mt-cell>
+        <mt-cell :title="$t('bankeTask.Last_start_time')" :value="itemInfo.starttime"></mt-cell>
       </div>
     </div>
     <p class="submit-info text-center border-bottom border-top fontsmall">
-      <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">未提交（{{noSubMit.length}}人）</span>
-      <span @click="subMit(1)" :class="isTrue?'my-color':''">已提交（{{isSubMit.length}}人）</span>
+      <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">{{$t('bankeTask.Not_yet')}}（{{noSubMit.length}}{{$t('common.Person')}}）</span>
+      <span @click="subMit(1)" :class="isTrue?'my-color':''">{{$t('bankeTask.Not_yet')}}（{{isSubMit.length}}{{$t('common.Person')}}）</span>
     </p>
 
     <ul v-if="isTrue">
       <li v-for="(item,index) in isSubMit" :key="index">
-        <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime+'  首次提交'"></mt-cell>
+        <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime+$t('bankeTask.First_time_submission')"></mt-cell>
       </li>
     </ul>
     <ul v-if="!isTrue">
       <li v-for="(item,index) in noSubMit" :key="index">
-        <mt-cell :title="item.username" :label="item.ztext" value="未提交作业"></mt-cell>
+        <mt-cell :title="item.username" :label="item.ztext" :value="$t('bankeTask.Job_not_submitted')"></mt-cell>
       </li>
     </ul>
   </div>

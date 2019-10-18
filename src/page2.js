@@ -10,9 +10,9 @@ import './assets/iconfont/iconfont.css'
 import 'amfe-flexible';
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
-// import VueI18n from 'vue-i18n'
-// import zh from '../src/langs/zh'
-// import en from '../src/langs/en'
+import VueI18n from 'vue-i18n'
+import zh from '../src/langs/zh'
+import en from '../src/langs/en'
 Vue.prototype.$http = axios
 Vue.config.productionTip = false;
 Vue.use(Viewer, {
@@ -20,17 +20,15 @@ Vue.use(Viewer, {
         navbar: false,
     }
 })
-// Vue.use(VueI18n)
-// const i18n = new VueI18n({
-//     locale: sessionStorage.getItem('lang')||'zh',
-//     messages: {
-//         'zh': zh, // 中文语言包
-//         'en': en // 英文语言包
-//     }
-// })
-
-
-
+Vue.use(VueI18n);
+const i18n = new VueI18n({
+    locale: localStorage.getItem('lang') ||'zh',
+    messages: {
+        'zh': zh, // 中文语言包
+        'en': en // 英文语言包
+    },
+    silentTranslationWarn: true
+})
 // import VueRouter from 'vue-router'
 // Vue.use(VueRouter)
 
@@ -113,6 +111,7 @@ window.onresize = function () {
 new Vue({
     router: createRouter(),
     store,
+    i18n,
     render: h => h(Home)
 }).$mount('#app')
 

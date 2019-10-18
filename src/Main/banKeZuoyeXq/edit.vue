@@ -2,7 +2,7 @@
   <div class="bk-edit-container">
     <div class="pic-container" @click="unloadFn">
       <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt :onerror="defaultimg"/>
-      <p>班课封面</p>
+      <p>{{$t('common.CoverClass')}}</p>
     </div>
     <div class="bk-info-lists">
       <ul class="border-bottom-e5">
@@ -10,12 +10,12 @@
           <mt-field label="班级" placeholder v-model="banji"></mt-field>
         </li>-->
         <li>
-          <mt-field label="课程" placeholder v-model="bankeNmae"></mt-field>
+          <mt-field :label="$t('common.Curriculum')" placeholder v-model="bankeNmae"></mt-field>
         </li>
       </ul>
     </div>
     <div class="submit-fixed">
-      <mt-button class="botton-96" type="default" @click="submit">保存</mt-button>
+      <mt-button class="botton-96" type="default" @click="submit"> <p>{{$t('common.Keep')}}</p></mt-button>
     </div>
     <input
       ref="uploadPic"
@@ -95,7 +95,7 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
-            MessageBox.alert("操作成功").then(() => {
+            MessageBox.alert(this.$t('confirm.Success')).then(() => {
               this.imgSrc=res.data.data.avatar;
               this.$emit("imgSrcLoad", this.imgSrc);
                this.pic=res.data.data.avatar;

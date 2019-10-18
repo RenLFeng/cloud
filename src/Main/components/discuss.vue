@@ -185,7 +185,7 @@ export default {
   mounted() {},
   methods: {
     commentQuery(item) {
-      Indicator.open("加载中");
+      Indicator.open(this.$t('Indicator.Loading'));
       let url = "";
       if (this.topid) {
         url =
@@ -248,7 +248,7 @@ export default {
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
-      Indicator.open("提交中");
+      Indicator.open(this.$t('Indicator.Committing'));
       this.$http
         .post("/api/comment/addcomment", {
           taboutid: this.itemInfo.submitid,
@@ -286,7 +286,7 @@ export default {
     //回复评论
     HFSubmit() {
       if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open("提交中");
+      Indicator.open(this.$t('Indicator.Committing'));
       let subData = {};
       let item = this.indexItem;
       subData.tcommentid = item.tcommentid || item.id;
@@ -313,7 +313,7 @@ export default {
     },
     // 查看更多
     learnMoreFn(item, index) {
-      Indicator.open("加载中");
+      Indicator.open(this.$t('Indicator.Loading'));
       item.more = !item.more;
       if (item.more) {
         this.$http

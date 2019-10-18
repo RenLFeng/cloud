@@ -1,7 +1,7 @@
 <template>
   <div class="fontsmall">
-    <mt-header title="云平台">
-      <mt-button icon="back" slot="left" @click="onbackmain">返回</mt-button>
+    <mt-header :title="$t('common.HomeTite')">
+      <mt-button icon="back" slot="left" @click="onbackmain">{{$t('common.Back')}}</mt-button>
 
       <mt-button slot="right" class="btnadd" v-if="showadd" @click="onadd">+</mt-button>
     </mt-header>
@@ -24,20 +24,16 @@
         <mt-tab-container-item id="mine">
           <MineAbout></MineAbout>
         </mt-tab-container-item>
-        </mt-tab-container>
+      </mt-tab-container>
     </div>
-    <mt-tabbar v-model="selected" fixed class="cloud">
+    <mt-tabbar v-model="selected" fixed class="cloud cloud-b">
       <mt-tab-item id="banke">
         <i class="iconfont iconfont-big iconbianzu"></i>
-        <span class="fontnormal">班课</span>
+        <span class="fontnormal">{{$t('common.Class')}}</span>
       </mt-tab-item>
-      <!-- <mt-tab-item id="exam">
-               <i class="iconfont iconfont-big iconkaoshizhongxinoff"></i>
-                <span class="fontnormal">考试</span>
-      </mt-tab-item>-->
       <mt-tab-item id="mine">
         <i class="iconfont iconfont-big iconuser"></i>
-        <span class="fontnormal">我的</span>
+        <span class="fontnormal">{{$t('common.My')}}</span>
       </mt-tab-item>
     </mt-tabbar>
   </div>
@@ -93,9 +89,9 @@ export default {
     }
   },
   methods: {
-      onbackmain(){
-          nativecode.ncall("jsBackMain", {});
-      },
+    onbackmain() {
+      nativecode.ncall("jsBackMain", {});
+    },
     onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
@@ -185,5 +181,14 @@ export default {
   height: 5px;
   -webkit-transform: translateY(-50%) rotate(45deg);
   transform: translateY(-50%) rotate(45deg);
+}
+.cloud-b .mint-tab-item {
+  color: #26a2ff;
+  background-color: #eaeaea;
+}
+.cloud-b .mint-tab-item.is-selected {
+  color: #232323;
+
+  background-color: #fff;
 }
 </style>

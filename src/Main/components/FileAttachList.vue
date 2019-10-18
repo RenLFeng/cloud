@@ -129,9 +129,9 @@ export default {
       var fitem = this.localfiles[findex];
       if (fitem && fitem.uploadState) {
         if (fitem.uploadState == "wait") {
-          return "等待上传";
+          return this.$t('bankeTask.Wait_uploading');
         } else if (fitem.uploadState == "fail") {
-          return "上传失败";
+          return this.$t('bankeTask.Upload_failure');
         } else if (fitem.uploadState == "doing") {
           var s = fitem.uploadProgress;
           s += "%";
@@ -144,16 +144,16 @@ export default {
       if (event.target.files.length > 0) {
         var file = event.target.files;
         // console.log(file);
-        for (let item of file) {
+        for (let i=0;i<file.length;i++) {
           var vo = {};
-          vo.file = item;
-          vo.ftype = commontools.fileGetType(item.type);
-          vo.mimetype = item.type;
+          vo.file = file[i];
+          vo.ftype = commontools.fileGetType(file[i].type);
+          vo.mimetype = file[i].type;
           if (vo.ftype == "img") {
-            vo.imgsrc = URL.createObjectURL(item);
+            vo.imgsrc = URL.createObjectURL(file[i]);
           }
-          vo.filesize = item.size;
-          vo.filename = item.name;
+          vo.filesize = file[i].size;
+          vo.filename = file[i].name;
           vo.uploadState = "wait";
           vo.uploadProgress = 0;
 
@@ -253,7 +253,7 @@ export default {
       return commontools.fileType(fitem);
     },
     delfileindex(findex) {
-      var tips = "删除文件 %s？";
+      var tips = this.$t('bankeTask.Delete_file')+" %s？";
       var filename = "";
       if (this.localfiles[findex].filename) {
         filename = this.localfiles[findex].filename;

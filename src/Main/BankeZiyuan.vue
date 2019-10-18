@@ -12,20 +12,20 @@
           <mt-tab-item id="1" @click.native="onUploadLocal">
             <div>
               <i class="iconfont iconfont-big iconicon---copy"></i>
-              <div>从本地上传</div>
+              <div>{{$t('bankeZiYuan.Upload_files')}}</div>
             </div>
           </mt-tab-item>
 
           <mt-tab-item id="2" @click.native="onUploadLink">
             <div>
               <i class="iconfont iconfont-big icon80"></i>
-              <div>网页链接 {{bankeZhiYuanLinkItem.id}}</div>
+              <div>{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
             </div>
           </mt-tab-item>
           <mt-tab-item id="3" @click.native="onUploadServer">
             <div>
               <i class="iconfont iconfont-big iconzhuanyeziyuanku"></i>
-              <div>资源库</div>
+              <div>{{$t('bankeZiYuan.Resources_storehouse')}}</div>
             </div>
           </mt-tab-item>
         </mt-tabbar>
@@ -46,12 +46,12 @@
                   ></BankeFileSimple>
                 </div>
               </div>
-              <div v-if="filesempty" class="tc emptydesc">{{liststatedesc}}</div>
+              <div v-if="filesempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
             </div>
           </mt-tab-container-item>
-          <mt-tab-container-item id="3" class="text-center">尽请期待...</mt-tab-container-item>
+          <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
           <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false">
-            <mt-header title="添加网页链接">
+            <mt-header :title="$t('common.Add')+' '+$t('bankeZiYuan.WebLink')">
               <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
             </mt-header>
             <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
@@ -93,7 +93,7 @@ export default {
     return {
       selected: "1",
       files: [],
-      liststatedesc: "加载中",
+      liststatedesc:'common.Loading',
       list: ["11", "22"],
       topStatus: "",
       loadingState: false,
@@ -242,7 +242,7 @@ export default {
             commontools.arrayMergeAsIds(this.files, res.data.data);
             this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
             if (this.filesempty) {
-              this.liststatedesc = "当前没有文件";
+              this.liststatedesc = 'common.No_files';
               this.loadingState = true;
             } else {
               if (res.data.data.length) {
@@ -277,17 +277,18 @@ export default {
     },
     uploadChange(event) {
       if (event.target.files.length > 0) {
+
         var file = event.target.files;
         //! cjy: 大小限制？
-        console.log(file);
-        for (let item of file) {
+        console.log('00000000',file);
+        for (let i=0;i<file.length;i++) {
           var formdata = new FormData();
-          formdata.append("file", item);
+          formdata.append("file", file[i]);
 
           var url = "/api/bankefile/fileupload?";
           url += "bankeid=" + this.bankeid;
 
-          Indicator.open("上传中");
+          Indicator.open(this.$t('Indicator.Uploading'));
 
           this.$http({
             url: url,

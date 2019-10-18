@@ -6,7 +6,7 @@
                     <div>
                         <!-- <img slot="icon" src="../assets/100x100.png" class="uploadimgsize"> -->
                           <i class="iconfont iconfont-big iconqiandao0101"></i>
-                        <div>签到</div>
+                        <div>{{$t('common.Sign')}}</div>
                     </div>
 
                 </mt-tab-item>
@@ -14,7 +14,7 @@
                     <div>
                     <!-- <img slot="icon" src="../assets/100x100.png" class="uploadimgsize"> -->
                       <i class="iconfont iconfont-big iconfanganzhizuo_huaban"></i>
-                    <div>小组方案</div>
+                    <div>{{$t('bankeMember.Plan')}}</div>
                     </div>
                 </mt-tab-item>
 
@@ -22,8 +22,8 @@
         </div>
 
         <div class="memberdesc">
-            <div class="membertitledesc">成员总数</div>
-            <div class="membernumdesc">{{membernumdesc}}</div>
+            <div class="membertitledesc">{{$t('bankeZiYuan.Member')+$t('common.Total')}}</div>
+            <div class="membernumdesc">{{membernumdesc}}{{$t('common.Person')}}</div>
         </div>
 
 
@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div v-if="membersempty" class="tc emptydesc">
-                {{liststatedesc}}
+                {{$t(liststatedesc)}}
             </div>
         </div>
 
@@ -69,9 +69,9 @@
         ,data(){
             return {
                 members:[],
-                liststatedesc:'加载中',
+                liststatedesc:'common.Loading',
                 loadingState:false,
-                isloading:false
+                isloading:false,
             }
         }
         ,computed:{
@@ -89,14 +89,14 @@
             }
             ,membernumdesc(){
                 if (this.isloading){
-                    return '加载中';
+                    return 'common.Loading'
                 }
                 var nnum = 0;
                 if (this.members.length){
                     nnum = this.members.length;
                 }
-                nnum += ' 人';
-                return nnum;
+                // nnum += ' 人';
+                return nnum
 
             }
 
@@ -109,10 +109,10 @@
         }
         ,methods:{
             onMemberSign(){
-                Toast('签到：暂未实现');
+                // Toast('签到：暂未实现');
             },
             onMemberGroup(){
-                Toast('分组，暂未实现');
+                // Toast('分组，暂未实现');
             },
             loadMoreMember(){
 

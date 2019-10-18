@@ -4,12 +4,12 @@
         <div class="mainright" >
             <div class="rightcontrol" @click="icoclick"><img src="../../assets/zuoye_edit.png" class="rightcontrolimg" v-if="hasedit" ></div>
             <div class="rightstate" :class="{'rightstatemid':!hasedit}">
-                <div v-if="zuoyeitem.state == 100"><img src="../../assets/zuoye_st_play.png" class="rightstateimg"><div class="rightsttext rightstplay">进行中</div></div>
+                <div v-if="zuoyeitem.state == 100"><img src="../../assets/zuoye_st_play.png" class="rightstateimg"><div class="rightsttext rightstplay">{{$t('bankeTask.Have_in_hand')}}</div></div>
                 <div v-else-if="zuoyeitem.state == 10" class="rightsttext">
-                    <div class="rightststopico"> </div><span class="rightststop">已结束</span>
+                    <div class="rightststopico"> </div><span class="rightststop">{{$t('bankeTask.Has_ended')}}</span>
                 </div>
                 <div v-else class="rightsttext">
-                    <div class="rightstnormalico"></div><span class="rightstnormal">未开始</span>
+                    <div class="rightstnormalico"></div><span class="rightstnormal">{{$t('bankeTask.Not_yet_begun')}}</span>
                 </div>
             </div>
         </div>
@@ -44,25 +44,25 @@
             ,memberdesc(){
 
                 if (!this.zuoyeitem.state){
-                    return '未开始';
+                    return this.$t('bankeTask.Not_yet_begun');
                 }
 
                 if (!this.hasedit){
                     //! . html
                     if (this.zuoyeitem.submitnum){
-                        return '<span class="clrok">已参与</span>';
+                        return '<span class="clrok">'+this.$t('bankeTask.Already_involved')+'</span>';
                     }
                     else{
                         //！ 未参与
                         if (this.zuoyeitem.state == 10){
-                            return '未参与';
+                            return this.$t('bankeTask.Not_participate');
                         }
-                        return '<span class="clrdanger">未参与</span>';
+                        return '<span class="clrdanger">'+this.$t('bankeTask.Not_participate')+'</span>';
                     }
                 }
 
 
-                var szfmt = '%i人参与';
+                var szfmt = '%i'+this.$t('common.Person')+' '+this.$t('bankeTask.Partake');
                 var nnum = 0;
                 if (this.zuoyeitem.membernum){
                     nnum = this.zuoyeitem.membernum;

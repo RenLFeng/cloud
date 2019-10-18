@@ -1,18 +1,18 @@
 <template>
   <div class="all-mark">
     <p
-      v-if="statedesc"
+      v-if="statedesc && allInfo.length"
       class="color9 title-back"
       style="border-bottom:1px solid #e5e5e5;    margin-bottom: 15px;"
     >
-      <mt-cell title="活动尚未结束，以下得分可能不是最终得分"></mt-cell>
+      <mt-cell :title="$t('bankeTask.State_tips_text')"></mt-cell>
     </p>
     <p
       v-if="!statedesc"
       class="color9 title-back"
       style="border-bottom:1px solid #e5e5e5;    margin-bottom: 15px;"
     >
-      <mt-cell title="活动已结束"></mt-cell>
+      <mt-cell :title="$t('bankeTask.Has_ended')"></mt-cell>
     </p>
     <div class>
       <!-- <p @click="selectTextFn" class="my-color border-c-bottom">切换为按({{selectText?'得分':'学号'}})显示</p> -->

@@ -1,9 +1,9 @@
 <template>
   <div>
     <mt-header :title="titledesc">
-      <mt-button icon="back" slot="left" @click="goback">返回</mt-button>
+      <mt-button icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
 
-      <mt-button slot="right" v-if="pagemode=='submit'" @click="popupSubmit=true">提交作业</mt-button>
+      <mt-button slot="right" v-if="pagemode=='submit'" @click="popupSubmit=true">{{$t('bankeTask.Submit_job')}}</mt-button>
     </mt-header>
 
     <div class="noheadercontainer noheaderscroll">
@@ -17,23 +17,23 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">{{zuoyeitem.name}}</div>
           <div class="zuoyesubtitle">
-            <span class="zuoyescore">作业分值 100分</span>&nbsp;|&nbsp;
+            <span class="zuoyescore">{{$t('bankeTask.Assignment_score')}} 100{{$t('common.min')}}</span>&nbsp;|&nbsp;
             <span>{{statedesc}}</span>
           </div>
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
         </div>
         <div>
-          <mt-cell title="作业详情" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
+          <mt-cell :title="$t('bankeTask.Job_details')" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
         </div>
 
         <div @click="syudentsMark">
-          <mt-cell title="本次作业所有人得分" is-link v-if="pagemode=='result'"></mt-cell>
+          <mt-cell :title="$t('bankeTask.Score_of_the_operation_owner')" is-link v-if="pagemode=='result'"></mt-cell>
         </div>
         <div @click="showZYinfo">
-          <mt-cell title="信息" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
+          <mt-cell :title="$t('common.Info')" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
         </div>
         <mt-cell
-          title="答案"
+          :title="$t('bankeTask.Answer')"
           is-link
           v-if="pagemode=='result'"
           @click.native="popupAnswer=true"
@@ -41,17 +41,17 @@
 
         <div class="devide zashowbtnpart">
           <div v-if="pagemode=='submit'">
-            <div class="zashowbtn zashowbtnactive">我的提交</div>
+            <div class="zashowbtn zashowbtnactive">{{$t('bankeTask.My_submission')}}</div>
           </div>
           <div v-if="pagemode=='result'">
             <div
               @click="selectPF(1)"
               :class="zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' "
-            >全部({{submitnum}})</div>
+            >{{$t('common.Whole')}}({{submitnum}})</div>
             <div
               @click="selectPF(0)"
               :class="!zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' "
-            >未评分({{uncommentnum}})</div>
+            >{{$t('bankeTask.No_score')}}({{uncommentnum}})</div>
           </div>
         </div>
 
@@ -68,10 +68,10 @@
         </div>
         <div v-if="showemptydesc" class="tc" style="margin-top:50px;">
           <div v-if="pagemode=='submit'">
-            <div style="margin-bottom:10px;">尚未提交</div>
+            <div style="margin-bottom:10px;">{{$t('bankeTask.Not_yet')}}</div>
             <div>
-              点击
-              <span class="link" @click="popupSubmit=true">提交作业</span>来提交
+              {{$t('common.Click')}}
+              <span class="link" @click="popupSubmit=true">{{$t('bankeTask.Submit_job')}}</span>{{$t('bankeTask.To_submit')}}
             </div>
           </div>
           <div v-else>{{emptydesc}}</div>
@@ -80,10 +80,10 @@
     </div>
 
     <mt-popup v-model="popupSubmit" position="right" class="mint-popup-3" :modal="false">
-      <mt-header title="作业提交">
-        <mt-button slot="right" @click="onbtnsubmit" :disabled="submitdisabled">提交</mt-button>
+      <mt-header :title="$t('bankeTask.Submit_job')">
+        <mt-button slot="right" @click="onbtnsubmit" :disabled="submitdisabled">{{$t('common.Submit')}}</mt-button>
 
-        <mt-button slot="left" @click="popupSubmit = false">关闭</mt-button>
+        <mt-button slot="left" @click="popupSubmit = false">{{$t('common.Close')}}</mt-button>
       </mt-header>
 
       <zuoyedetailedit :zdetail="zdetailsubmit"></zuoyedetailedit>
@@ -91,15 +91,15 @@
 
     <mt-popup v-model="popupZDetail" position="right" class="mint-popup-3" :modal="false">
       <mt-header title>
-        <mt-button slot="left" icon="back" @click="popupZDetail = false">返回</mt-button>
+        <mt-button slot="left" icon="back" @click="popupZDetail = false">{{$t('common.Back')}}</mt-button>
       </mt-header>
 
       <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly"></zuoyedetailedit>
     </mt-popup>
     <!-- 评论 -->
     <mt-popup v-model="popupZuoyePL" position="right" class="mint-popup-3" :modal="false">
-      <mt-header title="作业结果列表   评论区">
-        <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
+      <mt-header :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Comment_area')">
+        <mt-button slot="left" icon="back" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <Discuss :itemInfo="studentInfo" :popupZuoyePL="popupZuoyePL"></Discuss>
     </mt-popup>
@@ -107,15 +107,15 @@
     <mt-popup v-model="popupZuoyePF" position="bottom" class="pf-container-popup">
       <div class="pf-container">
         <p class="tit border-bottom-e5 text-center">
-          <span class="close-mode float-l" @click="goBacks">取消</span>
-          给{{studentName}}&nbsp;{{mark}}评分
+          <span class="close-mode float-l" @click="goBacks">{{$t('confirm.Cancel')}}</span>
+          {{$t('bankeTask.To')}}&nbsp;{{studentName}}&nbsp;{{mark}} {{$t('bankeTask.Score')}}
           <span
             class="close-mode float-r"
             @click="submiMark"
-          >评分</span>
+          >{{$t('bankeTask.Score')}}</span>
         </p>
         <p class="mark-input border-bottom-e5">
-          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />总体评分（100分）
+          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />{{$t('bankeTask.Overall_score')}}(100)
         </p>
         <ul class="clearIt">
           <li
@@ -123,7 +123,10 @@
             v-for="i in markArr"
             :key="i"
             @click="seleMarkFn(i)"
-          >{{i>90?'满分':i}}</li>
+          >
+          {{i}}
+          <!-- {{i>90?$t('bankeTask.Full_marks'):i}} -->
+          </li>
         </ul>
       </div>
     </mt-popup>
@@ -136,7 +139,7 @@
       style="background:#f0f0f0"
     >
       <mt-header :title="zuoyeitem.name">
-        <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
+        <mt-button slot="left" icon="back" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <zouYeInfo :itemInfo="zuoyeitem" :allZuoyeitem="allInitData"></zouYeInfo>
     </mt-popup>
@@ -148,15 +151,15 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header title="作业结果列表  本次作业所有人得分">
-        <mt-button slot="left" icon="back" @click="goBacks">返回</mt-button>
+      <mt-header :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Score_of_the_operation_owner')">
+        <mt-button slot="left" icon="back" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <studentsMark :itemInfo="zuoyeitem" :allZuoyeitem="allInitData"></studentsMark>
     </mt-popup>
     <!-- 答案 -->
     <mt-popup v-model="popupAnswer" position="right" class="mint-popup-3" :modal="false">
-      <mt-header title="作业答案">
-        <mt-button icon="back" slot="left" @click="goBacks">返回</mt-button>
+      <mt-header :title="$t('bankeTask.Task_Answer')">
+        <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <Answer :zuoyeitem="zuoyeitem" :states="true" />
     </mt-popup>
@@ -168,8 +171,8 @@
       :modal="false"
       style="  overflow:scroll;"
     >
-      <mt-header title="所有提交">
-        <mt-button icon="back" slot="left" @click="goBacks">返回</mt-button>
+      <mt-header :title="$t('bankeTask.All_submitted')">
+        <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <div v-for="(ritem,selindex) in popupAllsubmitItem" v-bind:key="selindex">
         <div v-if="showitem(ritem)">
@@ -261,7 +264,7 @@ export default {
     answerdesc() {
       return this.zuoyeitem.answerdesc
         ? this.zuoyeitem.answerdesc
-        : "未设置答案";
+        : this.$t('bankeTask.No_answer_set');
     },
     submitdisabled() {
       if (this.zdetailsubmit.ztext) {
@@ -271,15 +274,15 @@ export default {
     },
     titledesc() {
       if (this.pagemode == "submit") {
-        return "作业详细";
+        return this.$t('bankeTask.Job_details');
       }
-      return "作业结果列表";
+      return this.$t('bankeTask.Job_Results');
     },
     statedesc() {
       if (this.zuoyeitem.state == 100) {
-        return "进行中";
+        return this.$t('bankeTask.Have_in_hand');
       }
-      return "已结束";
+      return this.$t('bankeTask.Has_ended');
     },
     unsubmitnum() {
       var ni = 0;
@@ -306,10 +309,10 @@ export default {
     },
     emptydesc() {
       if (this.showfilter == "score") {
-        return "尚无未评分";
+        return this.$t('bankeTask.No_score_yet');
       }
 
-      return "尚无提交";
+      return this.$t('bankeTask.No_submission');
     },
     submitnum() {
       var ni = 0;
@@ -331,25 +334,25 @@ export default {
     },
     zuoyetimedesc() {
       if (!this.zuoyeitem.hassubmittime) {
-        return "不限制提交时间";
+        return  this.$t('bankeTask.Unlimited_submission_time');
       }
       var tdesc = commontools.timeToHummanRead(this.zuoyeitem.submittime);
-      var tallowpass = "允许超时提交";
+      var tallowpass = this.$t('bankeTask.Allow_timeout_submission');
       if (!this.zuoyeitem.allowpasstime) {
-        tallowpass = "不允许超时提交";
+        tallowpass = this.$t('bankeTask.Timeout_submission_not_allowed');
       }
-      var tfmt = "%s 前提交 | %s";
+      var tfmt = "%s "+this.$t('common.Front')+this.$t('common.Submit')+" | %s";
       return commontools.sprintf(tfmt, tdesc, tallowpass);
     },
     submitnumdesc() {
       if (!this.results.length) {
-        return "无学员参与";
+        return this.$t('bankeTask.No_participants');
       }
       var ni = this.unsubmitnum;
       if (ni == 0) {
-        return "已全部提交";
+        returnthis.$t('bankeTask.All_submitteds');
       }
-      var tfmt = "%i 人未提交";
+      var tfmt = "%i "+this.$t('common.Person')+this.$t('bankeTask.Not_submitted');
       return commontools.sprintf(tfmt, ni);
     }
   },
@@ -406,7 +409,7 @@ export default {
           this.zuoyeid +
           "&userid=" +
           item.userid;
-        Indicator.open("加载中");
+        Indicator.open(this.$t('Indicator.Loading'));
         this.$http
           .post(url)
           .then(res => {
@@ -500,7 +503,7 @@ export default {
     },
     loadAll() {
       var url = "/api/api/zuoyeresultquery?zuoyeid=" + this.zuoyeid;
-      Indicator.open("加载中");
+      Indicator.open(this.$t('Indicator.Loading'));
       this.$http
         .post(url)
         .then(res => {
@@ -551,7 +554,7 @@ export default {
       });
     },
     dosubmit() {
-      Indicator.open("提交中");
+      Indicator.open(this.$t('Indicator.Committing'));
       var url = "/api/api/zuoyesubmit?zuoyeid=" + this.zuoyeid;
       this.$http
         .post(url, {

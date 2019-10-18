@@ -2,14 +2,15 @@
   <div class="allSignStudent">
     <div v-if="item.length">
       <p v-for="(v,index) in item" :key="index">
-        <mt-cell :title="`${v.studentName}: ${v.state?v.signtime:''}`" :value="v.state?'已签到':'未签到'"></mt-cell>
+        <mt-cell :title="`${v.studentName}: ${v.state?time:''}`" :value="v.state?$t('bankehHudong.CheckIn'):$t('bankehHudong.No_sign_in')"></mt-cell>
       </p>
     </div>
-    <p v-if="!item.length" class="text-center">暂无学生签到记录</p>
+    <p v-if="!item.length" class="text-center">{{$t('bankehHudong.No_student_sign_in_record')}}</p>
   </div>
 </template>
 
 <script>
+import commontools from "../../commontools";
 export default {
   name: "",
   props: {
@@ -21,6 +22,11 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    time() {
+         return  commontools.longTime(this.item.signtime);
+    }
   },
   created() {
     console.log("hfhf", this.item);
