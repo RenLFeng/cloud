@@ -147,6 +147,9 @@ export default {
     downLoadFile() {
       if (!this.isupload) {
         let fitem = this.tempLocalfiles[this.index];
+        if (nativecode.ncall("jsFileLink", fitem)) {
+          return;
+        }
         fitem.name = fitem.filename;
         fitem.downurl = nativecode.getDownUrl(fitem.filepath);
         fitem.ftype = "file";
@@ -159,6 +162,9 @@ export default {
         down.click();
         down.remove();
         return;
+        // if (window.exsoftTest) {
+        //   window.exsoftTest(fitem.filepath, fitem.filename1);
+        // }
       }
     },
     onItemClick(fitem) {
@@ -209,7 +215,7 @@ export default {
       return "";
     },
     uploadChange(event) {
-      if (event.target.files.length >=6) {
+      if (event.target.files.length >= 6) {
         MessageBox.alert("最多同时上传5个文件");
         return;
       }
