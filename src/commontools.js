@@ -331,27 +331,28 @@ commontools.longTime = function (time) {
             result = commontools.fmtDates(tmpTime);
             break;
         case monthC >= 1:
-            console.log("switch 月");
+            // console.log("switch 月");
             result = "" + parseInt(monthC) + "月前";
             break;
         case weekC >= 1:
-            console.log("switch 周");
+            // console.log("switch 周");
             result = "" + parseInt(weekC) + "周前";
             break;
         case dayC >= 1:
-            console.log("switch 日");
+            // console.log("switch 日");
             result = "" + parseInt(dayC) + "天前";
             break;
         case hourC >= 1:
-            console.log("switch 时");
+            // console.log("switch 时");
             result = "" + parseInt(hourC) + "小时前";
             break;
         case minC >= 1:
-            console.log("switch 分");
+            // console.log("switch 分");
             result = "" + parseInt(minC) + "分前";
             break;
         default:
-            console.log("其他");
+            result = '刚刚'
+            break;
 
     }
     return result;

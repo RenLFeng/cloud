@@ -2,8 +2,11 @@
   <div>
     <mt-header :title="titledesc">
       <mt-button icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
-
-      <mt-button slot="right" v-if="pagemode=='submit'" @click="popupSubmit=true">{{$t('bankeTask.Submit_job')}}</mt-button>
+      <mt-button
+        slot="right"
+        v-if="pagemode=='submit'"
+        @click="popupSubmit=true"
+      >{{$t('bankeTask.Submit_job')}}</mt-button>
     </mt-header>
 
     <div class="noheadercontainer noheaderscroll">
@@ -23,11 +26,19 @@
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
         </div>
         <div>
-          <mt-cell :title="$t('bankeTask.Job_details')" is-link @click.native="popupZDetail=true">{{zuoyeitem.detaildesc}}</mt-cell>
+          <mt-cell
+            :title="$t('bankeTask.Job_details')"
+            is-link
+            @click.native="popupZDetail=true"
+          >{{zuoyeitem.detaildesc}}</mt-cell>
         </div>
 
         <div @click="syudentsMark">
-          <mt-cell :title="$t('bankeTask.Score_of_the_operation_owner')" is-link v-if="pagemode=='result'"></mt-cell>
+          <mt-cell
+            :title="$t('bankeTask.Score_of_the_operation_owner')"
+            is-link
+            v-if="pagemode=='result'"
+          ></mt-cell>
         </div>
         <div @click="showZYinfo">
           <mt-cell :title="$t('common.Info')" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
@@ -71,7 +82,11 @@
             <div style="margin-bottom:10px;">{{$t('bankeTask.Not_yet')}}</div>
             <div>
               {{$t('common.Click')}}
-              <span class="link" @click="popupSubmit=true">{{$t('bankeTask.Submit_job')}}</span>{{$t('bankeTask.To_submit')}}
+              <span
+                class="link"
+                @click="popupSubmit=true"
+              >{{$t('bankeTask.Submit_job')}}</span>
+              {{$t('bankeTask.To_submit')}}
             </div>
           </div>
           <div v-else>{{emptydesc}}</div>
@@ -81,7 +96,11 @@
 
     <mt-popup v-model="popupSubmit" position="right" class="mint-popup-3" :modal="false">
       <mt-header :title="$t('bankeTask.Submit_job')">
-        <mt-button slot="right" @click="onbtnsubmit" :disabled="submitdisabled">{{$t('common.Submit')}}</mt-button>
+        <mt-button
+          slot="right"
+          @click="onbtnsubmit"
+          :disabled="submitdisabled"
+        >{{$t('common.Submit')}}</mt-button>
 
         <mt-button slot="left" @click="popupSubmit = false">{{$t('common.Close')}}</mt-button>
       </mt-header>
@@ -115,17 +134,13 @@
           >{{$t('bankeTask.Score')}}</span>
         </p>
         <p class="mark-input border-bottom-e5">
-          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />{{$t('bankeTask.Overall_score')}}(100)
+          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />
+          {{$t('bankeTask.Overall_score')}}(100)
         </p>
         <ul class="clearIt">
-          <li
-            class="float-l text-center"
-            v-for="i in markArr"
-            :key="i"
-            @click="seleMarkFn(i)"
-          >
-          {{i}}
-          <!-- {{i>90?$t('bankeTask.Full_marks'):i}} -->
+          <li class="float-l text-center" v-for="i in markArr" :key="i" @click="seleMarkFn(i)">
+            {{i}}
+            <!-- {{i>90?$t('bankeTask.Full_marks'):i}} -->
           </li>
         </ul>
       </div>
@@ -151,7 +166,9 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Score_of_the_operation_owner')">
+      <mt-header
+        :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Score_of_the_operation_owner')"
+      >
         <mt-button slot="left" icon="back" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <studentsMark :itemInfo="zuoyeitem" :allZuoyeitem="allInitData"></studentsMark>
@@ -169,7 +186,7 @@
       position="right"
       class="mint-popup-3"
       :modal="false"
-      style="  overflow:scroll;"
+      :style="overflow?{overflow: 'scroll'}:''"
     >
       <mt-header :title="$t('bankeTask.All_submitted')">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
@@ -261,28 +278,31 @@ export default {
     };
   },
   computed: {
+    overflow(){
+      return this.$store.state.isPreview;
+    },
     answerdesc() {
       return this.zuoyeitem.answerdesc
         ? this.zuoyeitem.answerdesc
-        : this.$t('bankeTask.No_answer_set');
+        : this.$t("bankeTask.No_answer_set");
     },
     submitdisabled() {
-      if (this.zdetailsubmit.ztext) {
+      if (this.zdetailsubmit.ztext || this.zdetailsubmit.localfiles.length) {
         return false;
       }
       return true;
     },
     titledesc() {
       if (this.pagemode == "submit") {
-        return this.$t('bankeTask.Job_details');
+        return this.$t("bankeTask.Job_details");
       }
-      return this.$t('bankeTask.Job_Results');
+      return this.$t("bankeTask.Job_Results");
     },
     statedesc() {
       if (this.zuoyeitem.state == 100) {
-        return this.$t('bankeTask.Have_in_hand');
+        return this.$t("bankeTask.Have_in_hand");
       }
-      return this.$t('bankeTask.Has_ended');
+      return this.$t("bankeTask.Has_ended");
     },
     unsubmitnum() {
       var ni = 0;
@@ -309,10 +329,10 @@ export default {
     },
     emptydesc() {
       if (this.showfilter == "score") {
-        return this.$t('bankeTask.No_score_yet');
+        return this.$t("bankeTask.No_score_yet");
       }
 
-      return this.$t('bankeTask.No_submission');
+      return this.$t("bankeTask.No_submission");
     },
     submitnum() {
       var ni = 0;
@@ -334,25 +354,27 @@ export default {
     },
     zuoyetimedesc() {
       if (!this.zuoyeitem.hassubmittime) {
-        return  this.$t('bankeTask.Unlimited_submission_time');
+        return this.$t("bankeTask.Unlimited_submission_time");
       }
       var tdesc = commontools.timeToHummanRead(this.zuoyeitem.submittime);
-      var tallowpass = this.$t('bankeTask.Allow_timeout_submission');
+      var tallowpass = this.$t("bankeTask.Allow_timeout_submission");
       if (!this.zuoyeitem.allowpasstime) {
-        tallowpass = this.$t('bankeTask.Timeout_submission_not_allowed');
+        tallowpass = this.$t("bankeTask.Timeout_submission_not_allowed");
       }
-      var tfmt = "%s "+this.$t('common.Front')+this.$t('common.Submit')+" | %s";
+      var tfmt =
+        "%s " + this.$t("common.Front") + this.$t("common.Submit") + " | %s";
       return commontools.sprintf(tfmt, tdesc, tallowpass);
     },
     submitnumdesc() {
       if (!this.results.length) {
-        return this.$t('bankeTask.No_participants');
+        return this.$t("bankeTask.No_participants");
       }
       var ni = this.unsubmitnum;
       if (ni == 0) {
-        returnthis.$t('bankeTask.All_submitteds');
+        return this.$t("bankeTask.All_submitteds");
       }
-      var tfmt = "%i "+this.$t('common.Person')+this.$t('bankeTask.Not_submitted');
+      var tfmt =
+        "%i " + this.$t("common.Person") + this.$t("bankeTask.Not_submitted");
       return commontools.sprintf(tfmt, ni);
     }
   },
@@ -409,7 +431,7 @@ export default {
           this.zuoyeid +
           "&userid=" +
           item.userid;
-        Indicator.open(this.$t('Indicator.Loading'));
+        Indicator.open(this.$t("Indicator.Loading"));
         this.$http
           .post(url)
           .then(res => {
@@ -503,7 +525,7 @@ export default {
     },
     loadAll() {
       var url = "/api/api/zuoyeresultquery?zuoyeid=" + this.zuoyeid;
-      Indicator.open(this.$t('Indicator.Loading'));
+      Indicator.open(this.$t("Indicator.Loading"));
       this.$http
         .post(url)
         .then(res => {
@@ -554,7 +576,7 @@ export default {
       });
     },
     dosubmit() {
-      Indicator.open(this.$t('Indicator.Committing'));
+      Indicator.open(this.$t("Indicator.Committing"));
       var url = "/api/api/zuoyesubmit?zuoyeid=" + this.zuoyeid;
       this.$http
         .post(url, {
@@ -620,7 +642,7 @@ export default {
     Discuss,
     zouYeInfo,
     studentsMark,
-    Answer
+    Answer,
   }
 };
 </script>

@@ -13,6 +13,7 @@
             <div>
               <i class="iconfont iconfont-big iconicon---copy"></i>
               <div>{{$t('bankeZiYuan.Upload_files')}}</div>
+              <!--本地上传-->
             </div>
           </mt-tab-item>
 
@@ -20,14 +21,15 @@
             <div>
               <i class="iconfont iconfont-big icon80"></i>
               <div>{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
+              <!--网页链接-->
             </div>
           </mt-tab-item>
-          <mt-tab-item id="3" @click.native="onUploadServer">
+          <!-- <mt-tab-item id="3" @click.native="onUploadServer">
             <div>
               <i class="iconfont iconfont-big iconzhuanyeziyuanku"></i>
               <div>{{$t('bankeZiYuan.Resources_storehouse')}}</div>
             </div>
-          </mt-tab-item>
+          </mt-tab-item>-->
         </mt-tabbar>
       </div>
       <div class="items-container">
@@ -93,7 +95,7 @@ export default {
     return {
       selected: "1",
       files: [],
-      liststatedesc:'common.Loading',
+      liststatedesc: "common.Loading",
       list: ["11", "22"],
       topStatus: "",
       loadingState: false,
@@ -219,7 +221,7 @@ export default {
           "&pagesize=10";
       } else {
         this.files = [];
-         this.loadingState = false;
+        this.loadingState = false;
         url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=10";
       }
       this.$http
@@ -242,7 +244,7 @@ export default {
             commontools.arrayMergeAsIds(this.files, res.data.data);
             this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
             if (this.filesempty) {
-              this.liststatedesc = 'common.No_files';
+              this.liststatedesc = "common.No_files";
               this.loadingState = true;
             } else {
               if (res.data.data.length) {
@@ -276,19 +278,22 @@ export default {
       // Toast("暂未实现");
     },
     uploadChange(event) {
+      if (event.target.files.length >= 6) {
+        MessageBox.alert("最多同时上传5个文件");
+        return;
+      }
       if (event.target.files.length > 0) {
-
         var file = event.target.files;
         //! cjy: 大小限制？
-        console.log('00000000',file);
-        for (let i=0;i<file.length;i++) {
+        console.log("00000000", file);
+        for (let i = 0; i < file.length; i++) {
           var formdata = new FormData();
           formdata.append("file", file[i]);
 
           var url = "/api/bankefile/fileupload?";
           url += "bankeid=" + this.bankeid;
 
-          Indicator.open(this.$t('Indicator.Uploading'));
+          Indicator.open(this.$t("Indicator.Uploading"));
 
           this.$http({
             url: url,

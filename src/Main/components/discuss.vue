@@ -18,14 +18,14 @@
             <li class="teacher-name color9">
               {{lists.username}}
               &nbsp;&nbsp;
-              <mt-badge size="small" color="#ff7403">老师</mt-badge>
+              <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
               <span class="hui-fu" @click="studentHF(lists,tindex)">回复</span>
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
             <li v-if="lists.files">
-              <viewer>
-                <img :src="lists.files.filepath" class="pic-sub" />
-              </viewer>
+              <!-- <viewer> -->
+                <img :src="lists.files.filepath" class="pic-sub" @click="Preview(lists.files.filepath)" />
+              <!-- </!--> 
               <!-- <viewer>
                 <img
                   v-for="(item,index) in lists.files"
@@ -38,7 +38,7 @@
             <li
               class="dade color9"
               :class="lists.lastreplydata.length?'border-bottom':''"
-            >{{lists.createtime}}</li>
+            >{{longTime(lists.createtime)}}</li>
             <li
               v-for="(item ,index) in lists.lastreplydata"
               :key="index"
@@ -49,15 +49,15 @@
                 <li class="teacher-name color9">
                   {{item.fromusername}}
                   &nbsp;&nbsp;
-                  <mt-badge size="small" color="#ff7403">老师</mt-badge>
+                  <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
                   <span class="hui-fu" @click="studentHF(item,tindex)">回复</span>
                 </li>
                 <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
 
                 <li v-if="item.files">
-                  <viewer>
-                    <img :src="item.files.filepath" class="pic-sub" />
-                  </viewer>
+                  <!-- <viewer> -->
+                    <img :src="item.files.filepath" class="pic-sub"  @click="Preview(item.files.filepath)"/>
+                  <!-- </viewer> -->
                   <!-- <viewer>
                     <img
                       v-for="(item,index) in item.files"
@@ -68,7 +68,7 @@
                   </!-->
                 </li>
 
-                <li class="dade color9">{{item.createtime}}</li>
+                <li class="dade color9">{{longTime(item.createtime)}}</li>
               </ul>
             </li>
           </ul>
@@ -85,8 +85,8 @@
     <mt-popup v-model="show" position="bottom" class="mint-popup-3" :closeOnClickModal="false">
       <div style class="hf-box">
         <p class="tit border-bottom-e5">
-          <span class="qx" @click="qx">取消</span>
-          <span class="qr" style="float:right" @click="HFSubmit()">确认</span>
+          <span class="qx button-blue" @click="qx">取消</span>
+          <span class="qr button-blue" style="float:right" @click="HFSubmit()">确认</span>
         </p>
         <textarea class="border-bottom-e5" rows="10" placeholder="输入你的观点" v-model="textareaMsg"></textarea>
         <div class="add-pic">
@@ -115,13 +115,15 @@
         />
       </div>
       <input class="msg" type="text" v-model="discussMsg" placeholder="在此发表评论" />
-      <span class="color9 submit" @click="submit()">发送</span>
+      <span class="color9 submit" style="color:#26a2ff" @click="submit()">发送</span>
     </div>
   </div>
 </template>
 
 <script>
 import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
+import ImagePreview from "vant/lib/image-preview";
+import "vant/lib/image-preview/style";
 import dispic from "../../assets/dis.jpg";
 import dispic2 from "../../assets/dis.jpg";
 import mimgcrop from "../../common/m-image-crop";
@@ -147,6 +149,9 @@ export default {
       }
     }
   },
+  components: {
+   [ImagePreview.name]:ImagePreview
+  },
   data() {
     return {
       loading: false,
@@ -167,6 +172,7 @@ export default {
       noComment: false,
       commentPic: [],
       commentPicSrc: [],
+      longTime:commontools.longTime,
     };
   },
   watch: {
@@ -184,8 +190,13 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    Preview(img){
+      let images=[img];
+
+       ImagePreview(images);
+    },
     commentQuery(item) {
-      Indicator.open(this.$t('Indicator.Loading'));
+      Indicator.open(this.$t("Indicator.Loading"));
       let url = "";
       if (this.topid) {
         url =
@@ -248,7 +259,7 @@ export default {
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
-      Indicator.open(this.$t('Indicator.Committing'));
+      Indicator.open(this.$t("Indicator.Committing"));
       this.$http
         .post("/api/comment/addcomment", {
           taboutid: this.itemInfo.submitid,
@@ -286,7 +297,7 @@ export default {
     //回复评论
     HFSubmit() {
       if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open(this.$t('Indicator.Committing'));
+      Indicator.open(this.$t("Indicator.Committing"));
       let subData = {};
       let item = this.indexItem;
       subData.tcommentid = item.tcommentid || item.id;
@@ -297,13 +308,13 @@ export default {
       this.$http
         .post("/api/comment/addreply", subData)
         .then(res => {
-          Indicator.close();
           console.log("提交成功", res);
           let Data = res.data.data;
           if (this.imgFileJson) {
             Data.files = JSON.parse(this.imgFileJson);
           }
           this.teacherInfo[this.index].lastreplydata.push(Data);
+             Indicator.close();
           this.init();
         })
         .catch(() => {
@@ -313,7 +324,7 @@ export default {
     },
     // 查看更多
     learnMoreFn(item, index) {
-      Indicator.open(this.$t('Indicator.Loading'));
+      Indicator.open(this.$t("Indicator.Loading"));
       item.more = !item.more;
       if (item.more) {
         this.$http

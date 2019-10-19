@@ -1,28 +1,28 @@
 <template>
-  <div class="flist-container">
+  <div class="flist-container" id="content">
     <ul class="flist-ul">
-      <viewer>
-        <li
-          v-for="(fitem, findex) in localfiles"
-          :key="findex"
-          class="imgblock"
-          :class="{'liupload':isupload,'imgblocksmall':!isupload}"
-        >
-          <div class="imgcontainer blockborder" @click="onItemClick(fitem)">
-            <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
-            <img v-else :src="getimgico(fitem)" class="iconclass" />
-          </div>
+      <!-- <viewer> -->
+      <li
+        v-for="(fitem, findex) in localfiles"
+        :key="findex"
+        class="imgblock"
+        :class="{'liupload':isupload,'imgblocksmall':!isupload}"
+      >
+        <div class="imgcontainer blockborder" @click="onImagePreview(localfiles,findex)">
+          <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
+          <img v-else :src="getimgico(fitem)" class="iconclass" />
+        </div>
 
-          <div v-if="uploadstate(findex)" class="uploadbg">
-            <div class="midtext">{{updatestatedesc(findex)}}</div>
-          </div>
-          <div v-else-if="isupload" class="uploadbg uploadbgtransparent"></div>
+        <div v-if="uploadstate(findex)" class="uploadbg">
+          <div class="midtext">{{updatestatedesc(findex)}}</div>
+        </div>
+        <div v-else-if="isupload" class="uploadbg uploadbgtransparent"></div>
 
-          <div v-if="isupload" class="delbtn" @click="delfileindex(findex)">
-            <div class="delbtntext">x</div>
-          </div>
-        </li>
-      </viewer>
+        <div v-if="isupload" class="delbtn" @click="delfileindex(findex)">
+          <div class="delbtntext">x</div>
+        </div>
+      </li>
+      <!-- </viewer> -->
       <li v-if="isupload" class="imgblock liupload">
         <div class="blockborder" @click="onbtnupload">
           <div class="imgblocktext textadd">+</div>
@@ -37,21 +37,40 @@
       @change="uploadChange"
       style="display:none"
     />
+    <van-image-preview
+      v-model="show"
+      :images="tempImgs"
+      :startPosition="index"
+      :closeOnPopstate="true"
+      @change="onChange"
+      @close="onclose"
+    >
+      <template v-slot:index></template>
+    </van-image-preview>
+    <div class="preview-downLoad-btn" v-if="tempLocalfiles.length && !tempLocalfiles[index].imgsrc">
+      <mt-button type="primary" @click.native="downLoadFile()">下载附件</mt-button>
+    </div>
   </div>
 </template>
-
 <script>
+import Vue from "vue";
 import commontools from "../../commontools";
-
+import ImagePreview from "vant/lib/image-preview";
+import "vant/lib/image-preview/style";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import nativecode from "../../nativecode";
-
+Vue.use(ImagePreview);
 export default {
   name: "FileAttachList",
   data() {
     return {
       curUploadingFile: null,
-      inDestroy: false
+      inDestroy: false,
+      show: false,
+      index: 0,
+      isLoad: false,
+      tempLocalfiles: [],
+      tempImgs: []
     };
   },
   props: {
@@ -92,7 +111,56 @@ export default {
       }
     }
   },
+  mounted() {},
   methods: {
+    v() {
+      ImagePreview([
+        "https://img.yzcdn.cn/public_files/2017/09/05/4e3ea0898b1c2c416eec8c11c5360833.jpg",
+        "https://img.yzcdn.cn/public_files/2017/09/05/fd08f07665ed67d50e11b32a21ce0682.jpg"
+      ]);
+    },
+    onImagePreview(item, index) {
+      this.$store.commit("SET_ISPREVIEW", false);
+      let file = item;
+      console.log("filefile", file);
+      for (let v of file) {
+        if (v.imgsrc) {
+          this.tempImgs.push(v.filepath);
+        } else {
+          this.tempImgs.push(this.getimgico(v));
+        }
+      }
+      // console.log("tempImgs", this.tempImgs);
+      this.tempLocalfiles = file;
+      this.index = index;
+      this.show = true;
+    },
+    onChange(index) {
+      this.index = index;
+    },
+    onclose() {
+      this.$store.commit("SET_ISPREVIEW", true);
+      this.tempLocalfiles = [];
+      this.tempImgs = [];
+      this.index = 0;
+    },
+    downLoadFile() {
+      if (!this.isupload) {
+        let fitem = this.tempLocalfiles[this.index];
+        fitem.name = fitem.filename;
+        fitem.downurl = nativecode.getDownUrl(fitem.filepath);
+        fitem.ftype = "file";
+        nativecode.ncall("jsFileLink", fitem);
+
+        let down = document.createElement("a");
+        down.href = fitem.downurl;
+        down.download = fitem.name;
+        document.body.appendChild(down);
+        down.click();
+        down.remove();
+        return;
+      }
+    },
     onItemClick(fitem) {
       if (!this.isupload) {
         // Toast('文件浏览请使用原生实现:' + fitem.filepath);
@@ -129,9 +197,9 @@ export default {
       var fitem = this.localfiles[findex];
       if (fitem && fitem.uploadState) {
         if (fitem.uploadState == "wait") {
-          return this.$t('bankeTask.Wait_uploading');
+          return this.$t("bankeTask.Wait_uploading");
         } else if (fitem.uploadState == "fail") {
-          return this.$t('bankeTask.Upload_failure');
+          return this.$t("bankeTask.Upload_failure");
         } else if (fitem.uploadState == "doing") {
           var s = fitem.uploadProgress;
           s += "%";
@@ -141,10 +209,14 @@ export default {
       return "";
     },
     uploadChange(event) {
+      if (event.target.files.length >=6) {
+        MessageBox.alert("最多同时上传5个文件");
+        return;
+      }
       if (event.target.files.length > 0) {
         var file = event.target.files;
         // console.log(file);
-        for (let i=0;i<file.length;i++) {
+        for (let i = 0; i < file.length; i++) {
           var vo = {};
           vo.file = file[i];
           vo.ftype = commontools.fileGetType(file[i].type);
@@ -253,7 +325,7 @@ export default {
       return commontools.fileType(fitem);
     },
     delfileindex(findex) {
-      var tips = this.$t('bankeTask.Delete_file')+" %s？";
+      var tips = this.$t("bankeTask.Delete_file") + " %s？";
       var filename = "";
       if (this.localfiles[findex].filename) {
         filename = this.localfiles[findex].filename;
@@ -404,4 +476,5 @@ export default {
   transform: translate(-50%, -50%);
   display: inline-block;
 }
+/* onImagePreview */
 </style>

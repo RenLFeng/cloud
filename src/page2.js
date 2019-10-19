@@ -9,7 +9,6 @@ import axios from 'axios'
 import './assets/iconfont/iconfont.css'
 import 'amfe-flexible';
 import Viewer from 'v-viewer'
-import 'viewerjs/dist/viewer.css'
 import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'

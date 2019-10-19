@@ -32,6 +32,7 @@ const state = {
     usercookiereaded:false,
     bankeZhiYuanLinkItem:[],
     lang:localStorage.getItem('lang') ||'zh',
+    isPreview:true,
 }
 
 const getters =
@@ -133,6 +134,9 @@ const mutations =
         },
         SET_LANG(state,lang){
             state.lang=lang;
+        },
+        SET_ISPREVIEW(state,v){
+            state.isPreview=v;
         }
     }
 

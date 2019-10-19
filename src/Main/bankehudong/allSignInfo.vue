@@ -27,6 +27,10 @@ export default {
       return commontools.longTime(this.item.starttime);
     }
   },
+  created(){
+    
+    // console.log('longTimelongTime',commontools.longTime('2019-10-19 16:53:07'))
+  },
   methods: {
     signquerymemberFn(item) {
       this.$emit("signquerymemberFn", item);

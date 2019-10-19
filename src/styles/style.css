@@ -143,3 +143,20 @@ textarea{resize:none;overflow:auto}
     height: 100%;
     background-color: white;
   }
+.button-blue{
+    color: #26a2ff;
+}
+.van-image-preview {
+    background: rgba(0, 0, 0, 1);
+    z-index: 99999!important;
+  }
+  .preview-downLoad-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    z-index: 999999999999 !important;
+    color: #fff;
+    font-size: 16px;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+  }

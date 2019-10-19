@@ -113,7 +113,25 @@ export default {
       this.domenuopt(10);
     },
     menudel() {
-      // Toast("暂未实现");
+      MessageBox.confirm("您确定要删除吗？").then(res => {
+        this.$http
+          .post("/api/azuoye/delete", { id: this.curzuoye.id })
+          .then(res => {
+            console.log(res);
+            if (res.data.code == 0) {
+              for (let i = 0; i < this.zuoyelist.length; i++) {
+                if (this.curzuoye.id == this.zuoyelist[i].id) {
+                  this.zuoyelist.splice(i, 1);
+                  return;
+                }
+              }
+              MessageBox.alert("删除成功").then(() => {});
+            } else {
+              MessageBox.alert("失败");
+            }
+          })
+          .catch(() => {});
+      });
     },
     menustart() {
       this.domenuopt(100);

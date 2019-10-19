@@ -10,12 +10,12 @@
     </div>
     <p class="submit-info text-center border-bottom border-top fontsmall">
       <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">{{$t('bankeTask.Not_yet')}}（{{noSubMit.length}}{{$t('common.Person')}}）</span>
-      <span @click="subMit(1)" :class="isTrue?'my-color':''">{{$t('bankeTask.Not_yet')}}（{{isSubMit.length}}{{$t('common.Person')}}）</span>
+      <span @click="subMit(1)" :class="isTrue?'my-color':''">{{$t('bankeTask.Submitted')}}（{{isSubMit.length}}{{$t('common.Person')}}）</span>
     </p>
 
     <ul v-if="isTrue">
       <li v-for="(item,index) in isSubMit" :key="index">
-        <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime+$t('bankeTask.First_time_submission')"></mt-cell>
+        <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime"></mt-cell>
       </li>
     </ul>
     <ul v-if="!isTrue">

@@ -2,7 +2,7 @@
   <div>
     <div class="zacontainer">
       <div class="zaavatar">
-          <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="defaultImage" />
+        <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="defaultImage" />
         <div class="zabtnmore zatopmargin" v-if="showsubmitnum">
           <div @click="onseeAllSubmit(resultitem)" class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
         </div>
@@ -25,7 +25,11 @@
         </span>
       </TextEllipsis>
 
-      <FileAttachList :isupload="isupload" :localfiles="resultitem.localfiles" class="falist"></FileAttachList>
+      <FileAttachList
+        :isupload="isupload"
+        :localfiles="resultitem.localfiles"
+        class="falist"
+      ></FileAttachList>
 
       <div class="zasubmittime">{{submittimedesc}}</div>
     </div>
@@ -56,14 +60,13 @@ export default {
       isupload: false,
       localfiles: [{ imgsrc: require("../../assets/zuoye_icon.png") }],
       text: "",
-      isLimitHeight: true
+      isLimitHeight: true,
     };
   },
-  mounted(){
-  },
+  mounted() {},
   methods: {
-    onseeAllSubmit(item){
-      this.$emit("seeAllSubmit",item)
+    onseeAllSubmit(item) {
+      this.$emit("seeAllSubmit", item);
     },
     onclickcomment() {
       let data = {
@@ -104,7 +107,8 @@ export default {
       return commontools.sprintf(nfmt, this.resultitem.score);
     },
     submittimedesc() {
-      var szt = commontools.timeToHummanRead(this.resultitem.submittime);
+       var szt = commontools.longTime(this.resultitem.submittime);
+      // var szt = commontools.timeToHummanRead(this.resultitem.submittime);
       var szfmt = "%s 提交";
       return commontools.sprintf(szfmt, szt);
     }
@@ -129,6 +133,7 @@ export default {
   components: {
     FileAttachList,
     TextEllipsis
+    // [ImagePreview.name]:ImagePreview
   }
 };
 </script>

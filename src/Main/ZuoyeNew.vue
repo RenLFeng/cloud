@@ -15,8 +15,8 @@
 
       <div class="devide"></div>
 
-      <mt-cell title="小组划分方式" is-link>未实现</mt-cell>
-      <mt-cell title="评分方式" is-link>未实现</mt-cell>
+      <!-- <mt-cell title="小组划分方式" is-link>未实现</mt-cell>
+      <mt-cell title="评分方式" is-link>未实现</mt-cell> -->
 
       <div class="devide"></div>
 
@@ -135,7 +135,7 @@ export default {
       return commontools.timeToHummanRead(this.zuoyeitem.submittime);
     },
     savedisable() {
-      if (this.zuoyeitem.detaildesc && this.zuoyeitem.name) {
+      if (this.zuoyeitem.name) {
         return false;
       }
       return true;
@@ -217,17 +217,7 @@ export default {
       );
     },
     doSave() {
-      var ttip = "已完成创建？";
-      if (this.isEditMode) {
-        ttip = "已完成编辑？";
-      }
-      MessageBox({
-        message: ttip,
-        showCancelButton: true
-      }).then(res => {
-        //  console.log(res);
-        if (res == "confirm") {
-          MessageBox({
+         MessageBox({
             message: "是否现在开始作业？",
             showCancelButton: true,
             confirmButtonText: "立即开始",
@@ -242,8 +232,33 @@ export default {
             .catch(() => {
               this.doSaveUpload();
             });
-        }
-      });
+      // var ttip = "已完成创建？";
+      // if (this.isEditMode) {
+      //   ttip = "已完成编辑？";
+      // }
+      // MessageBox({
+      //   message: ttip,
+      //   showCancelButton: true
+      // }).then(res => {
+      //   //  console.log(res);
+      //   if (res == "confirm") {
+      //     MessageBox({
+      //       message: "是否现在开始作业？",
+      //       showCancelButton: true,
+      //       confirmButtonText: "立即开始",
+      //       cancelButtonText: "暂不开始"
+      //     })
+      //       .then(res2 => {
+      //         if (res2 == "confirm") {
+      //           this.zuoyeitem.state = 100;
+      //         }
+      //         this.doSaveUpload();
+      //       })
+      //       .catch(() => {
+      //         this.doSaveUpload();
+      //       });
+      //   }
+      // });
     },
     doSaveUpload() {
       //! serverData
