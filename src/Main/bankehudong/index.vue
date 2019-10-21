@@ -53,15 +53,22 @@
         </p>
       </div>
     </mt-loadmore>
-
     <mt-popup v-model="popuQuerymember" position="right" class="mint-popup" :modal="false">
       <mt-header :title="$t('bankehHudong.All_class_records')">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <div v-if="signqueryhistoryData.length">
-        <div v-for="(item,index) in signqueryhistoryData" :key="index">
-          <allSignInfo @signquerymemberFn="onSignquerymemberFn" :item="item" :role="isTeacher" />
-        </div>
+        <!-- <mt-loadmore
+          :top-method="loadTopHistory"
+          :bottom-method="loadBottomHistory"
+          ref="loadmore"
+          :auto-fill="autofill"
+          :bottom-all-loaded="loadingState"
+        > -->
+          <div v-for="(item,index) in signqueryhistoryData" :key="index">
+            <allSignInfo @signquerymemberFn="onSignquerymemberFn" :item="item" :role="isTeacher" />
+          </div>
+        <!-- </mt-loadmore> -->
       </div>
       <p v-else class="text-center">{{$t('bankehHudong.No_class_record')}}</p>
     </mt-popup>
@@ -73,7 +80,6 @@
     </mt-popup>
   </div>
 </template>
-
 <script>
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
 import allSignInfo from "./allSignInfo";
@@ -104,7 +110,9 @@ export default {
       signqueryhistoryData: [],
       studentSignInfo: [],
       autofill: true,
-      isOpen: false
+      isOpen: false,
+      loadingState: false,
+      autofill: true
     };
   },
   computed: {
@@ -162,6 +170,8 @@ export default {
     // alert()
   },
   methods: {
+    loadTopHistory() {},
+    loadBottomHistory() {},
     loadTop() {
       this.signquery();
     },
@@ -333,7 +343,7 @@ export default {
     signdo() {
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),
-        message: this.$t('confirm.SignOver'),
+        message: this.$t("confirm.SignOver"),
         confirmButtonText: this.$t("confirm.Ok"),
         cancelButtonText: this.$t("confirm.Cancel"),
         showCancelButton: true

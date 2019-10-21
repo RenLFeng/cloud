@@ -1,37 +1,37 @@
 <template>
-  <mt-loadmore
-    :top-method="loadTop"
-    :bottom-method="loadBottom"
-    ref="loadmore"
-    :auto-fill="autofill"
-    :bottom-all-loaded="loadingState"
-  >
-    <div class="url-wrap fontsmall">
-      <div v-if="showupload" class="uploadpart">
-        <mt-tabbar v-model="selected" class="uploadtabbar">
-          <mt-tab-item id="1" @click.native="onUploadLocal">
-            <div>
-              <i class="iconfont iconfont-big iconicon---copy"></i>
-              <div>{{$t('bankeZiYuan.Upload_files')}}</div>
-              <!--本地上传-->
-            </div>
-          </mt-tab-item>
+  <div class="url-wrap fontsmall">
+    <div v-if="showupload" class="uploadpart">
+      <mt-tabbar v-model="selected" class="uploadtabbar">
+        <mt-tab-item id="1" @click.native="onUploadLocal">
+          <div>
+            <i class="iconfont iconfont-big iconicon---copy"></i>
+            <div>{{$t('bankeZiYuan.Upload_files')}}</div>
+            <!--本地上传-->
+          </div>
+        </mt-tab-item>
 
-          <mt-tab-item id="2" @click.native="onUploadLink">
-            <div>
-              <i class="iconfont iconfont-big icon80"></i>
-              <div>{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
-              <!--网页链接-->
-            </div>
-          </mt-tab-item>
-          <!-- <mt-tab-item id="3" @click.native="onUploadServer">
+        <mt-tab-item id="2" @click.native="onUploadLink">
+          <div>
+            <i class="iconfont iconfont-big icon80"></i>
+            <div>{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
+            <!--网页链接-->
+          </div>
+        </mt-tab-item>
+        <!-- <mt-tab-item id="3" @click.native="onUploadServer">
             <div>
               <i class="iconfont iconfont-big iconzhuanyeziyuanku"></i>
               <div>{{$t('bankeZiYuan.Resources_storehouse')}}</div>
             </div>
-          </mt-tab-item>-->
-        </mt-tabbar>
-      </div>
+        </mt-tab-item>-->
+      </mt-tabbar>
+    </div>
+    <mt-loadmore
+      :top-method="loadTop"
+      :bottom-method="loadBottom"
+      ref="loadmore"
+      :auto-fill="autofill"
+      :bottom-all-loaded="loadingState"
+    >
       <div class="items-container">
         <mt-tab-container class v-model="selected">
           <mt-tab-container-item id="1">
@@ -60,17 +60,17 @@
           </mt-popup>
         </mt-tab-container>
       </div>
-      <input
-        ref="uploadfilebtn"
-        type="file"
-        name="file"
-        class="upload__input"
-        @change="uploadChange"
-        style="display:none"
-        multiple
-      />
-    </div>
-  </mt-loadmore>
+    </mt-loadmore>
+    <input
+      ref="uploadfilebtn"
+      type="file"
+      name="file"
+      class="upload__input"
+      @change="uploadChange"
+      style="display:none"
+      multiple
+    />
+  </div>
 </template>
 
 <script>

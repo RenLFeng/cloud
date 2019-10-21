@@ -44,8 +44,14 @@
       :closeOnPopstate="true"
       @change="onChange"
       @close="onclose"
+      :className="isFile?'isFile':' '"
     >
-      <template v-slot:index></template>
+      <template v-slot:index>
+        <div v-if="tempLocalfiles.length && !tempLocalfiles[index].imgsrc" class="file-info">
+          <p>{{tempLocalfiles[index].filename}}</p>
+          <p>{{tempLocalfiles[index].size}}</p>
+        </div>
+      </template>
     </van-image-preview>
     <div class="preview-downLoad-btn" v-if="tempLocalfiles.length && !tempLocalfiles[index].imgsrc">
       <mt-button type="primary" @click.native="downLoadFile()">下载附件</mt-button>
@@ -70,7 +76,8 @@ export default {
       index: 0,
       isLoad: false,
       tempLocalfiles: [],
-      tempImgs: []
+      tempImgs: [],
+      popupDownLoad: false
     };
   },
   props: {
@@ -97,7 +104,19 @@ export default {
       required: false
     }
   },
-  computed: {},
+  computed: {
+    isFile() {
+      if (
+        !this.$store.state.isPreview &&
+        this.tempLocalfiles.length &&
+        !this.tempLocalfiles[this.index].imgsrc
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
   destroyed() {
     this.inDestroy = true;
     this.cancelAllUpload();
@@ -113,16 +132,10 @@ export default {
   },
   mounted() {},
   methods: {
-    v() {
-      ImagePreview([
-        "https://img.yzcdn.cn/public_files/2017/09/05/4e3ea0898b1c2c416eec8c11c5360833.jpg",
-        "https://img.yzcdn.cn/public_files/2017/09/05/fd08f07665ed67d50e11b32a21ce0682.jpg"
-      ]);
-    },
     onImagePreview(item, index) {
       this.$store.commit("SET_ISPREVIEW", false);
       let file = item;
-      console.log("filefile", file);
+      // console.log("filefile", file);
       for (let v of file) {
         if (v.imgsrc) {
           this.tempImgs.push(v.filepath);
@@ -137,12 +150,19 @@ export default {
     },
     onChange(index) {
       this.index = index;
+      if (this.tempLocalfiles.length && !this.tempLocalfiles[index].imgsrc) {
+        this.tempLocalfiles[index].size = commontools.renderFileSizeDesc(
+          this.tempLocalfiles[index].filesize
+        );
+      }
     },
     onclose() {
       this.$store.commit("SET_ISPREVIEW", true);
       this.tempLocalfiles = [];
       this.tempImgs = [];
-      this.index = 0;
+    },
+    goBacks() {
+      this.popupDownLoad = false;
     },
     downLoadFile() {
       if (!this.isupload) {
