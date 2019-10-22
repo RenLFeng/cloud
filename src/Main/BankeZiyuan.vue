@@ -43,6 +43,9 @@
                 <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
                   <BankeFileSimple
                     :fileitem="bankeZhiYuanLinkItem[selindex]"
+                    :index="selindex"
+                    :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
+                    :fileInfo="fileInfo"
                     @editclick="oneditclick"
                     @normalclick="onviewfile"
                   ></BankeFileSimple>
@@ -113,6 +116,20 @@ export default {
     }
   },
   computed: {
+    fileInfo() {
+      for (let v of this.bankeZhiYuanLinkItem) {
+        let localfiles = [];
+        if (v.info) {
+          let arr = [];
+          arr[0] = v.info;
+          localfiles = arr;
+        } else {
+          localfiles = [];
+        }
+        return localfiles;
+      }
+      
+    },
     showupload() {
       if (this.$store.getters.isteacher) {
         return true;
@@ -243,6 +260,7 @@ export default {
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
             this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
+            console.log(" this.files", this.files);
             if (this.filesempty) {
               this.liststatedesc = "common.No_files";
               this.loadingState = true;

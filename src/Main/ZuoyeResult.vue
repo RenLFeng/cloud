@@ -186,7 +186,7 @@
       position="right"
       class="mint-popup-3"
       :modal="false"
-      :style="overflow?{overflow: 'scroll'}:''"
+      :style="Preview?{overflow: 'scroll'}:''"
     >
       <mt-header :title="$t('bankeTask.All_submitted')">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
@@ -278,7 +278,7 @@ export default {
     };
   },
   computed: {
-    overflow(){
+    Preview(){
       return this.$store.state.isPreview;
     },
     answerdesc() {

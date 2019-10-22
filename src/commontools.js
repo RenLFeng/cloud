@@ -272,19 +272,19 @@ commontools.fileType = function (fitem) {
     },
     commontools.fmtDates = function (obj) {
         var date = new Date(obj);
-        console.log("格式化时间戳", date);
+        // console.log("格式化时间戳", date);
 
         var y = date.getFullYear();
-        console.log("y", y, date.getFullYear());
+        // console.log("y", y, date.getFullYear());
 
         var m = "0" + (date.getMonth() + 1);
-        console.log("m", m, date.getMonth());
+        // console.log("m", m, date.getMonth());
 
         var d = "0" + date.getDate();
-        console.log("d", d, date.getDate());
+        // console.log("d", d, date.getDate());
 
         // 参数二可以省略
-        console.log(m.substring(1));
+        // console.log(m.substring(1));
 
         // substring() 用于提取字符串中 介于 两个指定下标之间的字符。
         return y + "-" + m.substring(m.length - 2, m.length) + "-" +
@@ -298,7 +298,7 @@ commontools.longTime = function (time) {
     // 下面两种转换格式都可以。
     // var tmpTime = Date.parse(new Date(time.replace(/-/gi,"/")));
     var tmpTime = Date.parse(time.replace(/-/gi, "/"));
-    console.log(now, time, tmpTime);
+    // console.log(now, time, tmpTime);
 
     // 返回值
     var result;
@@ -315,7 +315,7 @@ commontools.longTime = function (time) {
     if (diffValue < 0) {
         return;
     }
-    console.log(diffValue);
+    // console.log(diffValue);
 
     // 计算 差距时间除以 指定时间段的毫秒数 
     var yearC = diffValue / year;
@@ -326,7 +326,7 @@ commontools.longTime = function (time) {
     var minC = diffValue / minute;
     switch (true) {
         case yearC >= 1:
-            console.log("switch 年");
+            // console.log("switch 年");
             // 如果大于一年就显示具体日期
             result = commontools.fmtDates(tmpTime);
             break;

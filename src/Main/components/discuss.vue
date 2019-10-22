@@ -22,18 +22,13 @@
               <span class="hui-fu" @click="studentHF(lists,tindex)">回复</span>
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
-            <li v-if="lists.files">
-              <!-- <viewer> -->
-                <img :src="lists.files.filepath" class="pic-sub" @click="Preview(lists.files.filepath)" />
-              <!-- </!--> 
-              <!-- <viewer>
-                <img
-                  v-for="(item,index) in lists.files"
-                  :key="index"
-                  :src="item.filepath"
-                  class="pic-sub"
-                />
-              </!-->
+            <li v-if="lists.files" class="clearfix">
+              <!-- <img
+                :src="lists.files.filepath"
+                class="pic-sub"
+                @click="Preview(lists.files.filepath)"
+              />-->
+              <FileAttachList :isupload="false" class="falist" :localfiles="lists.files"></FileAttachList>
             </li>
             <li
               class="dade color9"
@@ -54,9 +49,14 @@
                 </li>
                 <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
 
-                <li v-if="item.files">
+                <li v-if="item.files" class="clearfix">
                   <!-- <viewer> -->
-                    <img :src="item.files.filepath" class="pic-sub"  @click="Preview(item.files.filepath)"/>
+                  <!-- <img
+                    :src="item.files.filepath"
+                    class="pic-sub"
+                    @click="Preview(item.files.filepath)"
+                  />-->
+                  <FileAttachList :isupload="false" class="falist" :localfiles="item.files"></FileAttachList>
                   <!-- </viewer> -->
                   <!-- <viewer>
                     <img
@@ -130,6 +130,7 @@ import mimgcrop from "../../common/m-image-crop";
 import { constants } from "crypto";
 import { formateTime } from "../../util";
 import FileAttachList from "./FileAttachList";
+import ZuoyeDetailEdit from "../ZuoyeDetailEdit";
 import maintools from "../maintools";
 const _URL = window.URL || window.webkitURL;
 import commontools from "../../commontools";
@@ -150,7 +151,9 @@ export default {
     }
   },
   components: {
-   [ImagePreview.name]:ImagePreview
+    [ImagePreview.name]: ImagePreview,
+    FileAttachList,
+    ZuoyeDetailEdit
   },
   data() {
     return {
@@ -172,7 +175,7 @@ export default {
       noComment: false,
       commentPic: [],
       commentPicSrc: [],
-      longTime:commontools.longTime,
+      longTime: commontools.longTime
     };
   },
   watch: {
@@ -190,10 +193,10 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    Preview(img){
-      let images=[img];
+    Preview(img) {
+      let images = [img];
 
-       ImagePreview(images);
+      ImagePreview(images);
     },
     commentQuery(item) {
       Indicator.open(this.$t("Indicator.Loading"));
@@ -225,7 +228,18 @@ export default {
               }
               for (let lists of serveData) {
                 if (lists.files && typeof lists.files == "string") {
-                  lists.files = JSON.parse(lists.files);
+                  // after
+                  let arr = [];
+                  arr[0] = JSON.parse(lists.files);
+                  lists.files = arr;
+                  for (let v of lists.files) {
+                    if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
+                      v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+                    } else {
+                      v.imgsrc = v.filepath;
+                    }
+                  }
+                  //front    lists.files = JSON.parse(lists.files);
                 }
                 if (lists.lastreplydata == "") {
                   lists.lastreplydata = [];
@@ -233,7 +247,18 @@ export default {
                   lists.lastreplydata = JSON.parse(lists.lastreplydata);
                   for (let item of lists.lastreplydata) {
                     if (item.files) {
-                      item.files = JSON.parse(item.files);
+                      // after
+                      let arr = [];
+                      arr[0] = JSON.parse(item.files);
+                      item.files = arr;
+                      for (let v of item.files) {
+                        if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
+                          v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+                        } else {
+                          v.imgsrc = v.filepath;
+                        }
+                      }
+                      //front   item.files = JSON.parse(item.files);
                     }
                   }
                 }
@@ -271,7 +296,18 @@ export default {
           if (res.data.code == "0") {
             let Data = res.data.data;
             if (Data.files) {
-              Data.files = JSON.parse(Data.files);
+              // arft
+              let arr = [];
+              arr[0] = JSON.parse(Data.files);
+              Data.files = arr;
+              for (let v of Data.files) {
+                if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
+                  v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+                } else {
+                  v.imgsrc = v.filepath;
+                }
+              }
+              // front  Data.files = JSON.parse(Data.files);
             }
             this.teacherInfo.unshift(Data);
             this.ItemInfo.commentnum++;
@@ -311,10 +347,21 @@ export default {
           console.log("提交成功", res);
           let Data = res.data.data;
           if (this.imgFileJson) {
-            Data.files = JSON.parse(this.imgFileJson);
+            // arft
+            let arr = [];
+            arr[0] = JSON.parse(this.imgFileJson);
+            Data.files = arr;
+            for (let v of Data.files) {
+              if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
+                v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+              } else {
+                v.imgsrc = v.filepath;
+              }
+            }
+            // front  Data.files = JSON.parse(this.imgFileJson);
           }
           this.teacherInfo[this.index].lastreplydata.push(Data);
-             Indicator.close();
+          Indicator.close();
           this.init();
         })
         .catch(() => {
@@ -324,9 +371,9 @@ export default {
     },
     // 查看更多
     learnMoreFn(item, index) {
-      Indicator.open(this.$t("Indicator.Loading"));
       item.more = !item.more;
       if (item.more) {
+        Indicator.open(this.$t("Indicator.Loading"));
         this.$http
           .get(
             "/api/comment/queryreply?tcommentid=" +
@@ -338,7 +385,18 @@ export default {
             let Data = res.data.data;
             for (let item of Data) {
               if (item.files) {
-                item.files = JSON.parse(item.files);
+                // arft
+                let arr = [];
+                arr[0] = JSON.parse(item.files);
+                item.files = arr;
+                for (let v of item.files) {
+                  if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
+                    v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+                  } else {
+                    v.imgsrc = v.filepath;
+                  }
+                }
+                // front  item.files = JSON.parse(item.files);
               }
             }
             this.teacherInfo[index].lastreplydata = Data;
@@ -353,6 +411,7 @@ export default {
           this.teacherInfo[index].lastreplydata.length
         );
       }
+      Indicator.close();
     },
     unloadFn() {
       this.$refs.uploadPic.click();
@@ -583,6 +642,9 @@ export default {
       height: 3.675rem;
       margin-right: 10px;
     }
+  }
+  .imgclass{
+    height: 100% !important;
   }
 }
 </style>

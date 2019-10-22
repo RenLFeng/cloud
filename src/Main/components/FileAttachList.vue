@@ -8,7 +8,7 @@
         class="imgblock"
         :class="{'liupload':isupload,'imgblocksmall':!isupload}"
       >
-        <div class="imgcontainer blockborder" @click="onImagePreview(localfiles,findex)">
+        <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
           <img v-else :src="getimgico(fitem)" class="iconclass" />
         </div>
@@ -44,22 +44,31 @@
       :closeOnPopstate="true"
       @change="onChange"
       @close="onclose"
+      :maxZoom="isFile?1:3"
       :className="isFile?'isFile':' '"
+      :showIndex="isFile?true:false"
     >
       <template v-slot:index>
-        <div v-if="tempLocalfiles.length && !tempLocalfiles[index].imgsrc" class="file-info">
+        <div v-if="isFile" class="file-info">
           <p>{{tempLocalfiles[index].filename}}</p>
           <p>{{tempLocalfiles[index].size}}</p>
         </div>
       </template>
     </van-image-preview>
-    <div class="preview-downLoad-btn" v-if="tempLocalfiles.length && !tempLocalfiles[index].imgsrc">
+    <div class="preview-downLoad-btn" v-if="isFile">
       <mt-button type="primary" @click.native="downLoadFile()">下载附件</mt-button>
+    </div>
+    <div :class="isFile?'page-nb isFile':'page-nb'" v-if="tempLocalfiles.length">
+      <span class="iconfont iconjiantou2" @click="Prev"></span>
+      {{index+1}}&nbsp;/&nbsp;{{tempLocalfiles.length}}
+      <span class="iconfont iconjiantou" @click="Next"></span>
+       <span v-if="!isFile" class="iconfont iconlist-xiazai img-down" @click="downLoadFile()"></span>
     </div>
   </div>
 </template>
 <script>
 import Vue from "vue";
+import "@vant/touch-emulator/index";
 import commontools from "../../commontools";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
@@ -135,7 +144,7 @@ export default {
     onImagePreview(item, index) {
       this.$store.commit("SET_ISPREVIEW", false);
       let file = item;
-      // console.log("filefile", file);
+      console.log("filefile", file);
       for (let v of file) {
         if (v.imgsrc) {
           this.tempImgs.push(v.filepath);
@@ -160,6 +169,18 @@ export default {
       this.$store.commit("SET_ISPREVIEW", true);
       this.tempLocalfiles = [];
       this.tempImgs = [];
+    },
+    Prev() {
+      this.index--;
+      if(this.index==-1){
+        this.index= this.tempLocalfiles.length-1;
+      }
+    },
+    Next() {
+      this.index++;
+      if(this.index==this.tempLocalfiles.length){
+        this.index=0;
+      }
     },
     goBacks() {
       this.popupDownLoad = false;
@@ -461,7 +482,6 @@ export default {
   color: #eaeaea;
 }
 .blockborder {
-  border: 1px solid #eaeaea;
   border-radius: 2px;
   width: 100%;
   height: 100%;

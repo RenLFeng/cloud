@@ -24,7 +24,7 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState">
+    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState && Preview">
       <mt-tab-item id="ziyuan">
         <i class="iconfont iconwenjianjiai"></i>
         <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
@@ -87,7 +87,7 @@ export default {
       showzuoye: false,
       addmenudata: [
         {
-          name:'新增 作业',
+          name: "新增 作业",
           method: this.onAddZuoye
         }
       ],
@@ -108,6 +108,9 @@ export default {
     }
   },
   computed: {
+    Preview() {
+      return this.$store.state.isPreview;
+    },
     isEN() {
       return this.$store.state.lang;
     },

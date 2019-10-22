@@ -2,7 +2,10 @@
   <div class="allSignStudent">
     <div v-if="item.length">
       <p v-for="(v,index) in item" :key="index">
-        <mt-cell :title="`${v.studentName}: ${v.state?time:''}`" :value="v.state?$t('bankehHudong.CheckIn'):$t('bankehHudong.No_sign_in')"></mt-cell>
+        <mt-cell
+          :title="`${v.studentName}: ${v.state?time:''}`"
+          :value="v.state?$t('bankehHudong.CheckIn'):$t('bankehHudong.No_sign_in')"
+        ></mt-cell>
       </p>
     </div>
     <p v-if="!item.length" class="text-center">{{$t('bankehHudong.No_student_sign_in_record')}}</p>
@@ -25,7 +28,9 @@ export default {
   },
   computed: {
     time() {
-         return  commontools.longTime(this.item.signtime);
+      for (let v of this.item) {
+        return commontools.longTime(v.signtime);
+      }
     }
   },
   created() {
