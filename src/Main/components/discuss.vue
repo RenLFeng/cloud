@@ -88,7 +88,7 @@
           <span class="qx button-blue" @click="qx">取消</span>
           <span class="qr button-blue" style="float:right" @click="HFSubmit()">确认</span>
         </p>
-        <textarea class="border-bottom-e5" rows="10" placeholder="输入你的观点" v-model="textareaMsg"></textarea>
+        <textarea class="border-bottom-e5" rows="8" placeholder="输入你的观点" v-model="textareaMsg"></textarea>
         <div class="add-pic">
           <div class="attachdesc border-bottom-e5">添加附件</div>
           <div class="listc">
@@ -313,9 +313,10 @@ export default {
             this.ItemInfo.commentnum++;
             this.noComment = false;
             this.init();
+            Indicator.close();
           } else {
+            Indicator.close();
           }
-          Indicator.close();
         })
         .catch(() => {
           Indicator.close();
@@ -333,7 +334,6 @@ export default {
     //回复评论
     HFSubmit() {
       if (!this.textareaMsg && !this.imgFileJson) return;
-      Indicator.open(this.$t("Indicator.Committing"));
       let subData = {};
       let item = this.indexItem;
       subData.tcommentid = item.tcommentid || item.id;
@@ -341,32 +341,38 @@ export default {
       subData.tousername = item.tousername || item.username;
       subData.content = this.textareaMsg;
       subData.files = this.imgFileJson;
+      Indicator.open(this.$t("Indicator.Committing"));
       this.$http
         .post("/api/comment/addreply", subData)
         .then(res => {
           console.log("提交成功", res);
-          let Data = res.data.data;
-          if (this.imgFileJson) {
-            // arft
-            let arr = [];
-            arr[0] = JSON.parse(this.imgFileJson);
-            Data.files = arr;
-            for (let v of Data.files) {
-              if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
-                v.imgsrc = v.filepath + v.metainfo.snapsuffix;
-              } else {
-                v.imgsrc = v.filepath;
+          if (res.data.code == "0") {
+            let Data = res.data.data;
+            if (this.imgFileJson) {
+              // arft
+              let arr = [];
+              arr[0] = JSON.parse(this.imgFileJson);
+              Data.files = arr;
+              for (let v of Data.files) {
+                if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
+                  v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+                } else {
+                  v.imgsrc = v.filepath;
+                }
               }
+              // front  Data.files = JSON.parse(this.imgFileJson);
             }
-            // front  Data.files = JSON.parse(this.imgFileJson);
+            this.teacherInfo[this.index].lastreplydata.push(Data);
+            this.init();
+            Indicator.close();
+          } else {
+            console.log("提交失败");
+            Indicator.close();
           }
-          this.teacherInfo[this.index].lastreplydata.push(Data);
-          Indicator.close();
-          this.init();
         })
         .catch(() => {
           Indicator.close();
-          console.log("提交失败");
+          console.log("异常");
         });
     },
     // 查看更多
@@ -429,6 +435,7 @@ export default {
       let formdata = new FormData();
       formdata.append("file", file);
       let url = this.urlinfo.urlupload;
+      Indicator.open("上传中...");
       this.$http
         .post(url, formdata)
         .then(res => {
@@ -440,11 +447,14 @@ export default {
               this.submit();
             }
             console.log("成功", res.data.data);
+            Indicator.close();
           } else {
+            Indicator.close();
             console.log("失败", res.data.data);
           }
         })
         .catch(() => {
+          Indicator.close();
           console.log("catch", res.data.data);
         });
     },
@@ -643,7 +653,7 @@ export default {
       margin-right: 10px;
     }
   }
-  .imgclass{
+  .imgclass {
     height: 100% !important;
   }
 }

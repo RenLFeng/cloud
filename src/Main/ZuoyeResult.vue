@@ -274,7 +274,8 @@ export default {
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
       submitok: false,
       zashowbtnactive: true,
-      markArr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+      markArr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+      loadingState:false
     };
   },
   computed: {

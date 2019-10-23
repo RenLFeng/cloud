@@ -16,6 +16,7 @@
             placeholder="输入账户名"
             autocomplete="off"
             class="logininput fontnormal"
+            @keyup.enter="dologin"
           />
         </div>
         <div class="loginline">
@@ -26,6 +27,7 @@
             type="password"
             autocomplete="off"
             class="logininput fontnormal"
+            @keyup.enter="dologin"
           />
         </div>
       </div>
@@ -55,7 +57,7 @@
         </div>
       </div>
 
-      <button  class="loginbtn fontnormal" @click="dologin"   @keyup.enter.native="dologin">{{state?'登录':'下一步'}}</button>
+      <button  class="loginbtn fontnormal" @click="dologin">{{state?'登录':'下一步'}}</button>
     </div>
   </div>
 </template>

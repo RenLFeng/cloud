@@ -61,8 +61,11 @@
     <div :class="isFile?'page-nb isFile':'page-nb'" v-if="tempLocalfiles.length">
       <span class="iconfont iconjiantou2" @click="Prev"></span>
       {{index+1}}&nbsp;/&nbsp;{{tempLocalfiles.length}}
-      <span class="iconfont iconjiantou" @click="Next"></span>
-       <span v-if="!isFile" class="iconfont iconlist-xiazai img-down" @click="downLoadFile()"></span>
+      <span
+        class="iconfont iconjiantou"
+        @click="Next"
+      ></span>
+      <span v-if="!isFile" class="iconfont iconlist-xiazai img-down" @click="downLoadFile()"></span>
     </div>
   </div>
 </template>
@@ -172,14 +175,14 @@ export default {
     },
     Prev() {
       this.index--;
-      if(this.index==-1){
-        this.index= this.tempLocalfiles.length-1;
+      if (this.index == -1) {
+        this.index = this.tempLocalfiles.length - 1;
       }
     },
     Next() {
       this.index++;
-      if(this.index==this.tempLocalfiles.length){
-        this.index=0;
+      if (this.index == this.tempLocalfiles.length) {
+        this.index = 0;
       }
     },
     goBacks() {

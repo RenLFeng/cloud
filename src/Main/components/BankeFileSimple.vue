@@ -1,11 +1,16 @@
 <template>
-  <div class="mainpart zy-content" >
-    <FileAttachList v-if="localfiles.length" :isupload="false" class="falist" :localfiles="localfiles" />
+  <div class="mainpart zy-content">
+    <FileAttachList
+      v-if="localfiles.length"
+      :isupload="false"
+      class="falist"
+      :localfiles="localfiles"
+    />
     <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
     <div class="mainright" v-if="hasedit">
       <i class="iconfont icon-shanchu2 eicotrigger" @click="icoclick"></i>
     </div>
-    <div class="maincontent"  @click="onclick">
+    <div class="maincontent" @click="onclick">
       <div class="mainctitle ellipse">{{fileitem.name}}</div>
       <div class="maincsubtitle text-ellipsis">{{filesizedesc}}</div>
       <div class="maincsubtitle text-ellipsis">{{filetimedesc}}</div>
@@ -22,9 +27,7 @@ export default {
   components: {
     FileAttachList
   },
-  created() {
- 
-  },
+  created() {},
   computed: {
     localfiles() {
       let arr = [];
@@ -34,6 +37,8 @@ export default {
         for (let v of this.fileitem.localfile) {
           if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
             v.imgsrc = v.filepath + v.metainfo.snapsuffix;
+          } else if (v.filename.includes("png")) {
+            v.imgsrc = v.filepath;
           } else {
             v.imgsrc = "";
           }
@@ -153,6 +158,7 @@ export default {
   height: 83px;
   border-bottom: 1px solid #eaeaea;
   padding: 10px;
+  position: relative;
 }
 
 .mainimg {
@@ -194,9 +200,9 @@ export default {
 
   margin-right: 5px;
 }
-.mainpart .flist-container{
-  width: auto;
-  float: left;
+.mainpart .flist-container {
+  height: 100px;
+  position: absolute;
+  left: 0;
 }
-
 </style>
