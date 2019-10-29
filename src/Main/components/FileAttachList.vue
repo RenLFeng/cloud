@@ -37,36 +37,6 @@
       @change="uploadChange"
       style="display:none"
     />
-    <van-image-preview
-      v-model="show"
-      :images="tempImgs"
-      :startPosition="index"
-      :closeOnPopstate="true"
-      @change="onChange"
-      @close="onclose"
-      :maxZoom="isFile?1:3"
-      :className="isFile?'isFile':' '"
-      :showIndex="isFile?true:false"
-    >
-      <template v-slot:index>
-        <div v-if="isFile" class="file-info">
-          <p>{{tempLocalfiles[index].filename}}</p>
-          <p>{{tempLocalfiles[index].size}}</p>
-        </div>
-      </template>
-    </van-image-preview>
-    <div class="preview-downLoad-btn" v-if="isFile">
-      <mt-button type="primary" @click.native="downLoadFile()">下载附件</mt-button>
-    </div>
-    <div :class="isFile?'page-nb isFile':'page-nb'" v-if="tempLocalfiles.length">
-      <span class="iconfont iconjiantou2" @click="Prev"></span>
-      {{index+1}}&nbsp;/&nbsp;{{tempLocalfiles.length}}
-      <span
-        class="iconfont iconjiantou"
-        @click="Next"
-      ></span>
-      <span v-if="!isFile" class="iconfont iconlist-xiazai img-down" @click="downLoadFile()"></span>
-    </div>
   </div>
 </template>
 <script>
@@ -145,71 +115,30 @@ export default {
   mounted() {},
   methods: {
     onImagePreview(item, index) {
-      this.$store.commit("SET_ISPREVIEW", false);
+      this.tempLocalfiles = [];
+      this.tempImgs = [];
       let file = item;
-      console.log("filefile", file);
+      // console.log("filefile", file);
       for (let v of file) {
         if (v.imgsrc) {
           this.tempImgs.push(v.filepath);
         } else {
+          v.imgsrc = "";
           this.tempImgs.push(this.getimgico(v));
         }
       }
-      // console.log("tempImgs", this.tempImgs);
-      this.tempLocalfiles = file;
-      this.index = index;
-      this.show = true;
-    },
-    onChange(index) {
-      this.index = index;
-      if (this.tempLocalfiles.length && !this.tempLocalfiles[index].imgsrc) {
-        this.tempLocalfiles[index].size = commontools.renderFileSizeDesc(
-          this.tempLocalfiles[index].filesize
-        );
-      }
-    },
-    onclose() {
-      this.$store.commit("SET_ISPREVIEW", true);
-      this.tempLocalfiles = [];
-      this.tempImgs = [];
-    },
-    Prev() {
-      this.index--;
-      if (this.index == -1) {
-        this.index = this.tempLocalfiles.length - 1;
-      }
-    },
-    Next() {
-      this.index++;
-      if (this.index == this.tempLocalfiles.length) {
-        this.index = 0;
-      }
+      this.$store.commit("SET_ISPREVIEW", false);
+      this.$store.commit("SET_PREVIEWLOADFILE", item);
+      this.$store.commit("SET_IMAGES", this.tempImgs);
+          this.$store.commit("SET_INDEX",index);
+      this.$store.commit("SET_SHOW", true);
+      // console.log("tt", this.tempImgs);
+      // this.tempLocalfiles = item;
+      // this.index = index;
+      // this.show = true;
     },
     goBacks() {
       this.popupDownLoad = false;
-    },
-    downLoadFile() {
-      if (!this.isupload) {
-        let fitem = this.tempLocalfiles[this.index];
-        if (nativecode.ncall("jsFileLink", fitem)) {
-          return;
-        }
-        fitem.name = fitem.filename;
-        fitem.downurl = nativecode.getDownUrl(fitem.filepath);
-        fitem.ftype = "file";
-        nativecode.ncall("jsFileLink", fitem);
-
-        let down = document.createElement("a");
-        down.href = fitem.downurl;
-        down.download = fitem.name;
-        document.body.appendChild(down);
-        down.click();
-        down.remove();
-        return;
-        // if (window.exsoftTest) {
-        //   window.exsoftTest(fitem.filepath, fitem.filename1);
-        // }
-      }
     },
     onItemClick(fitem) {
       if (!this.isupload) {

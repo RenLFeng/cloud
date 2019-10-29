@@ -200,6 +200,7 @@ export default {
       }
       if (fileitem.ftype == "file") {
         MessageBox.confirm("您可以下载当前文件!").then(res => {
+             alert(0)
           let down = document.createElement("a");
           down.href = fileitem.downurl;
           down.download = fileitem.name;

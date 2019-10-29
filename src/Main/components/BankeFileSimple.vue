@@ -1,5 +1,5 @@
 <template>
-  <div class="mainpart zy-content">
+  <div class="mainpart zy-content"  @click.stop="onclick">
     <FileAttachList
       v-if="localfiles.length"
       :isupload="false"
@@ -10,7 +10,7 @@
     <div class="mainright" v-if="hasedit">
       <i class="iconfont icon-shanchu2 eicotrigger" @click="icoclick"></i>
     </div>
-    <div class="maincontent" @click="onclick">
+    <div class="maincontent">
       <div class="mainctitle ellipse">{{fileitem.name}}</div>
       <div class="maincsubtitle text-ellipsis">{{filesizedesc}}</div>
       <div class="maincsubtitle text-ellipsis">{{filetimedesc}}</div>
@@ -192,8 +192,10 @@ export default {
 }
 
 .mainright {
-  float: right;
-  padding-top: 20px;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translate(0,-50%);
 }
 .eicotrigger {
   font-size: 22px;

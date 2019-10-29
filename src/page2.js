@@ -12,6 +12,11 @@ import Viewer from 'v-viewer'
 import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'
+const weiXinEnv = wx.miniProgram.getEnv(function (res) {
+    return res.miniprogram
+});
+Vue.prototype.$isWeiXinEnv=weiXinEnv;
+// import F2 from "@antv/f2/lib/index-all";
 Vue.prototype.$http = axios
 Vue.config.productionTip = false;
 Vue.use(Viewer, {
@@ -21,7 +26,7 @@ Vue.use(Viewer, {
 })
 Vue.use(VueI18n);
 const i18n = new VueI18n({
-    locale: localStorage.getItem('lang') ||'zh',
+    locale: localStorage.getItem('lang') || 'zh',
     messages: {
         'zh': zh, // 中文语言包
         'en': en // 英文语言包

@@ -20,7 +20,7 @@ import bankehome from '../Main/BankeHome'
 import zuoyedetailedit from '../Main/ZuoyeDetailEdit'
 import zuoyenew from '../Main/ZuoyeNew'
 import zuoyeresult from '../Main/ZuoyeResult'
-// import ZuoyeComment from '../Main/banKeZuoye/comment.vue'
+import preview from '../Main/preview'
 
 Vue.use(Router)
 export function createRouter() {
@@ -43,7 +43,7 @@ export function createRouter() {
         {path:'/zuoyedetailedit', component:zuoyedetailedit},
         {path:'/zuoyenew/:bankeid', component:zuoyenew, props:true},
         {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true},
-        // {path:'/ZuoyeDiss', component:ZuoyeComment},
+        {path:'/preview', component:preview},
     ]
   });
   routers.beforeEach((to, from, next) => {

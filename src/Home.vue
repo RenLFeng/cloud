@@ -6,18 +6,64 @@
     <transition :name="transitionName">
       <router-view class="Router"></router-view>
     </transition>
+    <preview
+      :pshow="show"
+      :Pimages="images"
+      :PtempLocalfiles="tempLocalfiles"
+      :pindex="index"
+      @toggleClick="onToggleClick"
+    ></preview>
   </div>
 </template>
 
 <script>
 // import rem from './rem/rem.js'
 
-import nativecode from './nativecode'
-
+import nativecode from "./nativecode";
+import preview from "./common/preview";
 import "./styles/common.less";
 export default {
   name: "Home",
+  components: {
+    preview
+  },
   computed: {
+    show: {
+      get: function() {
+        return this.$store.state.show;
+      },
+      set: function(newValue) {
+        console.log(newValue);
+        this.$store.commit("SET_SHOW", newValue);
+      }
+    },
+    images: {
+      get: function() {
+        return this.$store.state.images;
+      },
+      set: function(newValue) {
+        console.log(newValue);
+        this.$store.commit("SET_IMAGES", newValue);
+      }
+    },
+    tempLocalfiles: {
+      get: function() {
+        return this.$store.state.previewLoadFile;
+      },
+      set: function(newValue) {
+        console.log(newValue);
+        this.$store.commit("SET_PREVIEWLOADFILE", newValue);
+      }
+    },
+    index: {
+      get: function() {
+        return this.$store.state.index;
+      },
+      set: function(newValue) {
+        console.log(newValue);
+        this.$store.commit("SET_INDEX", newValue);
+      }
+    },
     username() {
       // 我们很快就会看到 `params` 是什么
       return this.$route.params.username;
@@ -30,27 +76,27 @@ export default {
     };
   },
   created: function() {
-   // console.log("routerview page created, cur path:"+this.$router.path);
+    // console.log("routerview page created, cur path:"+this.$router.path);
     //! 请求登录信息
     var url = "/api/api/uservalidate";
     this.$http
       .post(url)
       .then(res => {
-          console.log("user validate ret, cur path:"+this.$route.path);
+        console.log("user validate ret, cur path:" + this.$route.path);
         //  console.log(document.cookie);
         if (res.data.code == 0) {
           this.$store.commit("setLoginUser", res.data.data);
           // cjy: 大屏端，如果已登录， 应当自动跳转主页
-            if (this.$route.path == '/login'){
-                this.$store.commit("setRouterForward", true);
-                this.$router.push("/");
-            }
-            let loginobj = {
-                login:1,
-                cookie:document.cookie,
-                user:res.data.data,
-            };
-            nativecode.ncall('jsLogin', loginobj);
+          if (this.$route.path == "/login") {
+            this.$store.commit("setRouterForward", true);
+            this.$router.push("/");
+          }
+          let loginobj = {
+            login: 1,
+            cookie: document.cookie,
+            user: res.data.data
+          };
+          nativecode.ncall("jsLogin", loginobj);
         } else {
           //!  未登录， 强制跳转登录
           this.$store.commit("setLoginUser", {});
@@ -58,11 +104,11 @@ export default {
           this.$router.push("/login");
 
           let loginobj = {
-              login:0,
-              cookie:{},
-              user:{},
+            login: 0,
+            cookie: {},
+            user: {}
           };
-          nativecode.ncall('jsLogin', loginobj);
+          nativecode.ncall("jsLogin", loginobj);
         }
       })
       .catch(() => {
@@ -100,6 +146,15 @@ export default {
     }
   },
   methods: {
+    onToggleClick(data) {
+      if (!data) {
+        this.show = data;
+        this.images = [];
+        this.tempLocalfiles = [];
+        this.index = 0;
+        this.$store.commit("SET_ISPREVIEW", true);
+      }
+    },
     goBack() {
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
     }
