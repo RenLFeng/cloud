@@ -56,7 +56,21 @@ nativecode.getDownUrl=function(suburl)
     }
     return url + suburl;
 }
-
+nativecode.getDownUrl2=function(suburl)
+{
+    let url = "http://192.168.0.2:81";
+  //  url = "http://192.168.40.116";
+    if (process.env.NODE_ENV !== "development")
+    {
+        url = document.location.origin;
+    }
+    if(!suburl.includes('downloads') && suburl.includes('svg')){
+        return `${url}/${suburl}`
+    }else{
+        return  `${url}${suburl}`
+    }
+    
+}
 
 
 export default nativecode;

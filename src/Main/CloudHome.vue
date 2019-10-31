@@ -20,7 +20,6 @@
         <mt-tab-container-item id="exam">
           <examhome></examhome>
         </mt-tab-container-item>
-
         <mt-tab-container-item id="mine">
           <MineAbout></MineAbout>
         </mt-tab-container-item>
@@ -88,6 +87,15 @@ export default {
       }
     }
   },
+  created: function() {
+    var osel = this.$store.state.homeselected;
+    if (osel) {
+      this.selected = osel;
+    }
+    if (this.selected == "banke") {
+      this.initbanke();
+    }
+  },
   methods: {
     onbackmain() {
       nativecode.ncall("jsBackMain", {});
@@ -129,15 +137,6 @@ export default {
             this.bankestatedesc = "发生异常";
           });
       }
-    }
-  },
-  created: function() {
-    var osel = this.$store.state.homeselected;
-    if (osel) {
-      this.selected = osel;
-    }
-    if (this.selected == "banke") {
-      this.initbanke();
     }
   },
   destroyed: function() {

@@ -112,7 +112,9 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+  
+  },
   methods: {
     onImagePreview(item, index) {
       this.tempLocalfiles = [];
@@ -127,15 +129,47 @@ export default {
           this.tempImgs.push(this.getimgico(v));
         }
       }
-      this.$store.commit("SET_ISPREVIEW", false);
-      this.$store.commit("SET_PREVIEWLOADFILE", item);
-      this.$store.commit("SET_IMAGES", this.tempImgs);
-          this.$store.commit("SET_INDEX",index);
-      this.$store.commit("SET_SHOW", true);
-      // console.log("tt", this.tempImgs);
-      // this.tempLocalfiles = item;
-      // this.index = index;
-      // this.show = true;
+      if (window.__wxjs_environment === "miniprogram") {
+        console.log(this.tempImgs);
+        let imgs = this.tempImgs;
+        for (let i = 0; i < imgs.length; i++) {
+          imgs[i] = nativecode.getDownUrl2(imgs[i]);
+        }
+        let i = index;
+        console.log("xx", imgs);
+        let that = this;
+
+        // wx.getLocation({
+        //   type: "wgs84",
+        //   success(res) {
+        //      alert(JSON.stringify(res));
+        //     const latitude = res.latitude;
+        //     const longitude = res.longitude;
+        //     const speed = res.speed;
+        //     const accuracy = res.accuracy;
+        //   },
+        //   fail(res) {
+        //     alert(JSON.stringify(res));
+        //     console.log("error", res);
+        //   }
+        // });
+        wx.previewImage({
+          current: imgs[i], // 当前显示图片的http链接
+          urls: imgs, // 需要预览的图片http链接列表
+          success(res) {
+            console.log("success", res);
+          },
+          fail(res) {
+            console.log("error", res);
+          }
+        });
+      } else {
+        this.$store.commit("SET_ISPREVIEW", false);
+        this.$store.commit("SET_PREVIEWLOADFILE", item);
+        this.$store.commit("SET_IMAGES", this.tempImgs);
+        this.$store.commit("SET_INDEX", index);
+        this.$store.commit("SET_SHOW", true);
+      }
     },
     goBacks() {
       this.popupDownLoad = false;
