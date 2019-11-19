@@ -1,0 +1,58 @@
+.lists-container-icon {
+  li {
+    a {
+      .mint-cell-wrapper {
+        padding: 10px;
+
+        .mint-cell-title {
+          position: relative;
+
+          img {
+            width: 68px;
+            height: 68px;
+          }
+
+          .mint-cell-text {
+            vertical-align: middle;
+            position: absolute;
+            top: 26px;
+            left: 80px;
+            font-size: 16px;
+          }
+          .mint-cell-label {
+            position: absolute;
+            left: 80px;
+            bottom: 6px;
+          }
+        }
+      }
+    }
+
+    .mint-cell:last-child {
+      background-image: none;
+    }
+    &.islabel{
+      .mint-cell-text {
+        top: 15px!important;
+      }
+      .mint-cell-label {
+        bottom: 17px!important;
+      }
+    }
+  }
+
+  li:first-child {
+    .mint-cell-wrapper {
+      background-image: none;
+    }
+  }
+
+  li:last-child {
+    .mint-cell:last-child {
+      background-image: linear-gradient(180deg,
+          #d9d9d9,
+          #d9d9d9 50%,
+          transparent 50%);
+    }
+  }
+}
