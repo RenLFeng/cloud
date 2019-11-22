@@ -3,16 +3,16 @@
     <mt-header :title="$t('common.HomeTite')">
       <mt-button icon="back" slot="left" @click="onbackmain">{{$t('common.Back')}}</mt-button>
 
-      <mt-button slot="right" class="btnadd" v-if="showadd" @click="onadd">+</mt-button>
+      <!-- <mt-button slot="right" class="btnadd" v-if="showadd" @click="onadd">+</mt-button> -->
     </mt-header>
-
     <div class="noheadercontainer page-wrap cloud">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
+           <mt-search v-model="value" :result.sync="result"></mt-search>
           <div class="bankecontainer">
             <div v-for="(item,selindex) in curbankes" v-bind:key="selindex">
               <BankeSimple :classitem="curbankes[selindex]" @click.native="bankeclick(item)"></BankeSimple>
-              <div class="bankedevide"></div>
+              <!-- <div class="bankedevide"></div> -->
             </div>
             <div v-if="bankeempty" class="tc">{{bankestatedesc}}</div>
           </div>
@@ -21,7 +21,7 @@
           <examhome></examhome>
         </mt-tab-container-item>
         <mt-tab-container-item id="mine">
-          <MineAbout></MineAbout>
+          <MineAbout @changeSelected="onChangeSelected"></MineAbout>
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
@@ -53,12 +53,15 @@ export default {
   name: "CloudHome",
   data() {
     return {
-      selected: "banke",
+      selected:"banke",
       classitem: {
         name: "11",
         avatar: ""
       },
-      bankestatedesc: ""
+      bankestatedesc: "",
+
+      value:'',
+      result:[]
     };
   },
   computed: {
@@ -97,6 +100,9 @@ export default {
     }
   },
   methods: {
+    onChangeSelected(v){
+      this.selected =v
+    },
     onbackmain() {
       nativecode.ncall("jsBackMain", {});
     },
@@ -160,7 +166,6 @@ export default {
 }
 
 .bankecontainer {
-  margin: 10px;
   height: 100%;
 }
 

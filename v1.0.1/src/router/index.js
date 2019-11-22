@@ -20,6 +20,7 @@ import bankehome from '../views/BankeHome'
 import zuoyedetailedit from '../views/ZuoyeDetailEdit'
 import zuoyenew from '../views/ZuoyeNew'
 import zuoyeresult from '../views/ZuoyeResult'
+import line from '../common/antv/f2/line.vue'
 
 Vue.use(Router)
 export function createRouter() {
@@ -43,6 +44,7 @@ export function createRouter() {
         {path:'/zuoyedetailedit', component:zuoyedetailedit},
         {path:'/zuoyenew/:bankeid', component:zuoyenew, props:true},
         {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true},
+        {path:'/line', component:line},
     ]
   });
   routers.beforeEach((to, from, next) => {

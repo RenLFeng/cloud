@@ -274,6 +274,10 @@ export default {
             ztext: this.zdetail.ztext,
             files: maintools.filelistFromLocalfiles(this.zdetail.localfiles)
           },
+          zanswer: {
+            ztext: this.zanswer.ztext,
+            files: maintools.filelistFromLocalfiles(this.zanswer.localfiles)
+          },
           zuoye: zitem
         })
         .then(res => {
@@ -336,7 +340,9 @@ export default {
         .post("/api/api/bankezuoyedetail", { zuoyeid: this.zuoyeitem.id })
         .then(res => {
           Indicator.close();
+           alert(0)
           if (res.data.code == 0) {
+           
             this.zuoyeitem = res.data.data["zuoye"];
             var jz = res.data.data["zdetail"];
             this.assignZDetail(this.zdetail, jz);

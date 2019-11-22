@@ -12,7 +12,7 @@
     </div>
 
     <div class="devide"></div>
-
+    <mt-cell title="创建班课" is-link @click.native="onadd"></mt-cell>
     <mt-cell :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
 
     <div class="devide"></div>
@@ -47,6 +47,18 @@ export default {
     }
   },
   methods: {
+       onadd() {
+      var isteacher = this.$store.getters.isteacher;
+      if (isteacher) {
+        //! 跳转新增课堂
+        this.$store.commit("setRouterForward", true);
+        this.$router.push("/bankenew");
+      } else {
+        //! 跳转搜索课堂
+        Toast("加入课堂， 暂未实现");
+      }
+      this.$emit('changeSelected','banke');
+    },
     selectLang(item) {
       this.$i18n.locale = item.langType;
       localStorage.setItem("lang", item.langType);
@@ -55,7 +67,7 @@ export default {
     onlogout: function() {
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),
-        message:this.$t("confirm.Exit_current_account"),
+        message: this.$t("confirm.Exit_current_account"),
         confirmButtonText: this.$t("confirm.Ok"),
         cancelButtonText: this.$t("confirm.Cancel"),
         showCancelButton: true

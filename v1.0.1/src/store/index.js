@@ -11,6 +11,8 @@ import cookie from 'js-cookie'
 
 
 
+
+
 Vue.use(Vuex)
 
 
@@ -35,11 +37,16 @@ const state = {
     isWX:(() => {
         return window.__wxjs_environment === 'miniprogram';
     })(),
-    isPreview: true,
-    images: [],
-    show: false,
-    previewLoadFile:[],
-    index:0,
+
+    isPreview: true,//是否开启了预览
+    previewLoadFile:[],//预览文件
+    images: [],//预览图片
+    show: false,//是否显示预览组件
+    index:0,//预览图片当前的索引
+
+
+    footerBarState:true,
+
 }
 
 const getters = {
@@ -161,7 +168,10 @@ const mutations = {
     },
     SET_INDEX(state, v) {
         state.index = v
-    }
+    },
+    SET_FOOTER_BAR_STATE(state, v) {
+        state.footerBarState = v
+    },
 }
 
 

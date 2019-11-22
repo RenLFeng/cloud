@@ -126,12 +126,18 @@ textarea {
 }
 
 /* .container{padding-top: 1.45rem} */
-
-
+.colory{
+    color: #FF8900;
+}
+.colord{
+    color: #0089ff;
+}
 .clrok {
     color: #00c626;
 }
-
+.color9{
+    color: #999;
+}
 .clrdanger {
     color: #ff8900;
 }
@@ -213,6 +219,9 @@ textarea {
 .fonttiny {
     font-size: 14px;
 }
+.font-xs {
+    font-size: 12px;
+}
 
 .button-worp {
     text-align: center;
@@ -244,6 +253,30 @@ textarea {
     flex: 1;
 }
 
+.mint-header,
+.mint-searchbar {
+    background-color: #fff !important;
+}
+
+.mint-header .mint-button {
+    color: #0089ff !important;
+}
+.mint-header-title{
+    color: #000!important;
+}
+.mint-search {
+    height: auto !important;
+}
+
+.mint-searchbar-inner {
+    background:rgba(249,249,249,1)!important;
+    height: 43px!important;
+    border-radius:8px!important;
+    border: 1px solid rgba(240, 240, 240, 1)!important;
+}
+
+
+
 .mint-indicator-wrapper {
     z-index: 99999;
 }
@@ -261,6 +294,9 @@ textarea {
     height: 100%;
     background-color: white;
 }
+.mint-popup-50{
+    height: 200px;
+}
 
 .button-blue {
     color: #26a2ff;
@@ -270,11 +306,13 @@ textarea {
     background: rgba(0, 0, 0, 1);
     z-index: 99999 !important;
 }
-.van-image-preview__image.file{
-    background: #fff!important;
-    color: #000!important;
+
+.van-image-preview__image.file {
+    background: #fff !important;
+    color: #000 !important;
 }
-.van-image-preview__image.file .van-image__img{
+
+.van-image-preview__image.file .van-image__img {
     width: 100px !important;
     height: 100px !important;
     min-width: 100px;
@@ -285,13 +323,16 @@ textarea {
     top: 50%;
     transform: translate(-50%, -50%);
 }
-.file-info{
-    color: #000!important;
+
+.file-info {
+    color: #000 !important;
     text-align: center;
 }
-.file-info p{
+
+.file-info p {
     margin: 10px 0;
 }
+
 .preview-downLoad-btn {
     position: fixed;
     bottom: 60px;
@@ -302,7 +343,8 @@ textarea {
     -webkit-transform: translate(-50%, 0);
     transform: translate(-50%, 0);
 }
-.page-nb{
+
+.page-nb {
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -314,31 +356,32 @@ textarea {
     text-align: center;
     font-size: 14px;
 }
-.page-nb .iconfont{
+
+.page-nb .iconfont {
     display: inline-block;
     height: 100%;
     /* width: 50px; */
 }
-.page-nb .iconjiantou{
-   
-}
-.page-nb .iconjiantou2{
-    
-}
-.page-nb .img-down{
+
+.page-nb .iconjiantou {}
+
+.page-nb .iconjiantou2 {}
+
+.page-nb .img-down {
     position: absolute;
     width: 30px;
     height: 30px;
     top: 50%;
     right: 10px;
     line-height: 30px;
-    transform: translate(0,-50%);
+    transform: translate(0, -50%);
     font-size: 20px;
 }
 
-.page-nb.isFile{
+.page-nb.isFile {
     color: #000;
 }
+
 .download-container {
     background: #fff;
     color: #000;
@@ -354,15 +397,20 @@ textarea {
     height: 100%;
     transform: translate(0, -20%);
 }
-.download-container .content p{
+
+.download-container .content p {
     margin: 10px 0;
 }
+
 .download-container .icon {
     width: 100px;
     height: 100px;
 
 }
 
-.zy-content .flist-container .imgclass{
+.zy-content .flist-container .imgclass {
     height: 100% !important;
-  }
+}
+.mychart-f2{
+    width: 100%;
+}

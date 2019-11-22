@@ -1,12 +1,20 @@
 <template>
-  <div class="item">
-    <img class="itemavatar" :src="classitem.avatar" :onerror="defaultimg" />
-    <div class="itemright">
-      <i class="item-arrow-right"></i>
-    </div>
-
-    <div class="itempart">
-      <div class="itemtitle ellipse">{{classitem.name}}</div>
+  <div class="item class-banke-list">
+    <div class="item">
+      <img class="itemavatar" :src="classitem.avatar" :onerror="defaultimg" />
+      <div class="itempart">
+        <div class="wrap">
+          <div class="itemtitle ellipse">
+            {{classitem.name}}
+            <span class="membernum fonttiny">{{classitem.membernum}}人</span>
+          </div>
+          <div class="font-xs ellipse">教师：{{classitem.userid}}</div>
+          <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
+        </div>
+      </div>
+      <span class="go">
+        <i class="iconfont iconjiantou"></i>
+      </span>
     </div>
   </div>
 </template>
@@ -38,58 +46,58 @@ export default {
   }
 };
 </script>
-
+<style lang="less" scoped>
+.class-banke-list {
+  .item {
+    position: relative;
+    background: #fff;
+    height: 72px;
+    border-top: 1px solid #f0f0f0;
+    padding-left: 80px;
+    .itemavatar {
+      position: absolute;
+      width: 55px;
+      height: 80%;
+      left: 10px;
+      top: 50%;
+      transform: translate(0, -50%);
+      border-radius: 3px;
+      background-color: white;
+    }
+    .itempart {
+      width: 100%;
+      .wrap {
+        height: 80%;
+        width: 80%;
+        margin-top: 4px;
+        > div {
+          padding: 1px 0;
+        }
+        .itemtitle {
+          font-size: 16px;
+          .membernum {
+            position: absolute;
+            right: 36px;
+            color: #aaaaaa;
+          }
+        }
+        .Notice {
+          color: #ff8900;
+        }
+      }
+    }
+    .go {
+      position: absolute;
+      right: 7px;
+      top: 50%;
+      transform: translate(0, -50%);
+      color: #aaaaaa;
+      .iconfont {
+        font-size: 30px;
+      }
+    }
+  }
+}
+</style>
 <style scoped>
-.item {
-  background: linear-gradient(to right, #74bfff, #0089ff);
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
-
-  border-radius: 8px;
-  height: 72px;
-}
-
-.itemtitle {
-  font-size: 16px;
-}
-
-.itemavatar {
-  width: 55px;
-  height: 55px;
-  border-radius: 3px;
-
-  margin-top: 8px;
-  margin-left: 12px;
-  float: left;
-
-  background-color: white;
-}
-
-.itempart {
-  margin-left: 77px;
-  margin-right: 40px;
-
-  padding-top: 22px;
-}
-
-.itemright {
-  float: right;
-  margin-top: 24px;
-}
-
-.item-arrow-right::after {
-  border: solid 2px white;
-  border-bottom-width: 0;
-  border-left-width: 0;
-  content: " ";
-  top: auto;
-  right: 20px;
-  position: absolute;
-  width: 10px;
-  height: 10px;
-
-  margin-right: 10px;
-
-  transform: translateY(50%) rotate(45deg);
-}
 </style>

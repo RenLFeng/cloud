@@ -1,5 +1,5 @@
 <template>
-  <div class="mainpart zy-content"  @click.stop="onclick">
+  <div class="mainpart zy-content" @click.stop="onclick">
     <FileAttachList
       v-if="localfiles.length"
       :isupload="false"
@@ -7,13 +7,19 @@
       :localfiles="localfiles"
     />
     <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
-    <div class="mainright" v-if="hasedit">
-      <i class="iconfont icon-shanchu2 eicotrigger" @click="icoclick"></i>
-    </div>
     <div class="maincontent">
-      <div class="mainctitle ellipse">{{fileitem.name}}</div>
-      <div class="maincsubtitle text-ellipsis">{{filesizedesc}}</div>
-      <div class="maincsubtitle text-ellipsis">{{filetimedesc}}</div>
+      <div class="mainctitle">
+        <div class="ellipse">{{fileitem.name}}</div>
+        <i v-if="seeState" class="iconfont iconjiantou1 eicotrigger" @click="icoclick"></i>
+      </div>
+      <div class="maincsubtitle text-ellipsis">
+        {{filesizedesc}}
+        <span class="fr" v-if="seeState">{{fileitem.viewnum}}人查看</span>
+      </div>
+      <div class="maincsubtitle text-ellipsis">
+        {{filetimedesc}}
+        <span class="fr">分值:{{fileitem.score}}分</span>
+      </div>
     </div>
   </div>
 </template>
@@ -148,6 +154,9 @@ export default {
       default() {
         return [];
       }
+    },
+    seeState:{
+      default:1
     }
   }
 };
@@ -159,6 +168,7 @@ export default {
   border-bottom: 1px solid #eaeaea;
   padding: 10px;
   position: relative;
+  background: #fff;
 }
 
 .mainimg {
@@ -172,17 +182,29 @@ export default {
 }
 
 .maincontent {
-  margin-left: 72px;
-  margin-right: 40px;
+  /* position: relative; */
+  margin-left: 70px;
 }
 
 .mainctitle {
+  position: relative;
   font-size: 16px;
   color: #313131;
 
   height: 24px;
   margin-bottom: 6px;
 }
+.mainctitle > div {
+  width: 90%;
+}
+.mainctitle > i {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  color: #0089FF;
+}
+
 .maincsubtitle {
   margin-top: 3px;
   height: 16px;
@@ -195,7 +217,7 @@ export default {
   position: absolute;
   top: 50%;
   right: 10px;
-  transform: translate(0,-50%);
+  transform: translate(0, -50%);
 }
 .eicotrigger {
   font-size: 22px;

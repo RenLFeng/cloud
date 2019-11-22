@@ -7,7 +7,11 @@
     <div class="noheadercontainer page-wrap" :class="selected=='tongzhi'?'tongzhi':''">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="ziyuan">
-          <BankeZiyuan :bankeid="id" v-if="showziyuan" @UploadLinkSelectEd="onUploadLinkSelectEd"></BankeZiyuan>
+          <BankeZiyuan :bankeid="id" v-if="showziyuan" 
+          @UploadLinkSelectEd="onUploadLinkSelectEd"
+          @popupZiyuanEdit="onPopupZiyuanEdit"
+          >
+          </BankeZiyuan>
         </mt-tab-container-item>
         <mt-tab-container-item id="chengyuan">
           <BankeChengyuan :bankeid="id" v-if="showchengyuan"></BankeChengyuan>
@@ -24,7 +28,7 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState && Preview">
+    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState && Preview && !footerBar && footerbar">
       <mt-tab-item id="ziyuan">
         <i class="iconfont iconwenjianjiai"></i>
         <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
@@ -94,7 +98,8 @@ export default {
       addmenuvisible: false,
       tabbarhide: false,
       tongzhiState: false,
-      zYLinkSelectEd: ""
+      zYLinkSelectEd: "",
+      footerBar:false
     };
   },
   props: {
@@ -108,6 +113,9 @@ export default {
     }
   },
   computed: {
+    footerbar(){
+      return this.$store.state.footerBarState;
+    },
     Preview() {
       return this.$store.state.isPreview;
     },
@@ -129,6 +137,9 @@ export default {
     }
   },
   methods: {
+    onPopupZiyuanEdit(v){
+      this.footerBar=v;
+    },
     onclickzuoye() {
       if (this.selected == "zuoye") {
         //Toast('新增作业， 暂未实现');

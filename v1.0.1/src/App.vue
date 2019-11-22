@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-   <transition :name="transitionName">
+    <transition :name="transitionName">
       <router-view class="Router"></router-view>
     </transition>
     <preview
@@ -72,6 +72,11 @@ export default {
     };
   },
   created: function() {
+    let clientWidth = window.innerWidth;
+    if (!clientWidth) return;
+    if (clientWidth >= 640) {
+      document.documentElement.style.fontSize = "2.5rem";
+    }
     // console.log("routerview page created, cur path:"+this.$router.path);
     //! 请求登录信息
     var url = "/api/api/uservalidate";
@@ -171,7 +176,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background-color: white;
+  background-color: #f0f0f0;
   font-size: 14px;
 }
 .noheadercontainer-bg {

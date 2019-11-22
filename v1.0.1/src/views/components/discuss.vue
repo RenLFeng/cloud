@@ -19,7 +19,7 @@
               {{lists.username}}
               &nbsp;&nbsp;
               <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
-              <span class="hui-fu" @click="studentHF(lists,tindex)">回复1</span>
+              <span class="hui-fu" @click="studentHF(lists,tindex)">回复</span>
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
             <li v-if="lists.files" class="clearfix">
@@ -45,9 +45,9 @@
                   {{item.fromusername}}
                   &nbsp;&nbsp;
                   <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
-                  <span v-if="item.content" class="hui-fu" @click="studentHF(item,tindex)">回复2</span>
+                  <span v-if="item.content" class="hui-fu" @click="studentHF(item,tindex)">回复</span>
                 </li>
-                <li class="text" v-if="item.content">回复3 {{item.fromusername}}：{{item.content}}</li>
+                <li class="text" v-if="item.content">回复 {{item.fromusername}}：{{item.content}}</li>
 
                 <li v-if="item.files" class="clearfix">
                   <!-- <viewer> -->
@@ -309,7 +309,6 @@ export default {
               }
               // front  Data.files = JSON.parse(Data.files);
             }
-            alert(0)
             this.teacherInfo.unshift(Data);
             this.ItemInfo.commentnum++;
             this.noComment = false;

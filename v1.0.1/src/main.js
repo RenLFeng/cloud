@@ -15,7 +15,6 @@ import en from '../src/langs/en'
 // import Vconsole from 'vconsole'
 // const vConsole = new Vconsole()
 // Vue.use(vConsole)
-// import F2 from "@antv/f2/lib/index-all";
 Vue.prototype.$http = axios
 Vue.config.productionTip = false;
 Vue.use(Viewer, {
@@ -32,13 +31,13 @@ const i18n = new VueI18n({
     },
     silentTranslationWarn: true
 })
-window.onresize = function () {
+window.addEventListener("resize", function () {
     let clientWidth = window.innerWidth;
     if (!clientWidth) return;
     if (clientWidth >= 640) {
         document.documentElement.style.fontSize = '2.5rem';
     }
-}
+});
 new Vue({
     router: createRouter(),
     store,

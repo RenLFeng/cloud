@@ -33,6 +33,10 @@
       :bottom-all-loaded="loadingState"
     >
       <div class="items-container">
+        <p
+          v-if="bankeZhiYuanLinkItem.length"
+          class="Resources-total fonttiny"
+        >资源总数:{{bankeZhiYuanLinkItem.length}}</p>
         <mt-tab-container class v-model="selected">
           <mt-tab-container-item id="1">
             <!-- v-infinite-scroll="loadMore"
@@ -73,11 +77,65 @@
       style="display:none"
       multiple
     />
+    <mt-popup v-model="popupZiyuanEdit" position="bottom" class="edit-container mint-popup-50">
+      <div>
+        <p>{{editItemFile.name}}</p>
+        <ul class="clearfix tc">
+          <li class="fl" @click="deletezy()">
+            <i class="iconfont iconshanchu"></i>
+            <span>删除</span>
+          </li>
+          <li class="fl" @click="showInfo()">
+            <i class="iconfont iconxinxi"></i>
+            <span>信息</span>
+          </li>
+          <li class="fl">
+            <i class="iconfont iconbianji"></i>
+            <span>编辑</span>
+          </li>
+        </ul>
+      </div>
+    </mt-popup>
+    <mt-popup
+      v-model="popupEditInfo"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+    >
+      <mt-header :title="editItemFile.name">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <BankeFileSimple :fileitem="editItemFile" :seeState="0"></BankeFileSimple>
+      <div class="info-list-main">
+        <div class="tit-table">
+          <p class="clearfix tc">
+            <span :class="!seeState?'act fl':'fl'" @click="see(0)">未查看（3 人）</span>
+            <span :class="seeState?'act fr':'fr'" @click="see(1)">已查看（3 人）</span>
+          </p>
+        </div>
+        <ul class="list-content">
+          <li v-for="(item,index) in viewnumList" :key="index" class="clearfix">
+            <span class="fl">{{item.name}}</span>
+            <span class="fr">
+              {{item.date}}
+              <span class="score fr">得分&nbsp;{{item.score}}</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </mt-popup>
   </div>
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
+import {
+  Indicator,
+  Toast,
+  MessageBox,
+  Cell,
+  Popup,
+  InfiniteScroll
+} from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
@@ -105,14 +163,37 @@ export default {
       popupUploadLink: false,
       popupUploadZhiYuan: false,
       popupUploadFile: true,
+      popupZiyuanEdit: false,
+      popupEditInfo: false,
+      viewnumList: [
+        {
+          name: "赵四",
+          date: "2019-02-10",
+          score: 100
+        },
+        {
+          name: "刘能",
+          date: "2019-02-10",
+          score: 0
+        }
+      ],
       topid: "",
       autofill: false,
-      loadMorePosition: "bottom"
+      loadMorePosition: "bottom",
+      editItemFile: {},
+
+      seeState: 0
     };
   },
   watch: {
     selected() {
       this.$emit("UploadLinkSelectEd", this.selected);
+    },
+    popupZiyuanEdit() {
+      this.$emit("popupZiyuanEdit", this.popupZiyuanEdit);
+    },
+    popupEditInfo() {
+      this.$emit("popupZiyuanEdit", this.popupEditInfo);
     }
   },
   computed: {
@@ -128,7 +209,6 @@ export default {
         }
         return localfiles;
       }
-      
     },
     showupload() {
       if (this.$store.getters.isteacher) {
@@ -177,23 +257,64 @@ export default {
     //    this.topStatus = status;
     // },
     oneditclick(fileitem) {
-      MessageBox.confirm("您确定要删除吗？").then(res => {
-        this.$http
-          .get("/api/Bankefile/delete?id=" + fileitem.id, {})
-          .then(res => {
-            if (res.data.code == 0) {
-              MessageBox.alert("删除成功").then(() => {
-                this.$store.commit("DELECT_BANKEZHIYUANLINKITEM", fileitem.id);
-              });
-            } else {
-              MessageBox.alert(res.data.msg);
-            }
-            console.log(res);
-          })
-          .catch(() => {});
-      });
+      this.popupZiyuanEdit = true;
+      this.editItemFile = fileitem;
+      this.setSeeResources(fileitem);
     },
+    deletezy() {
+      MessageBox.confirm("您确定要删除吗？")
+        .then(res => {
+          this.$http
+            .get("/api/Bankefile/delete?id=" + this.editItemFile.id, {})
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("删除成功").then(() => {
+                  this.$store.commit(
+                    "DELECT_BANKEZHIYUANLINKITEM",
+                    this.editItemFile.id
+                  );
+                  this.popupZiyuanEdit = false;
+                });
+              } else {
+                MessageBox.alert(res.data.msg);
+                this.popupZiyuanEdit = false;
+              }
+
+              console.log(res);
+            })
+            .catch(() => {
+              this.popupZiyuanEdit = false;
+            });
+        })
+        .catch(() => {
+          this.popupZiyuanEdit = false;
+        });
+    },
+    showInfo() {
+      this.popupEditInfo = true;
+      this.popupZiyuanEdit = false;
+    },
+    //学生查看or未查看
+    see(v) {
+      this.seeState = v;
+    },
+    //设置已阅读资源
+    setSeeResources(fileitem) {
+      this.$http
+        .post("api/bankefile/setview", {
+          bankefileid: fileitem.id,
+          classid: fileitem.bankeid
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            fileitem.viewnum++;
+          }
+        })
+        .catch(res => {});
+    },
+    //下载资源
     onviewfile(fileitem) {
+      this.setSeeResources(fileitem);
       fileitem.downurl = nativecode.getDownUrl(fileitem.url);
       if (nativecode.ncall("jsFileLink", fileitem)) {
         return;
@@ -253,7 +374,7 @@ export default {
             if (res.data.data.length < 10) {
               this.loadingState = true;
             }
-            console.log('success',res);
+            console.log("success", res);
             for (let item of res.data.data) {
               if (item.info) {
                 item.info = JSON.parse(item.info);
@@ -354,6 +475,10 @@ export default {
       if (this.popupUploadFile) {
         this.popupUploadFile = false;
       }
+      if (this.popupEditInfo) {
+        //  this.popupZiyuanEdit = false;
+        this.popupEditInfo = false;
+      }
       // this.popupUploadFile=true;
     }
     // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
@@ -400,7 +525,65 @@ export default {
 <style lang="less" scoped>
 .url-wrap {
   .items-container {
-    margin-top: 20px;
+    margin-top: 10px;
+    .Resources-total {
+      text-align: right;
+      background: #fff;
+      padding: 8px;
+    }
+  }
+  .edit-container {
+    padding: 15px;
+    p {
+      padding: 0.26667rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 20px;
+      word-break: break-all;
+    }
+    ul {
+      li {
+        width: 33%;
+        i {
+          font-size: 0.8rem;
+          background: #e3e3e3;
+          border-radius: 50%;
+          padding: 8px;
+        }
+        span {
+          display: block;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+  .info-popup {
+    background: #f0f0f0;
+    .info-list-main {
+      background: #fff;
+      margin-top: 15px;
+      .tit-table {
+        p {
+          padding: 15px 0;
+          span {
+            width: 50%;
+            &.act {
+              color: #0089ff;
+            }
+          }
+        }
+      }
+      .list-content {
+        li {
+          padding: 15px;
+          border-top: 1px solid #f0f0f0;
+        }
+        .score {
+          color: #ff8900;
+          width: 75px;
+          margin-left: 20px;
+        }
+      }
+    }
   }
 }
 </style>

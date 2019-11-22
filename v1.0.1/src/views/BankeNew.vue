@@ -64,12 +64,13 @@ export default {
         .post(url, this.classitem)
         .then(res => {
           Indicator.close();
-          Toast(res.data.msg);
           if (res.data.code == 0) {
             this.classitem.id = res.data.data.id;
             this.$store.commit("banke/appendBankes", this.classitem);
-            this.$router.go(-1);
+            this.$router.push("/");
+          } else {
           }
+          Toast(res.data.msg);
         })
         .catch(() => {
           Indicator.close();
@@ -89,12 +90,12 @@ export default {
       let that = this;
       let formdata = new FormData();
       formdata.append("file", file);
-      let url = '/api/api/zuoyefileupload';
+      let url = "/api/api/zuoyefileupload";
       this.$http
         .post(url, formdata)
         .then(res => {
           if (res.data.code == 0) {
-              this.classitem.avatar=res.data.data.filepath
+            this.classitem.avatar = res.data.data.filepath;
             console.log("成功", res.data.data);
           } else {
             console.log("失败", res.data.data);

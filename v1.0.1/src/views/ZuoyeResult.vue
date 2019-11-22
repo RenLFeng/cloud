@@ -26,8 +26,9 @@
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
         </div>
         <div>
+          <!-- 作业详细 -->
           <mt-cell
-            :title="$t('bankeTask.Job_details')"
+            :title="$t('bankeTask.Job_details')" 
             is-link
             @click.native="popupZDetail=true"
           >{{zuoyeitem.detaildesc}}</mt-cell>
@@ -43,6 +44,7 @@
         <div @click="showZYinfo">
           <mt-cell :title="$t('common.Info')" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
         </div>
+          <!-- 作业答案 -->
         <mt-cell
           :title="$t('bankeTask.Answer')"
           is-link
