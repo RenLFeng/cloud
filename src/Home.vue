@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-<<<<<<< HEAD
-   <transition :name="transitionName">
+  <div>
+    <!-- 路由出口 -->
+    <!-- 路由匹配到的组件将渲染在这里 -->
+
+    <transition :name="transitionName">
       <router-view class="Router"></router-view>
     </transition>
     <preview
@@ -11,23 +13,15 @@
       :pindex="index"
       @toggleClick="onToggleClick"
     ></preview>
-=======
-    <img src="./assets/logo.png">
-    <div>
-
-      <el-button v-on:click="textdec">pre</el-button> <el-button v-on:click="textinc">next </el-button>
-    </div>
-    <ExamItem :msg="msg"></ExamItem>
->>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
   </div>
 </template>
 
 <script>
-<<<<<<< HEAD
+// import rem from './rem/rem.js'
+
 import nativecode from "./nativecode";
 import preview from "./common/preview";
 import "./styles/common.less";
-import "./styles/style.css";
 export default {
   name: "Home",
   components: {
@@ -169,8 +163,9 @@ export default {
 </script>
 
 <style >
-@import "./fon/iconfont.css";
 @import "styles/style.css";
+@import "./fon/iconfont.css";
+
 .Router {
   position: absolute;
   top: 0;
@@ -277,103 +272,3 @@ export default {
   padding: 10px 0 20px 0;
 }
 </style>
-=======
-
-
-import ExamItem from './components/ExamItem.vue'
-
-
-var textarray1 = [
-    {text:'11'
-    },
-    {text:'22'
-    ,sel:['a.第一个选择', 'b.第二个选择', 'c.第三个选择']
-    },
-    {text:'{{__}}原上草,一岁一{{__}},{{__}}烧不尽,春风{{__}}',
-     type:'fill'
-    },
-    {text:'44'}
-    ];
-var gindex = 0;
-
-function count(o){
-    var t = typeof o;
-    if(t == 'string'){
-        return o.length;
-    }else if(t == 'object'){
-        var n = 0;
-        for(var i in o){
-            n++;
-        }
-        return n;
-    }
-    return false;
-};
-
-export default {
-  name: 'app',
-    props:{
-        showmsg:false,
-        msg:{},
-        textindex:0
-    },
-created(){
-
-},
-    methods:{
-      textinc:function(){
-
-        var len = 0;
-        len = textarray1.length;
-       // console.log(len);
-        gindex++;
-        if ( gindex >= len){
-            gindex = len-1;
-        }
-        if (gindex < 0){
-            gindex = 0;
-        }
-
-        this.msg = textarray1[gindex];
-      //  console.log(this.msg);
-
-       //   console.log(textarray1);
-          console.log('textinc');
-
-
-          // this.$http({
-          //     method:'post',
-          //     url:'/index/index/usertest',
-          // }).then(function(res){
-          //     console.log(res);
-          // }).catch(function(err){
-          //
-          // })
-      },
-        textdec:function(){
-          gindex--;
-          if (gindex <0){
-              gindex = 0;
-          }
-          this.msg = textarray1[gindex];
-
-          console.log(textarray1);
-        }
-    },
-  components: {
-      ExamItem
-  }
-}
-</script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
->>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f

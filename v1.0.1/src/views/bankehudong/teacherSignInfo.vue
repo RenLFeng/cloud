@@ -16,7 +16,11 @@
     <!-- 学生 -->
     <div v-else>
       <div class="sign-main">
-        <div class="no-class">
+        <div class="no-class btn-item">
+          <i class="iconfont iconjihuaweikaiqi"></i>
+          <span>教师未开启签到</span>
+        </div>
+        <div class="class-ing btn-item">
           <i class="iconfont iconjihuaweikaiqi"></i>
           <span>教师未开启签到</span>
         </div>
@@ -232,7 +236,7 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-        text-align: center;
+    text-align: center;
     .no-class {
       position: relative;
       i {

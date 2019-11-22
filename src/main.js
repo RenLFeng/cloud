@@ -1,4 +1,5 @@
 import Vue from 'vue'
+<<<<<<< HEAD
 import store from './store'
 import Home from './App.vue'
 import {
@@ -45,3 +46,17 @@ new Vue({
     i18n,
     render: h => h(Home)
 }).$mount('#app')
+=======
+import App from './App.vue'
+import './plugins/element.js'
+
+
+import axios from 'axios'
+Vue.prototype.$http= axios
+
+Vue.config.productionTip = false
+
+new Vue({
+  render: h => h(App),
+}).$mount('#app')
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f

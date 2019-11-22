@@ -1,17 +1,25 @@
 {
+<<<<<<< HEAD
   "name": "cloud",
+=======
+  "name": "vueapp",
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+<<<<<<< HEAD
     "test:unit": "vue-cli-service test:unit",
+=======
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@vant/touch-emulator": "^1.1.0",
     "amfe-flexible": "^2.2.1",
     "axios": "^0.18.0",
+<<<<<<< HEAD
     "core-js": "^3.3.2",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
@@ -20,12 +28,16 @@
     "vant": "^2.2.8",
     "v-viewer": "^1.4.2",
     "vue-i18n": "^8.14.1",
+=======
+    "core-js": "^2.6.5",
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
     "element-ui": "^2.4.5",
     "js-cookie": "^2.2.0",
     "mint-ui": "^2.2.13",
     "sprintf-js": "^1.1.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+<<<<<<< HEAD
     "vue-crop-image-mobile": "^1.0.4",
     "vue-route-transition": "^1.1.1"
   },
@@ -46,11 +58,49 @@
     "less-loader": "^5.0.0",
     "prettier": "^1.18.2",
     "vue-template-compiler": "^2.6.10",
+=======
+    "v-viewer": "^1.4.2",
+    "vant": "^2.2.8",
+    "vue": "^2.6.10",
+    "vue-crop-image-mobile": "^1.0.4",
+    "vue-i18n": "^8.14.1",
+    "vue-route-transition": "^1.1.1",
+    "vue-router": "^3.0.6",
+    "vuex": "^3.1.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.7.0",
+    "@vue/cli-plugin-eslint": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
     "node-sass": "^4.9.2",
     "postcss-pxtorem": "^4.0.1",
     "sass-loader": "^7.0.3",
     "vue-cli-plugin-element": "^1.0.1",
+<<<<<<< HEAD
     "vconsole": "^3.3.4"
+=======
+    "vue-template-compiler": "^2.5.21"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
   },
   "postcss": {
     "plugins": {
@@ -59,7 +109,11 @@
   },
   "browserslist": [
     "> 1%",
+<<<<<<< HEAD
     "last 2 versions",
     "not ie <= 8"
+=======
+    "last 2 versions"
+>>>>>>> 81928888a0fb73867c99559d99c5d1bf75b96d2f
   ]
 }
