@@ -1,5 +1,4 @@
-
-export const formateTime = (v,type) => {
+export const formateTime = (v, type) => {
   let date = new Date();
   if (v) {
     date = new Date(v);
@@ -10,10 +9,12 @@ export const formateTime = (v,type) => {
   var d = date.getDate();
   d = d < 10 ? ('0' + d) : d;
   var day = date.getDay();
-  if(type=='2'){
+  if (type == '2') {
     return m + '月' + d + '日';
-  }else{
-    return y+'年'+m + '月' + d + '日';
+  } else if (type == '/') {
+    return y + '/' + m + '/' + d;
+  } else {
+    return y + '年' + m + '月' + d + '日';
   }
 }
 export const Whatweek = (time) => {
@@ -39,4 +40,25 @@ export const timeWeekHummanread = v => {
     return wobj[v];
   }
   return '';
+}
+export const getDate = (date, n) => {
+  var base = new Date(date).getTime()
+  var oneDay = 24 * 3600 * 1000;
+  var date = [];
+  var data = [Math.random() * 300];
+  var time = new Date(base);
+  date.push([time.getFullYear(), time.getMonth() + 1, time.getDate()].join('/'));
+  for (var i = 1; i < n; i++) {
+    var now = new Date(base -= oneDay);
+    date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+    data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+  }
+  var newdate = date.reverse()
+  // console.log(newdate)
+  return newdate;
+}
+export const getNextDate = (n) => {
+  var date = new Date();
+  date.setDate(date.getDate() - n);
+  return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate()
 }

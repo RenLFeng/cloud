@@ -3,28 +3,27 @@
     <div class="tit">
       <p>签到开始时间:&nbsp;{{startTime}}&nbsp;{{Data.time}}</p>
       <p class="clearfix">
-        <span class="colord fl" @click="setALL()">一键设置签到</span>
+        <span class="colord fl" @click="setALL()" v-if="isTeacher">一键设置签到</span>
         <span class="colord fr" @click="More()">查看全部</span>
       </p>
     </div>
     <p class="tr" style="padding:5px">{{list.length}}人</p>
-    <div v-for="i in 20" :key="i">
-      <StudentSignInfoList
-        :memberuser="v"
-        scoreText="签到"
-        v-for="(v,index) in list"
-        :key="index"
-        :sign="1"
-      ></StudentSignInfoList>
-    </div>
-
-    <div class="footer">
+    <StudentSignInfoList
+      :memberuser="v"
+      scoreText="签到"
+      v-for="(v,index) in list"
+      :key="index"
+      :sign="1"
+      @click.native="setSignState(v)"
+    />
+    <div class="footer" v-if="isTeacher">
       <p class="fontlarge tc top" style="border-bottom:1px solid #f0f0f0">
-        <a class="colord">2&nbsp;</a>/&nbsp;40
+        <a class="colord">{{studentSignNb}}&nbsp;</a>
+        /&nbsp;{{list.length-studentSignNb}}
       </p>
       <p class="clearfix tc fontsmall">
         <span class="fl" style="border-right:1px solid #f0f0f0">放弃</span>
-        <span class="fr">结束</span>
+        <span class="fr" @click="teacherSignClass()">结束</span>
       </p>
     </div>
     <van-action-sheet
@@ -60,10 +59,18 @@ const More = [
 export default {
   name: "",
   props: {
+     signData: {
+      default() {
+        return {};
+      }
+    },
     Data: {
       default() {
         return {};
       }
+    },
+    bankeid: {
+      default: 0
     }
   },
   watch: {
@@ -80,16 +87,54 @@ export default {
       list: [],
       showActionSheet: false,
       actions: [],
-      styleobj: {}
+      styleobj: {},
+      studentSignNb: 0
     };
   },
   computed: {
+    isTeacher() {
+      return this.$store.getters.isteacher;
+    },
     startTime() {
       return formateTime(this.Data.date, "2");
     }
   },
   mounted() {},
   methods: {
+    //更改单个学生签到状态
+    setSignState(v){
+      if(!this.isTeacher) return;
+      this.$http.post('/api/sign/changestate',{
+        userid:v.userid,
+        signid:v.signid,
+        state:1
+      }).then(res=>{
+        console.log('ds',res);
+        if(res.data.code=='0'){
+          v.state=1;
+        }
+      }).catch(err => {
+
+      })
+        console.log(v);
+
+    },
+      //批量修改签到状态
+    setAllSignState(v){
+      this.$http.post('/api/sign/batchstate',{
+        signid:v.signid,
+        state:1
+      }).then(res=>{
+        console.log('ds',res);
+        if(res.data.code=='0'){
+          v.state=1;
+        }
+      }).catch(err => {
+
+      })
+        console.log(v);
+
+    },
     //学生打卡记录
     onSignquerymemberFn(item) {
       //   Indicator.open(this.$t("Indicator.Loading"));
@@ -108,6 +153,9 @@ export default {
                     item.avatar = v.avatar;
                   }
                 }
+                if (item.state) {
+                  this.studentSignNb++;
+                }
               }
               this.list = Data.signmembers;
               console.log("学生打卡记录", this.list);
@@ -119,6 +167,40 @@ export default {
         .catch(() => {
           //   Indicator.close();
         });
+    },
+    //教师下课
+    teacherSignClass() {
+      let url = "";
+      let obj = {};
+      let stateText = "";
+      url = "/api/sign/signupdate";
+      obj = {
+        id: this.signData.id,
+        state: 1
+      };
+      stateText = this.$t("confirm.ClassOver");
+      MessageBox.confirm("", {
+        title: this.$t("confirm.Tips"),
+        message: `${stateText}`,
+        confirmButtonText: this.$t("confirm.Ok"),
+        cancelButtonText: this.$t("confirm.Cancel"),
+        showCancelButton: true
+      }).then(res => {
+        Indicator.open(this.$t("Indicator.Loading"));
+        this.$http
+          .post(url, obj)
+          .then(res => {
+            if (res.data.code == 0) {
+              console.log("教师下课,", res);
+              this.$emit('calssStatefn',res.data.data.state)
+            } else {
+            }
+            Indicator.close();
+          })
+          .catch(() => {
+            Indicator.close();
+          });
+      });
     },
     setALL() {
       this.actions = setALL;

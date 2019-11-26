@@ -5,8 +5,8 @@
         {{item.date}}&nbsp;{{week}} &nbsp;签到
         <span class="fr font-xs color9">2 人 / 10 人</span>
       </div>
-      <!-- <div class="maincsubtitle colord">正在签到...</div> -->
-      <div class="maincsubtitle color9">11:20</div>
+      <div v-if="classSignId==item.id" class="maincsubtitle colord">正在签到...</div>
+      <div v-else class="maincsubtitle color9">{{item.starttime}}</div>
     </div>
     <i class="iconfont iconjiantou eicotrigger colord"></i>
   </div>
@@ -38,6 +38,9 @@ export default {
       default() {
         return {};
       }
+    },
+    classSignId:{
+      default:0
     }
   },
   computed: {

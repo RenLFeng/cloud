@@ -28,7 +28,7 @@
           style="padding-left:10px;"
         >{{membernumdesc}}人</span>
       </div>
-      <div class="membernumdesc Average colord">平均得分&nbsp;{{Average}}</div>
+      <div class="membernumdesc Average colord" @click="AverageScoreEchart">平均得分&nbsp;{{Average}}</div>
     </div>
 
     <div class="listcontainer">
@@ -37,14 +37,23 @@
         infinite-scroll-disabled="loadingState"
         infinite-scroll-distance="10"
       >
-        <div v-for="(mitem,selindex) in members" v-bind:key="selindex" @click="seeMemberDetail(mitem)">
-          <BankeMemberSimple :indexShow="1" :icon="1" :memberuser="members[selindex]" :index="selindex"></BankeMemberSimple>
+        <div
+          v-for="(mitem,selindex) in members"
+          v-bind:key="selindex"
+          @click="seeMemberDetail(mitem)"
+        >
+          <BankeMemberSimple
+            :indexShow="1"
+            :icon="1"
+            :memberuser="members[selindex]"
+            :index="selindex"
+          ></BankeMemberSimple>
         </div>
       </div>
       <div v-if="membersempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
     </div>
     <mt-popup
-     v-model="popupMemberDetail"
+      v-model="popupMemberDetail"
       position="right"
       class="popup-right info-popup"
       :modal="false"
@@ -54,7 +63,7 @@
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
       <div class="content-main">
-        <MemberDetail :memberuser="DetailItem"/>
+        <MemberDetail :memberuser="DetailItem" :chartData="chartData" />
       </div>
     </mt-popup>
   </div>
@@ -64,7 +73,7 @@
 import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import BankeMemberSimple from "./components/BankeMemberSimple";
-import MemberDetail from  './bankeMember/detail';
+import MemberDetail from "./bankeMember/detail";
 import commontools from "../commontools";
 
 export default {
@@ -83,8 +92,9 @@ export default {
       loadingState: false,
       isloading: false,
       Average: 0,
-      popupMemberDetail:false,
-      DetailItem:{},
+      popupMemberDetail: false,
+      DetailItem: {},
+      chartData: {}
     };
   },
   computed: {
@@ -115,21 +125,22 @@ export default {
   created() {},
   components: {
     BankeMemberSimple,
-    MemberDetail,
+    MemberDetail
   },
   methods: {
-    seeMemberDetail(item){
-      // this.$router.push('/line')
-      this.DetailItem=item;
-      this.popupMemberDetail=true;
-      this.$store.commit('SET_FOOTER_BAR_STATE',false);
+    seeMemberDetail(item) {
+      this.DetailItem = item;
+      this.popupMemberDetail = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+      this.chartData = {
+        account: item.account
+      };
     },
-    onMemberSign() {
-      // Toast('签到：暂未实现');
+    AverageScoreEchart() {
+      this.$router.push({name:'AverageScore', params:{classid:this.bankeid}});
     },
-    onMemberGroup() {
-      // Toast('分组，暂未实现');
-    },
+    onMemberSign() {},
+    onMemberGroup() {},
     loadMoreMember() {
       this.loadingState = true;
       this.isloading = true;
@@ -149,7 +160,7 @@ export default {
                 v.score4 +
                 v.score5;
             }
-            this.Average=this.Average/this.members.length;
+            this.Average = this.Average / this.members.length;
           }
           this.liststatedesc = "";
         })
@@ -158,11 +169,11 @@ export default {
           this.loadingState = false;
         });
     },
-    goBack(){
-      if(this.popupMemberDetail){
-        this.popupMemberDetail=false;
+    goBack() {
+      if (this.popupMemberDetail) {
+        this.popupMemberDetail = false;
       }
-       this.$store.commit('SET_FOOTER_BAR_STATE',true);
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
     }
   }
 };

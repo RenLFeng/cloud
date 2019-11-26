@@ -414,3 +414,9 @@ textarea {
 .mychart-f2{
     width: 100%;
 }
+.content-warp{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}

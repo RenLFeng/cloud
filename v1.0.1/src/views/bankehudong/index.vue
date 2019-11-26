@@ -14,11 +14,17 @@
         <i class="iconfont icondapingmu eicotrigger fr" style="color:#0055FF"></i>
       </li>
     </ul>
-    <mt-popup v-model="popupTeacherSignInfo" position="right" class="mint-popup" :modal="false" style="background:#f0f0f0">
+    <mt-popup
+      v-model="popupTeacherSignInfo"
+      position="right"
+      class="mint-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
       <mt-header title="上课签到">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <TeacherSignInfo :bankeid="bankeid" :role="isTeacher" />
+      <TeacherSignInfo :bankeid="bankeid" :role="isTeacher" :global="global" @global="onglobal" />
     </mt-popup>
   </div>
 </template>
@@ -41,7 +47,8 @@ export default {
   },
   data() {
     return {
-      popupTeacherSignInfo:false,
+      global: false,
+      popupTeacherSignInfo: false
     };
   },
   computed: {
@@ -54,16 +61,24 @@ export default {
   },
   methods: {
     //老师签到
-    teacherFn(){
-      this.popupTeacherSignInfo=true;
-      this.$store.commit('SET_FOOTER_BAR_STATE',false);
+    teacherFn() {
+      this.popupTeacherSignInfo = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
-    goBacks(){
-      if( this.popupTeacherSignInfo){
-         this.popupTeacherSignInfo=false;
+    onglobal(v) {
+        this.global = v;
+    },
+    goBacks() {
+      if (this.popupTeacherSignInfo) {
+        this.popupTeacherSignInfo = false;
       }
-      this.$store.commit('SET_FOOTER_BAR_STATE',true);
-    },
+      if (this.isTeacher) {
+        this.global = true;
+      } else {
+        this.global = false;
+      }
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
+    }
   }
 };
 </script>

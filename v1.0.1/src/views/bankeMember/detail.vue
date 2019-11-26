@@ -21,7 +21,7 @@
     </ul>
     <p class="tc Explain">学生在本班课中的总得分是按得分占比折算后的得分。</p>
     <div class="table-main">
-      <F2LineChart  :item="memberuser"/>
+      <F2LineChart :item="memberuser" />
       <!-- <div class="chart-wrapper">
         <canvas id="mountNode"></canvas>
       </div>-->
@@ -39,12 +39,20 @@ export default {
       default() {
         return {};
       }
+    },
+    chartData: {
+      default() {
+        return {};
+      }
     }
   },
   watch: {
-    memberuser: (newValue, oldValue) => {
-      console.log("newValue", newValue);
-    }
+    memberuser:  function(newValue, oldValue) {
+      console.log("newValuenewValue", newValue);
+    },
+    chartData:  function(newValue, oldValue) {
+      console.log("chartDatachartDatachartData", newValue);
+    },
   },
   components: {
     BankeMemberSimple,
@@ -52,7 +60,9 @@ export default {
   },
   data() {
     return {
-      Data: []
+      Data: [],
+      itemData: {},
+      index:2
     };
   },
   created() {},
