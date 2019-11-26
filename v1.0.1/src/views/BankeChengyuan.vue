@@ -137,7 +137,11 @@ export default {
       };
     },
     AverageScoreEchart() {
-      this.$router.push({name:'AverageScore', params:{classid:this.bankeid}});
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "AverageScore",
+        params: { classid: this.bankeid }
+      });
     },
     onMemberSign() {},
     onMemberGroup() {},

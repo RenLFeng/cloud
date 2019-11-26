@@ -13,10 +13,17 @@
 
     <div class="devide"></div>
     <mt-cell title="创建班课" is-link @click.native="onadd"></mt-cell>
+    <div class="devide"></div>
     <mt-cell :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
-
+    <div class="devide"></div>
+    <mt-cell title="学情统计" is-link @click.native="onset"></mt-cell>
+    <div class="devide"></div>
+    <mt-cell title="发布公告" is-link @click.native="onset"></mt-cell>
+    <div class="devide"></div>
+    <mt-cell title="得分占比设置)" is-link @click.native="onset"></mt-cell>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>
+    <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
     <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -47,7 +54,7 @@ export default {
     }
   },
   methods: {
-       onadd() {
+    onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
         //! 跳转新增课堂
@@ -57,7 +64,7 @@ export default {
         //! 跳转搜索课堂
         Toast("加入课堂， 暂未实现");
       }
-      this.$emit('changeSelected','banke');
+      this.$emit("changeSelected", "banke");
     },
     selectLang(item) {
       this.$i18n.locale = item.langType;
@@ -137,5 +144,8 @@ export default {
   height: 80px;
   padding: 10px;
   margin-top: 10px;
+}
+.mint-cell .mint-cell-wrapper {
+    background-image: none !important;
 }
 </style>
