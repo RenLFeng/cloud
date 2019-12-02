@@ -62,3 +62,26 @@ export const getNextDate = (n) => {
   date.setDate(date.getDate() - n);
   return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate()
 }
+
+export const pingceType = (v) => {
+  switch (v) {
+    case 1:
+      return "判断题";
+      break;
+    case 2:
+      return "多项选择题";
+      break;
+    case 3:
+      return "单项选择题";
+      break;
+    case 4:
+      return "主观题";
+      break;
+    case 5:
+      return "写作题";
+      break;
+    case 6:
+      return "抢答题";
+      break;
+  }
+}

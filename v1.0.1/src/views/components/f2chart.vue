@@ -1,22 +1,31 @@
 <template>
   <div class="f2-main-content">
-       <mt-header title="得分统计" style="margin-bottom: 10px;">
-        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
-      </mt-header>
+    <mt-header title="得分统计" style="margin-bottom: 10px;">
+      <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+    </mt-header>
     <div class="chart-item">
       <h3 class="tit">资源得分情况</h3>
       <Table @tableSelected="onTableSelected" type="score1" />
-      <canvas id="chart1" width height="200px" class="mychart-f2"></canvas>
+      <div class="canvas-wrap">
+        <canvas id="chart1" width height="200px" class="mychart-f2"></canvas>
+        <span v-if="!serverData.length" class="content-warp">暂无数据...</span>
+      </div>
     </div>
     <div class="chart-item">
       <h3 class="tit">签到得分情况</h3>
       <Table @tableSelected="onTableSelected" type="score2" />
-      <canvas id="chart2" width height="200px" class="mychart-f2"></canvas>
+      <div class="canvas-wrap">
+        <canvas id="chart2" width height="200px" class="mychart-f2"></canvas>
+        <span v-if="!serverData.length" class="content-warp">暂无数据...</span>
+      </div>
     </div>
     <div class="chart-item">
       <h3 class="tit">作业得分情况</h3>
       <Table @tableSelected="onTableSelected" type="score3" />
-      <canvas id="chart3" width height="200px" class="mychart-f2"></canvas>
+      <div class="canvas-wrap">
+        <canvas id="chart3" width height="200px" class="mychart-f2"></canvas>
+        <span v-if="!serverData.length" class="content-warp">暂无数据...</span>
+      </div>
     </div>
   </div>
 </template>
@@ -51,6 +60,7 @@ export default {
   },
   data() {
     return {
+      classid: 0,
       index: 0,
       score1InitState: true,
       score2InitState: true,
@@ -66,24 +76,12 @@ export default {
   created() {
     this.elId = uuidv1(); //获取随机id
   },
-  mounted: {
-    isroute() {
-      let params = this.$route.params;
-      if (params.classid) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    classid() {
-      let params = this.$route.params;
-      if (params.classid) {
-        return params.classid;
-      }
-    }
-  },
+  mounted: {},
   mounted() {
-    // console.log("this.$routethis.$route", this.$route);
+    if (this.$route.params) {
+      let params = this.$route.params;
+      this.classid = params.classid;
+    }
     this.getScoreinfo(getNextDate(7), 7);
   },
   methods: {
@@ -92,148 +90,150 @@ export default {
       this.$http
         .post("api/bankecount/scoreinfo", {
           userids: [1, 2, 3],
-          classid: 1000,
+          classid: this.classid,
           startdate: start,
           enddate: "2019/11/25",
           pagesize: 1000
         })
         .then(res => {
-          res.data.data.scores.push({
-            classid: 1000,
-            countdate: "2019/11/21",
-            id: 1006,
-            score1: 90,
-            score2: 80,
-            score3: 70,
-            score4: 0,
-            score5: 0,
-            userid: 3
-          });
-          res.data.data.scores.push({
-            classid: 1000,
-            countdate: "2019/11/21",
-            id: 1006,
-            score1: 60,
-            score2: 50,
-            score3: 40,
-            score4: 0,
-            score5: 0,
-            userid: 2
-          });
-          res.data.data.scores.push({
-            classid: 1000,
-            countdate: "2019/11/21",
-            id: 1006,
-            score1: 55,
-            score2: 45,
-            score3: 35,
-            score4: 0,
-            score5: 0,
-            userid: 1
-          });
-          this.serverData = res.data.data.scores;
-          let weeksignDate = getDate(this.serverData[0].countdate, n);
-          let tempData = [];
-          for (let i = 0; i < weeksignDate.length; i++) {
-            for (let v of chartType) {
-              this.score1Data.push({
-                count: weeksignDate[i],
-                value: 0,
-                type: v
-              });
-              this.score2Data.push({
-                count: weeksignDate[i],
-                value: 0,
-                type: v
-              });
-              this.score3Data.push({
-                count: weeksignDate[i],
-                value: 0,
-                type: v
-              });
+          if (res.data.code == "0") {
+            // res.data.data.scores.push({
+            //   classid: 1000,
+            //   countdate: "2019/11/21",
+            //   id: 1006,
+            //   score1: 90,
+            //   score2: 80,
+            //   score3: 70,
+            //   score4: 0,
+            //   score5: 0,
+            //   userid: 3
+            // });
+            // res.data.data.scores.push({
+            //   classid: 1000,
+            //   countdate: "2019/11/21",
+            //   id: 1006,
+            //   score1: 60,
+            //   score2: 50,
+            //   score3: 40,
+            //   score4: 0,
+            //   score5: 0,
+            //   userid: 2
+            // });
+            // res.data.data.scores.push({
+            //   classid: 1000,
+            //   countdate: "2019/11/21",
+            //   id: 1006,
+            //   score1: 55,
+            //   score2: 45,
+            //   score3: 35,
+            //   score4: 0,
+            //   score5: 0,
+            //   userid: 1
+            // });
+            this.serverData = res.data.data.scores;
+            let weeksignDate = getDate(this.serverData[0].countdate, n);
+            let tempData = [];
+            for (let i = 0; i < weeksignDate.length; i++) {
+              for (let v of chartType) {
+                this.score1Data.push({
+                  count: weeksignDate[i],
+                  value: 0,
+                  type: v
+                });
+                this.score2Data.push({
+                  count: weeksignDate[i],
+                  value: 0,
+                  type: v
+                });
+                this.score3Data.push({
+                  count: weeksignDate[i],
+                  value: 0,
+                  type: v
+                });
+              }
             }
-          }
-          //score1
-          if (this.score1InitState) {
-          for (let item of this.score1Data) {
-            for (let v of this.serverData) {
-              if (item.count == v.countdate) {
-                switch (item.type) {
-                  case "最高分":
-                    if (v.userid == "3") {
-                      item.value = v.score1;
+            //score1
+            if (this.score1InitState) {
+              for (let item of this.score1Data) {
+                for (let v of this.serverData) {
+                  if (item.count == v.countdate) {
+                    switch (item.type) {
+                      case "最高分":
+                        if (v.userid == "3") {
+                          item.value = v.score1;
+                        }
+                        break;
+                      case "最低分":
+                        if (v.userid == "2") {
+                          item.value = v.score1;
+                        }
+                        break;
+                      case "平均分":
+                        if (v.userid == "1") {
+                          item.value = v.score1;
+                        }
+                        break;
                     }
-                    break;
-                  case "最低分":
-                    if (v.userid == "2") {
-                      item.value = v.score1;
-                    }
-                    break;
-                  case "平均分":
-                    if (v.userid == "1") {
-                      item.value = v.score1;
-                    }
-                    break;
+                  }
                 }
               }
             }
-          }
-          }
-          //score2
-          if (this.score2InitState) {
-          for (let item of this.score2Data) {
-            for (let v of this.serverData) {
-              if (item.count == v.countdate) {
-                switch (item.type) {
-                  case "最高分":
-                    if (v.userid == "3") {
-                      item.value = v.score2;
+            //score2
+            if (this.score2InitState) {
+              for (let item of this.score2Data) {
+                for (let v of this.serverData) {
+                  if (item.count == v.countdate) {
+                    switch (item.type) {
+                      case "最高分":
+                        if (v.userid == "3") {
+                          item.value = v.score2;
+                        }
+                        break;
+                      case "最低分":
+                        if (v.userid == "2") {
+                          item.value = v.score2;
+                        }
+                        break;
+                      case "平均分":
+                        if (v.userid == "1") {
+                          item.value = v.score2;
+                        }
+                        break;
                     }
-                    break;
-                  case "最低分":
-                    if (v.userid == "2") {
-                      item.value = v.score2;
-                    }
-                    break;
-                  case "平均分":
-                    if (v.userid == "1") {
-                      item.value = v.score2;
-                    }
-                    break;
+                  }
                 }
               }
             }
-          }
-          }
-          //score3
-          if (this.score3InitState) {
-          for (let item of this.score3Data) {
-            for (let v of this.serverData) {
-              if (item.count == v.countdate) {
-                switch (item.type) {
-                  case "最高分":
-                    if (v.userid == "3") {
-                      item.value = v.score3;
+            //score3
+            if (this.score3InitState) {
+              for (let item of this.score3Data) {
+                for (let v of this.serverData) {
+                  if (item.count == v.countdate) {
+                    switch (item.type) {
+                      case "最高分":
+                        if (v.userid == "3") {
+                          item.value = v.score3;
+                        }
+                        break;
+                      case "最低分":
+                        if (v.userid == "2") {
+                          item.value = v.score3;
+                        }
+                        break;
+                      case "平均分":
+                        if (v.userid == "1") {
+                          item.value = v.score3;
+                        }
+                        break;
                     }
-                    break;
-                  case "最低分":
-                    if (v.userid == "2") {
-                      item.value = v.score3;
-                    }
-                    break;
-                  case "平均分":
-                    if (v.userid == "1") {
-                      item.value = v.score3;
-                    }
-                    break;
+                  }
                 }
               }
             }
-          }
           }
           this.chartInit();
-          console.log("分", this.serverData);
-          console.log("weeksignDate", weeksignDate);
+          console.log("serverData", this.serverData);
+          // console.log("weeksignDate", weeksignDate);
           // console.log("this.score1Data.data", this.score1Data);
           // console.log("this.score2Data.data", this.score2Data);
           // console.log("this.score3Data.data", this.score3Data);
@@ -443,9 +443,9 @@ export default {
         this.getScoreinfo(getNextDate(180), 180);
       }
     },
-    goBack(){
+    goBack() {
       this.$router.go(-1);
-    },
+    }
   },
   destroyed() {
     chart.destroy();
@@ -459,8 +459,13 @@ export default {
 </script>
 <style lang="less" scoped>
 .f2-main-content {
-  .chart-item{
-  background: #fff;
+  .chart-item {
+    background: #fff;
+    .canvas-wrap {
+      position: relative;
+      span {
+      }
+    }
   }
 
   .tit {

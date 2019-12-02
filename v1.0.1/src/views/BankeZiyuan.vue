@@ -109,16 +109,17 @@
       <div class="info-list-main">
         <div class="tit-table">
           <p class="clearfix tc">
-            <span :class="!seeState?'act fl':'fl'" @click="see(0)">未查看（3 人）</span>
-            <span :class="seeState?'act fr':'fr'" @click="see(1)">已查看（3 人）</span>
+            <span :class="!seeState?'act fl':'fl'" @click="see(0)">未查看（{{editItemFile.noviewnum}} 人）</span>
+            <span :class="seeState?'act fr':'fr'" @click="see(1)">已查看（{{editItemFile.viewnum}}人）</span>
           </p>
         </div>
         <ul class="list-content">
-          <li v-for="(item,index) in viewnumList" :key="index" class="clearfix">
+          <li v-for="(item,index) in UserList" :key="index" class="clearfix">
             <span class="fl">{{item.name}}</span>
             <span class="fr">
-              {{item.date}}
-              <span class="score fr">得分&nbsp;{{item.score}}</span>
+              <span class="time fonttiny">{{item.countdate}}</span>
+              <span v-if="item.score" class="score fr">得分&nbsp;{{item.score}}</span>
+              <span v-else class="score fr">未得分</span>
             </span>
           </li>
         </ul>
@@ -165,18 +166,10 @@ export default {
       popupUploadFile: true,
       popupZiyuanEdit: false,
       popupEditInfo: false,
-      viewnumList: [
-        {
-          name: "赵四",
-          date: "2019-02-10",
-          score: 100
-        },
-        {
-          name: "刘能",
-          date: "2019-02-10",
-          score: 0
-        }
-      ],
+
+      UserList: [],
+      noViewUserList: [],
+
       topid: "",
       autofill: false,
       loadMorePosition: "bottom",
@@ -260,6 +253,51 @@ export default {
       this.popupZiyuanEdit = true;
       this.editItemFile = fileitem;
       this.setSeeResources(fileitem);
+      this.$http
+        .post("api/bankefile/queryviews", {
+          id: fileitem.id,
+          bankeid: fileitem.bankeid
+        })
+        .then(res => {
+          if ((res.data.code = "0")) {
+            console.log("queryviews", res);
+            this.noViewUserList = [];
+            this.UserList = [];
+            this.seeState = 0;
+            this.editItemFile.users = res.data.data.users;
+            this.editItemFile.memberids = res.data.data.memberids;
+            this.editItemFile.views = res.data.data.views;
+            this.editItemFile.noviewnum =
+              this.editItemFile.memberids.length -
+              this.editItemFile.views.length;
+          }
+          if (this.editItemFile.views.length) {
+            for (let v of this.editItemFile.views) {
+              for (let item of this.editItemFile.users) {
+                if (v.userid == item.id) {
+                  v.name = item.name;
+                  item.isView = true;
+                }
+              }
+            }
+            for (let v of this.editItemFile.users) {
+              if (!v.isView) {
+                this.noViewUserList.push(v);
+              }
+            }
+          } else {
+            this.noViewUserList = this.editItemFile.users;
+          }
+          if (this.noViewUserList.length) {
+            this.UserList = this.noViewUserList;
+          } else {
+            this.seeState = 1;
+            this.UserList = this.editItemFile.views;
+          }
+          console.log("editItemFile", this.editItemFile);
+          console.log("noViewUserList", this.noViewUserList);
+        })
+        .catch(err => {});
     },
     deletezy() {
       MessageBox.confirm("您确定要删除吗？")
@@ -297,6 +335,11 @@ export default {
     //学生查看or未查看
     see(v) {
       this.seeState = v;
+      if (v == "0") {
+        this.UserList = this.noViewUserList;
+      } else {
+        this.UserList = this.editItemFile.views;
+      }
     },
     //设置已阅读资源
     setSeeResources(fileitem) {
@@ -378,6 +421,12 @@ export default {
             for (let item of res.data.data) {
               if (item.info) {
                 item.info = JSON.parse(item.info);
+                if (
+                  item.info.metainfo &&
+                  typeof item.info.metainfo == "string"
+                ) {
+                  item.info.metainfo = JSON.parse(item.info.metainfo);
+                }
               }
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
@@ -410,6 +459,7 @@ export default {
     },
     onUploadLink() {
       this.popupUploadLink = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
       // this.$emit('UploadLinkSelectEd',this.selected)
       // Toast("暂未实现");
     },
@@ -468,6 +518,7 @@ export default {
       if (this.popupUploadLink) {
         this.popupUploadLink = false;
         this.selected = "1";
+        this.$store.commit("SET_FOOTER_BAR_STATE", true);
       }
       if (this.popupUploadZhiYuan) {
         this.popupUploadZhiYuan = false;
@@ -576,6 +627,8 @@ export default {
         li {
           padding: 15px;
           border-top: 1px solid #f0f0f0;
+          .time {
+          }
         }
         .score {
           color: #ff8900;

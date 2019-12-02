@@ -5,16 +5,20 @@
         <span>上课签到</span>
         <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
       </li>
-      <li class="fontlarge">
+      <li class="fontlarge" @click="gopingce"  v-if="!isTeacher">
+        <span>评测</span>
+        <i class="iconfont icontongji eicotrigger fr" style="color:#38ADA9"></i>
+      </li>
+      <li class="fontlarge" @click="pingce">
         <span>评测记录</span>
         <i class="iconfont icontongji eicotrigger fr" style="color:#38ADA9"></i>
       </li>
-      <li class="fontlarge">
+      <li class="fontlarge" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
         <i class="iconfont icondapingmu eicotrigger fr" style="color:#0055FF"></i>
       </li>
     </ul>
-    <mt-popup
+    <!-- <mt-popup
       v-model="popupTeacherSignInfo"
       position="right"
       class="mint-popup"
@@ -25,14 +29,12 @@
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <TeacherSignInfo :bankeid="bankeid" :role="isTeacher" :global="global" @global="onglobal" />
-    </mt-popup>
+    </mt-popup> -->
   </div>
 </template>
 <script>
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
-import allSignInfo from "./allSignInfo";
-import allSignStudent from "./allSignrymember";
-import TeacherSignInfo from "./teacherSignInfo";
+import TeacherSignInfo from "./sign/teacherSignInfo";
 export default {
   name: "",
   props: {
@@ -41,8 +43,6 @@ export default {
     }
   },
   components: {
-    allSignInfo,
-    allSignStudent,
     TeacherSignInfo
   },
   data() {
@@ -61,12 +61,43 @@ export default {
   },
   methods: {
     //老师签到
-    teacherFn() {
-      this.popupTeacherSignInfo = true;
-      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+     teacherFn() {
+     this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "Sign",
+        params: { bankeid: this.bankeid }
+      });
+    },
+    // teacherFn() {
+    //   this.popupTeacherSignInfo = true;
+    //   this.$store.commit("SET_FOOTER_BAR_STATE", false);
+    // },
+    //评测
+    gopingce() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "PingCeing",
+        params: { bankeid: this.bankeid }
+      });
+    },
+    //评测记录
+    pingce() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "PingCe",
+        params: { bankeid: this.bankeid }
+      });
+    },
+    //大屏登录
+    BigLogin() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "BigLogin",
+        params: { bankeid: this.bankeid }
+      });
     },
     onglobal(v) {
-        this.global = v;
+      this.global = v;
     },
     goBacks() {
       if (this.popupTeacherSignInfo) {

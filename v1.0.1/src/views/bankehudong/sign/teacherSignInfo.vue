@@ -1,5 +1,8 @@
 <template>
   <div class="teacher-sign-main">
+    <mt-header title="上课签到">
+      <mt-button icon="back" slot="left" @click="Back">{{$t('common.Back')}}</mt-button>
+    </mt-header>
     <div v-if="isTeacher || global">
       <div class="icon-tit tc" @click="teacherSignClass()">
         <i class="iconfont iconqiandao2" :class="signStateIconColor"></i>
@@ -64,17 +67,11 @@
 <script>
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
 import { ActionSheet } from "vant";
-import List from "../../common/list";
+import List from "@/common/list";
 import studentSignInfo from "./studentSignInfo";
 export default {
   name: "",
   props: {
-    global: {
-      default: false
-    },
-    bankeid: {
-      default: 0
-    }
   },
   components: {
     List,
@@ -82,7 +79,8 @@ export default {
   },
   data() {
     return {
-      // global:false,
+      bankeid: 0,
+      global:false,
       classSignId: 0,
       signState: "",
       signStateIconColor: "colory",
@@ -108,7 +106,7 @@ export default {
       }
     },
     signStateText() {
-      if (this.signState == "0") {
+      if (this.signState == "0" ||this.studentSignState == "1") {
         this.signStateIconColor = "colord";
         this.signStateTextColor = "colord";
         return "正在签到...";
@@ -136,6 +134,10 @@ export default {
     }
   },
   mounted() {
+    let params = this.$route.params;
+    if (params.bankeid) {
+      this.bankeid = params.bankeid;
+    }
     this.signquery();
     this.signquerymember();
   },
@@ -145,8 +147,8 @@ export default {
       this.classSignId = 0;
     },
     studentSee() {
-      // this.global=true;
-      this.$emit("global", true);
+      this.global=true;
+      // this.$emit("global", true);
     },
     //查询老师当前签到状态
     signquery() {
@@ -194,7 +196,7 @@ export default {
     },
     //教师上课
     teacherSignClass() {
-      if(this.signState=='0') return;
+      if (this.signState == "0" || !this.isTeacher) return;
       let url = "";
       let obj = {};
       let stateText = "";
@@ -219,10 +221,11 @@ export default {
               // this.signState = res.data.data.sign.state;
               this.signState = 0;
               let signData = res.data.data.sign;
+              this.signData = signData;
               let splitTime = signData.starttime.split(" ");
               signData.date = splitTime[0];
               signData.time = splitTime[1];
-              this.classSignId=signData.id
+              this.classSignId = signData.id;
               this.teacherSignHistory.unshift(signData);
             } else {
             }
@@ -295,6 +298,9 @@ export default {
       if (this.popupStudentSignInfo) {
         this.popupStudentSignInfo = false;
       }
+    },
+    Back() {
+      this.$router.go(-1);
     },
     onShowStudentSignInfo(v) {
       this.classSignItem = v;

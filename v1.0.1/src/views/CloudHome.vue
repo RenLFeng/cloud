@@ -8,7 +8,8 @@
     <div class="noheadercontainer page-wrap cloud">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
-           <mt-search v-model="value" :result.sync="result"></mt-search>
+          <mt-search v-model="value" :result.sync="result"></mt-search>
+          <p class="v"></p>
           <div class="bankecontainer">
             <div v-for="(item,selindex) in curbankes" v-bind:key="selindex">
               <BankeSimple :classitem="curbankes[selindex]" @click.native="bankeclick(item)"></BankeSimple>
@@ -53,15 +54,15 @@ export default {
   name: "CloudHome",
   data() {
     return {
-      selected:"banke",
+      selected: "banke",
       classitem: {
         name: "11",
         avatar: ""
       },
       bankestatedesc: "",
 
-      value:'',
-      result:[]
+      value: "",
+      result: []
     };
   },
   computed: {
@@ -100,8 +101,8 @@ export default {
     }
   },
   methods: {
-    onChangeSelected(v){
-      this.selected =v
+    onChangeSelected(v) {
+      this.selected = v;
     },
     onbackmain() {
       nativecode.ncall("jsBackMain", {});
@@ -158,6 +159,10 @@ export default {
 </script>
 
 <style scoped>
+.v {
+  background: #fff;
+  height: 10px;
+}
 .cloud .iconfont-big {
   font-size: 33px !important;
 }
@@ -187,12 +192,17 @@ export default {
   transform: translateY(-50%) rotate(45deg);
 }
 .cloud-b .mint-tab-item {
-  color: #26a2ff;
-  background-color: #eaeaea;
+  color: #232323; 
+  background-color: #fff;
 }
 .cloud-b .mint-tab-item.is-selected {
-  color: #232323;
+  color: #26a2ff;
 
-  background-color: #fff;
+  background-color: #f0f0f0;
+}
+.mint-searchbar-inner .mintui-search {
+  font-size: 25px;
+  color: #d9d9d9;
+  padding-right: 5px;
 }
 </style>

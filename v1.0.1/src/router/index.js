@@ -21,6 +21,12 @@ import zuoyedetailedit from '../views/ZuoyeDetailEdit'
 import zuoyenew from '../views/ZuoyeNew'
 import zuoyeresult from '../views/ZuoyeResult'
 import F2chart from '../views/components/f2chart'
+import BigLogin from '../views/bankehudong/big/index'
+import Sign from '../views/bankehudong/sign/teacherSignInfo'
+import PingCe from '../views/bankehudong/pingce/index'
+import PingCeing from '../views/bankehudong/pingceing/index'
+
+
 
 Vue.use(Router)
 export function createRouter() {
@@ -45,6 +51,13 @@ export function createRouter() {
         {path:'/zuoyenew/:bankeid', component:zuoyenew, props:true},
         {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true},
         {path:'/AverageScore',name:'AverageScore', component:F2chart},
+        {path:'/BigLogin',name:'BigLogin', component:BigLogin},
+        {path:'/Sign',name:'Sign', component:Sign},
+        {path:'/PingCe',name:'PingCe', component:PingCe},
+        {path:'/PingCeing',name:'PingCeing', component:PingCeing},
+
+
+     
     ]
   });
   routers.beforeEach((to, from, next) => {

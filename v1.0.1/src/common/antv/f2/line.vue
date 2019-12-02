@@ -11,8 +11,10 @@
     >
       <van-tab v-for="(item,index) in rangeTypes" :title="item.text" :key="index"></van-tab>
     </van-tabs>
-    <canvas :id="elId" width height="200px" class="mychart-f2"></canvas>
-    <!-- <canvas id="mychart" class="mychart-f2" height="200px"></canvas> -->
+    <div class="canvas-wrap">
+      <canvas :id="elId" width height="200px" class="mychart-f2"></canvas>
+      <span v-if="!serverData.length" class="content-warp">暂无数据...</span>
+    </div>
   </div>
 </template>
 
@@ -79,15 +81,15 @@ export default {
     isroute() {
       let params = this.$route.params;
       if (params.calssid) {
-        return true
+        return true;
       } else {
-         return false
+        return false;
       }
     },
     classid() {
       let params = this.$route.params;
       if (params.calssid) {
-        return params.calssid
+        return params.calssid;
       }
     }
   },
@@ -103,35 +105,35 @@ export default {
       console.log("scoreinfo", item);
       this.$http
         .post("api/bankecount/scoreinfo", {
-          userids:[item.memberuserid],
-          classid:item.classid,
+          userids: [item.memberuserid],
+          classid: item.classid,
           startdate: start,
           enddate: "2019/11/25",
           pagesize: 1000
         })
         .then(res => {
-          res.data.data.scores.push({
-            classid: 1000,
-            countdate: "2019/11/20",
-            id: 1006,
-            score1: 10,
-            score2: 30,
-            score3: 0,
-            score4: 0,
-            score5: 0,
-            userid: 1003
-          });
-          res.data.data.scores.push({
-            classid: 1000,
-            countdate: "2019/11/19",
-            id: 1006,
-            score1: 20,
-            score2: 40,
-            score3: 0,
-            score4: 0,
-            score5: 0,
-            userid: 1003
-          });
+          // res.data.data.scores.push({
+          //   classid: 1000,
+          //   countdate: "2019/11/20",
+          //   id: 1006,
+          //   score1: 10,
+          //   score2: 30,
+          //   score3: 0,
+          //   score4: 0,
+          //   score5: 0,
+          //   userid: 1003
+          // });
+          // res.data.data.scores.push({
+          //   classid: 1000,
+          //   countdate: "2019/11/19",
+          //   id: 1006,
+          //   score1: 20,
+          //   score2: 40,
+          //   score3: 0,
+          //   score4: 0,
+          //   score5: 0,
+          //   userid: 1003
+          // });
           this.serverData = res.data.data.scores;
           let weeksignDate = getDate(this.serverData[0].countdate, n);
           let tempData = [];
@@ -254,6 +256,12 @@ export default {
 .f2-main {
   .tit {
     padding: 10px;
+  }
+  .canvas-wrap{
+    position: relative;
+    span{
+
+    }
   }
 }
 </style>

@@ -3,7 +3,7 @@
     <div class="tit">
       <p>签到开始时间:&nbsp;{{startTime}}&nbsp;{{Data.time}}</p>
       <p class="clearfix">
-        <span class="colord fl" @click="setALL()" v-if="isTeacher">一键设置签到</span>
+        <span class="colord fl" @click="confign()" v-if="isTeacher">一键设置签到</span>
         <span class="colord fr" @click="More()">查看全部</span>
       </p>
     </div>
@@ -18,8 +18,8 @@
     />
     <div class="footer" v-if="isTeacher">
       <p class="fontlarge tc top" style="border-bottom:1px solid #f0f0f0">
-        <a class="colord">{{studentSignNb}}&nbsp;</a>
-        /&nbsp;{{list.length-studentSignNb}}
+        <a class="colord">{{signNumber.sign}}&nbsp;</a>
+        /&nbsp;{{signNumber.nosign}}
       </p>
       <p class="clearfix tc fontsmall">
         <span class="fl" style="border-right:1px solid #f0f0f0">放弃</span>
@@ -34,6 +34,7 @@
       @cancel="onCancel"
       @select="onSelect"
       class="ActionSheet"
+      :close-on-click-overlay="false"
     />
   </div>
 </template>
@@ -41,25 +42,25 @@
 <script>
 import { ActionSheet } from "vant";
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
-import StudentSignInfoList from "../components/BankeMemberSimple";
-import { Whatweek, formateTime } from "../../util";
+import StudentSignInfoList from "../../components/BankeMemberSimple";
+import { Whatweek, formateTime } from "@/util";
 const setALL = [
-  { name: "设为已签到" },
-  { name: "设为迟到" },
-  { name: "设为超时" },
-  { name: "设为未签到", subname: "" }
+  { name: "设为已签到", id: 1 },
+  { name: "设为迟到", id: 2 },
+  { name: "设为超时", id: 3 },
+  { name: "设为未签到", id: 0 }
 ];
 const More = [
-  { name: "查看全部" },
-  { name: "查看未签到" },
-  { name: "查看超时" },
-  { name: "查看迟到" },
-  { name: "查看已签到" }
+  { name: "查看全部", id: 100 },
+  { name: "查看未签到", id: 0 },
+  { name: "查看超时", id: 3 },
+  { name: "查看迟到", id: 2 },
+  { name: "查看已签到", id: 1 }
 ];
 export default {
   name: "",
   props: {
-     signData: {
+    signData: {
       default() {
         return {};
       }
@@ -84,11 +85,21 @@ export default {
   },
   data() {
     return {
+      allList: [],
       list: [],
       showActionSheet: false,
       actions: [],
       styleobj: {},
-      studentSignNb: 0
+
+      studentInfo: {},
+
+      isSign: true,
+      isStudent: true,
+
+      signNumber: {
+        sign: 0,
+        nosign: 0
+      }
     };
   },
   computed: {
@@ -101,40 +112,6 @@ export default {
   },
   mounted() {},
   methods: {
-    //更改单个学生签到状态
-    setSignState(v){
-      if(!this.isTeacher) return;
-      this.$http.post('/api/sign/changestate',{
-        userid:v.userid,
-        signid:v.signid,
-        state:1
-      }).then(res=>{
-        console.log('ds',res);
-        if(res.data.code=='0'){
-          v.state=1;
-        }
-      }).catch(err => {
-
-      })
-        console.log(v);
-
-    },
-      //批量修改签到状态
-    setAllSignState(v){
-      this.$http.post('/api/sign/batchstate',{
-        signid:v.signid,
-        state:1
-      }).then(res=>{
-        console.log('ds',res);
-        if(res.data.code=='0'){
-          v.state=1;
-        }
-      }).catch(err => {
-
-      })
-        console.log(v);
-
-    },
     //学生打卡记录
     onSignquerymemberFn(item) {
       //   Indicator.open(this.$t("Indicator.Loading"));
@@ -153,11 +130,10 @@ export default {
                     item.avatar = v.avatar;
                   }
                 }
-                if (item.state) {
-                  this.studentSignNb++;
-                }
               }
+              this.allList = Data.signmembers;
               this.list = Data.signmembers;
+              this.countSign(this.list);
               console.log("学生打卡记录", this.list);
             }
           } else {
@@ -167,6 +143,17 @@ export default {
         .catch(() => {
           //   Indicator.close();
         });
+    },
+    countSign(data) {
+      this.signNumber.sign = 0;
+      this.signNumber.nosign = 0;
+      for (let v of data) {
+        if (v.state != "0") {
+          this.signNumber.sign++;
+        } else {
+          this.signNumber.nosign++;
+        }
+      }
     },
     //教师下课
     teacherSignClass() {
@@ -192,7 +179,7 @@ export default {
           .then(res => {
             if (res.data.code == 0) {
               console.log("教师下课,", res);
-              this.$emit('calssStatefn',res.data.data.state)
+              this.$emit("calssStatefn", res.data.data.state);
             } else {
             }
             Indicator.close();
@@ -202,27 +189,104 @@ export default {
           });
       });
     },
-    setALL() {
+    //一键设置
+    confign() {
+      this.isStudent = false;
       this.actions = setALL;
-      this.showActionSheet = true;
-      this.styleobj = {
-        height: (this.actions.length + 1) * 48 + "px"
-      };
+      this.styleFn();
     },
+    //查看类型
     More() {
+      this.isSign = false;
       this.actions = More;
-      this.showActionSheet = true;
-
+      this.styleFn();
+    },
+    //签到状态下拉选项
+    onSelect(item) {
+      //设置签到状态
+      if (this.isSign) {
+        if (this.isStudent) {
+          this.studentChangestate(item.id);
+        } else {
+          this.setAllSignState(item.id);
+        }
+      } else {
+        //查看签到类型
+        this.seeSginType(item.id);
+        let list = [];
+        switch (item.id) {
+          case 0:
+            break;
+        }
+        for (let v of this.list) {
+        }
+        this.isSign = true;
+      }
+      this.showActionSheet = false;
+    },
+    // van-action 取消btn
+    onCancel() {
+      this.isSign = true;
+      this.isStudent = true;
+      this.showActionSheet = false;
+    },
+    //更改单个学生签到状态
+    setSignState(v) {
+      if (!this.isTeacher) return;
+      this.studentInfo = v;
+      this.actions = setALL;
+      this.styleFn();
+    },
+    studentChangestate(state) {
+      this.$http
+        .post("/api/sign/changestate", {
+          userid: this.studentInfo.userid,
+          signid: this.studentInfo.signid,
+          state: state
+        })
+        .then(res => {
+          console.log("ds", res);
+          if (res.data.code == "0") {
+            this.studentInfo.state = state;
+            this.countSign(this.allList);
+          }
+        })
+        .catch(err => {});
+    },
+    //批量修改签到状态
+    setAllSignState(state) {
+      this.$http
+        .post("/api/sign/batchstate", {
+          signid: this.Data.id,
+          state: state
+        })
+        .then(res => {
+          console.log("ds", res);
+          if (res.data.code == "0") {
+            for (let v of this.list) {
+              v.state = state;
+            }
+            this.countSign(this.allList);
+            this.isStudent = true;
+          }
+        })
+        .catch(err => {});
+    },
+    //查看签到类型
+    seeSginType(state) {
+      let list = [];
+      list = this.allList.filter(item => item.state == state);
+      if (state == "100") {
+        this.list = this.allList;
+      } else {
+        this.list = list;
+      }
+    },
+    styleFn() {
       this.styleobj = {
         height: (this.actions.length + 1) * 48 + "px"
       };
-    },
-
-    onSelect() {
-      this.showActionSheet = false;
-    },
-    onCancel() {
-      this.showActionSheet = false;
+      this.showActionSheet = true;
     }
   }
 };

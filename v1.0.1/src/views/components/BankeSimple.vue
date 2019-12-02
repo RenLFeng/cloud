@@ -8,7 +8,7 @@
             {{classitem.name}}
             <span class="membernum fonttiny">{{classitem.membernum}}人</span>
           </div>
-          <div class="font-xs ellipse">教师：{{classitem.userid}}</div>
+          <div class="font-xs ellipse">教师：{{classitem.username}}</div>
           <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>

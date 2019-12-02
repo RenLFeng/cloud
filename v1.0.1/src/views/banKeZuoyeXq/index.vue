@@ -89,6 +89,7 @@ export default {
       if (!this.isteacher) return;
       this.editBkState = true;
       this.$emit("editBkFn", this.editBkState);
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
     edBk() {
       if (!this.isteacher) return;
@@ -167,6 +168,7 @@ export default {
     goBack() {
       this.editBkState = !this.editBkState;
       this.$emit("editBkFn", this.editBkState);
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
     }
   },
   destroyed() {

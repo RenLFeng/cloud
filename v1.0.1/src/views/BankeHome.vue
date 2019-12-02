@@ -28,7 +28,7 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="!tongzhiState && Preview && !footerBar && footerbar">
+    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="Preview && !zyEditState && footerbar">
       <mt-tab-item id="ziyuan">
         <i class="iconfont iconwenjianjiai"></i>
         <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
@@ -99,7 +99,7 @@ export default {
       tabbarhide: false,
       tongzhiState: false,
       zYLinkSelectEd: "",
-      footerBar:false
+      zyEditState:false
     };
   },
   props: {
@@ -138,7 +138,7 @@ export default {
   },
   methods: {
     onPopupZiyuanEdit(v){
-      this.footerBar=v;
+      this.zyEditState=v;
     },
     onclickzuoye() {
       if (this.selected == "zuoye") {

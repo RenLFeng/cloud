@@ -28,7 +28,10 @@
           style="padding-left:10px;"
         >{{membernumdesc}}人</span>
       </div>
-      <div class="membernumdesc Average colord" @click="AverageScoreEchart">平均得分&nbsp;{{Average}}</div>
+      <div class="membernumdesc Average colord" @click="AverageScoreEchart">
+        平均得分&nbsp;{{Average}}
+        <i class="iconfont iconjiantou eicotrigger colord"></i>
+      </div>
     </div>
 
     <div class="listcontainer">
@@ -201,7 +204,8 @@ export default {
 .membernumdesc {
   float: right;
 }
-.Average {
+.Average i {
+  font-size: 22px;
 }
 
 .loadmore {

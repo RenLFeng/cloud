@@ -135,28 +135,6 @@ export default {
         }
         let i = index;
         let that = this;
-        // wx.chooseImage({
-        //   count: 1, // 默认9
-        //   sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
-        //   sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
-        //   success: function(res) {
-        //    console.log('成功',res)
-        //   },
-        //   fail:function(res){
-        //     console.log("失败", res)
-        //   }
-        // });
-
-        // wx.getLocation({
-        //   type: "wgs84",
-        //   success(res) {
-        //     console.log("定位成功 success", res);
-        //   },
-        //   fail(res) {
-        //     console.log("定位失败 fail", res);
-        //   }
-        // });
-
         wx.previewImage({
           current: imgs[i], // 当前显示图片的http链接
           urls: imgs, // 需要预览的图片http链接列表

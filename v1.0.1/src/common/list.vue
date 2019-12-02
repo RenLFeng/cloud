@@ -1,19 +1,44 @@
 <template>
-  <div class="mainpart" @click="onclick">
-    <div class="maincontent">
+  <div class="mainpart common-list" :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''" @click="onclick">
+    <img v-if="type=='pingce'" class="itemavatar" :src="item.files" :onerror="defaultimg" />
+    <div class="maincontent" v-if="type=='sign'">
       <div class="mainctitle ellipse">
         {{item.date}}&nbsp;{{week}} &nbsp;签到
-        <span class="fr font-xs color9">2 人 / 10 人</span>
+        <span class="fr font-xs color9">{{item.joinnum}} 人 / {{item.totalnum}} 人</span>
       </div>
       <div v-if="classSignId==item.id" class="maincsubtitle colord">正在签到...</div>
       <div v-else class="maincsubtitle color9">{{item.starttime}}</div>
     </div>
-    <i class="iconfont iconjiantou eicotrigger colord"></i>
+
+    <div class="maincontent" v-if="type=='pingce'">
+      <div class="mainctitle ellipse">
+        {{pingceType}}
+        <span class="fr font-xs color9">{{item.joinnum}}人 / {{item.totalnum}} 人</span>
+      </div>
+      <div class="maincsubtitle color9">{{item.createtime}}</div>
+    </div>
+
+    <div class="maincontent pingcedetail" v-if="type=='pingcedetail'">
+      <div class="mainctitle ellipse">
+        <img class="itemavatar" :src="item.files" :onerror="defaultimg" />
+        黄蓉
+        <span class="fr font-xs colorf">正确</span>
+      </div>
+      <div class="maincsubtitle">提交答案 A、C、D</div>
+      <div class="footer">
+        <span class="color9 font-xs">{{item.createtime}}</span>
+        <span class="fr colory">得分&nbsp;{{item.score}}</span>
+      </div>
+    </div>
+
+    <i v-if="type!='pingcedetail'" class="iconfont iconjiantou eicotrigger colord"></i>
   </div>
 </template>
 
 <script>
 import { Whatweek } from "../util";
+import { watch } from "fs";
+import { pingceType } from "@/util";
 export default {
   name: "BankeMemberSimple",
   props: {
@@ -22,30 +47,25 @@ export default {
         return {};
       }
     },
-    index: {
+    type: {
+      default: "sign"
+    },
+    classSignId: {
       default: 0
-    },
-    indexShow: {
-      default: 0
-    },
-    icon: {
-      default: 0
-    },
-    scoreText: {
-      default: "得分"
-    },
-    memberuser: {
-      default() {
-        return {};
-      }
-    },
-    classSignId:{
-      default:0
     }
   },
   computed: {
     week() {
       return Whatweek(this.item.date);
+    },
+    defaultimg() {
+      var srcstr = 'this.src="';
+      srcstr += require("../assets/100x100.png");
+      srcstr += '"';
+      return srcstr;
+    },
+    pingceType() {
+      return pingceType(this.item.ptype);
     }
   },
   created() {},
@@ -57,8 +77,7 @@ export default {
   },
   methods: {
     onclick() {
-      this.$emit('showStudentSignInfo',this.item)
-    
+      this.$emit("showStudentSignInfo", this.item);
     }
   }
 };
@@ -71,6 +90,9 @@ export default {
   border-bottom: 1px solid #f0f0f0;
   padding: 10px;
   background: #fff;
+}
+.mainpart.pingcedetail{
+  padding: 0;
 }
 .mainpart > .index {
   position: absolute;
@@ -108,6 +130,28 @@ export default {
   margin-bottom: 6px;
   margin-top: 6px;
 }
+.pingcedetail .mainctitle {
+  position: relative;
+  padding-left: 45px;
+  width: 100%;
+}
+.pingcedetail .mainctitle img {
+  width: 35px;
+  height: 35px;
+  left: 0;
+}
+.pingcedetail .mainctitle .colorf {
+  background: #3ee17f;
+  border-radius: 5px;
+  padding: 3px 10px;
+}
+.pingcedetail .maincsubtitle {
+  font-size: 16px;
+}
+.pingcedetail .footer {
+  margin-top: 5px;
+}
+
 .maincsubtitle {
   height: 16px;
   font-size: 12px;
@@ -121,5 +165,16 @@ export default {
   font-size: 22px;
 
   margin-right: 5px;
+}
+.common-list.pingce {
+  padding-left: 80px;
+}
+.common-list img {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  left: 10px;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 </style>

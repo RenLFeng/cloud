@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="baout-main">
     <div class="avatarpart" @click="onmine">
       <img :src="user.avatar" :onerror="defaultImage" class="avatarimgpart avatar" />
       <div class="avatartextpart">
@@ -10,39 +10,79 @@
         </div>
       </div>
     </div>
-
-    <div class="devide"></div>
-    <mt-cell title="创建班课" is-link @click.native="onadd"></mt-cell>
+    <div v-if="isTeacher">
+      <div class="devide"></div>
+      <mt-cell title="创建班课" is-link @click.native="onadd"></mt-cell>
+    </div>
     <div class="devide"></div>
     <mt-cell :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell title="学情统计" is-link @click.native="onset"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell title="发布公告" is-link @click.native="onset"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell title="得分占比设置)" is-link @click.native="onset"></mt-cell>
+    <div v-if="isTeacher">
+      <div class="devide"></div>
+      <mt-cell title="学情统计" is-link @click.native="situation"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell title="发布公告" is-link @click.native="setNotice"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell title="得分占比设置" is-link @click.native="setProportion"></mt-cell>
+    </div>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
+    <div class="devide"></div>
     <mt-cell
       v-for="(item,index) in $t('langs')"
       :key="index"
       :title="item.name"
       @click.native="selectLang(item)"
     ></mt-cell>
+
+    <mt-popup
+      v-model="popupNotice"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="发布公告">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <Notice />
+    </mt-popup>
+    <mt-popup
+      v-model="popupProportion"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="得分占比">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <Proportion />
+    </mt-popup>
   </div>
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox } from "mint-ui";
-
+import { Indicator, Toast, MessageBox, Button } from "mint-ui";
+import Notice from "./my/Notice";
+import Proportion from "./my/Proportion";
 export default {
   name: "MineAbout",
   data() {
-    return {};
+    return {
+      popupNotice: false,
+      popupProportion: false
+    };
+  },
+  components: {
+    Notice,
+    Proportion
   },
   computed: {
+    isTeacher() {
+      return this.$store.getters.isteacher;
+    },
     user() {
       return this.$store.getters.curuser;
     },
@@ -54,6 +94,18 @@ export default {
     }
   },
   methods: {
+    //发布公告
+    setNotice() {
+      this.popupNotice = true;
+    },
+    //得分占比
+    setProportion() {
+      this.popupProportion = true;
+    },
+    //学情统计
+    situation() {
+      window.location.href = "http://192.168.0.237:8088/ClassStatistics";
+    },
     onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
@@ -64,7 +116,7 @@ export default {
         //! 跳转搜索课堂
         Toast("加入课堂， 暂未实现");
       }
-      this.$emit("changeSelected", "banke");
+      // this.$emit("changeSelected", "banke");
     },
     selectLang(item) {
       this.$i18n.locale = item.langType;
@@ -100,12 +152,23 @@ export default {
     onmine: function() {
       this.$store.commit("setRouterForward", true);
       this.$router.push("/mineinfo");
+    },
+    goBack() {
+      if (this.popupNotice) {
+        this.popupNotice = false;
+      }
+      if (this.popupProportion) {
+        this.popupProportion = false;
+      }
     }
   }
 };
 </script>
 
 <style scoped>
+.baout-main {
+  padding-bottom: 50px;
+}
 .my-cell-allow-right::after {
   border: solid 2px #c8c8cd;
   border-bottom-width: 0;
@@ -143,9 +206,11 @@ export default {
 .avatarpart {
   height: 80px;
   padding: 10px;
-  margin-top: 10px;
+  background: #fff;
 }
-.mint-cell .mint-cell-wrapper {
-    background-image: none !important;
+</style>
+<style>
+.mint-cell-wrapper {
+  background-image: none !important;
 }
 </style>

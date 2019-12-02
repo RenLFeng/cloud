@@ -28,7 +28,7 @@
         <div>
           <!-- 作业详细 -->
           <mt-cell
-            :title="$t('bankeTask.Job_details')" 
+            :title="$t('bankeTask.Job_details')"
             is-link
             @click.native="popupZDetail=true"
           >{{zuoyeitem.detaildesc}}</mt-cell>
@@ -44,7 +44,7 @@
         <div @click="showZYinfo">
           <mt-cell :title="$t('common.Info')" is-link v-if="pagemode=='result'">{{submitnumdesc}}</mt-cell>
         </div>
-          <!-- 作业答案 -->
+        <!-- 作业答案 -->
         <mt-cell
           :title="$t('bankeTask.Answer')"
           is-link
@@ -277,11 +277,11 @@ export default {
       submitok: false,
       zashowbtnactive: true,
       markArr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      loadingState:false
+      loadingState: false
     };
   },
   computed: {
-    Preview(){
+    Preview() {
       return this.$store.state.isPreview;
     },
     answerdesc() {
@@ -417,8 +417,8 @@ export default {
           MessageBox("等待老师评分哦 ~");
         }
       } else {
-         this.popupZuoyePF = ritem.state;
-          this.studentName = ritem.info.username;
+        this.popupZuoyePF = ritem.state;
+        this.studentName = ritem.info.username;
         // if (ritem.info.score > "0") {
         //   MessageBox("不能重复评分~~");
         // } else {
@@ -647,7 +647,7 @@ export default {
     Discuss,
     zouYeInfo,
     studentsMark,
-    Answer,
+    Answer
   }
 };
 </script>

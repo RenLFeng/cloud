@@ -138,6 +138,9 @@ textarea {
 .color9{
     color: #999;
 }
+.colorf{
+    color: #fff;
+}
 .clrdanger {
     color: #ff8900;
 }
@@ -145,8 +148,12 @@ textarea {
 .link {
     color: #0089ff;
 }
-
-
+.bg-d{
+    background: #fff;
+}
+.border-b{
+    border-bottom: 1px solid #ccc;
+}
 .hide {
     display: none;
 }
@@ -173,9 +180,9 @@ textarea {
 
 
 .devide {
-    height: 15px;
+    height: 10px;
     /* #DCDFE6 */
-    background-color: #e7e7e7;
+    background-color: #f0f0f0;
 
 }
 
