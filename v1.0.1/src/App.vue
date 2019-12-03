@@ -72,6 +72,9 @@ export default {
     };
   },
   created: function() {
+
+      nativecode.initfirst();
+
     let clientWidth = window.innerWidth;
     if (!clientWidth) return;
     if (clientWidth >= 640) {
@@ -92,24 +95,15 @@ export default {
             this.$store.commit("setRouterForward", true);
             this.$router.push("/");
           }
-          let loginobj = {
-            login: 1,
-            cookie: document.cookie,
-            user: res.data.data
-          };
-          nativecode.ncall("jsLogin", loginobj);
+          nativecode.jsLogin(1, res.data.data);
         } else {
           //!  未登录， 强制跳转登录
           this.$store.commit("setLoginUser", {});
           this.$store.commit("setRouterForward", true);
           this.$router.push("/login");
 
-          let loginobj = {
-            login: 0,
-            cookie: {},
-            user: {}
-          };
-          nativecode.ncall("jsLogin", loginobj);
+          nativecode.jsLogin(0, {});
+
         }
       })
       .catch(() => {

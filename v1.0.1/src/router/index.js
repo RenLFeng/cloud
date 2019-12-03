@@ -28,6 +28,8 @@ import PingCeing from '../views/bankehudong/pingceing/index'
 
 
 
+import nativecode from '../nativecode'
+
 Vue.use(Router)
 export function createRouter() {
   let routers = new Router({
@@ -61,16 +63,26 @@ export function createRouter() {
     ]
   });
   routers.beforeEach((to, from, next) => {
-    if (
-        !store.getters.islogin
-        && to.path != '/login'
-    ) {
-        next({
-            path: '/login',
-        })
-    } else {
-        next() 
-    }
+      if (!nativecode.hasloginpage()){
+          if (to.path == '/login'){
+              next({
+                  path:'/'
+              })
+          }
+          else{
+              next();
+          }
+      }
+      else if (  //! todo. 检测不需要登陆即可查看的网页？
+          !store.getters.islogin
+          && to.path != '/login'
+      ) {
+          next({
+              path: '/login',
+          })
+      } else {
+          next()
+      }
 });
 return routers
 }
