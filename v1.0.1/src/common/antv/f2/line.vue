@@ -104,7 +104,7 @@ export default {
           userids: [item.memberuserid],
           classid: item.classid,
           startdate: start,
-          enddate: "2019/11/25",
+          enddate: getNextDate(0),
           pagesize: 1000
         })
         .then(res => {
@@ -154,7 +154,7 @@ export default {
                       item.value = v.score2;
                       break;
                     case "作业得分":
-                      item.value = v.score3;
+                      item.value = v.score3==-1?0:v.score3;
                       break;
                     case "评测得分":
                       item.value = v.score4;

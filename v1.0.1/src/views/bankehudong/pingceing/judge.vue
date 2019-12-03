@@ -92,6 +92,7 @@ computed:{
     //抢答
     ResponderFn(){
       this.ponderState=true;
+      this.$emit("submitFn", '');
     },
   }
 };

@@ -539,6 +539,13 @@ export default {
           if (res.data.code == 0) {
             //! ok
             this.allZuoyeitem = res.data.data.results;
+            for (let v of this.allZuoyeitem) {
+              for (let file of v.files) {
+                if (file.metainfo && typeof file.metainfo == "string") {
+                  file.metainfo = JSON.parse(file.metainfo);
+                }
+              }
+            }
             this.onHttpData(res.data.data);
             //  console.log(this.results);
           } else {
@@ -551,6 +558,13 @@ export default {
         });
     },
     onHttpData(data) {
+      for (let v of data.results) {
+        for (let file of v.files) {
+          if (file.metainfo && typeof file.metainfo == "string") {
+            file.metainfo = JSON.parse(file.metainfo);
+          }
+        }
+      }
       this.zuoyeitem = data["zuoye"];
       this.allZuoyeitem = data.results;
       for (let item of this.allZuoyeitem) {
