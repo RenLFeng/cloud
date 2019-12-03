@@ -24,7 +24,7 @@
             :type="pingceData.ptype"
             v-if="pingceData.ptype=='1' || pingceData.ptype=='5' || pingceData.ptype=='6'"
           />
-          <ZhuGuan v-if="pingceData.ptype=='4'" :pingceData="pingceData"  @submitFn="onSubmit"/>
+          <ZhuGuan v-if="pingceData.ptype=='4'" :pingceData="pingceData" @submitFn="onSubmit" />
         </div>
       </div>
     </div>
@@ -36,7 +36,7 @@ import Duoxuan from "./duoxuan";
 import Judge from "./judge";
 import ZhuGuan from "./zhuguan";
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
-import { pingceType } from "@/util";
+import { pingceType, parseURL } from "@/util";
 export default {
   name: "PingCeing",
   components: {
@@ -46,14 +46,13 @@ export default {
   },
   data() {
     return {
-      isPingce: true,
+      isPingce: false,
       bankeid: 0,
       pingceData: {
-        ptype: 6,
-        files: "/downloads/pingce/2019-11-30/d3e80fc710209188cf7e4306b1c81b5a.jpeg",
-        optdesc:{
-         
-        }
+        // ptype: 6,
+        // files:
+        //   "/downloads/pingce/2019-11-30/d3e80fc710209188cf7e4306b1c81b5a.jpeg",
+        optdesc: {}
       },
 
       tempAnswer: [],
@@ -61,13 +60,17 @@ export default {
       pingceType
     };
   },
-  mounted() {
+  created() {
+    const UrlParams = parseURL(window.location.href);
     let params = this.$route.params;
-    if (params.bankeid) {
+    if (UrlParams.id) {
+      this.bankeid = UrlParams.id;
+    } else {
       this.bankeid = params.bankeid;
     }
     this.querycur();
   },
+  mounted() {},
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
@@ -109,9 +112,9 @@ export default {
         this.tempAnswer = Answer.sort();
       }
       let answers = {
-        file:this.pingceData.ptype == "4"?Answer:'',
+        file: this.pingceData.ptype == "4" ? Answer : "",
         opts: this.tempAnswer || [],
-        textarea:this.pingceData.ptype == "5"?Answer:''
+        textarea: this.pingceData.ptype == "5" ? Answer : ""
       };
       let submitobj = {
         bankeid: this.bankeid,

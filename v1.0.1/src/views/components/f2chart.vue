@@ -92,7 +92,7 @@ export default {
           userids: [1, 2, 3],
           classid: this.classid,
           startdate: start,
-          enddate: "2019/11/25",
+          enddate: getNextDate(0),
           pagesize: 1000
         })
         .then(res => {
@@ -212,17 +212,17 @@ export default {
                     switch (item.type) {
                       case "最高分":
                         if (v.userid == "3") {
-                          item.value = v.score3;
+                          item.value =v.score3==-1?0:v.score3;
                         }
                         break;
                       case "最低分":
                         if (v.userid == "2") {
-                          item.value = v.score3;
+                          item.value = v.score3==-1?0:v.score3;
                         }
                         break;
                       case "平均分":
                         if (v.userid == "1") {
-                          item.value = v.score3;
+                          item.value = v.score3==-1?0:v.score3;
                         }
                         break;
                     }
