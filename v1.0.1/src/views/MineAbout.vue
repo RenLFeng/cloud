@@ -16,14 +16,6 @@
     </div>
     <div class="devide"></div>
     <mt-cell :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
-    <div v-if="isTeacher">
-      <div class="devide"></div>
-      <mt-cell title="学情统计" is-link @click.native="situation"></mt-cell>
-      <div class="devide"></div>
-      <mt-cell title="发布公告" is-link @click.native="setNotice"></mt-cell>
-      <div class="devide"></div>
-      <mt-cell title="得分占比设置" is-link @click.native="setProportion"></mt-cell>
-    </div>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>
     <div class="devide"></div>
@@ -35,49 +27,18 @@
       :title="item.name"
       @click.native="selectLang(item)"
     ></mt-cell>
-
-    <mt-popup
-      v-model="popupNotice"
-      position="right"
-      class="popup-right info-popup"
-      :modal="false"
-      style="background:#f0f0f0"
-    >
-      <mt-header title="发布公告">
-        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
-      </mt-header>
-      <Notice />
-    </mt-popup>
-    <mt-popup
-      v-model="popupProportion"
-      position="right"
-      class="popup-right info-popup"
-      :modal="false"
-      style="background:#f0f0f0"
-    >
-      <mt-header title="得分占比">
-        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
-      </mt-header>
-      <Proportion />
-    </mt-popup>
   </div>
 </template>
 
 <script>
 import { Indicator, Toast, MessageBox, Button } from "mint-ui";
-import Notice from "./my/Notice";
-import Proportion from "./my/Proportion";
 export default {
   name: "MineAbout",
   data() {
     return {
-      popupNotice: false,
-      popupProportion: false
     };
   },
   components: {
-    Notice,
-    Proportion
   },
   computed: {
     isTeacher() {
@@ -94,18 +55,6 @@ export default {
     }
   },
   methods: {
-    //发布公告
-    setNotice() {
-      this.popupNotice = true;
-    },
-    //得分占比
-    setProportion() {
-      this.popupProportion = true;
-    },
-    //学情统计
-    situation() {
-      window.location.href = "http://192.168.0.237:8088/ClassStatistics";
-    },
     onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
@@ -140,6 +89,7 @@ export default {
         //! 清空本地账户信息
         this.$store.commit("setLoginUser", {});
         this.$store.commit("setRouterForward", true);
+        this.$store.commit("banke/REMOV_BANKES", []);
         this.$router.push("/login");
       });
     },
@@ -154,12 +104,7 @@ export default {
       this.$router.push("/mineinfo");
     },
     goBack() {
-      if (this.popupNotice) {
-        this.popupNotice = false;
-      }
-      if (this.popupProportion) {
-        this.popupProportion = false;
-      }
+
     }
   }
 };

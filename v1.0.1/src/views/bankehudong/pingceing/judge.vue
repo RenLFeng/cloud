@@ -8,7 +8,13 @@
     <div v-if="type=='5'">
       <mt-field v-model="textareaAnswer" placeholder="请输入答案后点击提交" type="textarea" rows="6"></mt-field>
     </div>
-    <p class="submit-btn">
+    <div v-if="type=='6'">
+      <div class="Responder tc fontnormal" v-if="!ponderState" @click="ResponderFn">
+        点击抢答
+      </div>
+      <p v-if="ponderState" class="colory tc Responder-ed">{{ResponderText}}</p>
+    </div>
+    <p class="submit-btn" v-if="type!='6'">
       <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">提交</mt-button>
     </p>
   </div>
@@ -49,10 +55,15 @@ export default {
       indexNumber,
       isSubmit: false,
       Answer: [],
-      textareaAnswer: ""
+      textareaAnswer: "",
+      ponderState:false,
     };
   },
-
+computed:{
+  ResponderText(){
+    return '抢答成功，请您作答...'
+  },
+},
   methods: {
     select(item) {
       for (let v of this.indexNumber) {
@@ -77,7 +88,11 @@ export default {
       } else {
         this.$emit("submitFn", this.textareaAnswer);
       }
-    }
+    },
+    //抢答
+    ResponderFn(){
+      this.ponderState=true;
+    },
   }
 };
 </script>
@@ -104,6 +119,18 @@ export default {
     margin-left: 10px;
     margin-bottom: 10px;
     padding: 10px;
+  }
+  .Responder{
+    width: 140px;
+    height: 140px;
+    line-height: 140px;
+    background:linear-gradient(180deg,rgba(255,196,170,1) 0%,rgba(255,7,0,1) 100%);
+    border-radius:50%;
+    margin: 50px auto;
+    color: #fff;
+  }
+  .Responder-ed{
+    margin: 100px auto;
   }
 }
 </style>

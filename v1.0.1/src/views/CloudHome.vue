@@ -15,7 +15,7 @@
               <BankeSimple :classitem="curbankes[selindex]" @click.native="bankeclick(item)"></BankeSimple>
               <!-- <div class="bankedevide"></div> -->
             </div>
-            <div v-if="bankeempty" class="tc">{{bankestatedesc}}</div>
+            <div v-if="!bankeempty" class="tc">{{bankestatedesc}}</div>
           </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="exam">
@@ -78,9 +78,9 @@ export default {
     bankeempty() {
       //   console.log(this.curbankes);
       if (this.curbankes.length) {
-        return false;
+        return true;
       }
-      return true;
+      return false;
     }
   },
   watch: {
@@ -126,23 +126,23 @@ export default {
       }
     },
     initbanke() {
-      if (this.bankeempty) {
-        var url = "/api/api/bankequery";
-        this.bankestatedesc = "加载中";
-        this.$http
-          .post(url)
-          .then(res => {
-            if (res.data.code == 0) {
-              this.$store.commit("banke/appendBankes", res.data.data);
-            }
-            if (this.bankeempty) {
-              this.bankestatedesc = "当前无班课";
-            }
-          })
-          .catch(res => {
-            console.log(res);
-            this.bankestatedesc = "发生异常";
-          });
+      var url = "/api/api/bankequery";
+      if(!this.bankeempty){
+      this.bankestatedesc = "加载中";
+      this.$http
+        .post(url)
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$store.commit("banke/appendBankes", res.data.data);
+          }
+          if (!this.bankeempty) {
+            this.bankestatedesc = "当前无班课";
+          }
+        })
+        .catch(res => {
+          console.log(res);
+          this.bankestatedesc = "发生异常";
+        });
       }
     }
   },
@@ -192,7 +192,7 @@ export default {
   transform: translateY(-50%) rotate(45deg);
 }
 .cloud-b .mint-tab-item {
-  color: #232323; 
+  color: #232323;
   background-color: #fff;
 }
 .cloud-b .mint-tab-item.is-selected {

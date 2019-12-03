@@ -11,12 +11,7 @@
           <div class="float-l po">
             <div class="top">
               <span class>{{bankeInfo.name}}</span>
-              <!-- <span class>二年级</span> -->
             </div>
-            <!-- <div class="bottom color9">
-              <span class>物理</span>
-              <span class>{{bankeInfo.userupdatetime}}</span>
-            </div>-->
           </div>
         </li>
       </ul>
@@ -32,6 +27,19 @@
         <li @click="closeBk">
           <mt-cell :title="$t('bankeXingQing.DeleteClass')" is-link></mt-cell>
         </li>
+        <li v-if="isteacher">
+          <ul>
+            <li @click="situation">
+              <mt-cell title="学情统计" is-link></mt-cell>
+            </li>
+            <li @click="setNotice">
+              <mt-cell title="发布公告" is-link></mt-cell>
+            </li>
+            <li @click="setProportion">
+              <mt-cell title="得分占比设置" is-link></mt-cell>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
     <mt-popup v-model="editBkState" position="right" class="popup-right" :modal="false">
@@ -40,12 +48,39 @@
       </mt-header>
       <edit :bankeInfo="bankeInfo" :editBkState="editBkState" @imgSrcLoad="onImgSrcLoad" />
     </mt-popup>
+
+    <mt-popup
+      v-model="popupNotice"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="发布公告">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <Notice />
+    </mt-popup>
+    <mt-popup
+      v-model="popupProportion"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="得分占比">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <Proportion />
+    </mt-popup>
   </div>
 </template>
 
 <script>
 import { Cell, Button, MessageBox, Field } from "mint-ui";
 import edit from "./edit";
+import Notice from "./Notice";
+import Proportion from "./Proportion";
 export default {
   name: "",
   props: {
@@ -58,13 +93,18 @@ export default {
   watch: {
     bankeInfo(newValue, oldValue) {
       this.bankeInfoData = newValue;
+      console.log("gf", this.bankeInfoData);
     }
   },
   components: {
-    edit
+    edit,
+    Notice,
+    Proportion
   },
   data() {
     return {
+      popupNotice: false,
+      popupProportion: false,
       imgfilepath: "",
       bankeInfoData: {},
       editBkState: false
@@ -85,6 +125,20 @@ export default {
   },
   created() {},
   methods: {
+    //发布公告
+    setNotice() {
+      this.popupNotice = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+    },
+    //得分占比
+    setProportion() {
+      this.popupProportion = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+    },
+    //学情统计
+    situation() {
+      window.location.href = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+    },
     editBkFn() {
       if (!this.isteacher) return;
       this.editBkState = true;
@@ -166,8 +220,15 @@ export default {
       this.editBkState = false;
     },
     goBack() {
-      this.editBkState = !this.editBkState;
-      this.$emit("editBkFn", this.editBkState);
+      if (this.popupNotice) {
+        this.popupNotice = false;
+      }
+      if (this.popupProportion) {
+        this.popupProportion = false;
+      }
+      if (this.editBkState) {
+        this.editBkState = false;
+      }
       this.$store.commit("SET_FOOTER_BAR_STATE", true);
     }
   },

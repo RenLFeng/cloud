@@ -4,7 +4,7 @@
       <p>签到开始时间:&nbsp;{{startTime}}&nbsp;{{Data.time}}</p>
       <p class="clearfix">
         <span class="colord fl" @click="confign()" v-if="isTeacher">一键设置签到</span>
-        <span class="colord fr" @click="More()">查看全部</span>
+        <span class="colord fr" @click="More()">{{seeText}}</span>
       </p>
     </div>
     <p class="tr" style="padding:5px">{{list.length}}人</p>
@@ -99,7 +99,8 @@ export default {
       signNumber: {
         sign: 0,
         nosign: 0
-      }
+      },
+      seeText:'查看全部',
     };
   },
   computed: {
@@ -213,6 +214,7 @@ export default {
       } else {
         //查看签到类型
         this.seeSginType(item.id);
+        this.seeText=item.name
         let list = [];
         switch (item.id) {
           case 0:

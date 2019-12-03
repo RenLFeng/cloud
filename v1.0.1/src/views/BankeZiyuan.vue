@@ -300,6 +300,10 @@ export default {
         .catch(err => {});
     },
     deletezy() {
+      if(!this.isteacher){
+        Toast('你无权限');
+        return;
+      };
       MessageBox.confirm("您确定要删除吗？")
         .then(res => {
           this.$http

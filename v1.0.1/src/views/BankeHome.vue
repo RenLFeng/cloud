@@ -74,7 +74,7 @@ import BankeChengyuan from "./BankeChengyuan";
 import BankeZuoye from "./BankeZuoye";
 import listIcon from "../common/lists-icon";
 import pic from "../assets/dis.jpg";
-import bankeZouyeXq from "./banKeZuoyeXq/index";
+import bankeZouyeXq from "./banKeDetail/index";
 
 export default {
   name: "BankeHome",
@@ -97,7 +97,6 @@ export default {
       ],
       addmenuvisible: false,
       tabbarhide: false,
-      tongzhiState: false,
       zYLinkSelectEd: "",
       zyEditState:false
     };
@@ -165,11 +164,11 @@ export default {
       }
     },
     tongzhiOpenState(data) {
-      this.tongzhiState = data;
+      // this.tongzhiState = data;
     },
     onUploadLinkSelectEd(data) {
       //  this.tongzhiState=true;
-      this.zYLinkSelectEd = data;
+      // this.zYLinkSelectEd = data;
     }
   },
   created() {
