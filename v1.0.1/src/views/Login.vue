@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <button  class="loginbtn fontnormal" @click="dologin">{{state?'登录':'下一步'}}</button>
+      <button class="loginbtn fontnormal" @click="dologin">{{state?'登录':'下一步'}}</button>
     </div>
   </div>
 </template>
@@ -91,7 +91,7 @@ export default {
       }
     },
     login() {
-      Indicator.open(this.$t('Indicator.Logon'));
+      Indicator.open(this.$t("Indicator.Logon"));
       var url = "/api/api/login";
       var othis = this;
       this.$http

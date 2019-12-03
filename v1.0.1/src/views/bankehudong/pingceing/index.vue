@@ -22,7 +22,7 @@
           <Judge
             @submitFn="onSubmit"
             :type="pingceData.ptype"
-            v-if="pingceData.ptype=='1' || pingceData.ptype=='5'"
+            v-if="pingceData.ptype=='1' || pingceData.ptype=='5' || pingceData.ptype=='6'"
           />
           <ZhuGuan v-if="pingceData.ptype=='4'" :pingceData="pingceData"  @submitFn="onSubmit"/>
         </div>
@@ -46,11 +46,14 @@ export default {
   },
   data() {
     return {
-      isPingce: false,
+      isPingce: true,
       bankeid: 0,
       pingceData: {
-        // ptype: 4,
-        // files: "/downloads/pingce/2019-11-30/d3e80fc710209188cf7e4306b1c81b5a.jpeg"
+        ptype: 6,
+        files: "/downloads/pingce/2019-11-30/d3e80fc710209188cf7e4306b1c81b5a.jpeg",
+        optdesc:{
+         
+        }
       },
 
       tempAnswer: [],

@@ -1,5 +1,3 @@
-
-
 import commontools from '../../commontools'
 
 
@@ -7,7 +5,7 @@ import commontools from '../../commontools'
 
 const state = {
 
-    curbankes:[]
+    curbankes: []
 
 }
 
@@ -16,10 +14,10 @@ const state = {
 // getters
 
 const getters = {
-    getBankeById:(state)=>(id)=>{
+    getBankeById: (state) => (id) => {
         var bks = state.curbankes;
-        for(var i=0; i<bks.length; i++){
-            if (bks[i].id == id){
+        for (var i = 0; i < bks.length; i++) {
+            if (bks[i].id == id) {
                 return bks[i];
             }
         }
@@ -41,10 +39,15 @@ const actions = {
 
 const mutations = {
 
-    appendBankes(state, bankes){
+    appendBankes(state, bankes) {
         commontools.arrayMergeAsIds(state.curbankes, bankes);
         //console.log(state.curbankes);
+    },
+
+    REMOV_BANKES(state, v) {
+        state.curbankes = v;
     }
+
 
 
 

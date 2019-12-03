@@ -96,10 +96,6 @@ export default {
   mounted() {
     console.log("this.$routethis.$route", this.$route);
   },
-  destroyed() {
-    chart.destroy();
-    chart = null;
-  },
   methods: {
     getScoreinfo(item, start, n) {
       console.log("scoreinfo", item);
@@ -112,64 +108,66 @@ export default {
           pagesize: 1000
         })
         .then(res => {
-          // res.data.data.scores.push({
-          //   classid: 1000,
-          //   countdate: "2019/11/20",
-          //   id: 1006,
-          //   score1: 10,
-          //   score2: 30,
-          //   score3: 0,
-          //   score4: 0,
-          //   score5: 0,
-          //   userid: 1003
-          // });
-          // res.data.data.scores.push({
-          //   classid: 1000,
-          //   countdate: "2019/11/19",
-          //   id: 1006,
-          //   score1: 20,
-          //   score2: 40,
-          //   score3: 0,
-          //   score4: 0,
-          //   score5: 0,
-          //   userid: 1003
-          // });
-          this.serverData = res.data.data.scores;
-          let weeksignDate = getDate(this.serverData[0].countdate, n);
-          let tempData = [];
-          for (let i = 0; i < weeksignDate.length; i++) {
-            for (let v of chartType) {
-              this.data.push({
-                count: weeksignDate[i],
-                value: 0,
-                type: v
-              });
+          if (res.data.code == "0") {
+            // res.data.data.scores.push({
+            //   classid: 1000,
+            //   countdate: "2019/11/20",
+            //   id: 1006,
+            //   score1: 10,
+            //   score2: 30,
+            //   score3: 0,
+            //   score4: 0,
+            //   score5: 0,
+            //   userid: 1003
+            // });
+            // res.data.data.scores.push({
+            //   classid: 1000,
+            //   countdate: "2019/11/19",
+            //   id: 1006,
+            //   score1: 20,
+            //   score2: 40,
+            //   score3: 0,
+            //   score4: 0,
+            //   score5: 0,
+            //   userid: 1003
+            // });
+            this.serverData = res.data.data.scores;
+            let weeksignDate = getDate(this.serverData[0].countdate, n);
+            let tempData = [];
+            for (let i = 0; i < weeksignDate.length; i++) {
+              for (let v of chartType) {
+                this.data.push({
+                  count: weeksignDate[i],
+                  value: 0,
+                  type: v
+                });
+              }
             }
-          }
-          for (let item of this.data) {
-            for (let v of this.serverData) {
-              if (item.count == v.countdate) {
-                switch (item.type) {
-                  case "资源得分":
-                    item.value = v.score1;
-                    break;
-                  case "签到得分":
-                    item.value = v.score2;
-                    break;
-                  case "作业得分":
-                    item.value = v.score3;
-                    break;
-                  case "评测得分":
-                    item.value = v.score4;
-                    break;
+            for (let item of this.data) {
+              for (let v of this.serverData) {
+                if (item.count == v.countdate) {
+                  switch (item.type) {
+                    case "资源得分":
+                      item.value = v.score1;
+                      break;
+                    case "签到得分":
+                      item.value = v.score2;
+                      break;
+                    case "作业得分":
+                      item.value = v.score3;
+                      break;
+                    case "评测得分":
+                      item.value = v.score4;
+                      break;
+                  }
                 }
               }
             }
+            this.drawing();
+            console.log("分", this.serverData);
+            // console.log("weeksignDate", weeksignDate);
+            // console.log("this.datathis.data", this.data);
           }
-          this.drawing();
-          console.log("分", this.serverData);
-          // console.log("weeksignDate", weeksignDate);
-          // console.log("this.datathis.data", this.data);
         })
         .catch(err => {});
     },
@@ -249,6 +247,12 @@ export default {
         chart.source(this.data, {});
       }
     }
+  },
+  destroyed() {
+    if (chart !== undefined) {
+      chart.destroy();
+      chart = null;
+    }
   }
 };
 </script>
@@ -257,10 +261,9 @@ export default {
   .tit {
     padding: 10px;
   }
-  .canvas-wrap{
+  .canvas-wrap {
     position: relative;
-    span{
-
+    span {
     }
   }
 }

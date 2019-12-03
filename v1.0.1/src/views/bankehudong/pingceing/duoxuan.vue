@@ -13,36 +13,7 @@
 
 <script>
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
-const indexNumber = [
-  {
-    v: "A",
-    isTrue: false
-  },
-  {
-    v: "B",
-    isTrue: false
-  },
-  {
-    v: "C",
-    isTrue: false
-  },
-  {
-    v: "D",
-    isTrue: false
-  },
-  {
-    v: "E",
-    isTrue: false
-  },
-  {
-    v: "F",
-    isTrue: false
-  },
-  {
-    v: "J",
-    isTrue: false
-  }
-];
+const indexNumber = [];
 export default {
   name: "",
   props: {

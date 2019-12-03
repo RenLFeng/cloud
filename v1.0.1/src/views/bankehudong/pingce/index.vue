@@ -22,7 +22,7 @@
       <mt-header :title="pingceType(pingceItemfile.ptype)">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <Deatil :data="pingceHistoryList"/>
+      <Deatil :data="pingceItemfile"/>
     </mt-popup>
   </div>
 </template>
