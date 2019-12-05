@@ -19,6 +19,12 @@ nativecode.detectplatform = function()
         return 'exsoftandroid';
     }
     if (window.ExsoftWindows){
+
+        //! 检测是否是大屏端
+        if (ua.indexOf('WebDaPing') > -1){
+            return 'exsoftdaping';
+        }
+
         return 'exsoftwindows';
     }
     return '';
@@ -26,6 +32,9 @@ nativecode.detectplatform = function()
 
 nativecode.platform = nativecode.detectplatform()
 nativecode.os = ''; //! os 类型
+
+
+
 
 nativecode.parseurlparam = function(paraName)
 {
@@ -104,7 +113,7 @@ nativecode.hasloginpage = function(){
 //！ 是否能够绑定用户
 nativecode.canbindaccount = function()
 {
-    return true;
+    //return true;
     if (nativecode.platform == 'miniprogram'){
         return true;
     }
@@ -120,10 +129,28 @@ nativecode.hasnavbar = function()
     return true;
 }
 
+//! 是否有主页返回键
+nativecode.hasmainback = function()
+{
+    if (nativecode.platform.length > 0){
+        return true;
+    }
+    return false;
+}
+
+
+//import wx from 'weixin-js-sdk';
+
+nativecode.getwx = function(){
+    let wx = require('weixin-js-sdk');
+    return wx;
+}
+
 nativecode.wxcall = function(funname, argobj)
 {
-    // console.log("wxcall");
-    var wx = require('weixin-js-sdk');
+    console.log("wxcall");
+    let wx = require('weixin-js-sdk');
+    console.log(wx);
 
     // let Base64 = require('js-base64').Base64;
 
@@ -145,6 +172,8 @@ nativecode.wxcall = function(funname, argobj)
     let szuri = encodeURIComponent(szargs);
 
     tourl += "?args=" + szuri;
+
+    console.log("wx navigateto:"+tourl);
 
     wx.miniProgram.navigateTo({url:tourl});
     return {};
@@ -213,11 +242,17 @@ nativecode.ncall = function(funname, argobj){
             return null;
         }
 
-        let res = JSON.parse(szret);
-        return res;
+        try{
+            let res = JSON.parse(szret);
+            return res;
+        }catch(e){
+            return {
+                ret:szret
+            };
+        }
 
     }catch(e){
-        //   console.log(e);
+          console.log(e);
     }
     if (process.env.NODE_ENV == "development"){
         console.log('nativecode.platform:'+ nativecode.platform +'ncall:' + funname + " argobj:"+JSON.stringify(argobj));

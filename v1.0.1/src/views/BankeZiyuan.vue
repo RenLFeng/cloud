@@ -399,6 +399,17 @@ export default {
         this.loadMoreFile();
       }
     },
+      parseOneItem(item){
+          if (item.info) {
+              item.info = JSON.parse(item.info);
+              if (
+                  item.info.metainfo &&
+                  typeof item.info.metainfo == "string"
+              ) {
+                  item.info.metainfo = JSON.parse(item.info.metainfo);
+              }
+          }
+      },
     loadMoreFile() {
       let url = "";
       if (this.topid && this.loadMorePosition == "bottom") {
@@ -411,7 +422,7 @@ export default {
       } else {
         this.files = [];
         this.loadingState = false;
-        url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=10";
+        url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=50";
       }
       this.$http
         .get(url)
@@ -427,15 +438,7 @@ export default {
             }
             console.log("success", res);
             for (let item of res.data.data) {
-              if (item.info) {
-                item.info = JSON.parse(item.info);
-                if (
-                  item.info.metainfo &&
-                  typeof item.info.metainfo == "string"
-                ) {
-                  item.info.metainfo = JSON.parse(item.info.metainfo);
-                }
-              }
+              this.parseOneItem(item);
             }
             commontools.arrayMergeAsIds(this.files, res.data.data);
             this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
@@ -502,8 +505,9 @@ export default {
             .then(res => {
               Indicator.close();
               if (res.data.code == 0) {
+                  this.parseOneItem(res.data.data);
                 commontools.arrayMergeAsIds(this.files, res.data.data);
-                res.data.data.info = JSON.parse(res.data.data.info);
+              //  res.data.data.info = JSON.parse(res.data.data.info);
                 let arr = [];
                 arr[0] = res.data.data;
                 this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);

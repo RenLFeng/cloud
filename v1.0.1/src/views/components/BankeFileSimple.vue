@@ -66,9 +66,16 @@ export default {
     },
     fileimg() {
       let r = this.fileitem.url;
+      //! cjy: 不能使用原url
+        r= require("../../assets/file_icon/file.svg");
+        if (this.fileitem.ftype != 'file'){
+            r = require("../../assets/file_icon/IT.svg");
+            return r;
+        }
       var fitem = this.fileitem.info;
       if (fitem.filepath && fitem.metainfo) {
         r = fitem.filepath + fitem.metainfo.snapsuffix;
+        return r;
       }
       for (let item of fileType) {
         if (this.fileitem.name.includes(item)) {
@@ -88,12 +95,6 @@ export default {
         }
       }
 
-      // var r = errorImg; //this.fileitem.info ? this.fileitem.info.filepath : errorImg ;
-      // //！ cjy： 对于图片使用缩略图； 否则根据文件类型返回对应img
-      //   var fitem = this.fileitem.info;
-      //   if (fitem.filepath && fitem.metainfo && fitem.metainfo.snapsuffix){
-      //       r = fitem.filepath + fitem.metainfo.snapsuffix;
-      //   }
       return r;
     },
     filesizedesc() {

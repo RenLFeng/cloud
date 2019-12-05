@@ -32,9 +32,6 @@ const state = {
     usercookiereaded: false,
     bankeZhiYuanLinkItem: [],
     lang: localStorage.getItem('lang') || 'zh',
-    isWX:(() => {
-        return window.__wxjs_environment === 'miniprogram';
-    })(),
 
     isPreview: true,//是否开启了预览
     previewLoadFile:[],//预览文件

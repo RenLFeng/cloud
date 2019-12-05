@@ -1,8 +1,8 @@
 <template>
   <div class="url-container fontsmall">
     <div class="border-e5-bottom">
-      <mt-field :label="$t('common.Title')+':'" :placeholder="$t('common.Please_entry')+$t('common.Title')" v-model="url"></mt-field>
-      <mt-field :label="$t('common.Url')+':'" :placeholder="$t('common.Please_entry')+$t('common.Url')" type="url" v-model="urlTitle"></mt-field>
+      <mt-field :label="$t('common.Title')+':'" :placeholder="$t('common.Please_entry')+$t('common.Title')" v-model="urlTitle"></mt-field>
+      <mt-field :label="$t('common.Url')+':'" :placeholder="$t('common.Please_entry')+$t('common.Url')" type="url" v-model="url"></mt-field>
     </div>
     <div class="button-worp">
       <mt-button class="button-auto-96" type="primary" @click="submit">{{$t('common.Submit')}}</mt-button>

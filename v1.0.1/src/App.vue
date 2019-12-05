@@ -83,32 +83,37 @@ export default {
     // console.log("routerview page created, cur path:"+this.$router.path);
     //! 请求登录信息
     var url = "/api/api/uservalidate";
-    this.$http
-      .post(url)
-      .then(res => {
-        console.log("user validate ret, cur path:" + this.$route.path);
-        //  console.log(document.cookie);
-        if (res.data.code == 0) {
-          this.$store.commit("setLoginUser", res.data.data);
-          // cjy: 大屏端，如果已登录， 应当自动跳转主页
-          if (this.$route.path == "/login") {
-            this.$store.commit("setRouterForward", true);
-            this.$router.push("/");
-          }
-          nativecode.jsLogin(1, res.data.data);
-        } else {
-          //!  未登录， 强制跳转登录
-          this.$store.commit("setLoginUser", {});
-          this.$store.commit("setRouterForward", true);
-          this.$router.push("/login");
+    console.log("user validate ret, cur path:" + this.$route.path);
+    //! cjy: 考虑到微信可能在不同界面单独加载， 这里检测仅指定path才去query， 减少频率
+      if (this.$route.path == '/'){
+          this.$http
+              .post(url)
+              .then(res => {
 
-          nativecode.jsLogin(0, {});
+                  //  console.log(document.cookie);
+                  if (res.data.code == 0) {
+                      this.$store.commit("setLoginUser", res.data.data);
+                      // cjy: 大屏端，如果已登录， 应当自动跳转主页
+                      if (this.$route.path == "/login") {
+                          this.$store.commit("setRouterForward", true);
+                          this.$router.push("/");
+                      }
+                      nativecode.jsLogin(1, res.data.data);
+                  } else {
+                      //!  未登录， 强制跳转登录
+                      this.$store.commit("setLoginUser", {});
+                      this.$store.commit("setRouterForward", true);
+                      this.$router.push("/login");
 
-        }
-      })
-      .catch(() => {
-        //! 其他异常
-      });
+                      nativecode.jsLogin(0, {});
+
+                  }
+              })
+              .catch(() => {
+                  //! 其他异常
+              });
+      }
+
   },
   watch: {
     $route(to, from) {

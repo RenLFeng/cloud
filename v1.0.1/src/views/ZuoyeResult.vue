@@ -20,7 +20,7 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">{{zuoyeitem.name}}</div>
           <div class="zuoyesubtitle">
-            <span class="zuoyescore">{{$t('bankeTask.Assignment_score')}} 100{{$t('common.min')}}</span>&nbsp;|&nbsp;
+            <span class="zuoyescore">{{$t('bankeTask.Assignment_score')}} {{zuoyeitem.score}}{{$t('common.min')}}</span>&nbsp;|&nbsp;
             <span>{{statedesc}}</span>
           </div>
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
@@ -129,7 +129,7 @@
       <div class="pf-container">
         <p class="tit border-bottom-e5 text-center">
           <span class="close-mode float-l" @click="goBacks">{{$t('confirm.Cancel')}}</span>
-          {{$t('bankeTask.To')}}&nbsp;{{studentName}}&nbsp;{{mark}} {{$t('bankeTask.Score')}}
+          {{$t('bankeTask.To')}}&nbsp;{{studentName}} {{$t('bankeTask.Score')}}
           <span
             class="close-mode float-r"
             @click="submiMark"
@@ -137,7 +137,7 @@
         </p>
         <p class="mark-input border-bottom-e5">
           <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />
-          {{$t('bankeTask.Overall_score')}}(100)
+          {{$t('bankeTask.Overall_score')}}({{zuoyeitem.score}})
         </p>
         <ul class="clearIt">
           <li class="float-l text-center" v-for="i in markArr" :key="i" @click="seleMarkFn(i)">
@@ -257,7 +257,8 @@ export default {
         allowpasstime: 0,
         hassubmittime: 0,
         detaildesc: "",
-        submittime: ""
+        submittime: "",
+          score:10
       },
       allZuoyeitem: [],
       allInitData: [],
@@ -276,7 +277,7 @@ export default {
       pagemode: "result", //! 页面模式； 复用多种页面模式：result:所有结果列表  submit:学生答题列表
       submitok: false,
       zashowbtnactive: true,
-      markArr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+      markArr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       loadingState: false
     };
   },
@@ -411,7 +412,7 @@ export default {
       this.ScoreItemInfo = ritem.info;
       console.log("作业 info", ritem);
       if (!isteacher) {
-        if (ritem.info.score > "0") {
+        if (ritem.info.score >= 0) {
           MessageBox("已经评过分啦~~");
         } else {
           MessageBox("等待老师评分哦 ~");
@@ -467,18 +468,27 @@ export default {
     submiMark() {
       if (this.mark == "") return;
       this.$http
-        .get(
-          "/api/Azuoye/setScore?submitid=" +
-            this.ScoreItemInfo.submitid +
-            "&score=" +
-            this.mark,
-          {}
+        .post(
+          "/api/Azuoye/setScore",
+          {
+              submitid:this.ScoreItemInfo.submitid,
+              score:this.mark,
+              zuoyeid:this.zuoyeid
+          }
         )
         .then(res => {
           this.popupZuoyePF = false;
-          this.loadAll();
+       //   this.loadAll();
+            console.log('评分结果:'+res);
+            if (res.data.code == 0){
+              //  console.log("评分成功");
+                this.ScoreItemInfo.score = res.data.data.score;
+            }
+            else{
+               // console.log("评分错误", res);
+            }
           this.mark = "";
-          console.log("评分成功", res);
+
         })
         .catch(() => {
           this.popupZuoyePF = false;
@@ -559,11 +569,14 @@ export default {
     },
     onHttpData(data) {
       for (let v of data.results) {
-        for (let file of v.files) {
-          if (file.metainfo && typeof file.metainfo == "string") {
-            file.metainfo = JSON.parse(file.metainfo);
+          if (v.files){
+              for (let file of v.files) {
+                  if (file.metainfo && typeof file.metainfo == "string") {
+                      file.metainfo = JSON.parse(file.metainfo);
+                  }
+              }
           }
-        }
+
       }
       this.zuoyeitem = data["zuoye"];
       this.allZuoyeitem = data.results;
@@ -650,6 +663,7 @@ export default {
   created() {
     var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
     if (dd && dd.resultdata) {
+        //console.log(dd.resultdata);
       this.onHttpData(dd.resultdata);
     } else {
       this.loadAll();

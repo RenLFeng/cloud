@@ -10,7 +10,8 @@
       >
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
-          <img v-else :src="getimgico(fitem)" class="iconclass" />
+          <img v-else :src="getimgico(fitem)" :onerror="getimgico(fitem)" class="iconclass" />
+
         </div>
 
         <div v-if="uploadstate(findex)" class="uploadbg">
@@ -127,8 +128,12 @@ export default {
           this.tempImgs.push(this.getimgico(v));
         }
       }
-      if (window.__wxjs_environment === "miniprogram") {
+      if (
+          //window.__wxjs_environment === "miniprogram"
+          nativecode.platform == 'miniprogram'
+      ) {
         // console.log(this.tempImgs);
+        let wx = nativecode.getwx();
         let imgs = this.tempImgs;
         for (let i = 0; i < imgs.length; i++) {
           imgs[i] = nativecode.getDownUrl2(imgs[i]);
@@ -298,6 +303,9 @@ export default {
         this.$set(fitem, "uploadState", "success");
         fitem.serverData = bok;
         console.log(bok);
+        if (typeof bok.metainfo == "string"){
+            bok.metainfo = JSON.parse(bok.metainfo);
+        }
         if (bok.metainfo && bok.metainfo.w && bok.metainfo.h) {
           //! 更新宽高， 重新显示图片
           fitem.w = bok.metainfo.w;
@@ -319,6 +327,10 @@ export default {
     getimgico(fitem) {
       return commontools.fileType(fitem);
     },
+      getimgnativeico(fitem){
+        console.log(fitem);
+          return commontools.fileSnapPath(fitem);
+      },
     delfileindex(findex) {
       var tips = this.$t("bankeTask.Delete_file") + " %s？";
       var filename = "";

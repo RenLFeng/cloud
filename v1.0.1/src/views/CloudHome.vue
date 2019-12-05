@@ -1,11 +1,11 @@
 <template>
   <div class="fontsmall">
-    <mt-header :title="$t('common.HomeTite')">
-      <mt-button icon="back" slot="left" @click="onbackmain">{{$t('common.Back')}}</mt-button>
+    <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
+      <mt-button v-if="hasmainback" icon="back" slot="left" @click="onbackmain">{{$t('common.Back')}}</mt-button>
 
       <!-- <mt-button slot="right" class="btnadd" v-if="showadd" @click="onadd">+</mt-button> -->
     </mt-header>
-    <div class="noheadercontainer page-wrap cloud">
+    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
           <mt-search v-model="value" :result.sync="result"></mt-search>
@@ -72,7 +72,13 @@ export default {
       }
       return false;
     },
-    curbankes() {
+      hasmainback(){
+        return nativecode.hasmainback();
+      },
+      hasnavbar(){
+        return nativecode.hasnavbar();
+      }
+    ,curbankes() {
       return this.$store.state.banke.curbankes;
     },
     bankeempty() {
@@ -129,21 +135,22 @@ export default {
       var url = "/api/api/bankequery";
       if(!this.bankeempty){
       this.bankestatedesc = "加载中";
-      this.$http
-        .post(url)
-        .then(res => {
-          if (res.data.code == 0) {
-            this.$store.commit("banke/appendBankes", res.data.data);
-          }
-          if (!this.bankeempty) {
-            this.bankestatedesc = "当前无班课";
-          }
-        })
-        .catch(res => {
-          console.log(res);
-          this.bankestatedesc = "发生异常";
-        });
       }
+      //! cjy: 防止出错， 总是重新拉取
+        this.$http
+            .post(url)
+            .then(res => {
+                if (res.data.code == 0) {
+                    this.$store.commit("banke/setBankes", res.data.data);
+                }
+                if (!this.bankeempty) {
+                    this.bankestatedesc = "当前无班课";
+                }
+            })
+            .catch(res => {
+                console.log(res);
+                this.bankestatedesc = "发生异常";
+            });
     }
   },
   destroyed: function() {

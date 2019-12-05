@@ -87,7 +87,6 @@ export default {
       hasloginpage(){
           return nativecode.hasloginpage();
       }
-
       ,shownewaccount(){
           if (this.bindaccount.length > 0){
               return false;
