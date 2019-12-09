@@ -85,7 +85,8 @@ export default {
     var url = "/api/api/uservalidate";
     console.log("user validate ret, cur path:" + this.$route.path);
     //! cjy: 考虑到微信可能在不同界面单独加载， 这里检测仅指定path才去query， 减少频率
-      if (this.$route.path == '/'){
+     // if (this.$route.path == '/')  //! cjy: 服务器实现缓存
+      {
           this.$http
               .post(url)
               .then(res => {

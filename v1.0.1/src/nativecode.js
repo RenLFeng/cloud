@@ -146,6 +146,35 @@ nativecode.getwx = function(){
     return wx;
 }
 
+nativecode.navigateTo = function(path)
+{
+    if (nativecode.platform == 'miniprogram'){
+
+        let tourl = '/pages/web/page';
+        tourl += '?url=';
+        tourl += encodeURIComponent('/#' + path);
+
+        let wx = nativecode.getwx();
+
+        wx.miniProgram.navigateTo({url:tourl});
+
+
+        return true;
+    }
+    return false;
+}
+
+nativecode.navigateToSign = function(bankeid)
+{
+    let wx = nativecode.getwx();
+    let argobj = {
+        bankeid:bankeid
+    };
+    let tourl = '/pages/location/sign';
+    tourl += '?args=' + encodeURIComponent(JSON.stringify(argobj));
+    wx.miniProgram.navigateTo({url:tourl});
+}
+
 nativecode.wxcall = function(funname, argobj)
 {
     console.log("wxcall");
@@ -158,6 +187,8 @@ nativecode.wxcall = function(funname, argobj)
 
     if (funname == "jsFileLink"){
         tourl = "/pages/files/view";
+
+       //alert(JSON.stringify(wx.getLocation()));
     }
     if (tourl == ''){
         return null;

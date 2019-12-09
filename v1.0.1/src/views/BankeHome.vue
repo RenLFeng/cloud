@@ -1,10 +1,10 @@
 <template>
   <div>
-    <mt-header :title="bankename">
+    <mt-header v-show="hasnavbar" :title="bankename">
       <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
-    <div class="noheadercontainer page-wrap" :class="selected=='tongzhi'?'tongzhi':''">
+    <div class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap '" :class="selected=='tongzhi'?'tongzhi':''">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="ziyuan">
           <BankeZiyuan :bankeid="id" v-if="showziyuan" 
@@ -76,16 +76,24 @@ import listIcon from "../common/lists-icon";
 import pic from "../assets/dis.jpg";
 import bankeZouyeXq from "./banKeDetail/index";
 
+import nativecode from '../nativecode'
+
 export default {
   name: "BankeHome",
   data() {
     return {
       selected: "ziyuan",
-      curbanke: "common.Curbanke",
+     //curbanke: "common.Curbanke",
       //    Curbanke: {
       //   name: '未知班课',
       //   avatar: ""
       // }
+        curbanke:{  //! cjy： 预设字段， 方便触发vue的监听
+          name:'',
+            avatar:'',
+            id:0
+        },
+        bankeid:0,
       showziyuan: false,
       showchengyuan: false,
       showzuoye: false,
@@ -112,7 +120,10 @@ export default {
     }
   },
   computed: {
-    footerbar(){
+      hasnavbar(){
+          return nativecode.hasnavbar();
+      }
+    ,footerbar(){
       return this.$store.state.footerBarState;
     },
     Preview() {
@@ -170,16 +181,38 @@ export default {
       //  this.tongzhiState=true;
       // this.zYLinkSelectEd = data;
     }
+    ,loadBanke(){
+          this.$http.post('/api/banke/search',{
+              id:this.bankeid
+          }).then((res)=>{
+              if (res.data.code == 0){
+                  if (res.data.data.length > 0){
+                      this.curbanke = res.data.data[0];
+                      this.$store.commit("banke/appendBankes", this.curbanke);
+                      this.onBankeChange();
+                  }
+              }
+          }).catch(()=>{
+
+          })
+      }
+      ,onBankeChange(){
+        if (!this.hasnavbar){
+            document.title = this.bankename;
+        }
+      }
   },
   created() {
-    // console.log(this.id);
+     console.log('bankehome:'+this.id);
     //console.log(this.$store.getters);
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
-
+    this.bankeid = this.id;
     if (u) {
       this.curbanke = u;
+      this.onBankeChange();
     } else {
-      this.curbanke = this.$t("common.Curbanke");
+     // this.curbanke = this.$t("common.Curbanke");
+        this.loadBanke();
     }
     // console.log('uuuuuuu',u)
     var ss = this.$store.state.bhomeselected;

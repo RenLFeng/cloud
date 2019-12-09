@@ -127,8 +127,12 @@ export default {
     bankeclick(bankeitem) {
       console.log(bankeitem);
       if (bankeitem.id) {
-        this.$store.commit("setRouterForward", true);
-        this.$router.push("/bankehome/" + bankeitem.id);
+          let tourl = "/bankehome/" + bankeitem.id;
+          if (!nativecode.navigateTo(tourl)){
+              this.$store.commit("setRouterForward", true);
+              this.$router.push(tourl);
+          }
+
       }
     },
     initbanke() {
