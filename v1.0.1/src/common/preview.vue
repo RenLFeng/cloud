@@ -72,11 +72,11 @@ export default {
     PtempLocalfiles: function(newValue, oldValue) {
       this.tempLocalfiles = newValue;
       console.log("tempLocalfiles", this.tempLocalfiles);
+    },
+    pindex: function(newValue, oldValue) {
+      this.index = newValue;
+      console.log("tempLocalfiles", this.index);
     }
-    // pindex: function(newValue, oldValue) {
-    //   this.index = newValue;
-    //   console.log("tempLocalfiles", this.index);
-    // }
   },
   data() {
     return {

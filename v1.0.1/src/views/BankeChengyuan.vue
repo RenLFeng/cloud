@@ -1,26 +1,5 @@
 <template>
   <div class="memberdesc-main">
-    <!-- <div v-if="showcontrol" class="uploadpart">
-      <mt-tabbar class="uploadtabbar">
-        <mt-tab-item id="1" @click.native="onMemberSign">
-          <div>
-            <img slot="icon" src="../assets/100x100.png" class="uploadimgsize" />
-            <i class="iconfont iconfont-big iconqiandao0101"></i>
-            <div>{{$t('common.Sign')}}</div>
-            签到
-          </div>
-        </mt-tab-item>
-        <mt-tab-item id="2" @click.native="onMemberGroup">
-          <div>
-            <img slot="icon" src="../assets/100x100.png" class="uploadimgsize" />
-            <i class="iconfont iconfont-big iconfanganzhizuo_huaban"></i>
-            <div>{{$t('bankeMember.Plan')}}</div>
-            小组方案
-          </div>
-        </mt-tab-item>
-      </mt-tabbar>
-    </div>-->
-
     <div class="memberdesc clearfix">
       <div class="membertitledesc">
         {{$t('bankeZiYuan.Member')+$t('common.Total')}}
@@ -190,6 +169,9 @@ export default {
 .memberdesc-main {
   background: #fff;
   margin-top: 10px;
+}
+.memberdesc-main .head{
+  background: #fff;
 }
 .memberdesc {
   font-size: 18px;

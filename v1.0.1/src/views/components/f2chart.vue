@@ -449,15 +449,15 @@ export default {
   },
   destroyed() {
     if (chart !== undefined) {
-      chart.destroy();
+      // chart.destroy();
       chart = null;
     }
     if (chart2 !== undefined) {
-      chart2.destroy();
+      // chart2.destroy();
       chart2 = null;
     }
     if (chart3 !== undefined) {
-      chart3.destroy();
+      // chart3.destroy();
       chart3 = null;
     }
   }

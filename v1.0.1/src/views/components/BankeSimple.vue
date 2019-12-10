@@ -8,14 +8,15 @@
             {{classitem.name}}
             <span class="membernum fonttiny">{{classitem.membernum}}人</span>
           </div>
-          <div class="font-xs ellipse">教师：{{classitem.username}}</div>
+          <div class="font-xs ellipse">教师：{{classitem.username}} <span class="class-nmuber font-xs">班课号123456</span> </div>
           <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>
       <span class="go">
-        <i class="iconfont iconjiantou"></i>
+        <i class="iconfont iconjiantou1"></i>
       </span>
     </div>
+     
   </div>
 </template>
 
@@ -34,7 +35,9 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+
+    };
   },
   computed: {
     defaultimg() {
@@ -50,7 +53,7 @@ export default {
 .class-banke-list {
   .item {
     position: relative;
-    background: #fff;
+    // background: #fff;
     height: 72px;
     border-top: 1px solid #f0f0f0;
     padding-left: 80px;
@@ -72,6 +75,9 @@ export default {
         margin-top: 4px;
         > div {
           padding: 1px 0;
+          .class-nmuber{
+            margin-left: 10px;
+          }
         }
         .itemtitle {
           font-size: 16px;

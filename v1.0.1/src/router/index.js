@@ -20,13 +20,22 @@ import bankehome from '../views/BankeHome'
 import zuoyedetailedit from '../views/ZuoyeDetailEdit'
 import zuoyenew from '../views/ZuoyeNew'
 import zuoyeresult from '../views/ZuoyeResult'
+//成员平均分
 import F2chart from '../views/components/f2chart'
+//大屏
 import BigLogin from '../views/bankehudong/big/index'
+//签到
 import Sign from '../views/bankehudong/sign/teacherSignInfo'
+//评测记录
 import PingCe from '../views/bankehudong/pingce/index'
+//评测
 import PingCeing from '../views/bankehudong/pingceing/index'
-
-
+//分组管理
+import Group from '../views/bankeMember/group/index'
+//板书
+import Banshu from '../views/bankehudong/banshu/index'
+//加入班课
+import Join from '../views/bankehome/join'
 
 Vue.use(Router)
 export function createRouter() {
@@ -55,6 +64,9 @@ export function createRouter() {
         {path:'/Sign',name:'Sign', component:Sign},
         {path:'/PingCe',name:'PingCe', component:PingCe},
         {path:'/PingCeing',name:'PingCeing', component:PingCeing},
+        {path:'/Group',name:'Group', component:Group},
+        {path:'/Banshu',name:'Banshu', component:Banshu},
+        {path:'/Join',name:'Join', component:Join},
 
 
      

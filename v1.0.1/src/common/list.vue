@@ -1,15 +1,21 @@
 <template>
-  <div class="mainpart common-list" :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''" @click="onclick">
+  <div
+    class="mainpart common-list"
+    :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''"
+    @click="onclick"
+  >
     <img v-if="type=='pingce'" class="itemavatar" :src="item.files" :onerror="defaultimg" />
     <div class="maincontent" v-if="type=='sign'">
       <div class="mainctitle ellipse">
         {{item.date}}&nbsp;{{week}} &nbsp;签到
-        <span class="fr font-xs color9">{{item.joinnum}} 人 / {{item.totalnum}} 人</span>
+        <span
+          class="fr font-xs color9"
+        >{{item.joinnum}} 人 / {{item.totalnum}} 人</span>
       </div>
       <div v-if="classSignId==item.id" class="maincsubtitle colord">正在签到...</div>
       <div v-else class="maincsubtitle color9">{{item.starttime}}</div>
     </div>
-<!-- 评测记录 -->
+    <!-- 评测记录 -->
     <div class="maincontent" v-if="type=='pingce'">
       <div class="mainctitle ellipse">
         {{pingceType}}
@@ -17,7 +23,7 @@
       </div>
       <div class="maincsubtitle color9">{{item.createtime}}</div>
     </div>
-<!-- 签到详情 -->
+    <!-- 签到详情 -->
     <div class="maincontent pingcedetail" v-if="type=='pingcedetail'">
       <div class="mainctitle ellipse">
         <img class="itemavatar" :src="item.avatar" :onerror="defaultimg" />
@@ -30,8 +36,18 @@
         <span class="fr colory">得分&nbsp;{{item.score}}</span>
       </div>
     </div>
-
-    <i v-if="type!='pingcedetail'" class="iconfont iconjiantou eicotrigger colord"></i>
+    <!-- 成员分组 -->
+    <div class="maincontent" v-if="type=='group'">
+      <div class="mainctitle ellipse">
+        {{item.name}}
+        <span v-if="index==0" class="fr font-xs colory">默认分组</span>
+      </div>
+      <div
+        class="maincsubtitle color9"
+      >{{item.subgroupnum}} 人已被划分小组，划分为 {{item.subgroupmnum}}个小组{{item.createtime}}</div>
+    </div>
+    <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9"></i>
+    <i v-if="type!='pingcedetail' && type!='group'" class="iconfont iconjiantou eicotrigger colord"></i>
   </div>
 </template>
 
@@ -47,6 +63,12 @@ export default {
         return {};
       }
     },
+    text: {
+      default: ""
+    },
+    index:{
+      default: ''
+    },
     type: {
       default: "sign"
     },
@@ -55,10 +77,10 @@ export default {
     }
   },
   computed: {
-    answer(){
-      let str='';
-      for(let v of this.item.answerdesc.opts){
-        str+=v+'、';
+    answer() {
+      let str = "";
+      for (let v of this.item.answerdesc.opts) {
+        str += v + "、";
       }
       return str;
     },
@@ -98,7 +120,7 @@ export default {
   padding: 10px;
   background: #fff;
 }
-.mainpart.pingcedetail{
+.mainpart.pingcedetail {
   padding: 0;
 }
 .mainpart > .index {

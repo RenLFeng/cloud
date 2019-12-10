@@ -7,13 +7,18 @@
     <div class="noheadercontainer page-wrap" :class="selected=='tongzhi'?'tongzhi':''">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="ziyuan">
-          <BankeZiyuan :bankeid="id" v-if="showziyuan" 
-          @UploadLinkSelectEd="onUploadLinkSelectEd"
-          @popupZiyuanEdit="onPopupZiyuanEdit"
-          >
-          </BankeZiyuan>
+          <BankeZiyuan
+            :bankeid="id"
+            v-if="showziyuan"
+            @UploadLinkSelectEd="onUploadLinkSelectEd"
+            @popupZiyuanEdit="onPopupZiyuanEdit"
+          ></BankeZiyuan>
         </mt-tab-container-item>
-        <mt-tab-container-item id="chengyuan">
+        <mt-tab-container-item id="chengyuan" >
+          <div class="chengyuan-head tc" @click="groupFn">
+            <i class="iconfont iconxiaozu eicotrigger"></i>
+            <p>分组方案</p>
+          </div>
           <BankeChengyuan :bankeid="id" v-if="showchengyuan"></BankeChengyuan>
         </mt-tab-container-item>
 
@@ -28,7 +33,12 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-    <mt-tabbar v-model="selected" fixed :class="{hide:tabbarhide}" v-if="Preview && !zyEditState && footerbar">
+    <mt-tabbar
+      v-model="selected"
+      fixed
+      :class="{hide:tabbarhide}"
+      v-if="Preview && !zyEditState && footerbar"
+    >
       <mt-tab-item id="ziyuan">
         <i class="iconfont iconwenjianjiai"></i>
         <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
@@ -98,7 +108,7 @@ export default {
       addmenuvisible: false,
       tabbarhide: false,
       zYLinkSelectEd: "",
-      zyEditState:false
+      zyEditState: false
     };
   },
   props: {
@@ -112,7 +122,7 @@ export default {
     }
   },
   computed: {
-    footerbar(){
+    footerbar() {
       return this.$store.state.footerBarState;
     },
     Preview() {
@@ -136,8 +146,8 @@ export default {
     }
   },
   methods: {
-    onPopupZiyuanEdit(v){
-      this.zyEditState=v;
+    onPopupZiyuanEdit(v) {
+      this.zyEditState = v;
     },
     onclickzuoye() {
       if (this.selected == "zuoye") {
@@ -169,6 +179,13 @@ export default {
     onUploadLinkSelectEd(data) {
       //  this.tongzhiState=true;
       // this.zYLinkSelectEd = data;
+    },
+    groupFn() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "Group",
+        params: { bankeid: this.id }
+      });
     }
   },
   created() {
@@ -203,6 +220,14 @@ export default {
 </script>
 
 <style scoped>
+.chengyuan-head {
+  background: #fff;
+  padding: 10px;
+}
+.chengyuan-head i {
+  font-size: 45px;
+  color: #8ecbff;
+}
 .iconfont {
   display: block;
   padding-bottom: 10px;

@@ -47,16 +47,33 @@ export const getDate = (date, n) => {
   var date = [];
   var data = [Math.random() * 300];
   var time = new Date(base);
-  date.push([time.getFullYear(), time.getMonth() + 1, time.getDate()].join('/'));
+
+  let y = time.getFullYear();
+  let m = time.getMonth() + 1;
+  m = m < 10 ? ('0' + m) : m;
+  let d = time.getDate();
+  d = d < 10 ? ('0' + d) : d;
+
+  date.push([y, m, d].join('/'));
+  // date.push([time.getFullYear(), time.getMonth() + 1, time.getDate()].join('/'));
   for (var i = 1; i < n; i++) {
     var now = new Date(base -= oneDay);
-    date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+
+    let y = now.getFullYear();
+    let m = now.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    let d = now.getDate();
+    d = d < 10 ? ('0' + d) : d;
+
+    date.push([y, m,d].join('/'));
+    // date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
     data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
   }
   var newdate = date.reverse()
   // console.log(newdate)
   return newdate;
 }
+//指定多少天以后的时间
 export const getNextDate = (n) => {
   var date = new Date();
   date.setDate(date.getDate() - n);

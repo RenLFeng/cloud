@@ -99,6 +99,7 @@ export default {
   methods: {
     getScoreinfo(item, start, n) {
       console.log("scoreinfo", item);
+      this.data=[];
       this.$http
         .post("api/bankecount/scoreinfo", {
           userids: [item.memberuserid],
@@ -145,9 +146,10 @@ export default {
             }
             for (let item of this.data) {
               for (let v of this.serverData) {
-                if (item.count == v.countdate) {
+                if (item.count == v.countdate) {        
                   switch (item.type) {
                     case "资源得分":
+                
                       item.value = v.score1;
                       break;
                     case "签到得分":
@@ -164,9 +166,9 @@ export default {
               }
             }
             this.drawing();
-            console.log("分", this.serverData);
+            // console.log("分", this.serverData);
             // console.log("weeksignDate", weeksignDate);
-            // console.log("this.datathis.data", this.data);
+            // console.log("this.data.data", this.data);
           }
         })
         .catch(err => {});
@@ -251,7 +253,7 @@ export default {
   destroyed() {
     if (chart !== undefined) {
       chart.destroy();
-      chart = null;
+      // chart = null;
     }
   }
 };

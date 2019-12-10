@@ -5,7 +5,7 @@
         <span>上课签到</span>
         <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
       </li>
-      <li class="fontlarge" @click="gopingce"  v-if="!isTeacher">
+      <li class="fontlarge" @click="gopingce" v-if="!isTeacher">
         <span>评测</span>
         <i class="iconfont icontongji eicotrigger fr" style="color:#38ADA9"></i>
       </li>
@@ -16,6 +16,10 @@
       <li class="fontlarge" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
         <i class="iconfont icondapingmu eicotrigger fr" style="color:#0055FF"></i>
+      </li>
+      <li class="fontlarge" @click="Banshu">
+        <span>课堂板书</span>
+        <i class="iconfont iconwritin-blackboard eicotrigger fr" style="color:#38AD5A"></i>
       </li>
     </ul>
     <!-- <mt-popup
@@ -29,7 +33,7 @@
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <TeacherSignInfo :bankeid="bankeid" :role="isTeacher" :global="global" @global="onglobal" />
-    </mt-popup> -->
+    </mt-popup>-->
   </div>
 </template>
 <script>
@@ -61,8 +65,8 @@ export default {
   },
   methods: {
     //老师签到
-     teacherFn() {
-     this.$store.commit("setRouterForward", true);
+    teacherFn() {
+      this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "Sign",
         params: { bankeid: this.bankeid }
@@ -93,6 +97,14 @@ export default {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "BigLogin",
+        params: { bankeid: this.bankeid }
+      });
+    },
+    //板书
+    Banshu() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "Banshu",
         params: { bankeid: this.bankeid }
       });
     },
