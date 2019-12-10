@@ -1,6 +1,6 @@
 <template>
   <div class="pingceing-warp">
-    <mt-header :title="isPingce?pingceType(pingceData.ptype):'评测'">
+    <mt-header v-if="hasnavbar" :title="pagetitle">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="main">
@@ -55,6 +55,9 @@ export default {
         optdesc: {}
       },
 
+        //! 是否为参数导入； 参数导入的以参数为准，不再http拉取
+        isArgLoad:false,
+
       tempAnswer: [],
 
       pingceType
@@ -63,15 +66,44 @@ export default {
   created() {
     const UrlParams = parseURL(window.location.href);
     let params = this.$route.params;
+    let doquery = true;
     if (UrlParams.id) {
       this.bankeid = UrlParams.id;
-    } else {
+    }
+    else if (UrlParams.args){
+        let szarg = decodeURIComponent(UrlParams.args);
+        try{
+            let objarg = JSON.parse(szarg);
+           // console.log()
+            this.bankeid = objarg.bankeid;
+            doquery = false;
+            this.isArgLoad = true;
+
+            this.onpingcedata(objarg.data);
+
+        }catch(e){
+            Toast("解析错误");
+        }
+    }
+    else {
       this.bankeid = params.bankeid;
     }
-    this.querycur();
+    if (doquery){
+        this.querycur();
+    }
+
   },
   mounted() {},
   computed: {
+      pagetitle(){
+          return this.isPingce?pingceType(this.pingceData.ptype):'评测';
+      },
+      hasnavbar(){
+          if (this.isArgLoad){
+              return false;
+          }
+          return true;
+      },
     defaultimg() {
       var srcstr = 'this.src="';
       srcstr += require("@/assets/100x100.png");
@@ -80,6 +112,19 @@ export default {
     }
   },
   methods: {
+      onpingcedata(rdata){
+          this.pingceData = rdata;
+          if (this.pingceData) {
+              this.isPingce = true;
+          }
+
+          this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
+          console.log("this.pingceData", this.pingceData);
+
+          if (this.isArgLoad){
+              document.title = this.pagetitle;
+          }
+      },
     querycur() {
       this.$http
         .post("api/pingce/querycur", {
@@ -87,15 +132,10 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-            this.pingceData = res.data.data;
-            if (this.pingceData) {
-              this.isPingce = true;
-            }
-            console.log("res", res);
-            this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
-            console.log("this.pingceData", this.pingceData);
+              console.log("res", res);
+              this.onpingcedata(res.data.data);
           } else {
-            Toast("连接错误");
+            Toast("当前没有评测");
           }
         })
         .catch(err => {

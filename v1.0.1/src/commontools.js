@@ -270,6 +270,16 @@ commontools.fileType = function (fitem) {
         }
         return r;
     },
+
+    commontools.fileSnapPath = function(fitem){
+    if (fitem && fitem.metainfo && fitem.metainfo.snapsuffix ){
+        if (fitem.filepath){
+            return fitem.filepath + fitem.metainfo.snapsuffix;
+        }
+    }
+    return commontools.fileType;
+    }
+
     commontools.fmtDates = function (obj) {
         var date = new Date(obj);
         // console.log("格式化时间戳", date);

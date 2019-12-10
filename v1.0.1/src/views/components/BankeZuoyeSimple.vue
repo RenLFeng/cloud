@@ -64,8 +64,8 @@
 
                 var szfmt = '%i'+this.$t('common.Person')+' '+this.$t('bankeTask.Partake');
                 var nnum = 0;
-                if (this.zuoyeitem.membernum){
-                    nnum = this.zuoyeitem.membernum;
+                if (this.zuoyeitem.submitnum){
+                    nnum = this.zuoyeitem.submitnum;
                 }
                 var ostr = commontools.sprintf(szfmt,  nnum);
                 return ostr;

@@ -49,6 +49,9 @@ tools.localfilesFromFilelist = function(filelist)
         fobj.serverData = filelist[i];
         if (fobj.serverData.metainfo){
             //! 有缩略图
+            if (typeof fitem.metainfo == "string"){
+                fitem.metainfo = JSON.parse(fitem.metainfo);
+            }
             if (fitem.filepath && fitem.metainfo &&  fitem.metainfo.snapsuffix){
                 fobj.imgsrc = fitem.filepath + fitem.metainfo.snapsuffix;
                 fobj.w = fitem.metainfo.w;

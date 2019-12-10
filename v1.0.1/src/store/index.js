@@ -28,15 +28,10 @@ const state = {
 
     bankecachedata: {},
 
-    loginuser: (() => {
-        return cookie.getJSON('user');
-    })(), //! 当前登录用户
+    loginuser: {}, //! 当前登录用户
     usercookiereaded: false,
     bankeZhiYuanLinkItem: [],
     lang: localStorage.getItem('lang') || 'zh',
-    isWX:(() => {
-        return window.__wxjs_environment === 'miniprogram';
-    })(),
 
     isPreview: true,//是否开启了预览
     previewLoadFile:[],//预览文件
@@ -65,6 +60,12 @@ const getters = {
     islogin: (state, getters) => {
         var lm = getters.curuser;
         if (!lm || !lm.id) {
+
+            let szcookie = cookie.get('EXSOFTSSID');
+            if (szcookie && szcookie.length > 10){
+                return true;
+            }
+
             return false;
         }
         return true;
@@ -114,14 +115,14 @@ const mutations = {
         state.usercookiereaded = true;
         //！ cjy: ios 的localcookie 如果不设置 expires，则wkwebview的cookie不会被持久化(sessiononly 为true)
         //!  cjy: 不再使用cookie保存user信息; cookie 会随请求一并提交 ---- 保存简短信息
-        cookie.set('user', {
-            id: user.id,
-            account: user.account,
-            name: user.name,
-            role: user.role
-        }, {
-            expires: 360
-        });
+        // cookie.set('user', {
+        //     id: user.id,
+        //     account: user.account,
+        //     name: user.name,
+        //     role: user.role
+        // }, {
+        //     expires: 360
+        // });
     },
     setUserAvatar(state, avatar) {
         if (state.loginuser) {

@@ -1,6 +1,10 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
+      <li v-show="haswxsign" class="fontlarge" @click="onwxsign()">
+        <span>微信签到</span>
+        <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
+      </li>
       <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
         <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
@@ -39,6 +43,9 @@
 <script>
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
 import TeacherSignInfo from "./sign/teacherSignInfo";
+
+import nativecode from '../../nativecode'
+
 export default {
   name: "",
   props: {
@@ -58,15 +65,25 @@ export default {
   computed: {
     isTeacher() {
       return this.$store.getters.isteacher;
-    }
+    },
+      haswxsign(){
+        if (nativecode.platform == 'miniprogram'){
+            return true;
+        }
+        return false;
+      }
   },
   created() {
     // this.signquery();
   },
   methods: {
     //老师签到
-    teacherFn() {
-      this.$store.commit("setRouterForward", true);
+      onwxsign(){
+          //let ppath = '/Sign?bankeid' + this.bankeid;
+          nativecode.navigateToSign(this.bankeid);
+      },
+     teacherFn() {
+     this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "Sign",
         params: { bankeid: this.bankeid }
