@@ -187,7 +187,7 @@ export default {
                 v.score4 +
                 v.score5;
             }
-            this.Average = this.Average / this.members.length;
+            this.Average = this.Average / (this.members.length?this.members.length:1);
           }
           this.liststatedesc = "";
         })
