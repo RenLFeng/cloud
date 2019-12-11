@@ -21,7 +21,7 @@ import "./styles/style.css";
 export default {
   name: "Home",
   components: {
-    preview
+    preview,
   },
   computed: {
     show: {

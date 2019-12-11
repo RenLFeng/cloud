@@ -212,17 +212,17 @@ export default {
                     switch (item.type) {
                       case "最高分":
                         if (v.userid == "3") {
-                          item.value =v.score3==-1?0:v.score3;
+                          item.value =v.score3<0?0:v.score3;
                         }
                         break;
                       case "最低分":
                         if (v.userid == "2") {
-                          item.value = v.score3==-1?0:v.score3;
+                          item.value = v.score3<0?0:v.score3;
                         }
                         break;
                       case "平均分":
                         if (v.userid == "1") {
-                          item.value = v.score3==-1?0:v.score3;
+                          item.value = v.score3<0?0:v.score3;
                         }
                         break;
                     }

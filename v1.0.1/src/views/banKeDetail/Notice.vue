@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      textareaData: ""
+      textareaData: this.bankeInfo.info
     };
   },
 

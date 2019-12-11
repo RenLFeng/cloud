@@ -25,13 +25,13 @@
         </mt-tab-item>-->
       </mt-tabbar>
     </div>
-    <mt-loadmore
+    <!-- <mt-loadmore
       :top-method="loadTop"
       :bottom-method="loadBottom"
       ref="loadmore"
       :auto-fill="autofill"
       :bottom-all-loaded="loadingState"
-    >
+    > -->
       <div class="items-container">
         <p
           v-if="bankeZhiYuanLinkItem.length"
@@ -67,7 +67,7 @@
           </mt-popup>
         </mt-tab-container>
       </div>
-    </mt-loadmore>
+    <!-- </mt-loadmore> -->
     <input
       ref="uploadfilebtn"
       type="file"

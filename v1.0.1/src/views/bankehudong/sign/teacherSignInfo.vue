@@ -8,14 +8,17 @@
         <i class="iconfont iconqiandao2" :class="signStateIconColor"></i>
         <p class="fontsmall" :class="signStateTextColor">{{signStateText}}</p>
       </div>
-      <p style="padding:5px;margin:5px;" class>签到历史记录</p>
-      <List
-        @showStudentSignInfo="onShowStudentSignInfo"
-        v-for="(v,index) in teacherSignHistory"
-        :key="index"
-        :item="v"
-        :classSignId="classSignId"
-      />
+      <div v-if="teacherSignHistory.length">
+        <p style="padding:5px;margin:5px;" class>签到历史记录</p>
+        <List
+          @showStudentSignInfo="onShowStudentSignInfo"
+          v-for="(v,index) in teacherSignHistory"
+          :key="index"
+          :item="v"
+          :classSignId="classSignId"
+        />
+      </div>
+      <Empty v-else />
     </div>
     <!-- 学生 -->
     <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill">
@@ -72,12 +75,14 @@ import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
 import { ActionSheet } from "vant";
 import List from "@/common/list";
 import studentSignInfo from "./studentSignInfo";
+import Empty from "@/common/empty";
 export default {
   name: "",
   props: {},
   components: {
     List,
-    studentSignInfo
+    studentSignInfo,
+    Empty
   },
   data() {
     return {
@@ -102,7 +107,7 @@ export default {
     };
   },
   computed: {
-      SginState() {
+    SginState() {
       if (this.classSignItem.id == this.classSignId) {
         return true;
       } else {
@@ -193,7 +198,7 @@ export default {
                 )[1];
                 this.studentSignState = this.studentSignClassInfo.state;
                 console.log("lkns", this.studentSignClassInfo);
-                this.classSignId = this.studentSignClassInfo.signid
+                this.classSignId = this.studentSignClassInfo.signid;
               } else {
                 this.studentSignClassInfo = {};
                 this.studentSignState = "";
@@ -432,10 +437,9 @@ export default {
     border: 1px solid #0089ff;
     border-radius: 20px;
   }
-  .student-main{
+  .student-main {
     height: 100vh;
     min-height: 100vh;
   }
-
 }
 </style>

@@ -6,7 +6,7 @@
       class="falist"
       :localfiles="localfiles"
     />
-    <!-- <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" /> -->
+    <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
     <div class="maincontent">
       <div class="mainctitle">
         <div class="ellipse">{{fileitem.name}}</div>

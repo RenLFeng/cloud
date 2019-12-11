@@ -15,15 +15,13 @@
         <mt-tab-container-item id="banke">
           <div class="seach-wrap">
             <div class="div_sech">
-              <form action target="frameFile">
-                <mt-search
-                  v-model="value"
-                  cancel-text="取消"
-                  placeholder="搜索"
-                  @keyup.enter.native="searchData"
-                ></mt-search>
-              </form>
-              <iframe name="frameFile" style="display: none;"></iframe>
+              <mt-search
+                v-model="value"
+                cancel-text="取消"
+                placeholder="搜索"
+                autofocus
+                @keyup.native="searchData"
+              ></mt-search>
             </div>
             <i class="iconfont iconjiahao colord position-r fontmaintitle" @click="addBankeIcon"></i>
           </div>
@@ -31,7 +29,11 @@
           <p class="v"></p>
           <div class="bankecontainer">
             <div v-for="(item,selindex) in curbankes" v-bind:key="selindex">
-              <BankeSimple :classitem="curbankes[selindex]" @click.native="bankeclick(item)"></BankeSimple>
+              <BankeSimple
+                :classitem="curbankes[selindex]"
+                @click.native="bankeclick(item)"
+                @showMenu="onShowMenu"
+              ></BankeSimple>
               <!-- <div class="bankedevide"></div> -->
             </div>
             <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
@@ -49,7 +51,7 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-    <mt-tabbar v-model="selected" fixed class="cloud cloud-b">
+    <mt-tabbar v-model="selected" fixed class="cloud cloud-b" v-if="!CliudBar">
       <mt-tab-item id="banke">
         <i class="iconfont iconfont-big iconbianzu"></i>
         <span class="fontnormal">{{$t('common.Class')}}</span>
@@ -78,6 +80,7 @@ export default {
   name: "CloudHome",
   data() {
     return {
+      isBind:false,
       selected: "banke",
       classitem: {
         name: "11",
@@ -111,6 +114,9 @@ export default {
     };
   },
   computed: {
+    CliudBar(){
+      return this.$store.state.CliudBar;
+    },
     showadd() {
       if (this.selected == "banke") {
         return true;
@@ -163,8 +169,12 @@ export default {
       nativecode.ncall("jsBackMain", {});
     },
     bankeclick(bankeitem) {
-      console.log(bankeitem);
       this.bankeitem = bankeitem;
+      this.bankeDedail();
+    },
+    onShowMenu(v) {
+      console.log(v);
+      this.bankeitem = v;
       if (this.bankeitem.ordernum) {
         this.actions[1].name = "取消置顶";
       } else {
@@ -172,6 +182,7 @@ export default {
       }
       this.actionShow = true;
     },
+    //创建or加入
     addBankeIcon() {
       this.actionShow2 = true;
     },
@@ -224,8 +235,7 @@ export default {
     },
     //搜索
     searchData() {
-      for (let item of this.curbankes) {
-      }
+ 
     },
     initbanke() {
       var url = "/api/api/bankequery";

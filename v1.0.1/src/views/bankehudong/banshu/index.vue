@@ -5,13 +5,13 @@
     </mt-header>
 
     <div class="main">
-      <ul class="pic">
+      <ul class="pic" v-if="banshuList.length">
         <li v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
           <img :src="v.files" alt />
           <p class="tr color9">{{v.uploadtime}}</p>
         </li>
       </ul>
-      <p class="tc color9 content-warp" v-if="!banshuList.length">暂无板书</p>
+      <Empty v-else />
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@ import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
 import { Toast } from "mint-ui";
 import { parseURL } from "@/util";
+import Empty from "@/common/empty";
 export default {
   props: {},
   data() {
@@ -55,27 +56,27 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             this.banshuList = res.data.data;
-            this.banshuList.push({
-              bankeid: 1000,
-              files:
-                "/downloads/avatar/2019-12-05/649dd86fdaf8e173e6be25beea80c8d3.jpg",
-              id: 1000,
-              uploadtime: "2019-12-02 14:29:13"
-            });
-            this.banshuList.push({
-              bankeid: 1000,
-              files:
-                "/downloads/avatar/2019-12-05/72bdb233382ac7aa26fc93b64f6a7865.jpg",
-              id: 1000,
-              uploadtime: "2019-12-02 14:29:13"
-            });
-            this.banshuList.push({
-              bankeid: 1000,
-              files:
-                "/downloads/avatar/2019-12-05/5ecddd1df02b68e15649ccbfe181d50b.jpg",
-              id: 1000,
-              uploadtime: "2019-12-02 14:29:13"
-            });
+            // this.banshuList.push({
+            //   bankeid: 1000,
+            //   files:
+            //     "/downloads/avatar/2019-12-05/649dd86fdaf8e173e6be25beea80c8d3.jpg",
+            //   id: 1000,
+            //   uploadtime: "2019-12-02 14:29:13"
+            // });
+            // this.banshuList.push({
+            //   bankeid: 1000,
+            //   files:
+            //     "/downloads/avatar/2019-12-05/72bdb233382ac7aa26fc93b64f6a7865.jpg",
+            //   id: 1000,
+            //   uploadtime: "2019-12-02 14:29:13"
+            // });
+            // this.banshuList.push({
+            //   bankeid: 1000,
+            //   files:
+            //     "/downloads/avatar/2019-12-05/5ecddd1df02b68e15649ccbfe181d50b.jpg",
+            //   id: 1000,
+            //   uploadtime: "2019-12-02 14:29:13"
+            // });
           } else {
             Toast("失败");
           }
@@ -101,7 +102,8 @@ export default {
     }
   },
   components: {
-    [ImagePreview.name]: ImagePreview
+    [ImagePreview.name]: ImagePreview,
+    Empty
   }
 };
 </script>

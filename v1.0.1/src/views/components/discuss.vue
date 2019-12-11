@@ -45,11 +45,11 @@
                   {{item.fromusername}}
                   &nbsp;&nbsp;
                   <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
-                  <span v-if="item.content" class="hui-fu" @click="studentHF(item,tindex)">回复</span>
+                  <span class="hui-fu" @click="studentHF(item,tindex)">回复</span>
                 </li>
-                <li class="text" v-if="item.content">回复 {{item.fromusername}}：{{item.content}}</li>
+                <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
 
-                <li v-if="item.files" class="clearfix">
+                <li class="clearfix">
                   <!-- <viewer> -->
                   <!-- <img
                     :src="item.files.filepath"
@@ -295,6 +295,9 @@ export default {
           console.log("提交成功", res);
           if (res.data.code == "0") {
             let Data = res.data.data;
+            if (Data.lastreplydata && typeof Data.lastreplydata == "string") {
+              Data.lastreplydata = JSON.parse(Data.lastreplydata);
+            }
             if (Data.files) {
               // arft
               let arr = [];

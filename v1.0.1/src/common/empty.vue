@@ -39,7 +39,7 @@ export default {
   transform: translate(-50%, -50%);
     color: #999;
     i {
-    font-size: 80px;
+    font-size: 30px;
   }
   p{
     margin: 5px 0;

@@ -11,7 +11,7 @@
        <div v-if="sign"  class="maincsubtitle colory">{{memberuser.state?$t('bankehHudong.CheckIn'):$t('bankehHudong.No_sign_in')}}</div>
       <!-- <div class="maincsubtitle">{{memberdesc}}</div> -->
     </div>
-    <i v-if="icon" class="iconfont iconjiantou eicotrigger colord" @click="icoclick"></i>
+    <i v-if="icon" class="iconfont iconjiantou1 eicotrigger colord" @click.stop="icoclick"></i>
     <a class="color9" v-if="sign">得分:{{memberuser.score}}</a>
   </div>
 </template>
@@ -110,7 +110,7 @@ export default {
     icoclick() {
       // console.log('bankefilesimple icoclick');
       this.pendclick = true;
-      this.$emit("editclick", this.fileitem);
+      this.$emit("editclick", this.memberuser);
     },
     onclick() {
       //  console.log('bankefilesimple');

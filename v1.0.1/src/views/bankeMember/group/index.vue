@@ -4,14 +4,17 @@
       <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="content">
-      <List
-        v-for="(v,index) in groupList"
-        :key="index"
-        :item="v"
-        :index="index"
-        type="group"
-        @click.native="listClick(v,index)"
-      />
+      <div v-if="groupList.length">
+        <List
+          v-for="(v,index) in groupList"
+          :key="index"
+          :item="v"
+          :index="index"
+          type="group"
+          @click.native="listClick(v,index)"
+        />
+      </div>
+      <Empty v-else :text="['暂无分组...']"/>
     </div>
     <div class="button-worp">
       <mt-button class="button-auto-96" @click="addGroup">添加成员小组方案</mt-button>
@@ -34,11 +37,13 @@ import List from "@/common/list";
 import Edit from "./edit";
 import { parseURL } from "@/util";
 import { Indicator, Toast, MessageBox, Popup, Actionsheet } from "mint-ui";
+import Empty from "@/common/empty";
 export default {
   name: "Group",
   components: {
     List,
-    Edit
+    Edit,
+    Empty
   },
   watch: {
     EditSelect() {
@@ -204,9 +209,10 @@ export default {
       }
       Indicator.open("加载中...");
       let obj = {
-        name: "大班",
-        bankeid: this.EditItem.bankeid
+        name: "分组一",
+        bankeid: this.bankeid
       };
+      console.log('this.EditItemthis.EditItem',this.EditItem)
       this.$http
         .post("/api/group/savegroup", obj)
         .then(res => {

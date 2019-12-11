@@ -19,6 +19,7 @@
             left: 80px;
             font-size: 16px;
           }
+
           .mint-cell-label {
             position: absolute;
             left: 80px;
@@ -31,12 +32,14 @@
     .mint-cell:last-child {
       background-image: none;
     }
-    &.islabel{
+
+    &.islabel {
       .mint-cell-text {
-        top: 15px!important;
+        top: 15px !important;
       }
+
       .mint-cell-label {
-        bottom: 17px!important;
+        bottom: 17px !important;
       }
     }
   }
@@ -54,5 +57,33 @@
           #d9d9d9 50%,
           transparent 50%);
     }
+  }
+}
+
+.ActionSheet {
+  height: auto !important;
+  border-radius: 15px;
+  bottom: 20px;
+  left: 2%;
+  width: 96%;
+  background: none;
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 13px 0;
+    border: none;
+    border-bottom: 1px solid #999;
+    color: #007aff;
+
+    &:nth-last-child(2) {
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+    }
+  }
+
+  .van-action-sheet__cancel {
+    margin-top: 20px;
+    border-radius: 15px;
   }
 }

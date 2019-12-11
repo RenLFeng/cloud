@@ -41,6 +41,7 @@ const state = {
 
 
     footerBarState:true,
+    CliudBar:false,
 
 }
 
@@ -170,8 +171,12 @@ const mutations = {
     SET_INDEX(state, v) {
         state.index = v
     },
+    
     SET_FOOTER_BAR_STATE(state, v) {
         state.footerBarState = v
+    },
+    SET_CLOUD_BAR(state, v) {
+        state.CliudBar = v
     },
 }
 

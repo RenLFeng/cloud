@@ -3,10 +3,14 @@
     <!-- <img :src="imgUrl" alt="" class="imgUrl"> -->
     <ul class="clearfix">
       <li class="fl">
-        <i class="iconfont iconxiangji eicotrigger" style="color:#0089FF"></i>
+        <i class="iconfont iconxiangji eicotrigger" style="color:#0089FF" @click="unloadFn"></i>
       </li>
       <li class="fl">
-        <i class="iconfont iconmomentwritepicture eicotrigger" style="color:#0089FF"></i>
+        <i
+          class="iconfont iconmomentwritepicture eicotrigger"
+          style="color:#0089FF"
+          @click="unloadFn"
+        ></i>
       </li>
       <li class="fl">
         <i class="iconfont iconhuabi eicotrigger" style="color:#0089FF" @click="draw()"></i>
@@ -15,7 +19,15 @@
     <p class="submit-btn">
       <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">提交</mt-button>
     </p>
-
+    <input
+      ref="uploadPic"
+      type="file"
+      name="file"
+      class="upload"
+      @change="uploadChange"
+      style="display:none"
+      accept="image/*"
+    />
     <mt-popup
       v-model="popupDraw"
       position="right"
@@ -124,7 +136,10 @@ export default {
 
       popupDraw: false,
       isSubmit: false,
-      imgData: ""
+      imgData: "",
+
+
+       uploadData:{}
     };
   },
   created() {
@@ -140,6 +155,39 @@ export default {
   destroyed() {},
   computed: {},
   methods: {
+    unloadFn() {
+      this.$refs.uploadPic.click();
+    },
+    uploadChange(e) {
+      let that = this;
+      let file = e.target.files[0];
+      this.uploadImg(file);
+      this.$refs.uploadPic.value = "";
+    },
+    uploadImg(file) {
+      let that = this;
+      let formdata = new FormData();
+      formdata.append("file", file);
+      Indicator.open("上传中...");
+      this.$http
+        .post('/api/api/pingcefileupload', formdata)
+        .then(res => {
+          if (res.data.code == 0) {
+           console.log(res);
+           Toast('成功');
+           this.uploadData=res.data.data;
+            // this.isSubmit = true;
+            // this.imgUrl=this.uploadData.filepath
+          } else {
+            Toast('失败');
+          }
+          Indicator.close();
+        })
+        .catch(() => {
+           Toast('异常');
+          Indicator.close();
+        });
+    },
     isPc() {
       const userAgentInfo = navigator.userAgent;
       const Agents = [
@@ -268,21 +316,6 @@ export default {
     },
     // 生成图片
     getImage() {
-      // html2canvas($(".box"), {
-      //   allowTaint: true,
-      //   taintTest: false,
-      //   width: 1920,
-      //   height: 1080,
-      //   onrendered: function(canvas) {
-      //     var dataUrl = canvas.toDataURL("image/png", 1.0),
-      //       newImg = document.createElement("img");
-      //     newImg.src = dataUrl;
-      //     $(".box")
-      //       .empty()
-      //       .append(newImg);
-      //     newImg.style.width = "100%";
-      //   }
-      // });
       html2canvas(document.querySelector("#mydraw"), {
         allowTaint: true,
         taintTest: false,
@@ -294,18 +327,6 @@ export default {
         this.goBacks();
         console.log("生成图片", this.imgUrl);
       });
-
-      // const canvas = document.querySelector("#canvas");
-      // const src = canvas.toDataURL("image/jpeg ");
-      // this.imgUrl = src;
-      // this.isSubmit = true;
-      // console.log("生成图片", this.imgUrl);
-      // this.controlCanvas('clear');
-      // this.goBacks();
-      //   if (!this.isPc()) {
-      //     // window.open(`data:text/plain,${src}`)
-      //     window.location.href = src;
-      //   }
     },
     // 设置绘画配置
     setCanvasStyle() {
@@ -321,6 +342,7 @@ export default {
         return;
       }
       this.$emit("submitFn", this.imgUrl);
+       this.uploadData={};
       this.imgUrl = "";
       this.isSubmit = false;
       this.controlCanvas("clear");

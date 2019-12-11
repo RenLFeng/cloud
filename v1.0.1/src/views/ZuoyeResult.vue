@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="zouye-results-wrap">
     <mt-header :title="titledesc">
       <mt-button icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
       <mt-button
@@ -20,7 +20,9 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">{{zuoyeitem.name}}</div>
           <div class="zuoyesubtitle">
-            <span class="zuoyescore">{{$t('bankeTask.Assignment_score')}} {{zuoyeitem.score}}{{$t('common.min')}}</span>&nbsp;|&nbsp;
+            <span
+              class="zuoyescore"
+            >{{$t('bankeTask.Assignment_score')}} {{zuoyeitem.score}}{{$t('common.min')}}</span>&nbsp;|&nbsp;
             <span>{{statedesc}}</span>
           </div>
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
@@ -141,7 +143,7 @@
         </p>
         <ul class="clearIt">
           <li class="float-l text-center" v-for="i in markArr" :key="i" @click="seleMarkFn(i)">
-            {{i}}
+            {{i>9?$t('bankeTask.Full_marks'):i}}
             <!-- {{i>90?$t('bankeTask.Full_marks'):i}} -->
           </li>
         </ul>
@@ -180,7 +182,7 @@
       <mt-header :title="$t('bankeTask.Task_Answer')">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <Answer :zuoyeitem="zuoyeitem" :states="true" />
+      <Answer :zuoyeitem="zuoyeitem" :zanswer="zanswer" />
     </mt-popup>
     <!-- 所有提交 -->
     <mt-popup
@@ -258,11 +260,15 @@ export default {
         hassubmittime: 0,
         detaildesc: "",
         submittime: "",
-          score:10
+        score: 10
       },
       allZuoyeitem: [],
       allInitData: [],
       zdetail: {
+        ztext: "",
+        localfiles: []
+      },
+      zanswer: {
         ztext: "",
         localfiles: []
       },
@@ -468,27 +474,22 @@ export default {
     submiMark() {
       if (this.mark == "") return;
       this.$http
-        .post(
-          "/api/Azuoye/setScore",
-          {
-              submitid:this.ScoreItemInfo.submitid,
-              score:this.mark,
-              zuoyeid:this.zuoyeid
-          }
-        )
+        .post("/api/Azuoye/setScore", {
+          submitid: this.ScoreItemInfo.submitid,
+          score: this.mark,
+          zuoyeid: this.zuoyeid
+        })
         .then(res => {
           this.popupZuoyePF = false;
-       //   this.loadAll();
-            console.log('评分结果:'+res);
-            if (res.data.code == 0){
-              //  console.log("评分成功");
-                this.ScoreItemInfo.score = res.data.data.score;
-            }
-            else{
-               // console.log("评分错误", res);
-            }
+          //   this.loadAll();
+          console.log("评分结果:" + res);
+          if (res.data.code == 0) {
+            //  console.log("评分成功");
+            this.ScoreItemInfo.score = res.data.data.score;
+          } else {
+            // console.log("评分错误", res);
+          }
           this.mark = "";
-
         })
         .catch(() => {
           this.popupZuoyePF = false;
@@ -569,14 +570,13 @@ export default {
     },
     onHttpData(data) {
       for (let v of data.results) {
-          if (v.files){
-              for (let file of v.files) {
-                  if (file.metainfo && typeof file.metainfo == "string") {
-                      file.metainfo = JSON.parse(file.metainfo);
-                  }
-              }
+        if (v.files) {
+          for (let file of v.files) {
+            if (file.metainfo && typeof file.metainfo == "string") {
+              file.metainfo = JSON.parse(file.metainfo);
+            }
           }
-
+        }
       }
       this.zuoyeitem = data["zuoye"];
       this.allZuoyeitem = data.results;
@@ -593,6 +593,10 @@ export default {
       this.zdetail.ztext = data["zdetail"].ztext;
       this.zdetail.localfiles = maintools.localfilesFromFilelist(
         data["zdetail"].files
+      );
+        this.zanswer.ztext = data["zanswer"].ztext;
+      this.zanswer.localfiles = maintools.localfilesFromFilelist(
+        data["zanswer"].files
       );
       var dresults = data["results"];
       for (var i = 0; i < dresults.length; i++) {
@@ -663,7 +667,7 @@ export default {
   created() {
     var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
     if (dd && dd.resultdata) {
-        //console.log(dd.resultdata);
+      //console.log(dd.resultdata);
       this.onHttpData(dd.resultdata);
     } else {
       this.loadAll();
@@ -680,6 +684,9 @@ export default {
 };
 </script>
 <style lang="less">
+.zouye-results-wrap{
+  background: #fff;
+}
 .pf-container-popup {
   width: 100%;
   height: auto;

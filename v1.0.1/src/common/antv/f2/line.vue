@@ -156,7 +156,7 @@ export default {
                       item.value = v.score2;
                       break;
                     case "作业得分":
-                      item.value = v.score3==-1?0:v.score3;
+                      item.value = v.score3<0?0:v.score3;
                       break;
                     case "评测得分":
                       item.value = v.score4;

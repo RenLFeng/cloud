@@ -17,12 +17,7 @@
 
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
-    <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount">
-    </mt-cell>
-
-
-
-
+    <mt-cell v-if="canbindaccount" title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>
     <div class="devide"></div>
@@ -35,25 +30,47 @@
       @click.native="selectLang(item)"
     ></mt-cell>
 
-
     <mt-popup v-model="popupBind" position="right" class="mint-popup-3" :modal="false">
       <mt-header title="绑定账户">
-        <mt-button slot="left" icon="back" @click="popupBind = false">返回</mt-button>
+        <mt-button slot="left" icon="back" @click="bindBack">返回</mt-button>
       </mt-header>
 
       <div class="binddiv">
-        <div v-show="!shownewaccount">当前绑定账户：{{bindaccount}}</div>
-        <div>
-          <mt-button v-show="!shownewaccount" @click="uibindaction('changebind')">更改绑定</mt-button>
-          <mt-button v-show="!shownewaccount" @click="uibindaction('changepassword')">修改密码</mt-button>
-          <mt-button v-show="shownewaccount" @click.native="uibindactionchangebind">新增账户绑定</mt-button>
-          <mt-button v-show="shownewaccount" @click="uibindaction('newaccount')">生成登陆账户</mt-button>
+        <div v-show="!shownewaccount" class="title fontnormal">当前绑定账户：{{bindaccount}}</div>
+        <div class="btn-wrap">
+          <mt-button
+            class
+            :class="bindaction=='changebind'?'act':''"
+            v-show="!shownewaccount"
+            @click="uibindaction('changebind')"
+          >更改绑定</mt-button>
+          <mt-button
+            v-show="!shownewaccount"
+            :class="bindaction=='changepassword'?'act':''"
+            @click="uibindaction('changepassword')"
+          >修改密码</mt-button>
+          <mt-button
+            v-show="shownewaccount"
+            :class="bindaction=='uibindactionchangebind'?'act':''"
+            @click.native="uibindactionchangebind('uibindactionchangebind')"
+          >新增账户绑定</mt-button>
+          <mt-button
+            v-show="shownewaccount"
+            :class="bindaction=='newaccount'?'act':''"
+            @click="uibindaction('newaccount')"
+          >生成登陆账户</mt-button>
         </div>
         <div v-show="showbindpanel">
-          <div>{{bindtitle}}</div>
-          <div v-show="bindaction != 'changepassword'">账户：<input  v-model="inputaccount"></input></div>
-          <div>密码：<input v-model="inputpassword" type="password"></input></div>
-          <div><mt-button @click="uibindsubmit">提交</mt-button></div>
+          <div class="tit">{{bindtitle}}</div>
+          <div v-show="bindaction != 'changepassword'" class="input-item-wrap">
+            <mt-field label="账户：" placeholder="请输入用户名" v-model="inputaccount"></mt-field>
+          </div>
+          <div class="input-item-wrap">
+            <mt-field label="密码" placeholder="请输入密码" type="password" v-model="inputpassword"></mt-field>
+          </div>
+          <div class="button-worp">
+            <mt-button class="button-auto-96 b" @click="uibindsubmit">提交</mt-button>
+          </div>
           <div>{{bindstatedesc}}</div>
         </div>
       </div>
@@ -62,40 +79,38 @@
 </template>
 
 <script>
+import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
 
-import { Indicator, Toast, MessageBox, Button } from "mint-ui";
-
-import nativecode from '../nativecode'
+import nativecode from "../nativecode";
 
 export default {
   name: "MineAbout",
   data() {
     return {
-        popupBind:false,
-        bindaccount:'',
-        showbindpanel:false,
-        inputaccount:'',
-        inputpassword:'',
-        bindaction:'',
-        bindstatedesc:'',
-        bindtitle:''
+      popupBind: false,
+      bindaccount: "",
+      showbindpanel: true,
+      inputaccount: "",
+      inputpassword: "",
+      bindaction: "changebind",
+      bindstatedesc: "",
+      bindtitle: ""
     };
   },
-  components: {
-  },
+  components: {},
   computed: {
-      hasloginpage(){
-          return nativecode.hasloginpage();
+    hasloginpage() {
+      return nativecode.hasloginpage();
+    },
+    shownewaccount() {
+      if (this.bindaccount.length > 0) {
+        return false;
       }
-      ,shownewaccount(){
-          if (this.bindaccount.length > 0){
-              return false;
-          }
-          return true;
-      }
-      ,canbindaccount(){
-          return nativecode.canbindaccount();
-      },
+      return true;
+    },
+    canbindaccount() {
+      return nativecode.canbindaccount();
+    },
     isTeacher() {
       return this.$store.getters.isteacher;
     },
@@ -110,7 +125,6 @@ export default {
     }
   },
   methods: {
-
     onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
@@ -139,81 +153,86 @@ export default {
         this.dologout();
       });
     },
-    uibindsubmit:function(){
-        var url = '/api/weixin/changebind';
-        this.bindstatedesc = '处理中...';
-        this.$http.post(url, {
-            action:this.bindaction,
-            account:this.inputaccount,
-            password:this.inputpassword
-        }).then((res)=>{
-            this.bindstatedesc = '完成';
-            if (res.data.code == 0){
-                if (res.data.data && res.data.data.id){
-                    //! id发生了改变
-                    this.bindaccount = res.data.data.account;
-                    this.$store.commit("setLoginUser", res.data.data);
-                }
-                else if (res.data.data && res.data.data.length > 0){
-                    //! 新账户
-                    this.bindaccount = res.data.data;
-                }
-            }
-            else{
-                this.bindstatedesc = res.data.msg;
-            }
-        }).catch(()=>{
-            this.bindstatedesc = '异常';
+    bindBack() {
+      this.popupBind = false;
+      this.$store.commit("SET_CLOUD_BAR", false);
+    },
+    uibindsubmit: function() {
+      var url = "/api/weixin/changebind";
+      this.bindstatedesc = "处理中...";
+      this.$http
+        .post(url, {
+          action: this.bindaction,
+          account: this.inputaccount,
+          password: this.inputpassword
         })
-    }
-    ,uibindactionchangebind:function(){
-        this.uibindaction('changebind');
-    }
-    ,uibindaction:function(sza){
-        console.log('uibindaction');
-        this.bindaction = sza;
-        this.bindtitle = '';
-        this.bindstatedesc = '';
-        this.inputaccount = '';
-        this.inputpassword = '';
-        if (this.shownewaccount){
-            if (sza == 'newaccount'){
-                this.bindtitle = '生成登陆账户';
+        .then(res => {
+          this.bindstatedesc = "完成";
+          if (res.data.code == 0) {
+            if (res.data.data && res.data.data.id) {
+              //! id发生了改变
+              this.bindaccount = res.data.data.account;
+              this.$store.commit("setLoginUser", res.data.data);
+            } else if (res.data.data && res.data.data.length > 0) {
+              //! 新账户
+              this.bindaccount = res.data.data;
             }
-            else if (sza == 'changebind'){
-                this.bindtitle = "新增账户绑定";
-            }
-        }
-        else {
-            if (sza == 'changepassword'){
-                this.bindtitle = '修改密码';
-            }
-            else{
-                this.bindtitle = '更改绑定';
-            }
-        }
-        this.showbindpanel = true;
-    }
-
-    ,onbindaccount:function(){
-        Indicator.open('加载中...');
-        // this.popupBind = true;
-        var url = "/api/weixin/querybind";
-        this.$http.post(url).then((res)=>{
-            Indicator.close();
-            if (res.data.code == 0){
-                if (res.data.data){
-                    this.bindaccount = res.data.data;
-                }
-                else{
-                    this.bindaccount = "";
-                }
-                this.popupBind = true;
-            }
-
-        }).catch(()=>{
-            Indicator.close();
+          } else {
+            this.bindstatedesc = res.data.msg;
+          }
         })
+        .catch(() => {
+          this.bindstatedesc = "异常";
+        });
+    },
+    uibindactionchangebind: function(sza) {
+      this.bindaction = sza;
+      this.uibindaction("changebind");
+    },
+    uibindaction: function(sza) {
+      console.log("uibindaction");
+      this.bindaction = sza;
+      this.bindtitle = "";
+      this.bindstatedesc = "";
+      this.inputaccount = "";
+      this.inputpassword = "";
+      if (this.shownewaccount) {
+        if (sza == "newaccount") {
+          this.bindtitle = "生成登陆账户";
+        } else if (sza == "changebind") {
+          this.bindtitle = "新增账户绑定";
+        }
+      } else {
+        if (sza == "changepassword") {
+          this.bindtitle = "修改密码";
+        } else {
+          this.bindtitle = "更改绑定";
+        }
+      }
+      this.showbindpanel = true;
+    },
+
+    onbindaccount: function() {
+      Indicator.open("加载中...");
+      // this.popupBind = true;
+      var url = "/api/weixin/querybind";
+      this.$http
+        .post(url)
+        .then(res => {
+          Indicator.close();
+          if (res.data.code == 0) {
+            if (res.data.data) {
+              this.bindaccount = res.data.data;
+            } else {
+              this.bindaccount = "";
+            }
+            this.popupBind = true;
+            this.$store.commit("SET_CLOUD_BAR", true);
+          }
+        })
+        .catch(() => {
+          Indicator.close();
+        });
     },
     dologout: function() {
       var url = "/api/api/logout";
@@ -235,9 +254,7 @@ export default {
       this.$store.commit("setRouterForward", true);
       this.$router.push("/mineinfo");
     },
-    goBack() {
-
-    }
+    goBack() {}
   }
 };
 </script>
@@ -289,5 +306,39 @@ export default {
 <style>
 .mint-cell-wrapper {
   background-image: none !important;
+}
+</style>
+
+
+<style scoped lang="less">
+.binddiv {
+  padding: 0 10px;
+  .title {
+    margin: 20px 0;
+  }
+  .tit {
+    margin: 10px 0;
+  }
+  .btn-wrap {
+    border: 1px solid #0089ff;
+    border-radius: 30px;
+    button {
+      width: 50%;
+      color: #0089ff;
+      border-radius: 30px;
+      background: none;
+      border: none;
+      &.act {
+        background: #0089ff;
+        color: #fff;
+      }
+    }
+  }
+  .input-item-wrap {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .button-worp {
+    margin-top: 50px;
+  }
 }
 </style>

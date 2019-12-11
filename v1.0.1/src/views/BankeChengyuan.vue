@@ -29,6 +29,7 @@
             :icon="1"
             :memberuser="members[selindex]"
             :index="selindex"
+            @editclick="onEditclick"
           ></BankeMemberSimple>
         </div>
       </div>
@@ -125,6 +126,14 @@ export default {
   methods: {
     seeMemberDetail(item) {
       this.DetailItem = item;
+      this.popupMemberDetail = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+      this.chartData = {
+        account: item.account
+      };
+    },
+    onEditclick(item) {
+      this.DetailItem = item;
       this.actionShow = true;
     },
     see() {
@@ -136,9 +145,9 @@ export default {
       };
     },
     dlMember() {
-      if(!this.showcontrol){
-      Toast('你无权限');
-      retuen;
+      if (!this.showcontrol) {
+        Toast("你无权限");
+        retuen;
       }
       MessageBox.confirm("您确定要删除吗？")
         .then(res => {
@@ -153,11 +162,11 @@ export default {
                 Toast("删除失败");
               }
             })
-            .catch(() => {});
+            .catch(() => {
+              Toast("服务异常");
+            });
         })
-        .catch(() => {
-          Toast("服务异常");
-        });
+        .catch(() => {});
     },
     AverageScoreEchart() {
       this.$store.commit("setRouterForward", true);
@@ -187,7 +196,8 @@ export default {
                 v.score4 +
                 v.score5;
             }
-            this.Average = this.Average / (this.members.length?this.members.length:1);
+            this.Average =
+              this.Average / (this.members.length ? this.members.length : 1);
           }
           this.liststatedesc = "";
         })

@@ -8,12 +8,12 @@
             {{classitem.name}}
             <span class="membernum fonttiny">{{classitem.membernum}}人</span>
           </div>
-          <div class="font-xs ellipse">教师：{{classitem.username}} <span class="class-nmuber font-xs">班课号123456</span> </div>
+          <div class="font-xs ellipse">教师：{{classitem.username}} <span class="class-nmuber font-xs">班课号{{classitem.id}}</span> </div>
           <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>
       <span class="go">
-        <i class="iconfont iconjiantou1"></i>
+        <i class="iconfont iconjiantou1" @click.stop="showMenu(classitem)"></i>
       </span>
     </div>
      
@@ -45,6 +45,11 @@ export default {
       srcstr += require("../../assets/100x100.png");
       srcstr += '"';
       return srcstr;
+    }
+  },
+  methods: {
+    showMenu(item){
+      this.$emit('showMenu',item);
     }
   }
 };

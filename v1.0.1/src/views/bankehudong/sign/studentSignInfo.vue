@@ -7,15 +7,18 @@
         <span class="colord fr" @click="More()">{{seeText}}</span>
       </p>
     </div>
-    <p class="tr" style="padding:5px">{{list.length}}人</p>
-    <StudentSignInfoList
-      :memberuser="v"
-      scoreText="签到"
-      v-for="(v,index) in list"
-      :key="index"
-      :sign="1"
-      @click.native="setSignState(v)"
-    />
+    <div v-if="list.length">
+      <p class="tr" style="padding:5px">{{list.length}}人</p>
+      <StudentSignInfoList
+        :memberuser="v"
+        scoreText="签到"
+        v-for="(v,index) in list"
+        :key="index"
+        :sign="1"
+        @click.native="setSignState(v)"
+      />
+    </div>
+    <Empty v-else :text="['暂无记录...']" />
     <div class="footer" v-if="isTeacher && SginState">
       <p class="fontlarge tc top" style="border-bottom:1px solid #f0f0f0">
         <a class="colord">{{signNumber.sign}}&nbsp;</a>
@@ -27,7 +30,6 @@
       </p>
     </div>
     <van-action-sheet
-      :style="styleobj"
       v-model="showActionSheet"
       :actions="actions"
       cancel-text="取消"
@@ -41,9 +43,17 @@
 
 <script>
 import { ActionSheet } from "vant";
-import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
+import {
+  Button,
+  Indicator,
+  Toast,
+  Cell,
+  MessageBox,
+  Actionsheet
+} from "mint-ui";
 import StudentSignInfoList from "../../components/BankeMemberSimple";
 import { Whatweek, formateTime } from "@/util";
+import Empty from "@/common/empty";
 const setALL = [
   { name: "设为已签到", id: 1 },
   { name: "设为迟到", id: 2 },
@@ -73,8 +83,8 @@ export default {
     bankeid: {
       default: 0
     },
-    SginState:{
-      default:false
+    SginState: {
+      default: false
     }
   },
   watch: {
@@ -84,7 +94,8 @@ export default {
   },
   components: {
     StudentSignInfoList,
-    [ActionSheet.name]: ActionSheet
+    [ActionSheet.name]: ActionSheet,
+    Empty
   },
   data() {
     return {
@@ -92,7 +103,6 @@ export default {
       list: [],
       showActionSheet: false,
       actions: [],
-      styleobj: {},
 
       studentInfo: {},
 
@@ -103,7 +113,7 @@ export default {
         sign: 0,
         nosign: 0
       },
-      seeText:'查看全部',
+      seeText: "查看全部",
     };
   },
   computed: {
@@ -217,7 +227,7 @@ export default {
       } else {
         //查看签到类型
         this.seeSginType(item.id);
-        this.seeText=item.name
+        this.seeText = item.name;
         let list = [];
         switch (item.id) {
           case 0:
@@ -287,10 +297,7 @@ export default {
         this.list = list;
       }
     },
-    styleFn() {
-      this.styleobj = {
-        height: (this.actions.length + 1) * 48 + "px"
-      };
+    styleFn() {;
       this.showActionSheet = true;
     }
   }
@@ -318,33 +325,5 @@ export default {
       }
     }
   }
-  .ActionSheet {
-    border-radius: 15px;
-    bottom: 20px;
-    left: 2%;
-    width: 96%;
-    background: none;
-    button {
-      display: block;
-      width: 100%;
-      padding: 13px 0;
-      border: none;
-      border-bottom: 1px solid #999;
-      color: #007aff;
-      &:nth-last-child(2) {
-        border-bottom-left-radius: 15px;
-        border-bottom-right-radius: 15px;
-      }
-    }
-    .van-action-sheet__cancel {
-      position: absolute;
-      bottom: 0;
-      background: #fff;
-      //   left: 2%;
-      //   width: 96%;
-      border-radius: 15px;
-    }
-  }
 }
 </style>
-<style>

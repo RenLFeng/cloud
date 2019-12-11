@@ -1,22 +1,20 @@
 <template>
   <div class="container">
     <div style="height:100%;">
-      <div v-if="!states">
-        <textarea v-model="zanswer.ztext" placeholder="请输入答案" class="zdetail"></textarea>
-
-        <div class="attachdesc">添加附件</div>
+      <div>
+        <mt-field placeholder="请输入答案" type="textarea" rows="8" v-model="zanswer.ztext" :disabled="answerdesc" ></mt-field>
+        <div class="attachdesc">{{answerdesc?'附件':'添加附件'}}</div>
         <div class="listc">
-          <FileAttachList :urlinfo="urlinfo" :localfiles="zanswer.localfiles"></FileAttachList>
+          <FileAttachList :urlinfo="urlinfo" :localfiles="zanswer.localfiles" :isupload="answerdesc?false:true"></FileAttachList>
         </div>
         <div class="bottommargin"></div>
       </div>
-      <div v-else>{{answerdesc}}</div>
     </div>
   </div>
 </template>
 <script>
 import FileAttachList from "../components/FileAttachList";
-
+import {Field  } from "mint-ui";
 export default {
   name: "ZuoyeDetailEdit",
   data() {
@@ -36,11 +34,6 @@ export default {
         };
       }
     },
-    states: {
-      default() {
-        return false;
-      }
-    },
     zuoyeitem: {
       default() {
         return {};
@@ -48,8 +41,12 @@ export default {
     }
   },
   computed: {
-    answerdesc(){
-  return  this.zuoyeitem.answerdesc?this.zuoyeitem.answerdesc:'未设置答案'
+    answerdesc() {
+      if (this.zuoyeitem.answerdesc) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   components: {
