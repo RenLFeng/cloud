@@ -27,18 +27,27 @@
         <span v-if="!serverData.length" class="content-warp">暂无数据...</span>
       </div>
     </div>
+    <div class="chart-item">
+      <h3 class="tit">评测得分情况</h3>
+      <Table @tableSelected="onTableSelected" type="score4" />
+      <div class="canvas-wrap">
+        <canvas id="chart4" width height="200px" class="mychart-f2"></canvas>
+        <span v-if="!serverData.length" class="content-warp">暂无数据...</span>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { Tab, Tabs, Button } from "vant";
 import F2 from "@antv/f2/lib/index-all";
-import { getDate, formateTime, getNextDate } from "../../util";
+import { getDate, formateTime, getChartDate, getNextDate } from "../../util";
 const chartType = ["最高分", "最低分", "平均分"];
 import uuidv1 from "uuid/v1";
 import Table from "./vanTable";
 let chart = void 0;
 let chart2 = void 0;
 let chart3 = void 0;
+let chart4 = void 0;
 export default {
   name: "AverageScore",
   props: {
@@ -65,10 +74,12 @@ export default {
       score1InitState: true,
       score2InitState: true,
       score3InitState: true,
+        score4InitState:true,
 
       score1Data: [],
       score2Data: [],
       score3Data: [],
+        score4Data:[],
       serverData: [],
       memberuserData: {}
     };
@@ -76,7 +87,6 @@ export default {
   created() {
     this.elId = uuidv1(); //获取随机id
   },
-  mounted: {},
   mounted() {
     if (this.$route.params) {
       let params = this.$route.params;
@@ -131,8 +141,9 @@ export default {
             //   userid: 1
             // });
             this.serverData = res.data.data.scores;
-            let weeksignDate = getDate(this.serverData[0].countdate, n);
+            let weeksignDate = getChartDate(n, null);//getDate(this.serverData[0].countdate, n);
             let tempData = [];
+           // console.log(weeksignDate);
             for (let i = 0; i < weeksignDate.length; i++) {
               for (let v of chartType) {
                 this.score1Data.push({
@@ -150,6 +161,11 @@ export default {
                   value: 0,
                   type: v
                 });
+                  this.score4Data.push({
+                      count: weeksignDate[i],
+                      value: 0,
+                      type: v
+                  });
               }
             }
             //score1
@@ -230,7 +246,35 @@ export default {
                 }
               }
             }
+
+              //score4
+              if (this.score4InitState) {
+                  for (let item of this.score4Data) {
+                      for (let v of this.serverData) {
+                          if (item.count == v.countdate) {
+                              switch (item.type) {
+                                  case "最高分":
+                                      if (v.userid == "3") {
+                                          item.value = v.score4;
+                                      }
+                                      break;
+                                  case "最低分":
+                                      if (v.userid == "2") {
+                                          item.value = v.score4;
+                                      }
+                                      break;
+                                  case "平均分":
+                                      if (v.userid == "1") {
+                                          item.value = v.score4;
+                                      }
+                                      break;
+                              }
+                          }
+                      }
+                  }
+              }
           }
+
           this.chartInit();
           console.log("serverData", this.serverData);
           // console.log("weeksignDate", weeksignDate);
@@ -399,6 +443,59 @@ export default {
         chart3.source(this.score3Data, {});
       }
     },
+      score4AverageScore() {
+          if (!chart4) {
+              chart4 = new F2.Chart({
+                  id: "chart4",
+                  pixelRatio: window.devicePixelRatio
+              });
+              chart4.source(this.score4Data, {
+                  count: {
+                      tickCount: 4
+                  },
+                  value: {
+                      formatter: function formatter(ivalue) {
+                          return ivalue;
+                      }
+                  }
+              });
+              chart4.axis("count", {
+                  line: null,
+                  label: function label(text, index, total) {
+                      var textCfg = {};
+                      if (index === 0) {
+                          textCfg.textAlign = "left";
+                      } else if (index === total - 1) {
+                          textCfg.textAlign = "right";
+                      }
+                      return textCfg;
+                  }
+              });
+              //图例
+              chart4.legend({
+                  // align: "right"
+                  itemWidth: 70
+                  //  offsetY: 0,
+                  // offsetX: 150
+              });
+              chart4.tooltip({
+                  showCrosshairs: true,
+                  showXTip: true,
+                  onShow: function onShow(ev) {
+                      // console.log(ev);
+                  }
+              });
+              chart4
+                  .line()
+                  .position("count*value")
+                  .color("type")
+                  .shape("smooth");
+              chart4.render();
+          } else {
+              chart4.changeData(this.score4Data);
+              chart4.source(this.score4Data, {});
+          }
+      },
     chartInit() {
       if (this.score1InitState) {
         this.score1AverageScore();
@@ -409,6 +506,9 @@ export default {
       if (this.score3InitState) {
         this.score3AverageScore();
       }
+        if (this.score4InitState) {
+            this.score4AverageScore();
+        }
     },
     onTableSelected(v) {
       this.index = v.index;
@@ -416,6 +516,7 @@ export default {
       this.score1InitState = false;
       this.score2InitState = false;
       this.score3InitState = false;
+      this.score4InitState = false;
       switch (v.type) {
         case "score1":
           this.score1Data = [];
@@ -432,6 +533,11 @@ export default {
           this.score3InitState = true;
           this.changeTable(this.index);
           break;
+          case "score4":
+              this.score4Data = [];
+              this.score4InitState = true;
+              this.changeTable(this.index);
+              break;
       }
     },
     changeTable(index) {
@@ -459,6 +565,9 @@ export default {
     if (chart3 !== undefined) {
       // chart3.destroy();
       chart3 = null;
+    }
+    if (chart4 !== undefined){
+        chart4 = null;
     }
   }
 };

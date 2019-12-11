@@ -123,6 +123,7 @@ nativecode.canbindaccount = function()
 //! 是否有导航栏
 nativecode.hasnavbar = function()
 {
+    return true;
     if (nativecode.platform == 'miniprogram'){
         return false;
     }
@@ -133,6 +134,9 @@ nativecode.hasnavbar = function()
 nativecode.hasmainback = function()
 {
     if (nativecode.platform.length > 0){
+        if (nativecode.platform == 'miniprogram'){
+            return false;
+        }
         return true;
     }
     return false;
@@ -148,6 +152,13 @@ nativecode.getwx = function(){
 
 nativecode.navigateTo = function(path)
 {
+
+    //! 方便调试， 有navbar不navigate
+    if (nativecode.hasnavbar()){
+        return false;
+    }
+
+
     if (nativecode.platform == 'miniprogram'){
 
         let tourl = '/pages/web/page';

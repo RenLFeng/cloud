@@ -21,8 +21,11 @@
 <script>
 import { Tab, Tabs, Button } from "vant";
 import F2 from "@antv/f2/lib/index-all";
-import { getDate, formateTime, getNextDate } from "../../../util";
-const chartType = ["资源得分", "作业得分", "评测得分", "签到得分"];
+import { getDate, formateTime, getChartDate, getNextDate } from "../../../util";
+const chartType = [{name:"资源得分", matchcol:'score1'},
+    {name:"作业得分",matchcol:'score3'},
+    {name:"评测得分", matchcol:'score4'},
+    {name:"签到得分", matchcol:'score2'}];
 import uuidv1 from "uuid/v1";
 let chart = void 0;
 let data = [];
@@ -133,35 +136,46 @@ export default {
             //   userid: 1003
             // });
             this.serverData = res.data.data.scores;
-            let weeksignDate = getDate(this.serverData[0].countdate, n);
+
+            let weeksignDate =  getChartDate(n, null); //getDate(this.serverData[0].countdate, n);
             let tempData = [];
+            //！ 清空老数据
+              this.data.length = 0;
             for (let i = 0; i < weeksignDate.length; i++) {
               for (let v of chartType) {
                 this.data.push({
                   count: weeksignDate[i],
                   value: 0,
-                  type: v
+                  type: v.name,
+                    matchcol:v.matchcol
                 });
               }
             }
             for (let item of this.data) {
               for (let v of this.serverData) {
-                if (item.count == v.countdate) {        
-                  switch (item.type) {
-                    case "资源得分":
-                
-                      item.value = v.score1;
-                      break;
-                    case "签到得分":
-                      item.value = v.score2;
-                      break;
-                    case "作业得分":
-                      item.value = v.score3<0?0:v.score3;
-                      break;
-                    case "评测得分":
-                      item.value = v.score4;
-                      break;
-                  }
+                if (item.count == v.countdate) {
+                    if (v[item.matchcol]){
+                        item.value = v[item.matchcol];
+                        if (item.value < 0){
+                            item.value = 0;
+                        }
+                        break;
+                    }
+                  // switch (item.type) {
+                  //   case "资源得分":
+                  //
+                  //     item.value = v.score1;
+                  //     break;
+                  //   case "签到得分":
+                  //     item.value = v.score2;
+                  //     break;
+                  //   case "作业得分":
+                  //     item.value = v.score3==-1?0:v.score3;
+                  //     break;
+                  //   case "评测得分":
+                  //     item.value = v.score4;
+                  //     break;
+                  // }
                 }
               }
             }
@@ -252,8 +266,8 @@ export default {
   },
   destroyed() {
     if (chart !== undefined) {
-      chart.destroy();
-      // chart = null;
+     // chart.destroy();
+      chart = null;
     }
   }
 };
