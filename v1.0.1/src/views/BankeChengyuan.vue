@@ -48,11 +48,12 @@
         <MemberDetail :memberuser="DetailItem" :chartData="chartData" />
       </div>
     </mt-popup>
+    <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 
 import BankeMemberSimple from "./components/BankeMemberSimple";
 import MemberDetail from "./bankeMember/detail";
@@ -76,7 +77,19 @@ export default {
       Average: 0,
       popupMemberDetail: false,
       DetailItem: {},
-      chartData: {}
+      chartData: {},
+
+      actionShow: false,
+      actions: [
+        {
+          name: "查看",
+          method: this.see
+        },
+        {
+          name: "删除",
+          method: this.dlMember
+        }
+      ]
     };
   },
   computed: {
@@ -112,11 +125,39 @@ export default {
   methods: {
     seeMemberDetail(item) {
       this.DetailItem = item;
+      this.actionShow = true;
+    },
+    see() {
+      this.actionShow = false;
       this.popupMemberDetail = true;
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
       this.chartData = {
         account: item.account
       };
+    },
+    dlMember() {
+      if(!this.showcontrol){
+      Toast('你无权限');
+      retuen;
+      }
+      MessageBox.confirm("您确定要删除吗？")
+        .then(res => {
+          this.$http
+            .post("/api/banke/reqmemberleave", {
+              bankeid: this.bankeid
+            })
+            .then(res => {
+              if (res.data.code == 0) {
+                Toast("删除成功");
+              } else {
+                Toast("删除失败");
+              }
+            })
+            .catch(() => {});
+        })
+        .catch(() => {
+          Toast("服务异常");
+        });
     },
     AverageScoreEchart() {
       this.$store.commit("setRouterForward", true);
@@ -170,7 +211,7 @@ export default {
   background: #fff;
   margin-top: 10px;
 }
-.memberdesc-main .head{
+.memberdesc-main .head {
   background: #fff;
 }
 .memberdesc {

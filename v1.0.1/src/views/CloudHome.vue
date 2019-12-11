@@ -34,7 +34,11 @@
               <BankeSimple :classitem="curbankes[selindex]" @click.native="bankeclick(item)"></BankeSimple>
               <!-- <div class="bankedevide"></div> -->
             </div>
-            <div v-if="!bankeempty" class="tc">{{bankestatedesc}}</div>
+            <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
+              <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
+              <p>暂无班课，点击创建或加入班课</p>
+            </div>
+            <div v-if="!bankeempty &&bankestatedesc!='当前无班课' " class="tc">{{bankestatedesc}}</div>
           </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="exam">
@@ -57,19 +61,6 @@
     </mt-tabbar>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
     <mt-actionsheet :actions="actions2" v-model="actionShow2"></mt-actionsheet>
-
-    <mt-popup
-      v-model="popupJoin"
-      position="right"
-      class="popup-right"
-      :modal="false"
-      style="background:#f0f0f0"
-    >
-      <mt-header title="加入班课">
-        <mt-button icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
-      </mt-header>
-      <Join />
-    </mt-popup>
   </div>
 </template>
 
@@ -83,7 +74,6 @@ import MineAbout from "./MineAbout";
 import nativecode from "../nativecode";
 
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
-import Join from "./bankehome/join";
 export default {
   name: "CloudHome",
   data() {
@@ -175,6 +165,11 @@ export default {
     bankeclick(bankeitem) {
       console.log(bankeitem);
       this.bankeitem = bankeitem;
+      if (this.bankeitem.ordernum) {
+        this.actions[1].name = "取消置顶";
+      } else {
+        this.actions[1].name = "置顶班课";
+      }
       this.actionShow = true;
     },
     addBankeIcon() {
@@ -204,15 +199,29 @@ export default {
     },
     //加入班课
     jion() {
-      this.popupJoin = true;
-    },
-    goback() {
-      if (this.popupJoin) {
-        this.popupJoin = false;
-      }
+      // this.popupJoin = true;
+      this.$store.commit("setRouterForward", true);
+      this.$router.push("/Join");
     },
     //置顶
-    Roof() {},
+    Roof() {
+      this.$http
+        .post("/api/banke/settop", {
+          bankeid: this.bankeitem.id,
+          dotop: this.bankeitem.ordernum ? "0" : 1
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            Toast("成功");
+            this.initbanke();
+          } else {
+            Toast("失败");
+          }
+        })
+        .catch(() => {
+          Toast("服务异常");
+        });
+    },
     //搜索
     searchData() {
       for (let item of this.curbankes) {
@@ -247,8 +256,7 @@ export default {
   components: {
     MineAbout,
     examhome,
-    BankeSimple,
-    Join
+    BankeSimple
   }
 };
 </script>
@@ -312,5 +320,11 @@ export default {
   font-size: 25px;
   color: #d9d9d9;
   padding-right: 5px;
+}
+.no-class {
+  color: #999;
+}
+.no-class i {
+  font-size: 80px;
 }
 </style>

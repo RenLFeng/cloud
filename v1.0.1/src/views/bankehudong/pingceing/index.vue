@@ -3,10 +3,20 @@
     <mt-header v-if="hasnavbar" :title="pagetitle">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
+
     <div class="main">
-      <div class="no-pingce" v-if="!isPingce">
-        <mt-button type="primary" @click="Refresh">刷新</mt-button>
-      </div>
+      <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill">
+        <div class="no-pingce" v-if="!isPingce">
+          <div class="tc no-class empty">
+            <i class="iconfont icontongji fontmaintitle"></i>
+            <p>
+              请下拉本页面
+              <span class="colord" @click="Refresh">刷新</span> 题目
+            </p>
+          </div>
+          <!-- <mt-button type="primary" @click="Refresh">刷新</mt-button> -->
+        </div>
+      </mt-loadmore>
       <div class="pingce-ing" v-if="isPingce">
         <div class="subject">
           <img :src="pingceData.files" alt :onerror="defaultimg" />
@@ -35,7 +45,7 @@
 import Duoxuan from "./duoxuan";
 import Judge from "./judge";
 import ZhuGuan from "./zhuguan";
-import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
+import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
 import { pingceType, parseURL } from "@/util";
 export default {
   name: "PingCeing",
@@ -49,18 +59,19 @@ export default {
       isPingce: false,
       bankeid: 0,
       pingceData: {
-        // ptype: 6,
+        // ptype: 4,
         // files:
         //   "/downloads/pingce/2019-11-30/d3e80fc710209188cf7e4306b1c81b5a.jpeg",
         optdesc: {}
       },
 
-        //! 是否为参数导入； 参数导入的以参数为准，不再http拉取
-        isArgLoad:false,
+      //! 是否为参数导入； 参数导入的以参数为准，不再http拉取
+      isArgLoad: false,
 
       tempAnswer: [],
 
-      pingceType
+      pingceType,
+      autofill: true
     };
   },
   created() {
@@ -69,41 +80,37 @@ export default {
     let doquery = true;
     if (UrlParams.id) {
       this.bankeid = UrlParams.id;
-    }
-    else if (UrlParams.args){
-        let szarg = decodeURIComponent(UrlParams.args);
-        try{
-            let objarg = JSON.parse(szarg);
-           // console.log()
-            this.bankeid = objarg.bankeid;
-            doquery = false;
-            this.isArgLoad = true;
+    } else if (UrlParams.args) {
+      let szarg = decodeURIComponent(UrlParams.args);
+      try {
+        let objarg = JSON.parse(szarg);
+        // console.log()
+        this.bankeid = objarg.bankeid;
+        doquery = false;
+        this.isArgLoad = true;
 
-            this.onpingcedata(objarg.data);
-
-        }catch(e){
-            Toast("解析错误");
-        }
-    }
-    else {
+        this.onpingcedata(objarg.data);
+      } catch (e) {
+        Toast("解析错误");
+      }
+    } else {
       this.bankeid = params.bankeid;
     }
-    if (doquery){
-        this.querycur();
+    if (doquery) {
+      this.querycur();
     }
-
   },
   mounted() {},
   computed: {
-      pagetitle(){
-          return this.isPingce?pingceType(this.pingceData.ptype):'评测';
-      },
-      hasnavbar(){
-          if (this.isArgLoad){
-              return false;
-          }
-          return true;
-      },
+    pagetitle() {
+      return this.isPingce ? pingceType(this.pingceData.ptype) : "评测";
+    },
+    hasnavbar() {
+      if (this.isArgLoad) {
+        return false;
+      }
+      return true;
+    },
     defaultimg() {
       var srcstr = 'this.src="';
       srcstr += require("@/assets/100x100.png");
@@ -112,19 +119,22 @@ export default {
     }
   },
   methods: {
-      onpingcedata(rdata){
-          this.pingceData = rdata;
-          if (this.pingceData) {
-              this.isPingce = true;
-          }
+    loadTop() {
+      this.Refresh();
+    },
+    onpingcedata(rdata) {
+      this.pingceData = rdata;
+      if (this.pingceData) {
+        this.isPingce = true;
+      }
 
-          this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
-          console.log("this.pingceData", this.pingceData);
+      this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
+      console.log("this.pingceData", this.pingceData);
 
-          if (this.isArgLoad){
-              document.title = this.pagetitle;
-          }
-      },
+      if (this.isArgLoad) {
+        document.title = this.pagetitle;
+      }
+    },
     querycur() {
       this.$http
         .post("api/pingce/querycur", {
@@ -132,11 +142,12 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-              console.log("res", res);
-              this.onpingcedata(res.data.data);
+            console.log("res", res);
+            this.onpingcedata(res.data.data);
           } else {
             Toast("当前没有评测");
           }
+          this.$refs.loadmore.onTopLoaded();
         })
         .catch(err => {
           Toast("异常");
@@ -170,15 +181,17 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             console.log("res", res);
+            Toast("提交成功");
             this.tempAnswer = [];
+            this.isPingce = false;
           } else {
             this.tempAnswer = [];
-            Toast("");
+            Toast("提交失败");
           }
         })
         .catch(err => {
           this.tempAnswer = [];
-          Toast("异常");
+          Toast("服务异常");
         });
     },
     Refresh() {
@@ -195,6 +208,9 @@ export default {
 .pingceing-warp {
   background: #fff;
   .main {
+    .no-pingce {
+      height: 100vh;
+    }
     .pingce-ing {
       .subject {
         background: #f0f0f0;

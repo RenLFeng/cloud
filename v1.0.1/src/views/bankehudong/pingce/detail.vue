@@ -1,6 +1,6 @@
 <template>
   <div class="pingce-dtail-warp">
-    <div class="main">
+    <div class="main" v-if="memberData.length">
       <div class="pic">
         <img :src="pingceItemfile.files" alt />
         <p class="color9">
@@ -14,26 +14,44 @@
             <span class="fl">{{memberData.length}} 人提交</span>
             <span class="fr">正确率 00%</span>
           </p>
-          <List v-for="(v,index) in memberData" :key="index" :item="v" type="pingcedetail" />
+          <List
+            v-for="(v,index) in memberData"
+            :key="index"
+            :item="v"
+            type="pingcedetail"
+            :ptype="pingceItemfile.ptype"
+            @click.native="onMemberClick(v)"
+          />
         </div>
       </div>
     </div>
+    <Empty v-else :text="['暂无记录...']" />
+    <mt-popup v-model="popupDeatil" position="right" class="mint-popup" :modal="false" style>
+      <mt-header :title="`${memBerItem.name}的答案`">
+        <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
+      </mt-header>
+      <AnswerDetail :memBerItem="memBerItem" />
+    </mt-popup>
   </div>
 </template>
-
 <script>
+import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
 import List from "@/common/list";
+import AnswerDetail from "./answerdetail";
+import Empty from "@/common/empty.vue";
 export default {
   name: "",
   props: {
     data: {
       default() {
-        return [];
+        return {};
       }
     }
   },
   components: {
-    List
+    List,
+    AnswerDetail,
+    Empty
   },
   watch: {
     data: function(newValue, oldValue) {
@@ -45,7 +63,9 @@ export default {
   data() {
     return {
       pingceItemfile: {},
-      memberData: []
+      memberData: [],
+      popupDeatil: false,
+      memBerItem: {}
     };
   },
   mounted() {},
@@ -59,14 +79,34 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             this.memberData = res.data.data.submit;
-             console.log("详细", this.memberData);
             for (let item of this.memberData) {
               item.answerdesc = JSON.parse(item.answerdesc);
               for (let v of res.data.data.users) {
                 if (item.userid == v.id) {
-                  item.avatar=v.avatar;
+                  item.avatar = v.avatar;
                   item.name = v.account;
                 }
+              }
+            }
+            console.log("详细", this.memberData);
+            if (this.pingceItemfile.ptype == "1") {
+              for (let item of this.memberData) {
+                for (let key in item.answerdesc.opts) {
+                  let v = item.answerdesc.opts[key];
+                  switch (v) {
+                    case "A":
+                      item.answerdesc.opts[key] = "正确";
+                      break;
+                    case "B":
+                      item.answerdesc.opts[key] = "错误";
+                      break;
+                  }
+                }
+              }
+            }
+            if (this.pingceItemfile.ptype == "6") {
+              for (let item of this.memberData) {
+                item.isResponder='抢答成功'
               }
             }
           } else {
@@ -76,6 +116,15 @@ export default {
         .catch(err => {
           Toast("异常");
         });
+    },
+    onMemberClick(v) {
+      this.memBerItem = v;
+      this.popupDeatil = true;
+    },
+    goBacks() {
+      if (this.popupDeatil) {
+        this.popupDeatil = false;
+      }
     }
   }
 };

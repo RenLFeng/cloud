@@ -18,32 +18,34 @@
       />
     </div>
     <!-- 学生 -->
-    <div v-if="!isTeacher && !global">
-      <div class="sign-main">
-        <div class="btn-item sign-in" v-if="studentSignClassInfo && this.studentSignState == '0'">
-          <div class="content-warp" @click="signdo()">
+    <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill">
+      <div v-if="!isTeacher && !global" class="student-main">
+        <div class="sign-main">
+          <div class="btn-item sign-in" v-if="studentSignClassInfo && this.studentSignState == '0'">
+            <div class="content-warp" @click="signdo()">
+              <span>{{studentSignStateText}}</span>
+              <span class="fontsmall">{{studentSignClassInfo.starttime}}</span>
+            </div>
+          </div>
+          <div
+            class="btn-item sign-end"
+            v-else-if="studentSignClassInfo && this.studentSignState == '1'"
+          >
+            <i class="iconfont iconok- colord"></i>
+            <div>
+              <span>{{studentSignStateText}}</span>
+              <span class="fontsmall">{{studentSignClassInfo.starttime}}</span>
+            </div>
+          </div>
+          <div class="no-class btn-item" v-else>
+            <i class="iconfont iconjihuaweikaiqi"></i>
             <span>{{studentSignStateText}}</span>
-            <span class="fontsmall">{{studentSignClassInfo.starttime}}</span>
           </div>
         </div>
-        <div
-          class="btn-item sign-end"
-          v-else-if="studentSignClassInfo && this.studentSignState == '1'"
-        >
-          <i class="iconfont iconok- colord"></i>
-          <div>
-            <span>{{studentSignStateText}}</span>
-            <span class="fontsmall">{{studentSignClassInfo.starttime}}</span>
-          </div>
-        </div>
-        <div class="no-class btn-item" v-else>
-          <i class="iconfont iconjihuaweikaiqi"></i>
-          <span>{{studentSignStateText}}</span>
-        </div>
-      </div>
-      <mt-button class="button-auto-96 btn" @click="studentSee">签到历史记录</mt-button>
-    </div>
 
+        <mt-button class="button-auto-96 btn" @click="studentSee">签到历史记录</mt-button>
+      </div>
+    </mt-loadmore>
     <mt-popup
       v-model="popupStudentSignInfo"
       position="right"
@@ -59,6 +61,7 @@
         :bankeid="bankeid"
         :signData="signData"
         @calssStatefn="oncalssStatefn"
+        :SginState="SginState"
       />
     </mt-popup>
   </div>
@@ -71,8 +74,7 @@ import List from "@/common/list";
 import studentSignInfo from "./studentSignInfo";
 export default {
   name: "",
-  props: {
-  },
+  props: {},
   components: {
     List,
     studentSignInfo
@@ -80,7 +82,7 @@ export default {
   data() {
     return {
       bankeid: 0,
-      global:false,
+      global: false,
       classSignId: 0,
       signState: "",
       signStateIconColor: "colory",
@@ -94,10 +96,19 @@ export default {
       classSignItem: {},
 
       studentSignClassInfo: {},
-      studentSignState: ""
+      studentSignState: "",
+
+      autofill: true
     };
   },
   computed: {
+      SginState() {
+      if (this.classSignItem.id == this.classSignId) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     studentSignHaderText() {
       if (this.classSignItem.id == this.classSignId) {
         return "签到中...";
@@ -106,7 +117,7 @@ export default {
       }
     },
     signStateText() {
-      if (this.signState == "0" ||this.studentSignState == "1") {
+      if (this.signState == "0" || this.studentSignState == "1") {
         this.signStateIconColor = "colord";
         this.signStateTextColor = "colord";
         return "正在签到...";
@@ -142,12 +153,15 @@ export default {
     this.signquerymember();
   },
   methods: {
+    loadTop() {
+      this.signquery();
+    },
     oncalssStatefn(v) {
       this.signState = v;
       this.classSignId = 0;
     },
     studentSee() {
-      this.global=true;
+      this.global = true;
       // this.$emit("global", true);
     },
     //查询老师当前签到状态
@@ -179,6 +193,7 @@ export default {
                 )[1];
                 this.studentSignState = this.studentSignClassInfo.state;
                 console.log("lkns", this.studentSignClassInfo);
+                this.classSignId = this.studentSignClassInfo.signid
               } else {
                 this.studentSignClassInfo = {};
                 this.studentSignState = "";
@@ -188,6 +203,7 @@ export default {
             }
           } else {
           }
+          this.$refs.loadmore.onTopLoaded();
           Indicator.close();
         })
         .catch(() => {
@@ -416,5 +432,10 @@ export default {
     border: 1px solid #0089ff;
     border-radius: 20px;
   }
+  .student-main{
+    height: 100vh;
+    min-height: 100vh;
+  }
+
 }
 </style>

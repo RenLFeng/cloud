@@ -55,7 +55,6 @@ export const getDate = (date, n) => {
   d = d < 10 ? ('0' + d) : d;
 
   date.push([y, m, d].join('/'));
-  // date.push([time.getFullYear(), time.getMonth() + 1, time.getDate()].join('/'));
   for (var i = 1; i < n; i++) {
     var now = new Date(base -= oneDay);
 
@@ -66,7 +65,6 @@ export const getDate = (date, n) => {
     d = d < 10 ? ('0' + d) : d;
 
     date.push([y, m,d].join('/'));
-    // date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
     data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
   }
   var newdate = date.reverse()

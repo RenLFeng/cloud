@@ -3,7 +3,7 @@
     <mt-header title="评测记录">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="main">
+    <div class="main" v-if="pingceHistoryList.length">
       <List
         v-for="(v,index) in pingceHistoryList"
         :key="index"
@@ -12,6 +12,7 @@
         @click.native="details(v)"
       />
     </div>
+     <Empty v-else/>
     <mt-popup
       v-model="popupDeatil"
       position="right"
@@ -28,6 +29,7 @@
 </template>
 
 <script>
+import Empty from '@/common/empty.vue';
 import List from "@/common/list";
 import Deatil from "./detail";
 import {pingceType} from '@/util'
@@ -35,7 +37,8 @@ export default {
   name: "PingCe",
   components: {
     List,
-    Deatil
+    Deatil,
+    Empty
   },
   data() {
     return {

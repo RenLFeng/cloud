@@ -1,6 +1,6 @@
 <template>
   <div class="item class-banke-list">
-    <div class="item">
+    <div class="item" :class="classitem.ordernum?'act':''">
       <img class="itemavatar" :src="classitem.avatar" :onerror="defaultimg" />
       <div class="itempart">
         <div class="wrap">
@@ -101,6 +101,9 @@ export default {
       .iconfont {
         font-size: 30px;
       }
+    }
+    &.act{
+      background: #f0f0f0;
     }
   }
 }

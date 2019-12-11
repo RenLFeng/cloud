@@ -59,7 +59,7 @@
       <mt-header title="发布公告">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Notice />
+      <Notice :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess"/>
     </mt-popup>
     <mt-popup
       v-model="popupProportion"
@@ -71,7 +71,7 @@
       <mt-header title="得分占比">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Proportion />
+      <Proportion :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess"/>
     </mt-popup>
   </div>
 </template>
@@ -134,6 +134,15 @@ export default {
     setProportion() {
       this.popupProportion = true;
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
+    },
+    onSubmitSuccess(v){
+      if(this.popupProportion){
+       this.popupProportion = v;
+      }
+     if(this.popupNotice){
+       this.popupNotice = v;
+      }
+        this.$store.commit("SET_FOOTER_BAR_STATE", true);
     },
     //学情统计
     situation() {

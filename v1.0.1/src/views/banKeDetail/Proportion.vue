@@ -5,60 +5,85 @@
       <div class="item-box">
         <p class="tit">资源得分占比：</p>
         <p class="input">
-          <input type="text" v-model="data.score1" />
+          <input type="number" v-model="scorerule1" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">签到得分占比：</p>
         <p class="input">
-          <input type="text" v-model="data.score2" />
+          <input type="number" v-model="scorerule2" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">作业得分占比：</p>
         <p class="input">
-          <input type="text" v-model="data.score3" />
+          <input type="number" v-model="scorerule3" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">评测得分占比：</p>
         <p class="input">
-          <input type="text" v-model="data.score4" />
+          <input type="number" v-model="scorerule4" />
           <span>%</span>
         </p>
       </div>
       <p class="footer-btn">
         <mt-button type="default" @click.native="Submit" class="submit">确认</mt-button>
-        <mt-button type="default" @click.native="reSet" class="seSet">回复默认</mt-button>
+        <mt-button type="default" @click.native="reSet" class="seSet">恢复默认</mt-button>
       </p>
     </div>
   </div>
 </template>
 
 <script>
+import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
 export default {
   name: "",
-
+  props: {
+    bankeInfo: {
+      default() {
+        return {
+          
+        };
+      }
+    }
+  },
+  watch: {
+  },
   data() {
     return {
-      data: {
-        score1: "",
-        score2: "",
-        score3: "",
-        score4: ""
-      }
+      scorerule1: this.bankeInfo.scorerule1,
+      scorerule2: this.bankeInfo.scorerule2,
+      scorerule3: this.bankeInfo.scorerule3,
+      scorerule4: this.bankeInfo.scorerule4,
+      scorerule5: this.bankeInfo.scorerule5,
     };
   },
 
   methods: {
     Submit() {
       this.$http
-        .post("api/banke/updateinfo", {})
-        .then(res => {})
-        .catch(err => {});
+        .post("api/banke/updateinfo", {
+          id: this.bankeInfo.id,
+          scorerule1: this.scorerule1,
+          scorerule2: this.scorerule2,
+          scorerule3: this.scorerule3,
+          scorerule4: this.scorerule4
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            Toast("成功");
+            this.$emit("submitSuccess", false);
+          } else {
+            Toast("失败");
+          }
+        })
+        .catch(err => {
+          Toast("异常");
+        });
     },
     reSet() {}
   }

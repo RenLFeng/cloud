@@ -1,5 +1,6 @@
 <template>
   <div class="footer-item-z">
+    <!-- <img :src="imgUrl" alt="" class="imgUrl"> -->
     <ul class="clearfix">
       <li class="fl">
         <i class="iconfont iconxiangji eicotrigger" style="color:#0089FF"></i>
@@ -267,8 +268,28 @@ export default {
     },
     // 生成图片
     getImage() {
-      html2canvas(document.querySelector("#mydraw")).then(c => {
-        this.imgUrl = c.toDataURL("image/jpeg");
+      // html2canvas($(".box"), {
+      //   allowTaint: true,
+      //   taintTest: false,
+      //   width: 1920,
+      //   height: 1080,
+      //   onrendered: function(canvas) {
+      //     var dataUrl = canvas.toDataURL("image/png", 1.0),
+      //       newImg = document.createElement("img");
+      //     newImg.src = dataUrl;
+      //     $(".box")
+      //       .empty()
+      //       .append(newImg);
+      //     newImg.style.width = "100%";
+      //   }
+      // });
+      html2canvas(document.querySelector("#mydraw"), {
+        allowTaint: true,
+        taintTest: false,
+        width: 1920,
+        height: 1080
+      }).then(c => {
+        this.imgUrl = c.toDataURL("image/jpeg", 1.0);
         this.isSubmit = true;
         this.goBacks();
         console.log("生成图片", this.imgUrl);
@@ -301,7 +322,7 @@ export default {
       }
       this.$emit("submitFn", this.imgUrl);
       this.imgUrl = "";
-       this.isSubmit = false;
+      this.isSubmit = false;
       this.controlCanvas("clear");
     },
     draw() {
@@ -318,6 +339,13 @@ export default {
 
 <style lang='less'>
 .footer-item-z {
+  // .imgUrl{
+  //   position: fixed;
+  //   width: 100%;
+  //   height: auto;
+  //   z-index: 9999999999;
+  //   top: 0;
+  // }
   #pic {
     position: fixed;
     left: 0;

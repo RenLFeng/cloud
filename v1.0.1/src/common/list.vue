@@ -23,14 +23,15 @@
       </div>
       <div class="maincsubtitle color9">{{item.createtime}}</div>
     </div>
-    <!-- 签到详情 -->
+    <!-- 评测记录详情 -->
     <div class="maincontent pingcedetail" v-if="type=='pingcedetail'">
       <div class="mainctitle ellipse">
         <img class="itemavatar" :src="item.avatar" :onerror="defaultimg" />
         {{item.name}}
         <span class="fr font-xs colorf">正确</span>
       </div>
-      <div class="maincsubtitle">提交答案: {{answer}}</div>
+      <div v-if="ptype!='6'" class="maincsubtitle ellipse">提交答案: {{answer}}</div>
+      <div v-if="ptype=='6'">{{item.isResponder}}</div>
       <div class="footer">
         <span class="color9 font-xs">{{item.submittime}}</span>
         <span class="fr colory">得分&nbsp;{{item.score}}</span>
@@ -66,23 +67,37 @@ export default {
     text: {
       default: ""
     },
-    index:{
-      default: ''
+    index: {
+      default: ""
     },
     type: {
       default: "sign"
     },
     classSignId: {
       default: 0
+    },
+    ptype:{
+      default:null
     }
   },
   computed: {
     answer() {
       let str = "";
-      for (let v of this.item.answerdesc.opts) {
-        str += v + "、";
+      if (this.item.answerdesc.opts.length) {
+        for (let key in this.item.answerdesc.opts) {
+          let v = this.item.answerdesc.opts[key];
+          if (key == this.item.answerdesc.opts.length - 1) {
+            str += v + " ";
+          } else {
+            str += v + " 、";
+          }
+        }
+        return str;
       }
-      return str;
+      if (this.item.answerdesc.textarea) {
+        str = this.item.answerdesc.textarea;
+        return str;
+      }
     },
     week() {
       return Whatweek(this.item.date);
@@ -175,14 +190,15 @@ export default {
   padding: 3px 10px;
 }
 .pingcedetail .maincsubtitle {
+  width: 90%;
   font-size: 16px;
 }
 .pingcedetail .footer {
   margin-top: 5px;
 }
-
 .maincsubtitle {
-  height: 16px;
+  height: 25px;
+  line-height: 30px;
   font-size: 12px;
 }
 
