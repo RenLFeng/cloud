@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Empty from '@/common/empty.vue';
+import Empty from '@/common/empty';
 import List from "@/common/list";
 import Deatil from "./detail";
 import {pingceType} from '@/util'

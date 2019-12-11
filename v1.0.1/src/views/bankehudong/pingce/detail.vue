@@ -38,7 +38,7 @@
 import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
 import List from "@/common/list";
 import AnswerDetail from "./answerdetail";
-import Empty from "@/common/empty.vue";
+import Empty from "@/common/empty";
 export default {
   name: "",
   props: {
