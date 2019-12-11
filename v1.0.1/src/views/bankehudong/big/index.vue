@@ -3,10 +3,19 @@
     <mt-header :title="isLogin?'登录中...':'大屏登录'">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div v-if="isLogin">
-      <p>{{userInfo.mac}}</p>
-      <p>{{userInfo.name}}</p>
-      <mt-button @click="sinOut">退出</mt-button>
+    <div v-if="isLogin" class="isLogin">
+      <div class="tc no-class empty">
+        <i class="iconfont icondapingmu fontmaintitle"></i>
+        <p class="" style="color:#000">已登录到大屏</p>
+        <div class="" style="color:#000">
+          <p>{{userInfo.mac}}</p>
+          <p>{{userInfo.name}}</p>
+        </div>
+        <p>下课后请及时退出大屏登录</p>
+        <div class="button-worp">
+          <mt-button class="button-auto-96" @click="sinOut">退出</mt-button>
+        </div>
+      </div>
     </div>
     <div v-else>
       <Login :bankeid="bankeid" @login="onLogin" />
@@ -75,4 +84,21 @@ export default {
 };
 </script>
 
-<style lang='stylus' rel='stylesheet/stylus'></style>
+<style lang='less'>
+.big-main {
+  .isLogin {
+    height: 100vh;
+    min-height: 100vh;
+    p{
+      margin: 5px 0;
+    }
+    .button-worp {
+      margin-top: 30px;
+      button {
+        background: #0089ff;
+        color: #fff;
+      }
+    }
+  }
+}
+</style>

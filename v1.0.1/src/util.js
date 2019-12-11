@@ -55,7 +55,6 @@ export const getDate = (date, n) => {
   d = d < 10 ? ('0' + d) : d;
 
   date.push([y, m, d].join('/'));
-  // date.push([time.getFullYear(), time.getMonth() + 1, time.getDate()].join('/'));
   for (var i = 1; i < n; i++) {
     var now = new Date(base -= oneDay);
 

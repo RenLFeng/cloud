@@ -16,7 +16,7 @@
       :sign="1"
       @click.native="setSignState(v)"
     />
-    <div class="footer" v-if="isTeacher">
+    <div class="footer" v-if="isTeacher && SginState">
       <p class="fontlarge tc top" style="border-bottom:1px solid #f0f0f0">
         <a class="colord">{{signNumber.sign}}&nbsp;</a>
         /&nbsp;{{signNumber.nosign}}
@@ -72,6 +72,9 @@ export default {
     },
     bankeid: {
       default: 0
+    },
+    SginState:{
+      default:false
     }
   },
   watch: {

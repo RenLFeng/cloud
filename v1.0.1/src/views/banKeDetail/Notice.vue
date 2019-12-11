@@ -1,15 +1,21 @@
 <template>
   <div class="Notice-content-main">
-    <input type="textarea" class="textarea" placeholder="请输入公告内容" v-model="textareaData" />
+    <mt-field placeholder="请输入公告内容" type="textarea" rows="8" v-model="textareaData"></mt-field>
     <mt-button type="primary" @click.native="submit">发布</mt-button>
   </div>
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Button } from "mint-ui";
+import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
 export default {
   name: "",
-
+  props: {
+    bankeInfo: {
+      default() {
+        return {};
+      }
+    }
+  },
   data() {
     return {
       textareaData: ""
@@ -20,13 +26,17 @@ export default {
     submit() {
       if (!this.textareaData) {
         Toast("请输入公告");
-        rturn;
+        return;
       }
       this.$http
-        .post("api/banke/updateinfo", { info: this.textareaData })
+        .post("api/banke/updateinfo", {
+          id: this.bankeInfo.id,
+          info: this.textareaData
+        })
         .then(res => {
           if (res.data.code == "0") {
             Toast("发布成功");
+                this.$emit('submitSuccess',false)
           }
         })
         .catch(err => {});
