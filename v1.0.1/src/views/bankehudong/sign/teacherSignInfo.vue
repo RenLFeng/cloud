@@ -200,6 +200,7 @@ export default {
                 console.log("lkns", this.studentSignClassInfo);
                 this.classSignId = this.studentSignClassInfo.signid;
               } else {
+                Toast('暂无签到')
                 this.studentSignClassInfo = {};
                 this.studentSignState = "";
               }
@@ -207,11 +208,13 @@ export default {
               // alert(this.studentSignState)
             }
           } else {
+             Toast('出错了')
           }
           this.$refs.loadmore.onTopLoaded();
           Indicator.close();
         })
         .catch(() => {
+          
           Indicator.close();
         });
     },
@@ -438,8 +441,8 @@ export default {
     border-radius: 20px;
   }
   .student-main {
-    height: 100vh;
-    min-height: 100vh;
+    height: 90vh;
+    min-height: 90vh;
   }
 }
 </style>

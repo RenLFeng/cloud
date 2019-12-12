@@ -209,7 +209,8 @@ export default {
   background: #fff;
   .main {
     .no-pingce {
-      height: 100vh;
+      height: 90vh;
+      min-height: 90vh;
     }
     .pingce-ing {
       .subject {

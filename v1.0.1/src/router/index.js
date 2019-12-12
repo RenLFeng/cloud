@@ -37,7 +37,7 @@ import Banshu from '../views/bankehudong/banshu/index'
 //加入班课
 import Join from '../views/bankehome/join'
 //绑定账号
-import BindingAccount from '../views/my/bindingAccount'
+// import BindingAccount from '../views/my/bindingAccount'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
@@ -70,7 +70,7 @@ export function createRouter() {
         {path:'/Group',name:'Group', component:Group},
         {path:'/Banshu',name:'Banshu', component:Banshu},
         {path:'/Join',name:'Join', component:Join},
-        {path:'/BindingAccount',name:'BindingAccount', component:BindingAccount},
+        // {path:'/BindingAccount',name:'BindingAccount', component:BindingAccount},
 
 
      
