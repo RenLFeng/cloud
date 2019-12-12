@@ -233,16 +233,18 @@ export default {
     ondelectFn(index) {
       let item = this.tempData[index];
       // this.tempData.splice(this.tempData[index],1)
-      MessageBox.confirm("您确定要删除吗？")
+      MessageBox.confirm("您确定要删除小组吗？")
         .then(res => {
           this.$http
             .post("/api/group/deletegroup", {
-              id: item.id
+              subgroupid: item.id
             })
             .then(res => {
               if (res.data.code == 0) {
                 MessageBox.alert("删除成功").then(() => {
-                  this.querysubgroup();
+                  //this.querysubgroup();
+                    this.tempData.splice(index,1)
+                    this.querysubgroup();
                 });
               } else {
                 MessageBox.alert(res.data.msg);
