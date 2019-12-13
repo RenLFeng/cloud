@@ -147,7 +147,7 @@ export default {
     dlMember() {
       if (!this.showcontrol) {
         Toast("你无权限");
-        retuen;
+        return;
       }
       MessageBox.confirm("您确定要删除吗？")
         .then(res => {

@@ -11,7 +11,6 @@
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
           <img v-else :src="getimgico(fitem)" :onerror="getimgico(fitem)" class="iconclass" />
-
         </div>
 
         <div v-if="uploadstate(findex)" class="uploadbg">
@@ -116,6 +115,7 @@ export default {
   mounted() {},
   methods: {
     onImagePreview(item, index) {
+      console.log(item);
       this.tempLocalfiles = [];
       this.tempImgs = [];
       let file = item;
@@ -129,27 +129,27 @@ export default {
         }
       }
       if (
-          //window.__wxjs_environment === "miniprogram"
-          nativecode.platform == 'miniprogram'
+        //window.__wxjs_environment === "miniprogram"
+        nativecode.platform == "miniprogram"
       ) {
-        // console.log(this.tempImgs);
-        let wx = nativecode.getwx();
-        let imgs = this.tempImgs;
-        for (let i = 0; i < imgs.length; i++) {
-          imgs[i] = nativecode.getDownUrl2(imgs[i]);
-        }
-        let i = index;
-        let that = this;
-        wx.previewImage({
-          current: imgs[i], // 当前显示图片的http链接
-          urls: imgs, // 需要预览的图片http链接列表
-          success(res) {
-            console.log("success", res);
-          },
-          fail(res) {
-            console.log("error", res);
+          // console.log(this.tempImgs);
+          let wx = nativecode.getwx();
+          let imgs = this.tempImgs;
+          for (let i = 0; i < imgs.length; i++) {
+            imgs[i] = nativecode.getDownUrl2(imgs[i]);
           }
-        });
+          let i = index;
+          let that = this;
+          wx.previewImage({
+            current: imgs[i], // 当前显示图片的http链接
+            urls: imgs, // 需要预览的图片http链接列表
+            success(res) {
+              console.log("success", res);
+            },
+            fail(res) {
+              console.log("error", res);
+            }
+          });
       } else {
         this.$store.commit("SET_ISPREVIEW", false);
         this.$store.commit("SET_PREVIEWLOADFILE", item);
@@ -303,8 +303,8 @@ export default {
         this.$set(fitem, "uploadState", "success");
         fitem.serverData = bok;
         console.log(bok);
-        if (typeof bok.metainfo == "string"){
-            bok.metainfo = JSON.parse(bok.metainfo);
+        if (typeof bok.metainfo == "string") {
+          bok.metainfo = JSON.parse(bok.metainfo);
         }
         if (bok.metainfo && bok.metainfo.w && bok.metainfo.h) {
           //! 更新宽高， 重新显示图片
@@ -327,10 +327,10 @@ export default {
     getimgico(fitem) {
       return commontools.fileType(fitem);
     },
-      getimgnativeico(fitem){
-        console.log(fitem);
-          return commontools.fileSnapPath(fitem);
-      },
+    getimgnativeico(fitem) {
+      console.log(fitem);
+      return commontools.fileSnapPath(fitem);
+    },
     delfileindex(findex) {
       var tips = this.$t("bankeTask.Delete_file") + " %s？";
       var filename = "";

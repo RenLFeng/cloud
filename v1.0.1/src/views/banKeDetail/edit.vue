@@ -1,7 +1,7 @@
 <template>
   <div class="bk-edit-container">
     <div class="pic-container" @click="unloadFn">
-      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt :onerror="defaultimg"/>
+      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt  :onerror="$defaultImg('banke')"/>
       <p>{{$t('common.CoverClass')}}</p>
     </div>
     <div class="bk-info-lists">

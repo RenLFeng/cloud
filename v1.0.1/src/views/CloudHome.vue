@@ -80,7 +80,7 @@ export default {
   name: "CloudHome",
   data() {
     return {
-      isBind:false,
+      isBind: false,
       selected: "banke",
       classitem: {
         name: "11",
@@ -114,7 +114,7 @@ export default {
     };
   },
   computed: {
-    CliudBar(){
+    CliudBar() {
       return this.$store.state.CliudBar;
     },
     showadd() {
@@ -234,9 +234,7 @@ export default {
         });
     },
     //搜索
-    searchData() {
- 
-    },
+    searchData() {},
     initbanke() {
       var url = "/api/api/bankequery";
       if (!this.bankeempty) {

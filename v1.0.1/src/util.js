@@ -64,7 +64,7 @@ export const getDate = (date, n) => {
     let d = now.getDate();
     d = d < 10 ? ('0' + d) : d;
 
-    date.push([y, m,d].join('/'));
+    date.push([y, m, d].join('/'));
     // date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
     //data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
   }
@@ -81,88 +81,86 @@ export const getNextDate = (n) => {
 
 
 //! cjy: 得到图表数据的日期; 需要占位符，不足0补0， 如 2019/12/01
-export const getChartDate = (ndays, date)=>{
-    let enddate = date? new Date(date): new Date(); //!  new Date为本地时区 China Standard Time
-    //console.log(enddate);
-    let dates = [];
-    let basetime = new Date(enddate).getTime();
-    let oneday = 24 * 3600 * 1000;
-    for(let i=0; i<=ndays; i++){
-        let cur = new Date(basetime);
-        //console.log(cur);
-        basetime -= oneday;
-        let m = cur.getMonth() + 1;
-        let d = cur.getDate();
-        let dayarray = [cur.getFullYear()+'', m<10? '0'+m:''+m,
-            d<10?'0'+d:''+d];
-        dates.push(dayarray.join('/'));
-    }
-    return dates.reverse();
+export const getChartDate = (ndays, date) => {
+  let enddate = date ? new Date(date) : new Date(); //!  new Date为本地时区 China Standard Time
+  //console.log(enddate);
+  let dates = [];
+  let basetime = new Date(enddate).getTime();
+  let oneday = 24 * 3600 * 1000;
+  for (let i = 0; i <= ndays; i++) {
+    let cur = new Date(basetime);
+    //console.log(cur);
+    basetime -= oneday;
+    let m = cur.getMonth() + 1;
+    let d = cur.getDate();
+    let dayarray = [cur.getFullYear() + '', m < 10 ? '0' + m : '' + m,
+      d < 10 ? '0' + d : '' + d
+    ];
+    dates.push(dayarray.join('/'));
+  }
+  return dates.reverse();
 }
 
 //! cjy: 分析得分情况
-export const parseChartScoreData = (ed, wa, days, enddate)=>{
-    //! 清空原数据
-    ed.xAxis.data = [];
-    for (let v of ed.series){
-        v.data = [];
+export const parseChartScoreData = (ed, wa, days, enddate) => {
+  //! 清空原数据
+  ed.xAxis.data = [];
+  for (let v of ed.series) {
+    v.data = [];
+  }
+
+  let datearray = getChartDate(days, enddate);
+  ed.xAxis.data = datearray;
+  //! 首先对原数据进行按日期归类整理
+  let scoredatas = {};
+  for (let i = 0; i < wa.length; i++) {
+    let cdate = wa[i].countdate;
+    if (typeof scoredatas[cdate] == 'undefined') {
+      scoredatas[cdate] = [];
+    }
+    scoredatas[cdate].push(wa[i]);
+  }
+  //console.log(scoredatas);
+  for (let i = 0; i < datearray.length; i++) {
+    let scoredata = null; {
+      if (scoredatas[datearray[i]]) {
+        scoredata = scoredatas[datearray[i]];
+      }
     }
 
-    let datearray = getChartDate(days, enddate);
-    ed.xAxis.data = datearray;
-    //! 首先对原数据进行按日期归类整理
-    let scoredatas = {};
-    for(let i=0; i<wa.length; i++){
-        let cdate = wa[i].countdate;
-        if (typeof scoredatas[cdate] == 'undefined'){
-            scoredatas[cdate] = [];
-        }
-        scoredatas[cdate].push(wa[i]);
+    if (!scoredata) {
+      scoredata = [];
     }
-    //console.log(scoredatas);
-    for(let i = 0; i<datearray.length; i++){
-        let scoredata = null;
-        {
-            if (scoredatas[datearray[i]]){
-                scoredata = scoredatas[datearray[i]];
-            }
+    for (let v of ed.series) {
+      let curdata = 0;
+      let usescore = null;
+      //console.log(v.matchuserid);
+      if (v.matchuserid) {
+        //for(let us of scoredata)
+        for (let j = 0; j < scoredata.length; j++) {
+          let us = scoredata[j];
+          //  console.log(us);
+          if (us.userid == v.matchuserid) {
+            usescore = us;
+            break;
+          }
         }
-
-        if (!scoredata){
-            scoredata = [];
+      } else {
+        if (scoredata.length) {
+          usescore = scoredata[0];
         }
-        for (let v of ed.series){
-            let curdata = 0;
-            let usescore = null;
-            //console.log(v.matchuserid);
-            if (v.matchuserid){
-                //for(let us of scoredata)
-                for(let j=0; j<scoredata.length; j++)
-                {
-                    let us = scoredata[j];
-                    //  console.log(us);
-                    if (us.userid == v.matchuserid){
-                        usescore = us;
-                        break;
-                    }
-                }
-            }
-            else{
-                if (scoredata.length){
-                    usescore = scoredata[0];
-                }
-            }
-            //console.log(usescore);
-            if (usescore){
-                if(v.matchcol){
-                    if (typeof usescore[v.matchcol] != 'undefined'){
-                        curdata = Number(usescore[v.matchcol]);
-                    }
-                }
-            }
-            v.data.push(curdata);
+      }
+      //console.log(usescore);
+      if (usescore) {
+        if (v.matchcol) {
+          if (typeof usescore[v.matchcol] != 'undefined') {
+            curdata = Number(usescore[v.matchcol]);
+          }
         }
+      }
+      v.data.push(curdata);
     }
+  }
 }
 
 export const pingceType = (v) => {
@@ -187,7 +185,7 @@ export const pingceType = (v) => {
       break;
   }
 }
-export const parseURL = (url) =>{
+export const parseURL = (url) => {
   var query = url && url.split('?')[1]
   var queryArr = query && query.split('&')
   var params = {}
@@ -198,4 +196,30 @@ export const parseURL = (url) =>{
       params[key] = value
     })
   return params
+}
+export const defaultImg = (type) => {
+  var srcstr = 'this.src="';
+  switch (type) {
+    case 'account':
+      srcstr += require("./assets/account_default.png");
+      srcstr += '"';
+      return srcstr;
+      break;
+    case 'banke':
+      srcstr += require("./assets/banke_default.png");
+      srcstr += '"';
+      return srcstr;
+      break;
+    case 'zuoye':
+      srcstr += require("./assets/zuoye_add.png");
+      srcstr += '"';
+      return srcstr;
+      break;
+    case 'file':
+      srcstr += require("./assets/file_default.png");
+      srcstr += '"';
+      return srcstr;
+      break;
+  }
+
 }

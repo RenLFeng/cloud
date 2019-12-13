@@ -50,7 +50,6 @@ export default {
     join() {
       if (!this.bankeNumber) {
         Toast("请输入班号");
-        this.popupSubmitJoin = true;
         return;
       }
       this.$http
