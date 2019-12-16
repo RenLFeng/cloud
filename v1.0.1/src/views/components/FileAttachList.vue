@@ -1,7 +1,6 @@
 <template>
   <div class="flist-container" id="content">
     <ul class="flist-ul">
-      <!-- <viewer> -->
       <li
         v-for="(fitem, findex) in localfiles"
         :key="findex"
@@ -22,7 +21,6 @@
           <div class="delbtntext">x</div>
         </div>
       </li>
-      <!-- </viewer> -->
       <li v-if="isupload" class="imgblock liupload">
         <div class="blockborder" @click="onbtnupload">
           <div class="imgblocktext textadd">+</div>
@@ -132,24 +130,24 @@ export default {
         //window.__wxjs_environment === "miniprogram"
         nativecode.platform == "miniprogram"
       ) {
-          // console.log(this.tempImgs);
-          let wx = nativecode.getwx();
-          let imgs = this.tempImgs;
-          for (let i = 0; i < imgs.length; i++) {
-            imgs[i] = nativecode.getDownUrl2(imgs[i]);
+        // console.log(this.tempImgs);
+        let wx = nativecode.getwx();
+        let imgs = this.tempImgs;
+        for (let i = 0; i < imgs.length; i++) {
+          imgs[i] = nativecode.getDownUrl2(imgs[i]);
+        }
+        let i = index;
+        let that = this;
+        wx.previewImage({
+          current: imgs[i], // 当前显示图片的http链接
+          urls: imgs, // 需要预览的图片http链接列表
+          success(res) {
+            console.log("success", res);
+          },
+          fail(res) {
+            console.log("error", res);
           }
-          let i = index;
-          let that = this;
-          wx.previewImage({
-            current: imgs[i], // 当前显示图片的http链接
-            urls: imgs, // 需要预览的图片http链接列表
-            success(res) {
-              console.log("success", res);
-            },
-            fail(res) {
-              console.log("error", res);
-            }
-          });
+        });
       } else {
         this.$store.commit("SET_ISPREVIEW", false);
         this.$store.commit("SET_PREVIEWLOADFILE", item);
@@ -217,6 +215,16 @@ export default {
         var file = event.target.files;
         // console.log(file);
         for (let i = 0; i < file.length; i++) {
+          let _filesize = file[i].size;
+          if (_filesize / (1024 * 1024) > 300) {
+            MessageBox({
+              title: "提示",
+              message: `<p>${file[i].name}</p>
+              <p>此文件大小超上限，建议小于300M</p>`,
+              showCancelButton: true
+            });
+            continue;
+          }
           var vo = {};
           vo.file = file[i];
           vo.ftype = commontools.fileGetType(file[i].type);

@@ -7,7 +7,8 @@
     <div class="main">
       <div>
         <P class="name-tit">方案名称</P>
-        <p class="name">{{EditItemObj.name}}</p>
+        <mt-field v-model="groupName"></mt-field>
+        <!-- <p class="name">{{EditItemObj.name}}</p> -->
       </div>
       <div class="Explain">
         <p>连接到大屏时，按小组名分配小组大屏。</p>
@@ -49,7 +50,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Popup, Button } from "mint-ui";
+import { Indicator, Toast, MessageBox, Popup, Button, Field } from "mint-ui";
 import GroupList from "./groupList";
 import MembersList from "./memberslist";
 export default {
@@ -84,10 +85,20 @@ export default {
       popuoMembersList: false,
       count: 0,
       addMembersItem: {},
-      addMembersItem2: {}
+      addMembersItem2: {},
+      groupName: ""
     };
   },
-
+  computed: {
+    noMember() {
+      let nub = 0;
+      nub =
+        this.allMemBers.length - this.count
+          ? this.allMemBers.length - this.count
+          : 0;
+      return nub;
+    }
+  },
   methods: {
     //查询小组
     querysubgroup() {
@@ -103,6 +114,7 @@ export default {
             this.EditSelect = false;
             this.popuoEdit = true;
             this.tempData = res.data.data;
+            this.groupName = this.EditItemObj.name;
             for (let v of this.tempData) {
               v.files = [];
               v.members = JSON.parse(v.members);
@@ -133,6 +145,13 @@ export default {
     },
     //确定提交编辑
     savesubgroup() {
+      if (this.groupName != this.EditItemObj.name) {
+        this.changeState = true;
+      }
+      if (!this.groupName) {
+        Toast("请输入分组名");
+        return;
+      }
       if (!this.changeState) {
         MessageBox.alert("你没有修改的信息");
         return;
@@ -141,13 +160,22 @@ export default {
         .then(res => {
           let obj = [];
           for (let v of this.tempData) {
-            obj.push({
-              id: v.id,
-              groupid: v.groupid,
-              name: v.name,
-              membersnum: v.membersnum,
-              members: JSON.stringify(v.members)
-            });
+            if (v.id) {
+              obj.push({
+                id: v.id,
+                groupid: v.groupid,
+                name: v.name,
+                membersnum: v.membersnum,
+                members: JSON.stringify(v.members)
+              });
+            } else {
+              obj.push({
+                groupid: v.groupid,
+                name: v.name,
+                membersnum: v.membersnum,
+                members: JSON.stringify(v.members)
+              });
+            }
           }
           this.$http
             .post("/api/group/savesubgroup", {
@@ -157,7 +185,13 @@ export default {
               if (res.data.code == "0") {
                 Toast("成功");
                 this.changeState = false;
-                this.querysubgroup();
+                // this.querysubgroup();
+                if (this.groupName != this.EditItemObj.name && this.groupName) {
+                  this.EditItemObj.name = this.groupName;
+                  this.$emit("setGgoupName", this.groupName);
+                }
+                 this.count=0;
+                this.$emit("editBack", { state: false, type: 1 });
               } else {
                 Toast("失败");
               }
@@ -176,24 +210,34 @@ export default {
         membersnum: 0,
         members: "[]"
       };
-      this.$http
-        .post("/api/group/savesubgroup", {
-          subgroups: [obj]
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-            Toast("成功");
-            this.querysubgroup();
-          } else {
-            Toast("失败");
-          }
-        })
-        .catch(err => {
-          Toast("异常");
-        });
+      Toast("成功");
+      obj.members = JSON.parse(obj.members);
+      obj.files = [];
+      this.tempData.push(obj);
+      // this.$http
+      //   .post("/api/group/savesubgroup", {
+      //     subgroups: [obj]
+      //   })
+      //   .then(res => {
+      //     if (res.data.code == "0") {
+      //       Toast("成功");
+      //       obj.members = JSON.parse(obj.members);
+      //       obj.files=[];
+      //       this.tempData.push(obj);
+      //       // this.querysubgroup();
+      //     } else {
+      //       Toast("失败");
+      //     }
+      //   })
+      //   .catch(err => {
+      //     Toast("异常");
+      //   });
     },
     //取消编辑
     gobacks() {
+      if (this.groupName != this.EditItemObj.name) {
+        this.changeState = true;
+      }
       if (this.changeState) {
         console.log("您有未保存的信息", this.tempData);
         MessageBox.confirm("您有未保存的信息,确定要取消操作吗？")
@@ -205,7 +249,8 @@ export default {
               item.isTrue = false;
               item.groupName = "";
             }
-            this.$emit("editBack", { state: false, type: 0 });
+            this.groupName = this.EditItemObj.name;
+            this.$emit("editBack", { state: false, type: 1 });
           })
           .catch(() => {});
       } else {
@@ -220,7 +265,7 @@ export default {
     //添加成员btn
     onaddMembersFn(item) {
       this.addMembersItem = item;
-      this.len = item.files.length;
+      this.len = item.files ? item.files.length : 0;
       this.popuoMembersList = true;
       console.log("添加成员", this.addMembersItem);
     },
@@ -267,11 +312,14 @@ export default {
       this.tempData[v.gindex].members.splice(v.i, 1);
       this.tempData[v.gindex].membersnum--;
       this.addMembersItem = "";
+      this.count--;
       console.log(this.tempData);
       console.log(this.allMemBers);
     },
     //添加成员
     onaddMemberFn(v) {
+      console.log(v);
+      this.count = 0;
       this.tempData = [];
       for (let item of v) {
         this.tempData.push(item);
@@ -281,6 +329,15 @@ export default {
           if (item.memberuserid == v) {
             item.isTrue = true;
             item.groupName = this.addMembersItem.name;
+          }
+        }
+      }
+      for (let v of this.tempData) {
+        for (let i of v.members) {
+          for (let item of this.allMemBers) {
+            if (i == item.memberuserid) {
+              this.count++;
+            }
           }
         }
       }

@@ -31,42 +31,42 @@
       ref="loadmore"
       :auto-fill="autofill"
       :bottom-all-loaded="loadingState"
-    > -->
-      <div class="items-container">
-        <p
-          v-if="bankeZhiYuanLinkItem.length"
-          class="Resources-total fonttiny"
-        >资源总数:{{bankeZhiYuanLinkItem.length}}</p>
-        <mt-tab-container class v-model="selected">
-          <mt-tab-container-item id="1">
-            <!-- v-infinite-scroll="loadMore"
+    >-->
+    <div class="items-container">
+      <p
+        v-if="bankeZhiYuanLinkItem.length"
+        class="Resources-total fonttiny"
+      >资源总数:{{bankeZhiYuanLinkItem.length}}</p>
+      <mt-tab-container class v-model="selected">
+        <mt-tab-container-item id="1">
+          <!-- v-infinite-scroll="loadMore"
               infinite-scroll-disabled="loadingState"
-            infinite-scroll-distance="50"-->
-            <div class="listcontainer">
-              <div>
-                <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
-                  <BankeFileSimple
-                    :fileitem="bankeZhiYuanLinkItem[selindex]"
-                    :index="selindex"
-                    :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
-                    :fileInfo="fileInfo"
-                    @editclick="oneditclick"
-                    @normalclick="onviewfile"
-                  ></BankeFileSimple>
-                </div>
+          infinite-scroll-distance="50"-->
+          <div class="listcontainer">
+            <div>
+              <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
+                <BankeFileSimple
+                  :fileitem="bankeZhiYuanLinkItem[selindex]"
+                  :index="selindex"
+                  :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
+                  :fileInfo="fileInfo"
+                  @editclick="oneditclick"
+                  @normalclick="onviewfile"
+                ></BankeFileSimple>
               </div>
-              <div v-if="filesempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
             </div>
-          </mt-tab-container-item>
-          <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
-          <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false">
-            <mt-header :title="$t('common.Add')+' '+$t('bankeZiYuan.WebLink')">
-              <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
-            </mt-header>
-            <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
-          </mt-popup>
-        </mt-tab-container>
-      </div>
+            <div v-if="filesempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
+          </div>
+        </mt-tab-container-item>
+        <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
+        <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false">
+          <mt-header :title="$t('common.Add')+' '+$t('bankeZiYuan.WebLink')">
+            <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+          </mt-header>
+          <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
+        </mt-popup>
+      </mt-tab-container>
+    </div>
     <!-- </mt-loadmore> -->
     <input
       ref="uploadfilebtn"
@@ -399,17 +399,14 @@ export default {
         this.loadMoreFile();
       }
     },
-      parseOneItem(item){
-          if (item.info) {
-              item.info = JSON.parse(item.info);
-              if (
-                  item.info.metainfo &&
-                  typeof item.info.metainfo == "string"
-              ) {
-                  item.info.metainfo = JSON.parse(item.info.metainfo);
-              }
-          }
-      },
+    parseOneItem(item) {
+      if (item.info) {
+        item.info = JSON.parse(item.info);
+        if (item.info.metainfo && typeof item.info.metainfo == "string") {
+          item.info.metainfo = JSON.parse(item.info.metainfo);
+        }
+      }
+    },
     loadMoreFile() {
       let url = "";
       if (this.topid && this.loadMorePosition == "bottom") {
@@ -488,6 +485,16 @@ export default {
         //! cjy: 大小限制？
         console.log("00000000", file);
         for (let i = 0; i < file.length; i++) {
+          let _filesize = file[i].size;
+          if (_filesize / (1024 * 1024) > 300) {
+            MessageBox({
+              title: "提示",
+              message: `<p>${file[i].name}</p>
+              <p>此文件大小超过上限，建议小于300M</p>`,
+              showCancelButton: true
+            });
+            continue;
+          }
           var formdata = new FormData();
           formdata.append("file", file[i]);
 
@@ -505,9 +512,9 @@ export default {
             .then(res => {
               Indicator.close();
               if (res.data.code == 0) {
-                  this.parseOneItem(res.data.data);
+                this.parseOneItem(res.data.data);
                 commontools.arrayMergeAsIds(this.files, res.data.data);
-              //  res.data.data.info = JSON.parse(res.data.data.info);
+                //  res.data.data.info = JSON.parse(res.data.data.info);
                 let arr = [];
                 arr[0] = res.data.data;
                 this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);

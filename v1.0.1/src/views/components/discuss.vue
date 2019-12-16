@@ -428,6 +428,16 @@ export default {
     uploadChange(e) {
       let that = this;
       let file = e.target.files[0];
+      let _filesize = file.size;
+      if (_filesize / (1024 * 1024) > 300) {
+        MessageBox({
+          title: "提示",
+          message: `<p>${file.name}</p>
+              <p>此文件大小超上限，建议小于300M</p>`,
+          showCancelButton: true
+        });
+        return;
+      }
       // this.commentPic.push(file);
       // this.commentPicSrc.push(_URL.createObjectURL(file))
       this.uploadImg(file);

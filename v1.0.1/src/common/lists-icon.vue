@@ -3,7 +3,7 @@
     <ul>
       <li :class="item.ztext?'item-container islabel':'item-container'" v-for="(item,index) in listsData" :key="index">
         <mt-cell :title="item.username" :label="item.ztext" :value="item.score>=0?item.score:$t('bankeTask.No_score')">
-          <img slot="icon" :src="item.useravatar" />
+          <img slot="icon" :src="item.useravatar" :onerror="$defaultImg('account')"/>
         </mt-cell>
       </li>
     </ul>
