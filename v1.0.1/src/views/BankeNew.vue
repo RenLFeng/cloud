@@ -14,7 +14,7 @@
       ></mt-field>
 
       <mt-cell :title="$t('common.CoverClass')" is-link @click.native="onavatarset">
-        <img :src="classitem.avatar" class="avatarimgpart" :onerror="defaultImage" />
+        <img :src="classitem.avatar" class="avatarimgpart" :onerror="$defaultImg('banke')" />
       </mt-cell>
     </div>
     <input

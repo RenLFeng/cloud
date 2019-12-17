@@ -11,7 +11,7 @@
       <div class="subgroup-list">
         <ul class="clearfix">
           <li class="fl tc" v-for="(v,i) in item.files" :key="i">
-            <img :src="v.img" />
+            <img :src="v.img" :onerror="$defaultImg('account')"/>
             <p>{{v.name}}</p>
             <i class="iconfont iconshanchu1 eicotrigger" @click="dle(index,i)"></i>
           </li>

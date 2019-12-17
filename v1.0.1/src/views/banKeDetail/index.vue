@@ -6,7 +6,7 @@
           <img
             class="float-l"
             :src="imgfilepath?imgfilepath:bankeInfo.avatar"
-            :onerror="defaultimg"
+            :onerror="$defaultImg('banke')"
           />
           <div class="float-l po">
             <div class="top">

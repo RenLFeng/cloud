@@ -1,7 +1,6 @@
 <template>
   <div class="flist-container" id="content">
     <ul class="flist-ul">
-      <!-- <viewer> -->
       <li
         v-for="(fitem, findex) in localfiles"
         :key="findex"
@@ -11,7 +10,6 @@
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
           <img v-else :src="getimgico(fitem)" :onerror="getimgico(fitem)" class="iconclass" />
-
         </div>
 
         <div v-if="uploadstate(findex)" class="uploadbg">
@@ -23,7 +21,6 @@
           <div class="delbtntext">x</div>
         </div>
       </li>
-      <!-- </viewer> -->
       <li v-if="isupload" class="imgblock liupload">
         <div class="blockborder" @click="onbtnupload">
           <div class="imgblocktext textadd">+</div>
@@ -116,6 +113,7 @@ export default {
   mounted() {},
   methods: {
     onImagePreview(item, index) {
+      console.log(item);
       this.tempLocalfiles = [];
       this.tempImgs = [];
       let file = item;
@@ -129,8 +127,8 @@ export default {
         }
       }
       if (
-          //window.__wxjs_environment === "miniprogram"
-          nativecode.platform == 'miniprogram'
+        //window.__wxjs_environment === "miniprogram"
+        nativecode.platform == "miniprogram"
       ) {
         // console.log(this.tempImgs);
         let wx = nativecode.getwx();
@@ -217,6 +215,16 @@ export default {
         var file = event.target.files;
         // console.log(file);
         for (let i = 0; i < file.length; i++) {
+          let _filesize = file[i].size;
+          if (_filesize / (1024 * 1024) > 300) {
+            MessageBox({
+              title: "提示",
+              message: `<p>${file[i].name}</p>
+              <p>此文件大小超上限，建议小于300M</p>`,
+              showCancelButton: true
+            });
+            continue;
+          }
           var vo = {};
           vo.file = file[i];
           vo.ftype = commontools.fileGetType(file[i].type);
@@ -303,8 +311,8 @@ export default {
         this.$set(fitem, "uploadState", "success");
         fitem.serverData = bok;
         console.log(bok);
-        if (typeof bok.metainfo == "string"){
-            bok.metainfo = JSON.parse(bok.metainfo);
+        if (typeof bok.metainfo == "string") {
+          bok.metainfo = JSON.parse(bok.metainfo);
         }
         if (bok.metainfo && bok.metainfo.w && bok.metainfo.h) {
           //! 更新宽高， 重新显示图片
@@ -327,10 +335,10 @@ export default {
     getimgico(fitem) {
       return commontools.fileType(fitem);
     },
-      getimgnativeico(fitem){
-        console.log(fitem);
-          return commontools.fileSnapPath(fitem);
-      },
+    getimgnativeico(fitem) {
+      console.log(fitem);
+      return commontools.fileSnapPath(fitem);
+    },
     delfileindex(findex) {
       var tips = this.$t("bankeTask.Delete_file") + " %s？";
       var filename = "";

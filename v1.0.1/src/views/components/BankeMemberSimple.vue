@@ -1,7 +1,7 @@
 <template>
   <div class="mainpart" @click="onclick">
     <span v-if="indexShow" class="index colory">{{index+1}}</span>
-    <img :src="userimg" :onerror="defaultimg" class="mainimg mainleft avatar" />
+    <img :src="userimg" :onerror="$defaultImg('account')" class="mainimg mainleft avatar" />
     <div class="mainright" v-if="hasedit">
       <i class="iconfont icon-bianji eicotrigger" @click="icoclick"></i>
     </div>

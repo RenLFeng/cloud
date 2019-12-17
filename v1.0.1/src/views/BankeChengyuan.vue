@@ -72,7 +72,7 @@ export default {
   data() {
     return {
       members: [],
-      liststatedesc: "common.Loading",
+      liststatedesc: "",
       loadingState: false,
       isloading: false,
       Average: 0,
@@ -108,7 +108,7 @@ export default {
     },
     membernumdesc() {
       if (this.isloading) {
-        return "common.Loading";
+        return "";
       }
       var nnum = 0;
       if (this.members.length) {
@@ -147,7 +147,7 @@ export default {
     dlMember() {
       if (!this.showcontrol) {
         Toast("你无权限");
-        retuen;
+        return;
       }
       MessageBox.confirm("您确定要删除吗？")
         .then(res => {
@@ -180,6 +180,7 @@ export default {
     loadMoreMember() {
       this.loadingState = true;
       this.isloading = true;
+      Indicator.open("加载中");
       var url = "/api/api/bankememberquery?bankeid=" + this.bankeid;
       this.$http
         .post(url)
@@ -196,14 +197,17 @@ export default {
                 v.score4 +
                 v.score5;
             }
-            this.Average =
-              this.Average / (this.members.length ? this.members.length : 1);
+            this.Average = parseInt(
+              this.Average / (this.members.length ? this.members.length : 1)
+            );
           }
           this.liststatedesc = "";
+          Indicator.close();
         })
         .catch(() => {
           this.isloading = false;
           this.loadingState = false;
+          Indicator.close();
         });
     },
     goBack() {

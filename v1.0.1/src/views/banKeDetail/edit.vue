@@ -1,7 +1,7 @@
 <template>
   <div class="bk-edit-container">
     <div class="pic-container" @click="unloadFn">
-      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt :onerror="defaultimg"/>
+      <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt :onerror="$defaultImg('banke')" />
       <p>{{$t('common.CoverClass')}}</p>
     </div>
     <div class="bk-info-lists">
@@ -15,7 +15,9 @@
       </ul>
     </div>
     <div class="submit-fixed">
-      <mt-button class="botton-96" type="default" @click="submit"> <p>{{$t('common.Keep')}}</p></mt-button>
+      <mt-button class="botton-96" type="default" @click="submit">
+        <p>{{$t('common.Keep')}}</p>
+      </mt-button>
     </div>
     <input
       ref="uploadPic"
@@ -26,11 +28,32 @@
       accept="image/*"
       style="display:none"
     />
+    <mt-popup
+      v-model="popupMimgcrop"
+      position="right"
+      class="mint-popup-3"
+      :modal="false"
+      style="background:#000"
+    >
+      <mt-header :title="$t('personal.Edit_head')">
+        <mt-button icon="back" slot="left" @click="popupMimgcrop = false">{{$t('common.Back')}}</mt-button>
+      </mt-header>
+      <div class="cropComp">
+        <mimgcrop
+          v-model="imgobj"
+          class="cropComp"
+          ref="mimgcrop"
+          @cancel="popupMimgcrop = false"
+          @submit="onimgsubmit"
+        ></mimgcrop>
+      </div>
+    </mt-popup>
   </div>
 </template>
 <script>
 import defaultPic from "../../assets/avatar-default.png";
-import { Cell, Button, MessageBox, Field } from "mint-ui";
+import { Cell, Button, MessageBox, Field, Indicator } from "mint-ui";
+import mimgcrop from "@/common/m-image-crop";
 export default {
   name: "",
   props: {
@@ -56,9 +79,13 @@ export default {
       //   }
     }
   },
+  components: { mimgcrop },
   data() {
     return {
-      pic:'',
+      popupMimgcrop: false,
+      imgobj: {},
+
+      pic: "",
       defaultPic: defaultPic,
       banji: "",
       bankeNmae: "",
@@ -73,7 +100,7 @@ export default {
   },
   created() {},
   computed: {
-     defaultimg() {
+    defaultimg() {
       var srcstr = 'this.src="';
       srcstr += require("../../assets/100x100.png");
       srcstr += '"';
@@ -82,6 +109,10 @@ export default {
   },
   methods: {
     unloadFn() {
+      // ****
+      this.$refs.uploadPic.value = "";
+      this.imgobj = {};
+
       this.$refs.uploadPic.click();
     },
     submit() {
@@ -95,10 +126,10 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
-            MessageBox.alert(this.$t('confirm.Success')).then(() => {
-              this.imgSrc=res.data.data.avatar;
+            MessageBox.alert(this.$t("confirm.Success")).then(() => {
+              this.imgSrc = res.data.data.avatar;
               this.$emit("imgSrcLoad", this.imgSrc);
-               this.pic=res.data.data.avatar;
+              this.pic = res.data.data.avatar;
               for (let item of BankeData) {
                 if (item.id == res.data.data.id) {
                   item.name = res.data.data.name;
@@ -115,9 +146,35 @@ export default {
     },
     uploadChange(e) {
       let file = e.target.files[0];
-      let formdata = new FormData();
-      this.uploadImg(file);
+      // this.uploadImg(file);
       this.$refs.uploadPic.value = "";
+
+      // ****
+      this.$refs.mimgcrop.loadfile(file);
+      this.popupMimgcrop = true;
+    },
+    onimgsubmit() {
+      this.popupMimgcrop = false;
+      console.log(this.imgobj);
+      this.uploadimagedata(this.imgobj.base64);
+    },
+
+    uploadimagedata(base64str) {
+      var url = "/api/api/userUpdateAvatar";
+      Indicator.open(this.$t("Indicator.Uploading"));
+      this.$http
+        .post(url, {
+          jpeg: base64str
+        })
+        .then(res => {
+          Indicator.close();
+          if (res.data.code == 0) {
+            this.imgSrc = res.data.data.filepath;
+          }
+        })
+        .catch(res => {
+          Indicator.close();
+        });
     },
     uploadImg(file) {
       let formdata = new FormData();
@@ -127,8 +184,8 @@ export default {
         .post(url, formdata)
         .then(res => {
           if (res.data.code == 0) {
-            this.imgSrc=res.data.data.filepath;
-            console.log("成功", res)
+            this.imgSrc = res.data.data.filepath;
+            console.log("成功", res);
           } else {
             console.log("失败", res);
           }
@@ -149,10 +206,10 @@ export default {
     text-align: center;
     padding: 30px 0;
     img {
-        width: 88px;
-          height: 88px;
+      width: 88px;
+      height: 88px;
     }
-    p{
+    p {
       font-size: 14px;
       margin-top: 5px;
     }

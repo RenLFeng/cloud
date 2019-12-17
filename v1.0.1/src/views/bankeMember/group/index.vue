@@ -14,10 +14,10 @@
           @click.native="listClick(v,index)"
         />
       </div>
-      <Empty v-else :text="['暂无分组...']"/>
+      <Empty v-else :text="['暂无分组...']" />
     </div>
     <div class="button-worp">
-      <mt-button class="button-auto-96" @click="addGroup">添加成员小组方案</mt-button>
+      <mt-button class="button-auto-96" @click="addGroup('')">添加成员小组方案</mt-button>
     </div>
     <mt-popup
       v-model="popuoEdit"
@@ -26,7 +26,12 @@
       :modal="false"
       style="background:#f0f0f0;"
     >
-      <Edit :EditItem="EditItem" @editBack="onEditBack" :allMemBers="allMemBers" />
+      <Edit
+        :EditItem="EditItem"
+        @editBack="onEditBack"
+        :allMemBers="allMemBers"
+        @setGgoupName="onSetGgoupName"
+      />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
@@ -48,6 +53,11 @@ export default {
   watch: {
     EditSelect() {
       //   if(this.EditSelect)
+    },
+    actionShow: function(newValue, oldValue) {
+      if (!newValue) {
+        // this.EditItem = {};
+      }
     }
   },
   data() {
@@ -177,6 +187,7 @@ export default {
               if (res.data.code == 0) {
                 MessageBox.alert("删除成功").then(() => {
                   this.EditSelect = false;
+                  this.EditItem = {};
                   this.querygroup(this.bankeid);
                 });
               } else {
@@ -202,17 +213,18 @@ export default {
     },
 
     //新增
-    addGroup(type) {
+    addGroup(name) {
       if (!this.isteacher) {
         Toast("你无权限");
         return;
       }
       Indicator.open("加载中...");
       let obj = {
-        name: "分组一",
+        id: name ? this.EditItem.id : "",
+        name: name ? name : "分组1",
         bankeid: this.bankeid
       };
-      console.log('this.EditItemthis.EditItem',this.EditItem)
+      console.log("this.EditItemthis.EditItem", this.EditItem);
       this.$http
         .post("/api/group/savegroup", obj)
         .then(res => {
@@ -230,8 +242,12 @@ export default {
           Indicator.close();
         });
     },
+    onSetGgoupName(name) {
+      this.addGroup(name);
+    },
     onEditBack(v) {
       if (v.type) {
+        this.EditItem = {};
         this.querygroup(this.bankeid);
         this.popuoEdit = v.state;
       } else {

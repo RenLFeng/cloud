@@ -1,7 +1,7 @@
 <template>
   <div class="baout-main">
     <div class="avatarpart" @click="onmine">
-      <img :src="user.avatar" :onerror="defaultImage" class="avatarimgpart avatar" />
+      <img :src="user.avatar" :onerror="$defaultImg('account')" class="avatarimgpart avatar" />
       <div class="avatartextpart">
         <div class="fontlarge namepart">{{user.name}}</div>
         <div class="fontsmall accountpart">
@@ -17,7 +17,8 @@
 
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
-    <mt-cell v-if="canbindaccount" title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell>
+    <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
+        <mt-cell v-if="canbindaccount" title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>
     <div class="devide"></div>
@@ -119,7 +120,7 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += require("../assets/avatar-default.png");
+      srcstr += require("../assets/account_default.png");
       srcstr += '"';
       return srcstr;
     }

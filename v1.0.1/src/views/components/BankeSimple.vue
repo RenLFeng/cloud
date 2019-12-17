@@ -42,7 +42,7 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += require("../../assets/100x100.png");
+      srcstr += require("../../assets/banke_default.png");
       srcstr += '"';
       return srcstr;
     }

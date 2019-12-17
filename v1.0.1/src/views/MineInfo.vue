@@ -7,7 +7,7 @@
         </mt-header>
 
         <mt-cell :title="$t('personal.Head_portrait')" is-link @click.native="onavatarset">
-            <img :src="user.avatar" class="avatar avatarimgpart">
+            <img :src="user.avatar" class="avatar avatarimgpart" :onerror="$defaultImg('account')">
         </mt-cell>
 
         <mt-cell :title="$t('personal.Nickname')" is-link @click.native="onnameset">
@@ -73,7 +73,6 @@
     import commontools from '../commontools'
     import maintools from './maintools'
 
-
     export default {
         name: "MineInfo"
         ,data(){
@@ -86,7 +85,8 @@
                     size:100,  //! 这里size为限制原始图片size
                     isSlice:true,
                     path:null,
-                }
+                },
+
             }
         }
         ,computed:{
