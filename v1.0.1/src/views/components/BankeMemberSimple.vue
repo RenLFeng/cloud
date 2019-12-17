@@ -61,11 +61,12 @@ export default {
   computed: {
     scoreTotal() {
       return (
-        this.memberuser.score1 +
-        this.memberuser.score2 +
-        this.memberuser.score3 +
-        this.memberuser.score4 +
-        this.memberuser.score5
+        // this.memberuser.score1 +
+        // this.memberuser.score2 +
+        // this.memberuser.score3 +
+        // this.memberuser.score4 +
+        // this.memberuser.score5
+          this.memberuser.score
       );
     },
     defaultimg() {

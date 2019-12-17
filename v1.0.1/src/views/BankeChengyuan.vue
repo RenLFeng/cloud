@@ -182,20 +182,24 @@ export default {
       this.isloading = true;
       Indicator.open("加载中");
       var url = "/api/api/bankememberquery?bankeid=" + this.bankeid;
+
       this.$http
         .post(url)
         .then(res => {
           this.isloading = false;
           if (res.data.code == 0) {
             this.members = res.data.data["members"];
+            let curbanke = this.$store.state.curbanke;
+            if (typeof curbanke['scorerule1'] == 'undefined'){
+
+            }
             for (let v of this.members) {
-              this.Average =
-                this.Average +
-                v.score1 +
-                v.score2 +
-                v.score3 +
-                v.score4 +
-                v.score5;
+                v.score = 0;
+                v.score = v.score1 * curbanke.scorerule1 / 100
+                + v.score2 * curbanke.scorerule2 / 100
+                + v.score3 * curbanke.scorerule3 / 100
+                + v.score4 * curbanke.scorerule4 / 100;
+              this.Average += v.score;
             }
             this.Average = parseInt(
               this.Average / (this.members.length ? this.members.length : 1)

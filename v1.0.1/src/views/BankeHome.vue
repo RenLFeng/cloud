@@ -227,6 +227,23 @@ export default {
   created() {
      console.log('bankehome:'+this.id);
     //console.log(this.$store.getters);
+
+      //! 消除可能的wx缓存
+      this.$http
+          .post('/api/api/uservalidate')
+          .then(res =>{
+              if (res.data.code == 0){
+                  this.$store.commit("setLoginUser", res.data.data);
+              }
+              else{
+                  this.$store.commit("setLoginUser", {});
+                  this.$store.commit("setRouterForward", true);
+                  this.$router.push("/login");
+
+                  nativecode.jsLogin(0, {});
+              }
+          })
+
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
     this.bankeid = this.id;
     if (u) {

@@ -31,7 +31,9 @@ const state = {
 
     bankecachedata: {},
 
-    loginuser: {}, //! 当前登录用户
+    loginuser: {
+        role:0
+    }, //! 当前登录用户
     curbanke:{},   //! cjy： 当前使用的班课
     usercookiereaded: false,
     bankeZhiYuanLinkItem: [],

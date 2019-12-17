@@ -2,6 +2,7 @@
   <div class="teacher-sign-main">
     <mt-header title="上课签到">
       <mt-button icon="back" slot="left" @click="Back">{{$t('common.Back')}}</mt-button>
+      <mt-button slot="right">签到设置</mt-button>
     </mt-header>
     <div v-if="isTeacher || global">
       <div class="icon-tit tc" @click="teacherSignClass()">

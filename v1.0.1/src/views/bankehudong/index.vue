@@ -1,10 +1,7 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
-      <li v-show="haswxsign" class="fontlarge" @click="onwxsign()">
-        <span>微信签到</span>
-        <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
-      </li>
+
       <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
         <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
