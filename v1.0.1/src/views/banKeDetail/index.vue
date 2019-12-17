@@ -18,19 +18,10 @@
     </div>
     <div class="cell-wrap">
       <ul class="border-bottom-e5">
-        <li @click="editBkFn">
-          <mt-cell :title="$t('bankeXingQing.EditClass')" is-link></mt-cell>
-        </li>
-        <li @click="edBk">
-          <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
-        </li>
-        <li @click="closeBk">
-          <mt-cell :title="$t('bankeXingQing.DeleteClass')" is-link></mt-cell>
-        </li>
-        <li v-if="isteacher">
+        <li v-if="caneditbanke">
           <ul>
-            <li @click="situation">
-              <mt-cell title="学情统计" is-link></mt-cell>
+            <li @click="editBkFn">
+              <mt-cell :title="$t('bankeXingQing.EditClass')" is-link></mt-cell>
             </li>
             <li @click="setNotice">
               <mt-cell title="发布公告" is-link></mt-cell>
@@ -38,6 +29,54 @@
             <li @click="setProportion">
               <mt-cell title="得分占比设置" is-link></mt-cell>
             </li>
+            <div class="devide"></div>
+
+            <li @click="situation">
+              <mt-cell title="学情统计" is-link></mt-cell>
+            </li>
+            <div class="devide"></div>
+
+
+            <li @click="edBk">
+              <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
+            </li>
+            <div class="devide"></div>
+
+            <li @click="closeBk" class="dange">
+              <mt-cell :title="$t('bankeXingQing.DeleteClass')" is-link></mt-cell>
+            </li>
+
+
+
+          </ul>
+        </li>
+        <li v-else>
+          <ul>
+            <li @click="setNotice">
+              <mt-cell title="查看公告" is-link></mt-cell>
+            </li>
+            <li @click="setProportion">
+              <mt-cell title="查看得分占比" is-link></mt-cell>
+            </li>
+            <div class="devide"></div>
+
+            <div v-if="haseditrole">
+              <li @click="situation">
+                <mt-cell title="学情统计" is-link></mt-cell>
+              </li>
+              <div class="devide"></div>
+
+              <li @click="closeBk" class="dange">
+                <mt-cell title="删除班课" is-link></mt-cell>
+              </li>
+            </div>
+            <div v-else>
+              <li @click="closeBk" class="dange">
+                <mt-cell title="退出班课" is-link></mt-cell>
+              </li>
+            </div>
+
+
           </ul>
         </li>
       </ul>
@@ -112,11 +151,14 @@ export default {
   },
 
   computed: {
-    isteacher() {
-      let isteacher = this.$store.getters.isteacher;
-      return isteacher;
+    caneditbanke() {
+      let caneditbanke = this.$store.getters.caneditbanke;
+      return caneditbanke;
     },
-    defaultimg() {
+     haseditrole(){
+        return this.$store.getters.haseditbankerole;
+     }
+    ,defaultimg() {
       var srcstr = 'this.src="';
       srcstr += require("../../assets/100x100.png");
       srcstr += '"';
@@ -149,13 +191,13 @@ export default {
       window.location.href = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
     },
     editBkFn() {
-      if (!this.isteacher) return;
+      if (!this.caneditbanke) return;
       this.editBkState = true;
       this.$emit("editBkFn", this.editBkState);
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
     edBk() {
-      if (!this.isteacher) return;
+      if (!this.caneditbanke) return;
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),
@@ -184,6 +226,7 @@ export default {
                   }
                   this.$store.commit("banke/appendBankes", BankeData);
                   // this.$router.go(-1);
+
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});
@@ -195,7 +238,7 @@ export default {
     },
 
     closeBk() {
-      if (!this.isteacher) return;
+      if (!this.caneditbanke) return;
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),
@@ -253,6 +296,9 @@ export default {
     background: #fff;
     ul {
       padding: 10px;
+      li.dange{
+        color:red;
+      }
       li {
         position: relative;
         img {
@@ -261,6 +307,7 @@ export default {
           min-width: 88px;
           min-height: 88px;
         }
+
         div.po {
           position: absolute;
           padding-left: 15px;
@@ -304,4 +351,5 @@ export default {
   padding: 0;
   font-size: 3.5vw;
 }
+
 </style>

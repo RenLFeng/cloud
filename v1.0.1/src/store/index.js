@@ -10,6 +10,9 @@ import banke from './modules/banke'
 import cookie from 'js-cookie'
 
 
+import nativecode from '../nativecode'
+
+
 
 
 
@@ -29,6 +32,7 @@ const state = {
     bankecachedata: {},
 
     loginuser: {}, //! 当前登录用户
+    curbanke:{},   //! cjy： 当前使用的班课
     usercookiereaded: false,
     bankeZhiYuanLinkItem: [],
     lang: localStorage.getItem('lang') || 'zh',
@@ -76,6 +80,33 @@ const getters = {
             return true;
         }
         return false;
+    },
+    haseditbankerole:(state, getters) =>{  //! 当前用户是否有编辑班课的权限
+        if (!getters.isteacher){
+            return false;
+        }
+        if (!state.curbanke.id){
+            return false;
+        }
+        if (state.curbanke.userid == state.loginuser.id){
+            return true;
+        }
+        return false;
+    },
+    caneditbanke:(state,getters)=>{
+        if (nativecode.platform == 'exsoftdaping'){
+            return false;
+        }
+        if (!state.curbanke.id){
+            return false;
+        }
+        if (state.curbanke.states <1){  //! 班课已结束
+            return false;
+        }
+        if (!getters.haseditbankerole){
+            return false;
+        }
+        return true;
     }
 
 }
@@ -110,6 +141,9 @@ const mutations = {
         state.routerforward = bforward;
     }
 
+    ,setCurBanke(state, banke){
+        state.curbanke = banke;
+    }
     ,
     setLoginUser(state, user) {
         state.loginuser = user;
@@ -131,6 +165,7 @@ const mutations = {
             // cookie.set('user', state.loginuser, {expires:360});
         }
     }
+
 
     ,
     setHomeSelected(state, strsel) {

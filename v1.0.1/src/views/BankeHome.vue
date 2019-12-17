@@ -143,10 +143,14 @@ export default {
       return this.$store.state.lang;
     },
     bankename() {
-      return this.curbanke.name;
+      let bname =  this.curbanke.name;
+      if (this.curbanke.states < 0){
+          bname += '(已结束)';
+      }
+      return bname;
     },
     itemzuoyenormal() {
-      if (!this.$store.getters.isteacher) {
+      if (!this.$store.getters.caneditbanke) {
         return true;
       }
 
@@ -214,6 +218,7 @@ export default {
           })
       }
       ,onBankeChange(){
+        this.$store.commit("setCurBanke", this.curbanke);
         if (!this.hasnavbar){
             document.title = this.bankename;
         }
