@@ -226,7 +226,7 @@ export default {
     },
     showitem(zitem) {
       var useindex = this.curbtnindex;
-      if (!this.$store.getters.isteacher) {
+      if (!this.$store.getters.caneditbanke) {
         //! 学生
         if (useindex > 0) {
           useindex += 1;
@@ -297,7 +297,7 @@ export default {
   },
   data() {
     return {
-      btnlist: !this.$store.getters.isteacher ? "btnlist" : "btnlist2",
+      btnlist: !this.$store.getters.caneditbanke ? "btnlist" : "btnlist2",
       //   btnlist: (() => {
       //     if (!this.$store.getters.isteacher) {
       //       return [
@@ -320,7 +320,7 @@ export default {
       topStatus: "",
       bottomStatus: "",
       autofill: false,
-      hasedit: this.$store.getters.isteacher
+      hasedit: this.$store.getters.caneditbanke
     };
   },
   created() {

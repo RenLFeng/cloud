@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     isTeacher() {
-      return this.$store.getters.isteacher;
+      return this.$store.getters.caneditbanke;
     },
     startTime() {
       return formateTime(this.Data.date, "2");

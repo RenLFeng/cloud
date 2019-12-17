@@ -414,7 +414,7 @@ export default {
       console.log("作业 info", ritem);
     },
     onScoreClick(ritem) {
-      let isteacher = this.$store.getters.isteacher;
+      let isteacher = this.$store.getters.caneditbanke;
       this.ScoreItemInfo = ritem.info;
       console.log("作业 info", ritem);
       if (!isteacher) {
@@ -585,7 +585,7 @@ export default {
           this.noPingFengStudentInfo.push(item);
         }
       }
-      if (this.zuoyeitem.state == 100 && !this.$store.getters.isteacher) {
+      if (this.zuoyeitem.state == 100 && !this.$store.getters.caneditbanke) {
         //! 提交模式
         this.pagemode = "submit";
       }

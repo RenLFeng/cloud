@@ -64,7 +64,7 @@ export default {
   },
   computed: {
     isTeacher() {
-      return this.$store.getters.isteacher;
+      return this.$store.getters.caneditbanke;
     },
       haswxsign(){
         if (nativecode.platform == 'miniprogram'){

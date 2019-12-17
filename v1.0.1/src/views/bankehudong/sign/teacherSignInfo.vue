@@ -146,7 +146,7 @@ export default {
       }
     },
     isTeacher() {
-      return this.$store.getters.isteacher;
+      return this.$store.getters.caneditbanke;
     }
   },
   mounted() {

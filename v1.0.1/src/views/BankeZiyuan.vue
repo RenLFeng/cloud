@@ -191,7 +191,7 @@ export default {
   },
   computed: {
     isteacher() {
-      let isteacher = this.$store.getters.isteacher;
+      let isteacher = this.$store.getters.caneditbanke;
       return isteacher;
     },
     fileInfo() {
@@ -208,7 +208,10 @@ export default {
       }
     },
     showupload() {
-      if (this.$store.getters.isteacher) {
+        if (nativecode.platform == 'exsoftdaping'){
+            return true;
+        }
+      if (this.$store.getters.caneditbanke) {
         return true;
       }
       return false;
@@ -304,7 +307,7 @@ export default {
         .catch(err => {});
     },
     deletezy() {
-      if (!this.isteacher) {
+      if (!this.caneditbanke) {
         Toast("你无权限");
         return;
       }

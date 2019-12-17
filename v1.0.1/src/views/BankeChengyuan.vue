@@ -95,7 +95,7 @@ export default {
   },
   computed: {
     showcontrol() {
-      if (this.$store.getters.isteacher) {
+      if (this.$store.getters.caneditbanke) {
         return true;
       }
       return false;

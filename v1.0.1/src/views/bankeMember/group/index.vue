@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     isteacher() {
-      let isteacher = this.$store.getters.isteacher;
+      let isteacher = this.$store.getters.caneditbanke;
       return isteacher;
     }
   },

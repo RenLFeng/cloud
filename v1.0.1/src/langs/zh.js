@@ -13,7 +13,7 @@ export default {
     CoverClass: '班课封面',
     EntryClass: '请输入班课',
     Class: '班课',
-    Curriculum: '课程',
+    Curriculum: '班课名',
     UnknownClass: '未知班课',
     My: '我的',
     No_files: '当前没有文件',
