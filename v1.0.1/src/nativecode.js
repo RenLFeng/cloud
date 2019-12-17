@@ -281,6 +281,9 @@ nativecode.ncall = function(funname, argobj){
         }
 
         if (szret == ""){
+            if (nativecode.platform.length > 0){
+                return {};
+            }
             return null;
         }
 
