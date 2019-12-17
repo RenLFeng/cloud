@@ -13,7 +13,7 @@
         <div v-if="readonly">
             <p class="zdetailrl">{{zdetail.ztext}}</p>
             <div v-if="hasattach">
-                <div class="attachdesc">
+                <div class="attachdesc" v-if="!showZdetail">
                     {{$t('bankeTask.Enclosure')}}
                 </div>
                 <div class="listc">
@@ -73,6 +73,9 @@
                     return false;
                 },
                 required:false
+            },
+            showZdetail:{
+                default:false
             }
         }
         ,computed:{

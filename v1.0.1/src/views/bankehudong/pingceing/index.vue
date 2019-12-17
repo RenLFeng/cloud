@@ -62,7 +62,10 @@ export default {
         // ptype: 4,
         // files:
         //   "/downloads/pingce/2019-11-30/d3e80fc710209188cf7e4306b1c81b5a.jpeg",
-        optdesc: {}
+        optdesc: {},
+
+        // timelimit: 600,
+        // createtime: "2019-12-17 10:48:45"
       },
 
       //! 是否为参数导入； 参数导入的以参数为准，不再http拉取
