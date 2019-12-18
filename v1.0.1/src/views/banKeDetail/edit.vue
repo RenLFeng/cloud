@@ -139,7 +139,9 @@ export default {
               this.$store.commit("banke/appendBankes", BankeData);
             });
           } else {
-            MessageBox.alert(res.data.msg).then(() => {});
+            MessageBox.alert(res.data.msg).then(() => {
+              
+            });
           }
         })
         .catch(() => {});
@@ -160,7 +162,8 @@ export default {
     },
 
     uploadimagedata(base64str) {
-      var url = "/api/api/userUpdateAvatar";
+      // var url = "/api/api/userUpdateAvatar";
+       var url = "/api/banke/saveavatar";
       Indicator.open(this.$t("Indicator.Uploading"));
       this.$http
         .post(url, {

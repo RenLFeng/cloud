@@ -1,7 +1,7 @@
 <template>
   <div class="item class-banke-list">
     <div class="item" :class="classitem.ordernum?'act':''">
-      <img class="itemavatar" :src="classitem.avatar" :onerror="defaultimg" />
+      <img class="itemavatar" :src="classitem.avatar" :onerror="$defaultImg('banke')" />
       <div class="itempart">
         <div class="wrap">
           <div class="itemtitle ellipse">

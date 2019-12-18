@@ -104,9 +104,10 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             this.$emit("login", res.data.data.daping);
+            Toast('连接成功')
             // console.log("dapinglogin", res);
           }else{
-              Toast('连接错误')
+              Toast('连接错误,请查看链接码是否正确')
           }
         })
         .catch(err => {

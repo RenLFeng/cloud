@@ -8,9 +8,11 @@
             :src="imgfilepath?imgfilepath:bankeInfo.avatar"
             :onerror="$defaultImg('banke')"
           />
-          <div class="float-l po">
-            <div class="top">
-              <span class>{{bankeInfo.name}}</span>
+          <div class="po">
+            <div class="sub-po">
+              <span class>班课名:{{bankeInfo.name}}</span>
+              <span class>教师:{{bankeInfo.username}}</span>
+              <span class>班课号:{{bankeInfo.id}}</span>
             </div>
           </div>
         </li>
@@ -36,7 +38,6 @@
             </li>
             <div class="devide"></div>
 
-
             <li @click="edBk">
               <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
             </li>
@@ -45,9 +46,6 @@
             <li @click="closeBk" class="dange">
               <mt-cell :title="$t('bankeXingQing.DeleteClass')" is-link></mt-cell>
             </li>
-
-
-
           </ul>
         </li>
         <li v-else>
@@ -75,8 +73,6 @@
                 <mt-cell title="退出班课" is-link></mt-cell>
               </li>
             </div>
-
-
           </ul>
         </li>
       </ul>
@@ -98,7 +94,7 @@
       <mt-header title="发布公告">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Notice :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess"/>
+      <Notice :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" />
     </mt-popup>
     <mt-popup
       v-model="popupProportion"
@@ -110,7 +106,7 @@
       <mt-header title="得分占比">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Proportion :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess"/>
+      <Proportion :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" />
     </mt-popup>
   </div>
 </template>
@@ -132,7 +128,7 @@ export default {
   watch: {
     bankeInfo(newValue, oldValue) {
       this.bankeInfoData = newValue;
-      console.log("gf", this.bankeInfoData);
+      console.log("gf", newValue);
     }
   },
   components: {
@@ -146,7 +142,8 @@ export default {
       popupProportion: false,
       imgfilepath: "",
       bankeInfoData: {},
-      editBkState: false
+      editBkState: false,
+      titData: {}
     };
   },
 
@@ -155,10 +152,10 @@ export default {
       let caneditbanke = this.$store.getters.caneditbanke;
       return caneditbanke;
     },
-     haseditrole(){
-        return this.$store.getters.haseditbankerole;
-     }
-    ,defaultimg() {
+    haseditrole() {
+      return this.$store.getters.haseditbankerole;
+    },
+    defaultimg() {
       var srcstr = 'this.src="';
       srcstr += require("../../assets/100x100.png");
       srcstr += '"';
@@ -177,18 +174,19 @@ export default {
       this.popupProportion = true;
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
-    onSubmitSuccess(v){
-      if(this.popupProportion){
-       this.popupProportion = v;
+    onSubmitSuccess(v) {
+      if (this.popupProportion) {
+        this.popupProportion = v;
       }
-     if(this.popupNotice){
-       this.popupNotice = v;
+      if (this.popupNotice) {
+        this.popupNotice = v;
       }
-        this.$store.commit("SET_FOOTER_BAR_STATE", true);
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
     },
     //学情统计
     situation() {
-      window.location.href = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+      window.location.href = `http://192.168.0.237:8088/#/ClassStatistics?id=${this.bankeInfo.id}`;
+      // window.location.href = `http://192.168.0.2:9982/backend/#/ClassStatistics?id=${this.bankeInfo.id}`;
     },
     editBkFn() {
       if (!this.caneditbanke) return;
@@ -226,7 +224,6 @@ export default {
                   }
                   this.$store.commit("banke/appendBankes", BankeData);
                   // this.$router.go(-1);
-
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});
@@ -270,6 +267,7 @@ export default {
     onImgSrcLoad(data) {
       this.imgfilepath = data;
       this.editBkState = false;
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
     },
     goBack() {
       if (this.popupNotice) {
@@ -296,8 +294,8 @@ export default {
     background: #fff;
     ul {
       padding: 10px;
-      li.dange{
-        color:red;
+      li.dange {
+        color: red;
       }
       li {
         position: relative;
@@ -310,24 +308,19 @@ export default {
 
         div.po {
           position: absolute;
-          padding-left: 15px;
           width: 100%;
           height: 100%;
-          left: 25%;
+          left: 100px;
           top: 50%;
-          transform: translate(0, -7px);
-          div {
+          transform: translate(0, -50%);
+          .sub-po {
             position: absolute;
             width: 100%;
+            left: 0;
+            top: 50%;
+            transform: translate(0, -50%);
             span {
               display: block;
-              // font-size: 3.5vw;
-            }
-            &.top {
-              top: 0;
-            }
-            &.bottom {
-              bottom: 0;
             }
           }
         }
@@ -351,5 +344,4 @@ export default {
   padding: 0;
   font-size: 3.5vw;
 }
-
 </style>

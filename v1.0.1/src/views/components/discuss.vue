@@ -13,7 +13,7 @@
         infinite-scroll-distance="50"
       >
         <div class="item clearIt" v-for="(lists ,tindex) in teacherInfo" :key="tindex">
-          <img class="tit-pic" :src="lists.useravatar" alt />
+          <img class="tit-pic" :src="lists.useravatar" alt :onerror="$defaultImg('account')"/>
           <ul class="teacher-content">
             <li class="teacher-name color9">
               {{lists.username}}
@@ -233,6 +233,7 @@ export default {
                   arr[0] = JSON.parse(lists.files);
                   lists.files = arr;
                   for (let v of lists.files) {
+                    v.metainfo=JSON.parse(v.metainfo)
                     if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
                       v.imgsrc = v.filepath + v.metainfo.snapsuffix;
                     } else {
@@ -252,6 +253,7 @@ export default {
                       arr[0] = JSON.parse(item.files);
                       item.files = arr;
                       for (let v of item.files) {
+                         v.metainfo=JSON.parse(v.metainfo)
                         if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
                           v.imgsrc = v.filepath + v.metainfo.snapsuffix;
                         } else {
@@ -304,6 +306,7 @@ export default {
               arr[0] = JSON.parse(Data.files);
               Data.files = arr;
               for (let v of Data.files) {
+                 v.metainfo=JSON.parse(v.metainfo)
                 if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
                   v.imgsrc = v.filepath + v.metainfo.snapsuffix;
                 } else {
@@ -312,6 +315,7 @@ export default {
               }
               // front  Data.files = JSON.parse(Data.files);
             }
+            console.log('aaaaa',Data)
             this.teacherInfo.unshift(Data);
             this.ItemInfo.commentnum++;
             this.noComment = false;
@@ -357,6 +361,7 @@ export default {
               arr[0] = JSON.parse(this.imgFileJson);
               Data.files = arr;
               for (let v of Data.files) {
+                 v.metainfo=JSON.parse(v.metainfo)
                 if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
                   v.imgsrc = v.filepath + v.metainfo.snapsuffix;
                 } else {
@@ -399,6 +404,7 @@ export default {
                 arr[0] = JSON.parse(item.files);
                 item.files = arr;
                 for (let v of item.files) {
+                   v.metainfo=JSON.parse(v.metainfo)
                   if (v.filepath && v.metainfo && v.metainfo.snapsuffix) {
                     v.imgsrc = v.filepath + v.metainfo.snapsuffix;
                   } else {
@@ -524,7 +530,7 @@ export default {
       background: #f0f0f0;
     }
     .list-content {
-      // padding: 10px;
+      padding:0 10px;
       .item {
         position: relative;
         // margin-bottom: 5vw;

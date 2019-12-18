@@ -2,7 +2,7 @@
   <div class="submit-join-wrap">
     <div class="main">
       <div class="info">
-        <img :src="bankeItem.avatar" alt />
+        <img :src="bankeItem.avatar" alt :onerror="$defaultImg('banke')"/>
         <p class="colorf">{{bankeItem.name}}</p>
       </div>
       <p class="name">教师&nbsp;{{bankeItem.username}}</p>

@@ -247,7 +247,7 @@ export default {
     },
     onEditBack(v) {
       if (v.type) {
-        this.EditItem = {};
+        // this.EditItem = {};
         this.querygroup(this.bankeid);
         this.popuoEdit = v.state;
       } else {
