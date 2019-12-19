@@ -6,7 +6,7 @@
         <span>上课签到</span>
         <i class="iconfont iconqiandao2 eicotrigger bigfont fr" style="color:#E46100"></i>
       </li>
-      <li class="fontlarge" @click="gopingce" v-if="!isTeacher">
+      <li class="fontlarge" :class="eventmsgs.hdTips.pingce?'reddot-Tips':''"   @click="gopingce" v-if="!isTeacher">
         <span>评测</span>
         <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
       </li>
@@ -14,11 +14,11 @@
         <span>评测记录</span>
         <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
       </li>
-      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
+      <li class="fontlarge dp" :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
         <i class="iconfont icondapingmu eicotrigger bigfont fr" style="color:#0055FF"></i>
       </li>
-      <li class="fontlarge bs" @click="Banshu">
+      <li class="fontlarge bs" :class="eventmsgs.hdTips.banshu?'reddot-Tips':''" @click="Banshu">
         <span>课堂板书</span>
         <i class="iconfont iconwritin-blackboard eicotrigger bigfont fr" style="color:#38AD5A"></i>
       </li>

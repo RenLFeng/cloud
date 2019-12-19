@@ -5,7 +5,7 @@
         v-for="(fitem, findex) in localfiles"
         :key="findex"
         class="imgblock"
-        :class="{'liupload':isupload,'imgblocksmall':!isupload}"
+        :class="{'liupload':isupload,'imgblocksmall':!isupload,'reddot-Tips':fitem.eventmsgs}"
       >
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
@@ -440,7 +440,6 @@ export default {
   transform: translateX(-50%);
 }
 .imgcontainer img {
-
 }
 
 .iconclass {

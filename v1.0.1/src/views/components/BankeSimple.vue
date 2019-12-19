@@ -1,14 +1,19 @@
 <template>
   <div class="item class-banke-list">
     <div class="item" :class="classitem.ordernum?'act':''">
-      <img class="itemavatar" :src="classitem.avatar" :onerror="$defaultImg('banke')" />
+      <div class="reddot-Tips-wrap " :class="classitem.eventmsgs?'reddot-Tips':''">
+        <img class="itemavatar" :src="classitem.avatar" :onerror="$defaultImg('banke')" />
+      </div>
       <div class="itempart">
         <div class="wrap">
           <div class="itemtitle ellipse">
             {{classitem.name}}
             <span class="membernum fonttiny">{{classitem.membernum}}人</span>
           </div>
-          <div class="font-xs ellipse">教师：{{classitem.username}} <span class="class-nmuber font-xs">班课号{{classitem.id}}</span> </div>
+          <div class="font-xs ellipse">
+            教师：{{classitem.username}}
+            <span class="class-nmuber font-xs">班课号{{classitem.id}}</span>
+          </div>
           <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>
@@ -16,7 +21,6 @@
         <i class="iconfont iconjiantou1" @click.stop="showMenu(classitem)"></i>
       </span>
     </div>
-     
   </div>
 </template>
 
@@ -35,9 +39,7 @@ export default {
     }
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   computed: {
     defaultimg() {
@@ -48,8 +50,8 @@ export default {
     }
   },
   methods: {
-    showMenu(item){
-      this.$emit('showMenu',item);
+    showMenu(item) {
+      this.$emit("showMenu", item);
     }
   }
 };
@@ -62,16 +64,24 @@ export default {
     height: 72px;
     border-top: 1px solid #f0f0f0;
     padding-left: 80px;
-    .itemavatar {
+    .reddot-Tips-wrap {
       position: absolute;
       width: 55px;
       height: 80%;
       left: 10px;
       top: 50%;
       transform: translate(0, -50%);
-      border-radius: 3px;
       background-color: white;
+      .itemavatar {
+        position: absolute;
+        width: 100%;
+        height:100%;
+        left: 0;
+        top: 0;
+        border-radius: 3px;
+      }
     }
+
     .itempart {
       width: 100%;
       .wrap {
@@ -80,7 +90,7 @@ export default {
         margin-top: 4px;
         > div {
           padding: 1px 0;
-          .class-nmuber{
+          .class-nmuber {
             margin-left: 10px;
           }
         }
@@ -107,8 +117,8 @@ export default {
         font-size: 30px;
       }
     }
-    &.act{
-      background: #F9F9F9;
+    &.act {
+      background: #f9f9f9;
     }
   }
 }

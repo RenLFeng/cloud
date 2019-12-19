@@ -4,7 +4,10 @@
       <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
-    <div class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap '" :class="selected=='tongzhi'?'tongzhi':''">
+    <div
+      class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap '"
+      :class="selected=='tongzhi'?'tongzhi':''"
+    >
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="ziyuan">
           <BankeZiyuan
@@ -14,7 +17,7 @@
             @popupZiyuanEdit="onPopupZiyuanEdit"
           ></BankeZiyuan>
         </mt-tab-container-item>
-        <mt-tab-container-item id="chengyuan" >
+        <mt-tab-container-item id="chengyuan">
           <div class="chengyuan-head tc" @click="groupFn">
             <i class="iconfont iconxiaozu eicotrigger"></i>
             <p>分组方案</p>
@@ -26,7 +29,7 @@
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
-          <BankeHuDong :bankeid="id" />
+          <BankeHuDong :bankeid="id" :eventmsgs="eventmsgs" />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
           <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />
@@ -40,34 +43,59 @@
       v-if="Preview && !zyEditState && footerbar"
     >
       <mt-tab-item id="ziyuan">
-        <i class="iconfont iconwenjianjiai"></i>
-        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
+        <div class="bankehome">
+          <i
+            class="iconfont iconwenjianjiai reddot-Tips-wrap"
+            :class="eventmsgs.zyTips?'reddot-Tips':''"
+          ></i>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
+        </div>
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
-        <i class="iconfont iconuser"></i>
-        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Member')}}</span>
+        <div class="bankehome">
+          <i class="iconfont iconuser reddot-Tips-wrap" :class="eventmsgs.cyTips?'reddot-Tips':''"></i>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Member')}}</span>
+        </div>
       </mt-tab-item>
       <mt-tab-item id="zuoye">
-        <i v-if="itemzuoyenormal" class="iconfont iconhuodong"></i>
-        <span
-          v-if="itemzuoyenormal"
-          :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
-        >{{$t('bankeZiYuan.Task')}}</span>
-        <img
-          v-if="!itemzuoyenormal"
-          slot="icon"
-          src="../assets/zuoye_add.png"
-          class="tabitemmid"
-          @click="onclickzuoye"
-        />
+        <div class="bankehome">
+          <i
+            v-if="itemzuoyenormal"
+            class="iconfont iconhuodong reddot-Tips-wrap"
+            :class="eventmsgs.zouyeTips?'reddot-Tips':''"
+          ></i>
+          <span
+            v-if="itemzuoyenormal"
+            :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
+          >{{$t('bankeZiYuan.Task')}}</span>
+          <img
+            v-if="!itemzuoyenormal"
+            slot="icon"
+            src="../assets/zuoye_add.png"
+            class="tabitemmid"
+            @click="onclickzuoye"
+          />
+        </div>
       </mt-tab-item>
       <mt-tab-item id="hudong">
-        <i class="iconfont iconwenjianjiai"></i>
-        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Interaction')}}</span>
+        <div class="bankehome">
+          <i
+            class="iconfont iconwenjianjiai reddot-Tips-wrap"
+            :class="eventmsgs.hdTips.count?'reddot-Tips':''"
+          ></i>
+          <span
+            :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
+          >{{$t('bankeZiYuan.Interaction')}}</span>
+        </div>
       </mt-tab-item>
       <mt-tab-item id="tongzhi">
-        <i class="iconfont iconxiangqing"></i>
-        <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Details')}}</span>
+        <div class="bankehome">
+          <i
+            class="iconfont iconxiangqing reddot-Tips-wrap"
+            :class="eventmsgs.xqTips?'reddot-Tips':''"
+          ></i>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Details')}}</span>
+        </div>
       </mt-tab-item>
     </mt-tabbar>
 
@@ -86,24 +114,25 @@ import listIcon from "../common/lists-icon";
 import pic from "../assets/dis.jpg";
 import bankeZouyeXq from "./banKeDetail/index";
 
-import nativecode from '../nativecode'
+import nativecode from "../nativecode";
 
 export default {
   name: "BankeHome",
   data() {
     return {
       selected: "ziyuan",
-     //curbanke: "common.Curbanke",
+      //curbanke: "common.Curbanke",
       //    Curbanke: {
       //   name: '未知班课',
       //   avatar: ""
       // }
-        curbanke:{  //! cjy： 预设字段， 方便触发vue的监听
-          name:'',
-            avatar:'',
-            id:0
-        },
-        bankeid:0,
+      curbanke: {
+        //! cjy： 预设字段， 方便触发vue的监听
+        name: "",
+        avatar: "",
+        id: 0
+      },
+      bankeid: 0,
       showziyuan: false,
       showchengyuan: false,
       showzuoye: false,
@@ -116,7 +145,21 @@ export default {
       addmenuvisible: false,
       tabbarhide: false,
       zYLinkSelectEd: "",
-      zyEditState: false
+      zyEditState: false,
+      eventmsgs: {
+        zyTips: 0,
+        cyTips: 0,
+        zouyeTips: 0,
+        hdTips: {
+          count: 0,
+          sign: 0,
+          pingce: 0,
+          pingceIng: 0,
+          bigLogin: 0,
+          banshu: 0
+        },
+        xqTips: 0
+      }
     };
   },
   props: {
@@ -130,10 +173,10 @@ export default {
     }
   },
   computed: {
-      hasnavbar(){
-          return nativecode.hasnavbar();
-      }
-    ,footerbar(){
+    hasnavbar() {
+      return nativecode.hasnavbar();
+    },
+    footerbar() {
       return this.$store.state.footerBarState;
     },
     Preview() {
@@ -201,31 +244,68 @@ export default {
         name: "Group",
         params: { bankeid: this.id }
       });
-    }
-    ,loadBanke(){
-          this.$http.post('/api/banke/search',{
-              id:this.bankeid
-          }).then((res)=>{
-              if (res.data.code == 0){
-                  if (res.data.data.length > 0){
-                      this.curbanke = res.data.data[0];
-                      this.$store.commit("banke/appendBankes", this.curbanke);
-                      this.onBankeChange();
-                  }
+    },
+    loadBanke() {
+      this.$http
+        .post("/api/banke/search", {
+          id: this.bankeid
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            if (res.data.data.length > 0) {
+              this.curbanke = res.data.data[0];
+              this.$store.commit("banke/appendBankes", this.curbanke);
+              this.onBankeChange();
+            }
+          }
+        })
+        .catch(() => {});
+    },
+    onBankeChange() {
+      this.$store.commit("setCurBanke", this.curbanke);
+      if (!this.hasnavbar) {
+        document.title = this.bankename;
+      }
+    },
+    //红点-查询班课主页
+    eventmsgsOnbanke() {
+      this.$http
+        .post("/api/eventmsgs/onbanke", {
+          bankeid: this.id
+        })
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.length) {
+            let serveData = res.data.data;
+            for (let v of serveData) {
+              switch (v.eventtype) {
+                case 1:
+                  this.eventmsgs.zyTips = v.count;
+                  break;
+                case 2:
+                  this.eventmsgs.hdTips.count += v.count;
+                  this.eventmsgs.hdTips.sign = v.count;
+                  break;
+                case 3:
+                  this.eventmsgs.zouyeTips = v.count;
+                  break;
+                case 4:
+                  this.eventmsgs.hdTips.count += v.count;
+                  this.eventmsgs.hdTips.pingce = v.count;
+                  break;
+                case 100:
+                  this.eventmsgs.hdTips.count += v.count;
+                  this.eventmsgs.hdTips.banshu = v.count;
+                  break;
               }
-          }).catch(()=>{
-
-          })
-      }
-      ,onBankeChange(){
-        this.$store.commit("setCurBanke", this.curbanke);
-        if (!this.hasnavbar){
-            document.title = this.bankename;
-        }
-      }
+            }
+          } else {
+          }
+        })
+        .catch(err => {});
+    }
   },
   created() {
-     console.log('bankehome:'+this.id);
+    console.log("bankehome:" + this.id);
     //console.log(this.$store.getters);
 
       //! 消除可能的wx缓存
@@ -250,8 +330,8 @@ export default {
       this.curbanke = u;
       this.onBankeChange();
     } else {
-     // this.curbanke = this.$t("common.Curbanke");
-        this.loadBanke();
+      // this.curbanke = this.$t("common.Curbanke");
+      this.loadBanke();
     }
     // console.log('uuuuuuu',u)
     var ss = this.$store.state.bhomeselected;
@@ -260,6 +340,7 @@ export default {
     }
     this.checkNeedShow();
     console.log("班可", this.curbanke);
+    this.eventmsgsOnbanke();
   },
   destroyed() {
     this.$store.commit("setBHomeSelected", this.selected);
@@ -301,5 +382,23 @@ export default {
   width: 40px;
   height: 40px;
   transform: translate(-8px, -8px);
+}
+
+.bankehome {
+  position: relative;
+  height: 72px;
+}
+.bankehome i {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+.bankehome span {
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  bottom: 5px;
+  transform: translate(-50%, 0);
 }
 </style>

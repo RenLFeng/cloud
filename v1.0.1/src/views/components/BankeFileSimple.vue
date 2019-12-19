@@ -1,11 +1,13 @@
 <template>
   <div class="mainpart zy-content" @click.stop="onclick">
-    <FileAttachList
-      v-if="localfiles.length"
-      :isupload="false"
-      class="falist"
-      :localfiles="localfiles"
-    />
+    <div>
+      <FileAttachList
+        v-if="localfiles.length"
+        :isupload="false"
+        class="falist"
+        :localfiles="localfiles"
+      />
+    </div>
     <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
     <div class="maincontent">
       <div class="mainctitle">
@@ -67,11 +69,11 @@ export default {
     fileimg() {
       let r = this.fileitem.url;
       //! cjy: 不能使用原url
-        r= require("../../assets/file_icon/file.svg");
-        if (this.fileitem.ftype != 'file'){
-            r = require("../../assets/file_icon/IT.svg");
-            return r;
-        }
+      r = require("../../assets/file_icon/file.svg");
+      if (this.fileitem.ftype != "file") {
+        r = require("../../assets/file_icon/IT.svg");
+        return r;
+      }
       var fitem = this.fileitem.info;
       if (fitem.filepath && fitem.metainfo) {
         r = fitem.filepath + fitem.metainfo.snapsuffix;
@@ -156,8 +158,8 @@ export default {
         return [];
       }
     },
-    seeState:{
-      default:1
+    seeState: {
+      default: 1
     }
   }
 };
@@ -171,7 +173,6 @@ export default {
   position: relative;
   background: #fff;
 }
-
 .mainimg {
   width: 62px;
   height: 62px;
@@ -203,7 +204,7 @@ export default {
   right: 0;
   top: 50%;
   transform: translate(0, -50%);
-  color: #0089FF;
+  color: #0089ff;
 }
 
 .maincsubtitle {
@@ -226,7 +227,8 @@ export default {
   margin-right: 5px;
 }
 .mainpart .flist-container {
-  height: 100px;
+  width: auto;
+  height: auto;
   position: absolute;
   left: 0;
 }

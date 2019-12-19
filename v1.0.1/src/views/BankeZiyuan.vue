@@ -208,9 +208,9 @@ export default {
       }
     },
     showupload() {
-        if (nativecode.platform == 'exsoftdaping'){
-            return true;
-        }
+      if (nativecode.platform == "exsoftdaping") {
+        return true;
+      }
       if (this.$store.getters.caneditbanke) {
         return true;
       }
@@ -432,12 +432,15 @@ export default {
               this.loadingState = true;
             }
             console.log("success", res);
+            let ids = [];
             for (let item of res.data.data) {
+              ids.push(item.id);
               this.parseOneItem(item);
             }
-            commontools.arrayMergeAsIds(this.files, res.data.data);
-            this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
-            console.log(" this.files", this.files);
+            this.eventmsgsOnactivity(res.data.data, ids);
+            // commontools.arrayMergeAsIds(this.files, res.data.data);
+            // this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
+            // console.log(" this.files", this.files);
             if (this.filesempty) {
               this.liststatedesc = "common.No_files";
               this.loadingState = true;
@@ -455,6 +458,37 @@ export default {
           //! cjy: 这里server 的http code 非200 页会走这里。
           //! 因此不能继续加载
           this.loadingState = true;
+        });
+    },
+    //红点查询
+    eventmsgsOnactivity(serverData, eventids) {
+      this.$http
+        .post("/api/eventmsgs/onactivity", {
+          bankeid: this.bankeid,
+          eventtype: 1,
+          eventids: [...eventids]
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+          // if (res.data.code == "0" && res.data.data.length) {
+            for (let v of serverData) {
+              for (let id of res.data.data) {
+                if (v.id == id) {
+                  v.eventmsgs = true;
+                } else {
+                  v.eventmsgs = true;
+                }
+              }
+            }
+          } else {
+          }
+          commontools.arrayMergeAsIds(this.files, serverData);
+          this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
+          console.log("红点查询", this.files);
+        })
+        .catch(err => {
+          commontools.arrayMergeAsIds(this.files, serverData);
+          this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
         });
     },
     onUploadLocal() {
