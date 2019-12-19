@@ -108,7 +108,7 @@ export default {
       }
     }
     &.act{
-      background: #f0f0f0;
+      background: #F9F9F9;
     }
   }
 }

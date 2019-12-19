@@ -27,13 +27,24 @@
           </div>
           <div class="zuoyesubtitle">{{zuoyetimedesc}}</div>
         </div>
-        <div>
-          <!-- 作业详细 -->
+        <!-- <div>
           <mt-cell
             :title="$t('bankeTask.Job_details')"
             is-link
             @click.native="popupZDetail=true"
           >{{zuoyeitem.detaildesc}}</mt-cell>
+        </div>-->
+        <div>
+          <!-- 作业详细 -->
+          <mt-cell
+            :title="$t('bankeTask.Job_details')"
+            @click.native="showZdetail=!showZdetail"
+            class="showZdetail-tit"
+            :class="showZdetail?'act':''"
+          ></mt-cell>
+          <div v-show="showZdetail" class="showZdetail-main"  :class="showZdetail?'act':''">
+            <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly" :showZdetail="true"></zuoyedetailedit>
+          </div>
         </div>
 
         <div @click="syudentsMark">
@@ -112,13 +123,13 @@
       <zuoyedetailedit :zdetail="zdetailsubmit"></zuoyedetailedit>
     </mt-popup>
 
-    <mt-popup v-model="popupZDetail" position="right" class="mint-popup-3" :modal="false">
+    <!-- <mt-popup v-model="popupZDetail" position="right" class="mint-popup-3" :modal="false">
       <mt-header title>
         <mt-button slot="left" icon="back" @click="popupZDetail = false">{{$t('common.Back')}}</mt-button>
       </mt-header>
 
       <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly"></zuoyedetailedit>
-    </mt-popup>
+    </mt-popup>-->
     <!-- 评论 -->
     <mt-popup v-model="popupZuoyePL" position="right" class="mint-popup-3" :modal="false">
       <mt-header :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Comment_area')">
@@ -235,6 +246,9 @@ export default {
   },
   data() {
     return {
+      showZdetail:false,
+
+
       studentInfo: {},
       ScoreItemInfo: {},
       isLimitHeight: true,
@@ -689,7 +703,7 @@ export default {
 };
 </script>
 <style lang="less">
-.zouye-results-wrap{
+.zouye-results-wrap {
   background: #fff;
 }
 .pf-container-popup {
@@ -795,5 +809,8 @@ export default {
 }
 .noheaderscroll .mint-cell:last-child {
   background: none;
+}
+.showZdetail-tit.act,.showZdetail-main.act{
+  border-bottom: 1px solid #f0f0f0;
 }
 </style>

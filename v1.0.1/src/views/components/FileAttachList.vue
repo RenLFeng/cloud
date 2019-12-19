@@ -394,6 +394,7 @@ export default {
   height: 19vw;
   max-width: 80px;
   max-height: 80px;
+  /* margin: 0 2vw; */
 }
 
 .imgblocktext {
@@ -437,6 +438,9 @@ export default {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
+}
+.imgcontainer img {
+
 }
 
 .iconclass {

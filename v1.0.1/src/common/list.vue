@@ -4,7 +4,7 @@
     :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''"
     @click="onclick"
   >
-    <img v-if="type=='pingce'" class="itemavatar" :src="item.files" :onerror="defaultimg" />
+    <img v-if="type=='pingce'" class="itemavatar" :src="`${item.files}_snap.jpg`" :onerror="defaultimg" />
     <div class="maincontent" v-if="type=='sign'">
       <div class="mainctitle ellipse">
         {{item.date}}&nbsp;{{week}} &nbsp;签到

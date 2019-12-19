@@ -5,12 +5,24 @@
     </mt-header>
 
     <div class="main">
-      <ul class="pic" v-if="banshuList.length">
-        <li v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
-          <img :src="v.files" alt />
-          <p class="tr color9">{{v.uploadtime}}</p>
-        </li>
-      </ul>
+      <div v-if="banshuList.length">
+        <ul
+          class="pic"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-disabled="loading"
+          infinite-scroll-distance="500"
+          infinite-scroll-immediate-check="false"
+        >
+          <li class="tc" v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
+            <img :src="`${v.files}_snap.jpg`" alt />
+            <p class="tr color9">{{v.uploadtime}}</p>
+          </li>
+        </ul>
+        <p v-if="isScorll && !scorllEd" class="tc color9">
+          <van-loading size="24px">加载中...</van-loading>
+        </p>
+        <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p>
+      </div>
       <Empty v-else />
     </div>
   </div>
@@ -19,17 +31,40 @@
 <script>
 import Vue from "vue";
 import "@vant/touch-emulator/index";
+import Loading from "vant/lib/loading";
+import "vant/lib/loading/style";
+import "@vant/touch-emulator/index";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
-import { Toast } from "mint-ui";
+import {
+  Button,
+  Indicator,
+  Toast,
+  Cell,
+  MessageBox,
+  Loadmore,
+  InfiniteScroll
+} from "mint-ui";
 import { parseURL } from "@/util";
 import Empty from "@/common/empty";
+const arr = {
+  bankeid: 1000,
+  files: "downloads/pingce/2019-12-17/ae950d99cfbdabd73cf6d92eaa5237f7.jpeg",
+  id: 1000,
+  uploadtime: "2019-12-02 14:29:13"
+};
 export default {
   props: {},
   data() {
     return {
       banshuList: [],
-      bankeid: null
+      bankeid: null,
+
+      page: 0,
+      pagesize: 10,
+      loading: false,
+      isScorll: false,
+      scorllEd: false
     };
   },
   computed: {},
@@ -45,41 +80,38 @@ export default {
   },
   mounted() {},
   watch: {},
+  computed: {},
   methods: {
+    loadMore() {
+      this.isScorll = true;
+      this.loading = true;
+      this.queryBanshu();
+    },
     queryBanshu() {
       this.$http
         .post("/api/banshu/query", {
           bankeid: this.bankeid,
-          page: 0,
-          pagesize: 50
+          page: this.page,
+          pagesize: this.pagesize
         })
         .then(res => {
           if (res.data.code == "0") {
-            this.banshuList = res.data.data;
-            // this.banshuList.push({
-            //   bankeid: 1000,
-            //   files:
-            //     "/downloads/avatar/2019-12-05/649dd86fdaf8e173e6be25beea80c8d3.jpg",
-            //   id: 1000,
-            //   uploadtime: "2019-12-02 14:29:13"
-            // });
-            // this.banshuList.push({
-            //   bankeid: 1000,
-            //   files:
-            //     "/downloads/avatar/2019-12-05/72bdb233382ac7aa26fc93b64f6a7865.jpg",
-            //   id: 1000,
-            //   uploadtime: "2019-12-02 14:29:13"
-            // });
-            // this.banshuList.push({
-            //   bankeid: 1000,
-            //   files:
-            //     "/downloads/avatar/2019-12-05/5ecddd1df02b68e15649ccbfe181d50b.jpg",
-            //   id: 1000,
-            //   uploadtime: "2019-12-02 14:29:13"
-            // });
+            // for (let i = 0; i < 5; i++) {
+            //   res.data.data.push(arr);
+            // }
+            if (res.data.data.length < this.pagesize) {
+              this.loading = true;
+              this.scorllEd = true;
+            } else {
+              this.loading = false;
+              this.isScorll = false;
+              this.page++;
+            }
+            this.banshuList = [...this.banshuList, ...res.data.data];
           } else {
             Toast("失败");
           }
+          console.log("bb", this.banshuList);
         })
         .catch(err => {
           Toast("异常");
@@ -103,6 +135,7 @@ export default {
   },
   components: {
     [ImagePreview.name]: ImagePreview,
+    [Loading.name]: Loading,
     Empty
   }
 };
@@ -144,9 +177,12 @@ export default {
         margin: 0 auto;
         margin-bottom: 20px;
         background: #fff;
+        padding: 0 30px;
         img {
           width: 100%;
-          height: 260px;
+          height: auto;
+          max-width: 100%;
+          max-height: 100%;
         }
         p {
           padding: 10px;
