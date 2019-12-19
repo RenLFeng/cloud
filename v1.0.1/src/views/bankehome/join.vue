@@ -52,21 +52,36 @@ export default {
         Toast("请输入班号");
         return;
       }
-      this.$http
-        .post("/api/banke/reqmemberadd", {
-          	"bankeid":this.bankeNumber
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-            this.bankeItem=res.data.data.bankes[0];
-            this.popupSubmitJoin=true;
-          } else {
-            MessageBox.alert("你已加入或班课号不存在");
-          }
-        })
-        .catch(err => {
-          Toast("服务异常");
-        });
+        this.$http
+            .post("/api/banke/search", {
+                "id":this.bankeNumber
+            })
+            .then(res => {
+                if (res.data.code == "0" && res.data.data.length > 0) {
+                    this.bankeItem=res.data.data[0];
+                    this.popupSubmitJoin=true;
+                } else {
+                    MessageBox.alert("未找到班课");
+                }
+            })
+            .catch(err => {
+                Toast("服务异常");
+            });
+      // this.$http
+      //   .post("/api/banke/reqmemberadd", {
+      //     	"bankeid":this.bankeNumber
+      //   })
+      //   .then(res => {
+      //     if (res.data.code == "0") {
+      //       this.bankeItem=res.data.data.bankes[0];
+      //       this.popupSubmitJoin=true;
+      //     } else {
+      //       MessageBox.alert("你已加入或班课号不存在");
+      //     }
+      //   })
+      //   .catch(err => {
+      //     Toast("服务异常");
+      //   });
     },
     goback() {
       if (this.popupSubmitJoin) {

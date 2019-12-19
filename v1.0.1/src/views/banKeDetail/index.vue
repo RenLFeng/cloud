@@ -242,7 +242,30 @@ export default {
     },
 
     closeBk() {
-      if (!this.caneditbanke) return;
+      if (!this.caneditbanke){
+          MessageBox.confirm("", {
+              title: '提示',
+              message: '确认退出当前班课?',
+              confirmButtonText: '退出',
+              cancelButtonText: '取消',
+              showCancelButton: true
+          }).then(res=>{
+              this.$http
+                  .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
+                  .then(res => {
+                      if (res.data.code == 0) {
+                          MessageBox.alert('退出成功').then(() => {
+                              this.$store.commit("setRouterForward", true);
+                              this.$router.push("/");
+                          });
+                      } else {
+                          MessageBox.alert(res.data.msg).then(() => {});
+                      }
+                  })
+
+          });
+          return ;
+      }
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),

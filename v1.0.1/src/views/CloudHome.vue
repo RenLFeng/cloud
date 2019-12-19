@@ -157,7 +157,6 @@ export default {
                 name: "使用班课号加入班课",
                 method: this.jion
             }
-        ]
       ],
       SearchHistoryLen: false,
       SearchHistoryArr: [],
