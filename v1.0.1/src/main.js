@@ -43,9 +43,9 @@ window.addEventListener("resize", function () {
         document.documentElement.style.fontSize = '2.5rem';
     }
 });
-window.addEventListener('touchmove',function(e){
-    e.preventDefault();
-}, { passive: false })
+// window.addEventListener('touchmove',function(e){
+//     e.preventDefault();
+// }, { passive: false })
 new Vue({
     router: createRouter(),
     store,
