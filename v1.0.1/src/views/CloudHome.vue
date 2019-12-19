@@ -15,26 +15,20 @@
         <mt-tab-container-item id="banke">
           <div class="seach-wrap">
             <div class="div_sech">
-              <mt-search
-                v-model="value"
-                cancel-text="取消"
-                placeholder="搜索"
-                autofocus
-                @keyup.native="searchData"
-              ></mt-search>
+              <form action="/">
+                <van-search placeholder="搜索" :autofocus="false" @focus="onFocus" />
+              </form>
             </div>
             <i class="iconfont iconjiahao colord position-r fontmaintitle" @click="addBankeIcon"></i>
           </div>
-
           <p class="v"></p>
           <div class="bankecontainer">
-            <div v-for="(item,selindex) in curbankes" v-bind:key="selindex">
+            <div v-for="(item,selindex) in curbankes" :key="selindex">
               <BankeSimple
                 :classitem="curbankes[selindex]"
                 @click.native="bankeclick(item)"
                 @showMenu="onShowMenu"
               ></BankeSimple>
-              <!-- <div class="bankedevide"></div> -->
             </div>
             <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
               <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
@@ -65,6 +59,47 @@
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
     <mt-actionsheet  :actions="actions2" v-model="actionShow2"></mt-actionsheet>
     <mt-actionsheet :actions="actionsstu" v-model="actionShowStu"></mt-actionsheet>
+
+    <mt-popup
+      v-model="popupSearchHiosty"
+      class="search-popup"
+      pop-transition="popup-fade"
+      :modal="false"
+      :class="SearchHistoryLen?'act':''"
+    >
+      <div class="search-wrap">
+        <div class="seach-wrap">
+          <div class="div_sech">
+            <form action="/">
+              <van-search
+                placeholder="搜索"
+                :autofocus="false"
+                :show-action="true"
+                v-model="value"
+                @search="onSearch"
+                @cancel="onCancel"
+                @input="onInput"
+              />
+            </form>
+          </div>
+        </div>
+        <div class="main" :class="SearchHistoryLen?'act':''">
+          <div v-for="(item,selindex) in searchData" :key="selindex">
+            <BankeSimple :classitem="item" @click.native="bankeclick(item)" @showMenu="onShowMenu"></BankeSimple>
+          </div>
+          <div v-if="SearchHistoryLen">
+            <ul class="SearchHistoryLen">
+              <li v-for="(item,i) in SearchHistoryArr" :key="i" @click="historClick(item)">
+                {{item}}
+                <span class="fr color9 fontnormal" @click.stop="de(i)">x</span>
+              </li>
+            </ul>
+            <p class="tc color9 clear" @click="clearHistory">清除搜索记录</p>
+          </div>
+          <Empty v-if="!SearchHistoryLen&& !searchData.length" :text="['暂无搜索记录']" />
+        </div>
+      </div>
+    </mt-popup>
   </div>
 </template>
 
@@ -76,8 +111,11 @@ import BankeSimple from "./components/BankeSimple";
 import MineAbout from "./MineAbout";
 
 import nativecode from "../nativecode";
-
+import Empty from "@/common/empty";
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
+import Search from "vant/lib/search";
+import "vant/lib/search/style";
+import { mapState } from "vuex";
 export default {
   name: "CloudHome",
   data() {
@@ -120,6 +158,12 @@ export default {
                 method: this.jion
             }
         ]
+      ],
+      SearchHistoryLen: false,
+      SearchHistoryArr: [],
+      popupSearchHiosty: false,
+      tempCurbankes: [],
+      searchData: []
     };
   },
   computed: {
@@ -148,7 +192,6 @@ export default {
       return this.$store.state.banke.curbankes;
     },
     bankeempty() {
-      //   console.log(this.curbankes);
       if (this.curbankes.length) {
         return true;
       }
@@ -259,10 +302,8 @@ export default {
           Toast("服务异常");
         });
     },
-    //搜索
-    searchData() {},
       initmine(){
-        //! 避免wx 缓存
+          //! 避免wx 缓存
           this.$http
               .post('/api/api/uservalidate')
               .then(res =>{
@@ -278,6 +319,74 @@ export default {
                   }
               })
       },
+    //获得焦点
+    onFocus() {
+      let banke_history = localStorage.getItem("banke_history") || "[]";
+      banke_history = JSON.parse(banke_history);
+      this.SearchHistoryArr = banke_history;
+      if (this.SearchHistoryArr.length) {
+        this.SearchHistoryLen = true;
+      }
+
+      this.tempCurbankes = [];
+      Object.assign(this.tempCurbankes, this.curbankes);
+      this.popupSearchHiosty = true;
+      for (let v of this.tempCurbankes) {
+        v.searchKey = v.id + v.name;
+      }
+    },
+    //搜索btn or end
+    onSearch() {
+      let banke_history = localStorage.getItem("banke_history") || "[]";
+      banke_history = JSON.parse(banke_history);
+      banke_history.push(this.value);
+      localStorage.setItem("banke_history", JSON.stringify(banke_history));
+      this.SearchHistoryLen = false;
+      this.onInput("");
+    },
+    //输入框内容变化
+    onInput(value) {
+      if (!value) {
+        value = this.value;
+        if (value == "") {
+          return;
+        }
+      }
+      let temp = [];
+      for (let v of this.tempCurbankes) {
+        if (v.searchKey.indexOf(value) > -1) {
+          temp.push(v);
+        } else {
+        }
+      }
+      this.SearchHistoryLen = false;
+      this.searchData = temp;
+    },
+    historClick(val) {
+      this.onInput(val);
+    },
+    //取消
+    onCancel() {
+      this.popupSearchHiosty = false;
+      this.SearchHistoryArr = [];
+      this.searchData = [];
+      this.SearchHistoryLen = false;
+    },
+    clearHistory() {
+      localStorage.setItem("banke_history", "");
+      this.SearchHistoryArr = [];
+      this.SearchHistoryLen = false;
+    },
+    de(i) {
+      this.SearchHistoryArr.splice(i, 1);
+      if(!this.SearchHistoryArr.length){
+          this.SearchHistoryLen = false;
+      }
+      localStorage.setItem(
+        "banke_history",
+        JSON.stringify(this.SearchHistoryArr)
+      );
+    },
     initbanke() {
       var url = "/api/api/bankequery";
       if (!this.bankeempty) {
@@ -307,7 +416,9 @@ export default {
   components: {
     MineAbout,
     examhome,
-    BankeSimple
+    BankeSimple,
+    [Search.name]: Search,
+    Empty
   }
 };
 </script>
@@ -321,7 +432,7 @@ export default {
   height: 10px;
 }
 .cloud .iconfont-big {
-  font-size: 33px !important;
+  font-size: 35px !important;
 }
 .btnadd {
   font-size: 30px;
@@ -377,5 +488,46 @@ export default {
 }
 .no-class i {
   font-size: 80px;
+}
+.div_sech {
+  width: 85% !important;
+}
+.van-search__content {
+  background: rgba(249, 249, 249, 1) !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(240, 240, 240, 1) !important;
+}
+.search-popup {
+}
+</style>
+
+<style lang="less" scoped>
+.search-popup {
+  background: #f0f0f0;
+  .main {
+    &.act {
+      padding: 0 20px;
+    }
+  }
+  .div_sech {
+    width: 100% !important;
+    .van-search__action {
+      color: #0089ff;
+    }
+  }
+  .SearchHistoryLen {
+    li {
+      height: 50px;
+      line-height: 50px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  }
+  &.act {
+    background: #fff;
+  }
+  .clear {
+    padding: 20px 0;
+    color: #0089ff;
+  }
 }
 </style>

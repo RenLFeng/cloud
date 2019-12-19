@@ -49,6 +49,8 @@ const state = {
     footerBarState:true,
     CliudBar:false,
 
+    bankeSearchHistory:[]//班课搜索历史记录
+
 }
 
 const getters = {
@@ -214,6 +216,9 @@ const mutations = {
     },
     SET_CLOUD_BAR(state, v) {
         state.CliudBar = v
+    },
+    SET_BANKESEARCH_HISTORY(state, v) {
+        state.bankeSearchHistory.push(v);
     },
 }
 

@@ -2,7 +2,7 @@
   <div>
     <div class="zacontainer">
       <div class="zaavatar">
-        <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="defaultImage" />
+        <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="$defaultImg('account')" />
         <div class="zabtnmore zatopmargin" v-if="showsubmitnum">
           <div @click="onseeAllSubmit(resultitem)" class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
         </div>

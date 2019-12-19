@@ -139,7 +139,9 @@ export default {
               this.$store.commit("banke/appendBankes", BankeData);
             });
           } else {
-            MessageBox.alert(res.data.msg).then(() => {});
+            MessageBox.alert(res.data.msg).then(() => {
+
+            });
           }
         })
         .catch(() => {});

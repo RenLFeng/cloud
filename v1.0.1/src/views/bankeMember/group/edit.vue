@@ -124,7 +124,7 @@ export default {
                     v.files.push({
                       id: i,
                       img: item.avatar,
-                      name: item.account
+                      name: item.name
                     });
                     item.isTrue = true;
                     item.groupName = v.name;
@@ -190,7 +190,8 @@ export default {
                   this.EditItemObj.name = this.groupName;
                   this.$emit("setGgoupName", this.groupName);
                 }
-                 this.count=0;
+                this.savegroup();
+                this.count = 0;
                 this.$emit("editBack", { state: false, type: 1 });
               } else {
                 Toast("失败");
@@ -201,6 +202,31 @@ export default {
             });
         })
         .catch(() => {});
+    },
+    //设置  subgroupmnum subgroupnum  分组信息
+    savegroup() {
+      let obj = {
+        id: this.EditItem.id,
+        bankeid: this.EditItem.bankeid,
+        subgroupmnum: this.tempData.length,
+        subgroupnum: this.count
+      };
+      this.$http
+        .post("/api/group/savegroup", obj)
+        .then(res => {
+          if (res.data.code == "0") {
+            Toast("成功");
+            console.log(res.data.data);
+            this.querygroup(this.bankeid);
+          } else {
+            Toast("失败");
+          }
+          Indicator.close();
+        })
+        .catch(error => {
+          Toast("异常");
+          Indicator.close();
+        });
     },
     //添加新组
     addGroup() {
@@ -214,6 +240,7 @@ export default {
       obj.members = JSON.parse(obj.members);
       obj.files = [];
       this.tempData.push(obj);
+      this.changeState=true;
       // this.$http
       //   .post("/api/group/savesubgroup", {
       //     subgroups: [obj]
@@ -288,8 +315,8 @@ export default {
               if (res.data.code == 0) {
                 MessageBox.alert("删除成功").then(() => {
                   //this.querysubgroup();
-                    this.tempData.splice(index,1)
-                    this.querysubgroup();
+                  this.tempData.splice(index, 1);
+                  this.querysubgroup();
                 });
               } else {
                 MessageBox.alert(res.data.msg);

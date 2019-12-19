@@ -12,7 +12,9 @@ import Viewer from 'v-viewer'
 import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'
-import {defaultImg} from "@/util"
+import {
+    defaultImg
+} from "@/util"
 Vue.prototype.$defaultImg = defaultImg
 // import Vconsole from 'vconsole'
 // const vConsole = new Vconsole()
@@ -41,6 +43,9 @@ window.addEventListener("resize", function () {
         document.documentElement.style.fontSize = '2.5rem';
     }
 });
+// window.addEventListener('touchmove',function(e){
+//     e.preventDefault();
+// }, { passive: false })
 new Vue({
     router: createRouter(),
     store,

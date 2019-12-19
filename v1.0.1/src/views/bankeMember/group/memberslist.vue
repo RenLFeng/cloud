@@ -15,7 +15,8 @@
             ></i>
             <img class :src="v.avatar" alt />
             <p class="group" :class="{'istrue':v.groupName}">
-              <span>{{v.account}}</span>
+              <span>{{v.name}}</span>
+              <!-- <span>{{v.account}}</span> -->
               <span v-if="v.groupName" class="color9 font-xs">已分配到&nbsp;{{v.groupName}}</span>
             </p>
           </li>
@@ -89,11 +90,11 @@ export default {
   },
   created() {},
   computed: {
-    backText(){
+    backText() {
       if (this.count <= this.memerLenth) {
-        return "返回"
-      }else{
-        return '取消'
+        return "返回";
+      } else {
+        return "取消";
       }
     },
     MemBerTypeText() {
@@ -125,7 +126,8 @@ export default {
         this.TaddMembersItem.files.push({
           id: this.tempMemBersList[index].memberuserid,
           img: this.tempMemBersList[index].avatar,
-          name: this.tempMemBersList[index].account
+          // name: this.tempMemBersList[index].account
+          name: this.tempMemBersList[index].name
         });
         this.TaddMembersItem.members.push(
           this.tempMemBersList[index].memberuserid
@@ -158,13 +160,16 @@ export default {
       console.log(this.TaddMembersItem);
       console.log(this.tempMemBersList);
     },
-    
+
     addMember() {
       if (this.count <= this.memerLenth) {
         MessageBox.confirm("你未新添成员，是否返回")
           .then(action => {
             this.init();
-            this.$emit("hideMemberpageFn", {popup:false,oldLength:this.memerLenth});
+            this.$emit("hideMemberpageFn", {
+              popup: false,
+              oldLength: this.memerLenth
+            });
           })
           .catch(() => {});
       } else {
@@ -175,11 +180,18 @@ export default {
     goback() {
       if (this.count <= this.memerLenth) {
         this.init();
-        this.$emit("hideMemberpageFn", {popup:false,oldLength:this.memerLenth});
+        this.$emit("hideMemberpageFn", {
+          popup: false,
+          oldLength: this.memerLenth
+        });
       } else {
         MessageBox.confirm("你已修改信息，是否取消")
           .then(action => {
-             this.$emit("hideMemberpageFn", {state:true,popup:false,oldLength:this.memerLenth});
+            this.$emit("hideMemberpageFn", {
+              state: true,
+              popup: false,
+              oldLength: this.memerLenth
+            });
             this.init();
           })
           .catch(() => {});

@@ -7,7 +7,7 @@
         <span class="colord fr" @click="More()">{{seeText}}</span>
       </p>
     </div>
-    <div v-if="list.length">
+    <div v-if="list.length" class="overflow-auto">
       <p class="tr" style="padding:5px">{{list.length}}人</p>
       <StudentSignInfoList
         :memberuser="v"
@@ -35,8 +35,9 @@
       cancel-text="取消"
       @cancel="onCancel"
       @select="onSelect"
+      @click-overlay="onCancel"
       class="ActionSheet"
-      :close-on-click-overlay="false"
+
     />
   </div>
 </template>
@@ -113,7 +114,7 @@ export default {
         sign: 0,
         nosign: 0
       },
-      seeText: "查看全部",
+      seeText: "查看全部"
     };
   },
   computed: {
@@ -297,7 +298,7 @@ export default {
         this.list = list;
       }
     },
-    styleFn() {;
+    styleFn() {
       this.showActionSheet = true;
     }
   }
@@ -312,6 +313,11 @@ export default {
     p {
       padding: 10px 0;
     }
+  }
+  .overflow-auto {
+    width: 100vw;
+    height: 70vh;
+    overflow: auto;
   }
   .footer {
     position: fixed;

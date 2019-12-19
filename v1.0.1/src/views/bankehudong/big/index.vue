@@ -1,13 +1,13 @@
 <template>
-  <div class="big-main">
+  <div class="big-main" v-if="isLoad">
     <mt-header :title="isLogin?'登录中...':'大屏登录'">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div v-if="isLogin" class="isLogin">
       <div class="tc no-class empty">
         <i class="iconfont icondapingmu fontmaintitle"></i>
-        <p class="" style="color:#000">已登录到大屏</p>
-        <div class="" style="color:#000">
+        <p class style="color:#000">已登录到大屏</p>
+        <div class style="color:#000">
           <p>{{userInfo.mac}}</p>
           <p>{{userInfo.name}}</p>
         </div>
@@ -33,6 +33,7 @@ export default {
   },
   data() {
     return {
+      isLoad: false,
       userInfo: {},
       isLogin: false,
       bankeid: 0
@@ -47,6 +48,7 @@ export default {
   },
   methods: {
     dapingquery() {
+      Indicator.open("加载中...");
       this.$http
         .post("api/banke/dapingquery", {})
         .then(res => {
@@ -55,21 +57,35 @@ export default {
             this.userInfo = res.data.data.daping;
             console.log("大屏查询", res);
           }
+          this.isLoad = true;
+          Indicator.close();
         })
-        .catch(err => {});
+        .catch(err => {
+          this.isLoad = true;
+          Toast("异常");
+          Indicator.close();
+        });
     },
     sinOut() {
       MessageBox.confirm("您确定要退出吗？")
         .then(res => {
+          Indicator.open("加载中...");
           this.$http
             .post("api/banke/dapinglogout", {})
             .then(res => {
               if (res.data.code == "0") {
+                Toast("退出成功");
                 this.isLogin = false;
                 console.log("退出", res);
+              } else {
+                Toast("退出失败");
               }
+              Indicator.close();
             })
-            .catch(err => {});
+            .catch(err => {
+              Toast("异常");
+              Indicator.close();
+            });
         })
         .catch(() => {});
     },
@@ -89,7 +105,7 @@ export default {
   .isLogin {
     height: 100vh;
     min-height: 100vh;
-    p{
+    p {
       margin: 5px 0;
     }
     .button-worp {

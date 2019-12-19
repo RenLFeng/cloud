@@ -3,7 +3,7 @@
     <div class="avatarpart" @click="onmine">
       <img :src="user.avatar" :onerror="$defaultImg('account')" class="avatarimgpart avatar" />
       <div class="avatartextpart">
-        <div class="fontlarge namepart">{{user.name}}</div>
+        <div class="fontlarge namepart ellipse">{{user.name}}</div>
         <div class="fontsmall accountpart">
           {{$t('personal.Account')}}:{{user.account}}
           <i class="my-cell-allow-right"></i>
