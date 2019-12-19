@@ -149,15 +149,23 @@ export default {
         Toast("你无权限");
         return;
       }
+      let deluserid = this.DetailItem.memberuserid;
       MessageBox.confirm("您确定要删除吗？")
         .then(res => {
           this.$http
-            .post("/api/banke/reqmemberleave", {
-              bankeid: this.bankeid
+            .post("/api/banke/memberdelete", {
+              bankeid: this.bankeid,
+                userid:deluserid
             })
             .then(res => {
               if (res.data.code == 0) {
                 Toast("删除成功");
+                for(let i=0; i<this.members.length; i++){
+                    if (this.members[i].memberuserid == deluserid){
+                        this.members.splice(i, 1);
+                        break;
+                    }
+                  }
               } else {
                 Toast("删除失败");
               }

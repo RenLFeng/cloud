@@ -1,7 +1,7 @@
 <template>
   <div>
     <mt-header v-show="hasnavbar" :title="bankename">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div
@@ -176,6 +176,12 @@ export default {
     hasnavbar() {
       return nativecode.hasnavbar();
     },
+      hasbackbtn(){
+        if (nativecode.platform == 'exsoftdaping'){
+            return false;
+        }
+        return true;
+      },
     footerbar() {
       return this.$store.state.footerBarState;
     },
