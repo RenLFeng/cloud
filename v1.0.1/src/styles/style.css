@@ -206,7 +206,9 @@ textarea {
 .twarning {
     color: #E6A23C !important;
 }
-
+.iconfont.bigfont{
+    font-size: 44px;
+}
 .fontmaintitle {
     font-size: 37px;
 }
@@ -483,3 +485,6 @@ textarea {
   .mint-field-core{
     background: #fff;
   }
+.overflow-auto{
+
+}

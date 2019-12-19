@@ -388,7 +388,7 @@ export default {
   height: 10px;
 }
 .cloud .iconfont-big {
-  font-size: 33px !important;
+  font-size: 35px !important;
 }
 .btnadd {
   font-size: 30px;

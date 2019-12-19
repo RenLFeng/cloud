@@ -3,27 +3,27 @@
     <ul class="list-main">
       <li v-show="haswxsign" class="fontlarge" @click="onwxsign()">
         <span>微信签到</span>
-        <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
+        <i class="iconfont iconqiandao2 eicotrigger bigfont fr" style="color:#E46100"></i>
       </li>
       <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
-        <i class="iconfont iconqiandao2 eicotrigger fr" style="color:#E46100"></i>
+        <i class="iconfont iconqiandao2 eicotrigger bigfont fr" style="color:#E46100"></i>
       </li>
       <li class="fontlarge" @click="gopingce" v-if="!isTeacher">
         <span>评测</span>
-        <i class="iconfont icontongji eicotrigger fr" style="color:#38ADA9"></i>
+        <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
       </li>
       <li class="fontlarge" @click="pingce">
         <span>评测记录</span>
-        <i class="iconfont icontongji eicotrigger fr" style="color:#38ADA9"></i>
+        <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
       </li>
-      <li class="fontlarge" @click="BigLogin" v-if="isTeacher">
+      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
-        <i class="iconfont icondapingmu eicotrigger fr" style="color:#0055FF"></i>
+        <i class="iconfont icondapingmu eicotrigger bigfont fr" style="color:#0055FF"></i>
       </li>
-      <li class="fontlarge" @click="Banshu">
+      <li class="fontlarge bs" @click="Banshu">
         <span>课堂板书</span>
-        <i class="iconfont iconwritin-blackboard eicotrigger fr" style="color:#38AD5A"></i>
+        <i class="iconfont iconwritin-blackboard eicotrigger bigfont fr" style="color:#38AD5A"></i>
       </li>
     </ul>
     <!-- <mt-popup
@@ -44,7 +44,7 @@
 import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
 import TeacherSignInfo from "./sign/teacherSignInfo";
 
-import nativecode from '../../nativecode'
+import nativecode from "../../nativecode";
 
 export default {
   name: "",
@@ -66,24 +66,24 @@ export default {
     isTeacher() {
       return this.$store.getters.caneditbanke;
     },
-      haswxsign(){
-        if (nativecode.platform == 'miniprogram'){
-            return true;
-        }
-        return false;
+    haswxsign() {
+      if (nativecode.platform == "miniprogram") {
+        return true;
       }
+      return false;
+    }
   },
   created() {
     // this.signquery();
   },
   methods: {
     //老师签到
-      onwxsign(){
-          //let ppath = '/Sign?bankeid' + this.bankeid;
-          nativecode.navigateToSign(this.bankeid);
-      },
-     teacherFn() {
-     this.$store.commit("setRouterForward", true);
+    onwxsign() {
+      //let ppath = '/Sign?bankeid' + this.bankeid;
+      nativecode.navigateToSign(this.bankeid);
+    },
+    teacherFn() {
+      this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "Sign",
         params: { bankeid: this.bankeid }
@@ -156,8 +156,15 @@ export default {
       line-height: 40px;
       border-radius: 10px;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.07);
-      i {
-        font-size: 30px !important;
+      &.dp {
+        i {
+          font-size: 39px;
+        }
+      }
+      &.bs {
+        i {
+          font-size: 50px;
+        }
       }
     }
   }

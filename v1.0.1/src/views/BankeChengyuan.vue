@@ -272,4 +272,7 @@ export default {
 }
 .listcontainer {
 }
+.content-main{
+  margin-top: 50px;
+}
 </style>
