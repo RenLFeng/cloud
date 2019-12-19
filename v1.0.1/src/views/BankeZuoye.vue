@@ -20,7 +20,7 @@
         @bottom-status-change="handleBottomChange"
         :auto-fill="autofill"
       >
-        <div v-for="(zitem, sindex) in zuoyelist" :key="sindex">
+        <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
           <BankeZuoyeSimple
             :zuoyeitem="zuoyelist[sindex]"
             :hasedit="hasedit"
@@ -289,10 +289,41 @@ export default {
               //! clear cur all
               this.zuoyelist = [];
             }
-            commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+            let ids = [];
+            for (let v of res.data.data) {
+              ids.push(v.id);
+            }
+            this.eventmsgsOnactivity(res.data.data, ids);
+            //  commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
           }
         })
         .catch(() => {});
+    },
+    //红点查询
+    eventmsgsOnactivity(serverData, eventids) {
+      this.$http
+        .post("/api/eventmsgs/onactivity", {
+          bankeid: this.bankeid,
+          eventtype: 3,
+          eventids: [...eventids]
+        })
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.length) {
+            for (let v of serverData) {
+              for (let id of res.data.data) {
+                if (v.id == id) {
+                  v.eventmsgs = true;
+                }
+              }
+            }
+            console.log("红点查询", res.data.data);
+          } else {
+          }
+          commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+        })
+        .catch(err => {
+          commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+        });
     }
   },
   data() {

@@ -47,12 +47,19 @@
     </div>
     <mt-tabbar v-model="selected" fixed class="cloud cloud-b" v-if="!CliudBar">
       <mt-tab-item id="banke">
-        <i class="iconfont iconfont-big iconbianzu"></i>
-        <span class="fontnormal">{{$t('common.Class')}}</span>
+        <div class="bankehome">
+          <i
+            class="iconfont iconfont-big iconbianzu reddot-Tips-wrap"
+            :class="homeEventmsgs?'reddot-Tips':''"
+          ></i>
+          <span class="fontnormal">{{$t('common.Class')}}</span>
+        </div>
       </mt-tab-item>
       <mt-tab-item id="mine">
-        <i class="iconfont iconfont-big iconuser"></i>
-        <span class="fontnormal">{{$t('common.My')}}</span>
+        <div class="bankehome">
+          <i class="iconfont iconfont-big iconuser"></i>
+          <span class="fontnormal">{{$t('common.My')}}</span>
+        </div>
       </mt-tab-item>
     </mt-tabbar>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
@@ -153,7 +160,9 @@ export default {
       SearchHistoryArr: [],
       popupSearchHiosty: false,
       tempCurbankes: [],
-      searchData: []
+      searchData: [],
+
+      homeEventmsgs: false
     };
   },
   computed: {
@@ -202,6 +211,7 @@ export default {
     if (this.selected == "banke") {
       this.initbanke();
     }
+    this.eventmsgsOnmain();
   },
   methods: {
     onChangeSelected(v) {
@@ -335,8 +345,8 @@ export default {
     },
     de(i) {
       this.SearchHistoryArr.splice(i, 1);
-      if(!this.SearchHistoryArr.length){
-          this.SearchHistoryLen = false;
+      if (!this.SearchHistoryArr.length) {
+        this.SearchHistoryLen = false;
       }
       localStorage.setItem(
         "banke_history",
@@ -353,7 +363,11 @@ export default {
         .post(url)
         .then(res => {
           if (res.data.code == 0) {
-            this.$store.commit("banke/setBankes", res.data.data);
+            let arrId = [];
+            for (let v of res.data.data) {
+              arrId.push(v.id);
+            }
+            this.eventmsgsOnbankes(res.data.data, arrId);
           }
           if (!this.bankeempty) {
             this.bankestatedesc = "当前无班课";
@@ -363,6 +377,42 @@ export default {
           console.log(res);
           this.bankestatedesc = "发生异常";
         });
+    },
+    //红点班课列表
+    eventmsgsOnbankes(datas, bankeids) {
+      this.$http
+        .post("/api/eventmsgs/onbankes", {
+          bankes: [...bankeids]
+        })
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.length) {
+            let serveData = res.data.data;
+            for (let v of serveData) {
+              for (let item of datas) {
+                if (v.bankeid == item.id && v.count) {
+                  item.eventmsgs = v.count;
+                }
+              }
+            }
+          } else {
+          }
+          this.$store.commit("banke/setBankes", datas);
+        })
+        .catch(err => {
+           this.$store.commit("banke/setBankes", datas);
+        });
+    },
+    //红点班课主页
+    eventmsgsOnmain() {
+      this.$http
+        .post("/api/eventmsgs/onmain", {})
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.banke) {
+            this.homeEventmsgs = true;
+          } else {
+          }
+        })
+        .catch(err => {});
     }
   },
   destroyed: function() {
@@ -454,6 +504,22 @@ export default {
   border: 1px solid rgba(240, 240, 240, 1) !important;
 }
 .search-popup {
+}
+.bankehome {
+  position: relative;
+  height: 72px;
+}
+.bankehome i {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+.bankehome span {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  transform: translate(-50%, 0);
 }
 </style>
 
