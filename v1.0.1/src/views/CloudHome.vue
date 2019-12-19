@@ -202,8 +202,8 @@ export default {
     },
     //创建or加入
     addBankeIcon() {
-      //  let istea = this.$store.getters.isteacher;
-     //   console.log(istea);
+        let istea = this.$store.getters.isteacher;
+        console.log(istea);
         if (this.isteacher){
             this.actionShow2 = true;
         }

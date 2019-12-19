@@ -12,7 +12,9 @@ nativecode.detectplatform = function()
     if (ua.indexOf('ExsoftIosWeb') > -1){
         return 'exsoftios';
     }
-    if (ua.indexOf('miniProgram') > -1){
+    if (ua.indexOf('miniProgram') > -1
+     || ua.indexOf('wechatdevtools') > -1
+    ){
         return 'miniprogram';
     }
     if (window.ExsoftAndroid){

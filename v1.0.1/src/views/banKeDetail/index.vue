@@ -40,11 +40,6 @@
             <li @click="edBk">
               <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
             </li>
-            <div class="devide"></div>
-
-            <li @click="closeBk" class="dange">
-              <mt-cell :title="$t('bankeXingQing.DeleteClass')" is-link></mt-cell>
-            </li>
 
 
 
@@ -188,7 +183,14 @@ export default {
     },
     //学情统计
     situation() {
-      window.location.href = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+        let url = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+        url = 'http://localhost:9982/backend/#/ClassStatistics?id=' + this.bankeInfo.id;
+        if (process.env.NODE_ENV !== "development")
+        {
+            url = document.location.origin;
+            url += '/backend/#/ClassStatistics?id=' + this.bankeInfo.id;
+        }
+      window.location.href = url;
     },
     editBkFn() {
       if (!this.caneditbanke) return;

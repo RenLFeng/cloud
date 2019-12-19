@@ -2,7 +2,7 @@
   <div class="teacher-sign-main">
     <mt-header title="上课签到">
       <mt-button icon="back" slot="left" @click="Back">{{$t('common.Back')}}</mt-button>
-      <mt-button slot="right">签到设置</mt-button>
+      <mt-button v-if="isTeacher" slot="right">签到设置</mt-button>
     </mt-header>
     <div v-if="isTeacher || global">
       <div class="icon-tit tc" @click="teacherSignClass()">
@@ -77,6 +77,9 @@ import { ActionSheet } from "vant";
 import List from "@/common/list";
 import studentSignInfo from "./studentSignInfo";
 import Empty from "@/common/empty";
+
+import nativecode from '../../../nativecode'
+
 export default {
   name: "",
   props: {},
@@ -157,11 +160,59 @@ export default {
     }
     this.signquery();
     this.signquerymember();
+    this.dotest();
   },
   methods: {
     loadTop() {
       this.signquery();
     },
+      dotest(){
+        // if (nativecode.platform == 'miniprogram'){
+        //     let wx = nativecode.getwx();
+        //     console.log('test getlocation');
+        //     let url = window.location.href;
+        //     //url = "http://192.168.40.104:8080/index.html";
+        //     //url = 'http://192.168.40.104:8080/index.html';
+        //     url = 'https://www2.exsoft.com.cn/';
+        //     console.log(url);
+        //     this.$http.post('/api/weixin/querysign',{
+        //         url:url
+        //     }).then(res=>{
+        //         console.log(res);
+        //         if (res.data.code == 0){
+        //             let datad = res.data.data;
+        //             wx.config({
+        //                 debug:false,
+        //                 appId:datad.appId,
+        //                 timestamp:datad.timestamp,
+        //                 nonceStr:datad.nonceStr,
+        //                 signature:datad.signature,
+        //                 jsApiList:['getLocation']
+        //             })
+        //             wx.ready(()=>{
+        //                 console.log('wx ready');
+        //                 wx.getLocation({
+        //                     type: 'wgs84',
+        //                     success :res =>{
+        //                         console.log(res);
+        //
+        //                     }
+        //                     ,fail:(res)=>{
+        //                         console.log(res);
+        //                     }
+        //                 })
+        //             })
+        //             wx.error(res=>{
+        //                 console.log(res);
+        //             })
+        //
+        //         }
+        //     }).catch(res=>{
+        //         console.log(res);
+        //     })
+        //
+        // }
+      },
     oncalssStatefn(v) {
       this.signState = v;
       this.classSignId = 0;

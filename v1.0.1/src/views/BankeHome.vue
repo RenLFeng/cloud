@@ -144,8 +144,8 @@ export default {
     },
     bankename() {
       let bname =  this.curbanke.name;
-      if (this.curbanke.states < 0){
-          bname += '(已结束)';
+      if (this.curbanke.states < 1){
+          bname = '[已结束]' + bname;
       }
       return bname;
     },
