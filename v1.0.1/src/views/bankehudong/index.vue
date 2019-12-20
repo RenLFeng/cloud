@@ -131,6 +131,18 @@ export default {
         name: "Banshu",
         params: { bankeid: this.bankeid }
       });
+      //! cjy: 板书手动删除
+        this.$http
+            .post("/api/eventmsgs/clear", {
+                eventtype: 100,
+                bankeid: this.bankeid
+            })
+            .then(res =>{
+
+            }).catch(res=>{
+
+        });
+
     },
     onglobal(v) {
       this.global = v;
