@@ -13,9 +13,15 @@
           infinite-scroll-distance="500"
           infinite-scroll-immediate-check="false"
         >
-          <li class="tc" v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
+          <li class v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
             <img :src="`${v.files}_snap.jpg`" alt />
-            <p class="tr color9">{{v.uploadtime}}</p>
+            <p class="fontsmall">
+              {{v.uploadtime}}
+              <i
+                class="iconfont iconjiantou1 eicotrigger color9 fr"
+                @click.stop="onEdit(v)"
+              ></i>
+            </p>
           </li>
         </ul>
         <p v-if="isScorll && !scorllEd" class="tc color9">
@@ -24,6 +30,7 @@
         <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p>
       </div>
       <Empty v-else />
+      <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
     </div>
   </div>
 </template>
@@ -36,6 +43,7 @@ import "vant/lib/loading/style";
 import "@vant/touch-emulator/index";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
+import { parseURL, CollectionFn, getZYFileTypeIcon } from "@/util";
 import {
   Button,
   Indicator,
@@ -43,9 +51,9 @@ import {
   Cell,
   MessageBox,
   Loadmore,
-  InfiniteScroll
+  InfiniteScroll,
+  Actionsheet
 } from "mint-ui";
-import { parseURL } from "@/util";
 import Empty from "@/common/empty";
 const arr = {
   bankeid: 1000,
@@ -64,7 +72,16 @@ export default {
       pagesize: 10,
       loading: false,
       isScorll: false,
-      scorllEd: false
+      scorllEd: false,
+
+      editItemObj: {},
+      actionShow: false,
+      actions: [
+        {
+          name: "收藏",
+          method: this.Collection
+        }
+      ]
     };
   },
   computed: {},
@@ -82,6 +99,18 @@ export default {
   watch: {},
   computed: {},
   methods: {
+    onEdit(item) {
+      console.log(item);
+      this.editItemObj = item;
+      this.actionShow = true;
+    },
+    //收藏
+    Collection() {
+      let imgIcon = "";
+      this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
+      this.editItemObj.name = '课堂板书'+this.editItemObj.uploadtime
+      CollectionFn(this.editItemObj, 100, imgIcon, this.editItemObj.id);
+    },
     loadMore() {
       this.isScorll = true;
       this.loading = true;
@@ -96,9 +125,9 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-            // for (let i = 0; i < 5; i++) {
-            //   res.data.data.push(arr);
-            // }
+            for (let i = 0; i < 5; i++) {
+              res.data.data.push(arr);
+            }
             if (res.data.data.length < this.pagesize) {
               this.loading = true;
               this.scorllEd = true;
@@ -186,6 +215,9 @@ export default {
         }
         p {
           padding: 10px;
+          i {
+            font-size: 18px;
+          }
         }
       }
     }

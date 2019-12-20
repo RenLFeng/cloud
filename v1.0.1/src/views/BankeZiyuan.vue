@@ -125,6 +125,7 @@
         </ul>
       </div>
     </mt-popup>
+    <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
 
@@ -135,7 +136,8 @@ import {
   MessageBox,
   Cell,
   Popup,
-  InfiniteScroll
+  InfiniteScroll,
+  Actionsheet
 } from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
@@ -143,7 +145,7 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
-
+import { CollectionFn, getZYFileTypeIcon } from "@/util";
 import nativecode from "../nativecode";
 
 export default {
@@ -175,7 +177,27 @@ export default {
       loadMorePosition: "bottom",
       editItemFile: {},
 
-      seeState: 0
+      seeState: 0,
+
+      actions: [
+        {
+          name: "收藏",
+          method: this.Collection
+        },
+        {
+          name: "编辑",
+          method: this.bankeEdit
+        },
+        {
+          name: "信息",
+          method: this.showInfo
+        },
+        {
+          name: "删除",
+          method: this.deletezy
+        }
+      ],
+      actionShow: false
     };
   },
   watch: {
@@ -241,6 +263,36 @@ export default {
     URL
   },
   methods: {
+    //收藏
+    Collection() {
+      let imgIcon = "";
+      if (this.editItemFile.ftype == 'file') {
+        switch (this.editItemFile.finttype) {
+          case 0:
+            imgIcon = getZYFileTypeIcon(this.editItemFile.name);
+            break;
+          case 1:
+            this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
+            break;
+          case 2:
+            imgIcon = "MP4";
+            break;
+          case 3:
+            imgIcon = "MP3";
+            break;
+          case 4:
+            return "";
+            break;
+          default:
+            return "";
+        }
+      } else if (this.editItemFile.ftype == 'link') {
+        imgIcon = "IT";
+      }
+      CollectionFn(this.editItemFile, 1, imgIcon, this.editItemFile.id);
+    },
+    //编辑
+    bankeEdit() {},
     loadTop() {
       this.$store.commit("SET_BANKEZHIYUANLINKITEM");
       this.loadMorePosition = "top";
@@ -257,7 +309,8 @@ export default {
     //    this.topStatus = status;
     // },
     oneditclick(fileitem) {
-      this.popupZiyuanEdit = true;
+      // this.popupZiyuanEdit = true;
+      this.actionShow = true;
       this.editItemFile = fileitem;
       this.setSeeResources(fileitem);
       this.$http
@@ -474,13 +527,10 @@ export default {
           eventids: [...eventids]
         })
         .then(res => {
-          if (res.data.code == "0") {
-          // if (res.data.code == "0" && res.data.data.length) {
+          if (res.data.code == "0" && res.data.data.length) {
             for (let v of serverData) {
               for (let id of res.data.data) {
                 if (v.id == id) {
-                  v.eventmsgs = true;
-                } else {
                   v.eventmsgs = true;
                 }
               }
@@ -489,7 +539,7 @@ export default {
           }
           commontools.arrayMergeAsIds(this.files, serverData);
           this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
-          console.log("红点查询", this.files);
+          // console.log("红点查询", this.files);
         })
         .catch(err => {
           commontools.arrayMergeAsIds(this.files, serverData);

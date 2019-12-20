@@ -54,6 +54,7 @@ import BankeZuoyeSimple from "./components/BankeZuoyeSimple";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import commontools from "../commontools";
+import { CollectionFn, getZYFileTypeIcon } from "@/util";
 export default {
   name: "BankeZuoye",
   props: {
@@ -96,6 +97,10 @@ export default {
             method: this.menudel
           });
         }
+         odatas.push({
+            name: '收藏',
+            method: this.Collection
+          });
       }
       return odatas;
     }
@@ -105,6 +110,11 @@ export default {
   },
 
   methods: {
+    Collection(){
+      // console.log(this.curzuoye)
+        let imgIcon = "zuoye";
+       CollectionFn(this.curzuoye, 3, imgIcon, this.curzuoye.id);
+    },
     onbtnclick(sindex) {
       this.curbtnindex = sindex;
     },

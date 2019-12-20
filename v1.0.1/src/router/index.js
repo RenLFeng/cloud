@@ -36,8 +36,8 @@ import Group from '../views/bankeMember/group/index'
 import Banshu from '../views/bankehudong/banshu/index'
 //加入班课
 import Join from '../views/bankehome/join'
-//绑定账号
-// import BindingAccount from '../views/my/bindingAccount'
+//收藏
+import Collection from '../views/my/collection'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
@@ -69,8 +69,8 @@ export function createRouter() {
         {path:'/PingCeing',name:'PingCeing', component:PingCeing},
         {path:'/Group',name:'Group', component:Group},
         {path:'/Banshu',name:'Banshu', component:Banshu},
+        {path:'/Collection',name:'Collection', component:Collection},
         {path:'/Join',name:'Join', component:Join},
-        // {path:'/BindingAccount',name:'BindingAccount', component:BindingAccount},
 
 
      

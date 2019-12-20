@@ -14,11 +14,12 @@
       <div class="devide"></div>
       <mt-cell title="创建班课" is-link @click.native="onadd"></mt-cell>
     </div>
-
+    <div class="devide"></div>
+    <mt-cell title="收藏" is-link @click.native="seeCollection"></mt-cell>
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
-        <mt-cell v-if="canbindaccount" title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell>
+    <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
     <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>
     <div class="devide"></div>
@@ -95,7 +96,8 @@ export default {
       inputpassword: "",
       bindaction: "changebind",
       bindstatedesc: "",
-      bindtitle: ""
+      bindtitle: "",
+
     };
   },
   components: {},
@@ -126,6 +128,14 @@ export default {
     }
   },
   methods: {
+    //收藏
+    seeCollection() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "Collection",
+        params: {}
+      });
+    },
     onadd() {
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {

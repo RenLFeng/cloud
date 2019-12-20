@@ -1,3 +1,8 @@
+import axios from 'axios'
+import {
+  Indicator,
+  Toast,
+} from "mint-ui";
 export const formateTime = (v, type) => {
   let date = new Date();
   if (v) {
@@ -8,11 +13,19 @@ export const formateTime = (v, type) => {
   m = m < 10 ? ('0' + m) : m;
   var d = date.getDate();
   d = d < 10 ? ('0' + d) : d;
-  var day = date.getDay();
+
+  var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+  var minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+  var second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+  var milliSeconds = date.getMilliseconds();
+
+  // var day = date.getDay();
   if (type == '2') {
     return m + '月' + d + '日';
   } else if (type == '/') {
     return y + '/' + m + '/' + d;
+  } else if (type == '-') {
+    return `${y}-${m}-${d} ${hour}:${minute}:${second}`
   } else {
     return y + '年' + m + '月' + d + '日';
   }
@@ -162,7 +175,6 @@ export const parseChartScoreData = (ed, wa, days, enddate) => {
     }
   }
 }
-
 export const pingceType = (v) => {
   switch (v) {
     case 1:
@@ -204,22 +216,126 @@ export const defaultImg = (type) => {
       srcstr += require("./assets/account_default.png");
       srcstr += '"';
       return srcstr;
-      break;
     case 'banke':
       srcstr += require("./assets/banke_default.png");
       srcstr += '"';
       return srcstr;
-      break;
     case 'zuoye':
-      srcstr += require("./assets/zuoye_add.png");
+      srcstr += require("./assets/zuoye_default.png");
       srcstr += '"';
       return srcstr;
-      break;
     case 'file':
       srcstr += require("./assets/file_default.png");
       srcstr += '"';
       return srcstr;
-      break;
+    case 'txt':
+      srcstr += require("./assets/file_icon/txt.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'rar':
+      srcstr += require("./assets/file_icon/rar.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'xlsx':
+      srcstr += require("./assets/file_icon/xlsx.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'docx':
+      srcstr += require("./assets/file_icon/docx.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'ppt':
+      srcstr += require("./assets/file_icon/ppt.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'pdf':
+      srcstr += require("./assets/file_icon/pdf.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'IT':
+      srcstr += require("./assets/file_icon/IT.svg");
+      srcstr += '"';
+      return srcstr;
+    case 'MP4':
+      srcstr += require("./assets/file_icon/MP4.png");
+      srcstr += '"';
+      return srcstr;
+    case 'MP3':
+      srcstr += require("./assets/file_icon/MP3.png");
+      srcstr += '"';
+      return srcstr;
+    default:
+      srcstr += require("./assets/file_default.png");
+      srcstr += '"';
+      return srcstr;
   }
+}
+export const getFileType = (v) => {
+  switch (v) {
+    case 1:
+      return "资源";
+    case 2:
+      return "签到";
+    case 3:
+      return "作业";
+    case 4:
+      return "评测";
+    case 100:
+      return "板书";
+    default:
+      return "未知类型";
+  }
+}
+export const getZYFileTypeIcon = (name) => {
+  const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
+  let r = '';
+  for (let item of fileType) {
+    if (name.includes(item)) {
+      r = item;
+    }
+    if (
+      name.includes("doc") ||
+      name.includes("rtf")
+    ) {
+      r = 'docx';
+    }
+    if (name.includes("zip")) {
+      r = 'rar';
+    }
+    if (name.includes("xls")) {
+      r = 'xlsx';
+    }
+  }
+  return r;
+}
+export const CollectionFn = (itemfile, type, imgIcon, id) => {
+  Indicator.open("加载中...");
+  let info = {
+    typeText: getFileType(type),
+    img: itemfile.pic ? itemfile.pic : imgIcon,
+    time: formateTime('', '-'),
+    itemfile: itemfile
+  }
+  console.log(info)
+  // info = JSON.stringify(info);
+  // axios
+  //   .post("/api/userfav/add", {
+  //     title: itemfile.name,
+  //     info: info,
+  //     eventtype: type,
+  //     eventid: id
+  //   })
+  //   .then(res => {
+  //     if (res.data.code == "0") {
+  //       Toast("收藏成功");
+  //     } else {
+  //       Toast("收藏失败");
+  //     }
+  //     Indicator.close();
+  //   })
+  //   .catch(err => {
+  //     Toast("服务异常");
+  //     Indicator.close();
+  //   });
 
 }

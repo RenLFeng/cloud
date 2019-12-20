@@ -1,13 +1,11 @@
 <template>
   <div class="mainpart zy-content" @click.stop="onclick">
-    <div>
-      <FileAttachList
-        v-if="localfiles.length"
-        :isupload="false"
-        class="falist"
-        :localfiles="localfiles"
-      />
-    </div>
+    <FileAttachList
+      v-if="localfiles.length"
+      :isupload="false"
+      class="falist"
+      :localfiles="localfiles"
+    />
     <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
     <div class="maincontent">
       <div class="mainctitle">
@@ -41,6 +39,9 @@ export default {
       let arr = [];
       if (this.fileitem.info) {
         arr[0] = this.fileitem.info;
+        if (this.fileitem.eventmsgs) { //红点提示
+          arr[0].eventmsgs = true;
+        }
         this.fileitem.localfile = arr;
         for (let v of this.fileitem.localfile) {
           if (v.filepath && v.metainfo) {

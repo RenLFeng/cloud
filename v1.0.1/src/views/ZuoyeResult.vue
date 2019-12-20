@@ -18,7 +18,10 @@
         :auto-fill="autofill"
       >
         <div class="titlecontainer">
-          <div class="zuoyetitle">{{zuoyeitem.name}}</div>
+          <div class="zuoyetitle">
+            {{zuoyeitem.name}}
+            <i class="iconfont iconcollect eicotrigger color9 fr" @click="shuoc"></i>
+          </div>
           <div class="zuoyesubtitle">
             <span
               class="zuoyescore"
@@ -42,7 +45,7 @@
             class="showZdetail-tit"
             :class="showZdetail?'act':''"
           ></mt-cell>
-          <div v-show="showZdetail" class="showZdetail-main"  :class="showZdetail?'act':''">
+          <div v-show="showZdetail" class="showZdetail-main" :class="showZdetail?'act':''">
             <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly" :showZdetail="true"></zuoyedetailedit>
           </div>
         </div>
@@ -217,13 +220,14 @@
         </div>
       </div>
     </mt-popup>
+    <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
 
 <script>
 import Discuss from "./components/discuss";
 import ZuoyeAnswerItem from "./components/ZuoyeAnswerItem";
-import { Indicator, Toast, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
@@ -235,6 +239,7 @@ import dispic from "../assets/dis.jpg";
 import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
 import Answer from "./banKeZuoye/answer";
+import { parseURL, CollectionFn, getZYFileTypeIcon } from "@/util";
 export default {
   name: "ZuoyeResult",
   props: {
@@ -246,8 +251,7 @@ export default {
   },
   data() {
     return {
-      showZdetail:false,
-
+      showZdetail: false,
 
       studentInfo: {},
       ScoreItemInfo: {},
@@ -298,7 +302,15 @@ export default {
       submitok: false,
       zashowbtnactive: true,
       markArr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      loadingState: false
+      loadingState: false,
+
+      actionShow: false,
+      actions: [
+        {
+          name: "收藏",
+          method: this.Collection
+        }
+      ]
     };
   },
   computed: {
@@ -676,7 +688,17 @@ export default {
       } else {
         this.results = this.resultsTemp;
       }
-    }
+    },
+    shuoc(){
+      this.actionShow=true;
+    },
+        //收藏
+    Collection() {
+      // console.log(this.zuoyeitem);
+      let imgIcon = "zuoye";
+     CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id);
+    },
+
   },
   created() {
     var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
@@ -768,8 +790,16 @@ export default {
 }
 
 .zuoyetitle {
+  position: relative;
   font-size: 20px;
   color: black;
+}
+.zuoyetitle i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translate(0, -50%);
+  font-size: 25px;
 }
 .zuoyesubtitle {
   margin-top: 5px;
@@ -805,7 +835,8 @@ export default {
 .noheaderscroll .mint-cell:last-child {
   background: none;
 }
-.showZdetail-tit.act,.showZdetail-main.act{
+.showZdetail-tit.act,
+.showZdetail-main.act {
   border-bottom: 1px solid #f0f0f0;
 }
 </style>

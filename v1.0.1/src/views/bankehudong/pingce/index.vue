@@ -17,6 +17,7 @@
         :item="v"
         type="pingce"
         @click.native="details(v)"
+        @edit="onEdit"
       />
       <p v-if="isScorll && !scorllEd" class="tc color9">
         <van-loading size="24px">加载中...</van-loading>
@@ -36,6 +37,7 @@
       </mt-header>
       <Deatil :data="pingceItemfile" />
     </mt-popup>
+    <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
 
@@ -45,7 +47,7 @@ import "vant/lib/loading/style";
 import Empty from "@/common/empty";
 import List from "@/common/list";
 import Deatil from "./detail";
-import { pingceType } from "@/util";
+import { pingceType, CollectionFn, getZYFileTypeIcon } from "@/util";
 import {
   Button,
   Indicator,
@@ -53,7 +55,8 @@ import {
   Cell,
   MessageBox,
   Loadmore,
-  InfiniteScroll
+  InfiniteScroll,
+  Actionsheet
 } from "mint-ui";
 const arr = {
   answerdesc: "",
@@ -92,7 +95,16 @@ export default {
       pagesize: 10,
       loading: false,
       isScorll: false,
-      scorllEd: false
+      scorllEd: false,
+
+      actions: [
+        {
+          name: "收藏",
+          method: this.Collection
+        }
+      ],
+      actionShow: false,
+      editItemObj: {}
     };
   },
   mounted() {
@@ -103,6 +115,18 @@ export default {
     this.HistoryListRQuery();
   },
   methods: {
+    onEdit(item) {
+      console.log(item);
+      this.editItemObj = item;
+      this.actionShow = true;
+    },
+    //收藏
+    Collection() {
+      let imgIcon = "";
+      this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
+      this.editItemObj.name=pingceType(this.editItemObj.ptype)
+      CollectionFn(this.editItemObj, 4, imgIcon, this.editItemObj.id);
+    },
     loadMore() {
       this.loading = true;
       this.isScorll = true;

@@ -4,6 +4,7 @@
     :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''"
     @click="onclick"
   >
+  <img v-if="type=='common'" class="itemavatar" :src="`${item.info.img}`" :onerror="$defaultImg(item.info.img)"/>
     <img v-if="type=='pingce'" class="itemavatar" :src="`${item.files}_snap.jpg`" :onerror="defaultimg" />
     <div class="maincontent" v-if="type=='sign'">
       <div class="mainctitle ellipse">
@@ -47,8 +48,16 @@
         class="maincsubtitle color9"
       >{{item.subgroupnum}} 人已被划分小组，划分为 {{item.subgroupmnum}}个小组{{item.createtime}}</div>
     </div>
+     <!-- 收藏记录 -->
+    <div class="maincontent common" v-if="type=='common'">
+      <div class="mainctitle ellipse">
+        {{item.title}}
+      </div>
+      <div class="maincsubtitle color9"><span>{{item.info.typeText}}</span> &nbsp;{{item.info.time}}</div>
+    </div>
+     <i v-if="type=='common' ||type=='pingce'" class="iconfont iconjiantou1 eicotrigger color9" @click.stop="edit(item)"></i>
     <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9"></i>
-    <i v-if="type!='pingcedetail' && type!='group'" class="iconfont iconjiantou eicotrigger colord"></i>
+    <i v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' " class="iconfont iconjiantou eicotrigger colord"></i>
   </div>
 </template>
 
@@ -120,6 +129,9 @@ export default {
     };
   },
   methods: {
+    edit(item){
+      this.$emit('edit',item);
+    },
     onclick() {
       this.$emit("showStudentSignInfo", this.item);
     }
@@ -221,5 +233,8 @@ export default {
   left: 10px;
   top: 50%;
   transform: translate(0, -50%);
+}
+.maincontent.common{
+  padding-left: 60px;
 }
 </style>
