@@ -257,52 +257,62 @@ commontools.fileType = function (fitem) {
         for (let v of fileType) {
             if (fitem.filename.includes(v)) {
                 r = require(`../src/assets/file_icon/${v}.svg`);
-            }
+            } else
             if (fitem.filename.includes("doc") || fitem.filename.includes("rtf")) {
                 r = require(`../src/assets/file_icon/docx.svg`);
-            }
+            } else
             if (fitem.filename.includes("zip")) {
                 r = require(`../src/assets/file_icon/rar.svg`);
-            }
+            } else
             if (fitem.filename.includes("xls")) {
                 r = require(`../src/assets/file_icon/xlsx.svg`);
+            }  else
+            if (fitem.filename.includes("mp4")) {
+                r = require(`../src/assets/file_icon/MP4.png`);
+            }else
+            if (fitem.filename.includes("mp3")) {
+                r = require(`../src/assets/file_icon/MP3.png`);
             }
+            else {
+                r = require(`../src/assets/file_default.png`);
+            }
+
         }
         return r;
     },
 
-    commontools.fileSnapPath = function(fitem){
-    if (fitem && fitem.metainfo && fitem.metainfo.snapsuffix ){
-        if (fitem.filepath){
-            return fitem.filepath + fitem.metainfo.snapsuffix;
+    commontools.fileSnapPath = function (fitem) {
+        if (fitem && fitem.metainfo && fitem.metainfo.snapsuffix) {
+            if (fitem.filepath) {
+                return fitem.filepath + fitem.metainfo.snapsuffix;
+            }
         }
+        return commontools.fileType;
     }
-    return commontools.fileType;
-    }
 
-    commontools.fmtDates = function (obj) {
-        var date = new Date(obj);
-        // console.log("格式化时间戳", date);
+commontools.fmtDates = function (obj) {
+    var date = new Date(obj);
+    // console.log("格式化时间戳", date);
 
-        var y = date.getFullYear();
-        // console.log("y", y, date.getFullYear());
+    var y = date.getFullYear();
+    // console.log("y", y, date.getFullYear());
 
-        var m = "0" + (date.getMonth() + 1);
-        // console.log("m", m, date.getMonth());
+    var m = "0" + (date.getMonth() + 1);
+    // console.log("m", m, date.getMonth());
 
-        var d = "0" + date.getDate();
-        // console.log("d", d, date.getDate());
+    var d = "0" + date.getDate();
+    // console.log("d", d, date.getDate());
 
-        // 参数二可以省略
-        // console.log(m.substring(1));
+    // 参数二可以省略
+    // console.log(m.substring(1));
 
-        // substring() 用于提取字符串中 介于 两个指定下标之间的字符。
-        return y + "-" + m.substring(m.length - 2, m.length) + "-" +
+    // substring() 用于提取字符串中 介于 两个指定下标之间的字符。
+    return y + "-" + m.substring(m.length - 2, m.length) + "-" +
 
-            d.substring(d.length - 2, d.length);
-    }
+        d.substring(d.length - 2, d.length);
+}
 commontools.longTime = function (time) {
-    if(!time) return;
+    if (!time) return;
     // console.log('ndkld;lvds;lgm',time)
     var now = new Date().getTime();
     // 下面两种转换格式都可以。

@@ -1,18 +1,18 @@
 <template>
   <div class="item class-banke-list">
     <div class="item" :class="classitem.ordernum?'act':''">
-      <div class="reddot-Tips-wrap " :class="classitem.eventmsgs && homeEventmsgs?'reddot-Tips':''">
+      <div class="reddot-Tips-wrap" :class="classitem.eventmsgs && homeEventmsgs?'reddot-Tips':''">
         <img class="itemavatar" :src="classitem.avatar" :onerror="$defaultImg('banke')" />
       </div>
       <div class="itempart">
         <div class="wrap">
           <div class="itemtitle ellipse">
             {{classitem.name}}
-            <span class="membernum fonttiny">{{classitem.membernum}}人</span>
+            <span class="membernum fonttiny fr color9">{{classitem.membernum}}人</span>
           </div>
           <div class="font-xs ellipse">
             教师：{{classitem.username}}
-            <span class="class-nmuber font-xs">班课号{{classitem.id}}</span>
+            <span class="class-nmuber font-xs fr">班课号:{{classitem.id}}</span>
           </div>
           <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
@@ -37,10 +37,10 @@ export default {
         };
       }
     },
-    end:{
+    end: {
       default: false
     },
-     homeEventmsgs:{
+    homeEventmsgs: {
       default: false
     }
   },
@@ -81,7 +81,7 @@ export default {
       .itemavatar {
         position: absolute;
         width: 100%;
-        height:100%;
+        height: 100%;
         left: 0;
         top: 0;
         border-radius: 3px;
@@ -101,11 +101,8 @@ export default {
           }
         }
         .itemtitle {
-          font-size: 16px;
+          font-size: 18px;
           .membernum {
-            position: absolute;
-            right: 36px;
-            color: #aaaaaa;
           }
         }
         .Notice {

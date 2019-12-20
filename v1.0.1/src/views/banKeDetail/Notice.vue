@@ -1,7 +1,7 @@
 <template>
   <div class="Notice-content-main">
-    <mt-field placeholder="请输入公告内容" type="textarea" rows="8" v-model="textareaData"></mt-field>
-    <mt-button type="primary" @click.native="submit">发布</mt-button>
+    <mt-field  :placeholder="caneditbanke?'请输入公告内容':'暂无公告'" type="textarea" rows="8" v-model="textareaData" :disabled="!caneditbanke"></mt-field>
+    <mt-button v-if="caneditbanke" type="primary" @click.native="submit">发布</mt-button>
   </div>
 </template>
 
@@ -14,6 +14,9 @@ export default {
       default() {
         return {};
       }
+    },
+    caneditbanke:{
+      default:true
     }
   },
   data() {

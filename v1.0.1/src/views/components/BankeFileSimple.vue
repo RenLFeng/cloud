@@ -6,7 +6,7 @@
       class="falist"
       :localfiles="localfiles"
     />
-    <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="errorImg" />
+    <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="$defaultImg(errorImg)" />
     <div class="maincontent">
       <div class="mainctitle">
         <div class="ellipse">{{fileitem.name}}</div>
@@ -58,14 +58,11 @@ export default {
       return this.fileitem.localfile;
     },
     errorImg() {
-      var srcstr = 'this.src="';
       if (this.fileitem.ftype == "file") {
-        srcstr += require("../../assets/file_icon/file.svg");
+       return 'file'
       } else {
-        srcstr += require("../../assets/file_icon/IT.svg");
+        return 'IT'
       }
-      srcstr += '"';
-      return srcstr;
     },
     fileimg() {
       let r = this.fileitem.url;

@@ -515,7 +515,7 @@ export default {
 <style lang="less">
 .discuss-container {
   font-size: 14px;
-  margin-top: 50px;
+  // margin-top: 50px;
   .tit-info {
     .mint-cell-wrapper {
       font-size: 18px;

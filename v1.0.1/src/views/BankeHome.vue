@@ -1,7 +1,12 @@
 <template>
   <div>
     <mt-header v-show="hasnavbar" :title="bankename">
-      <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button
+        v-if="hasbackbtn"
+        icon="back"
+        slot="left"
+        @click="$router.go(-1)"
+      >{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div
@@ -29,7 +34,7 @@
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
-          <BankeHuDong :bankeid="id" :eventmsgs="eventmsgs" :selected="new Date().getTime()"/>
+          <BankeHuDong :bankeid="id" :eventmsgs="eventmsgs" :selected="new Date().getTime()" />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
           <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />
@@ -176,12 +181,12 @@ export default {
     hasnavbar() {
       return nativecode.hasnavbar();
     },
-      hasbackbtn(){
-        if (nativecode.platform == 'exsoftdaping'){
-            return false;
-        }
-        return true;
-      },
+    hasbackbtn() {
+      if (nativecode.platform == "exsoftdaping") {
+        return false;
+      }
+      return true;
+    },
     footerbar() {
       return this.$store.state.footerBarState;
     },
@@ -192,9 +197,9 @@ export default {
       return this.$store.state.lang;
     },
     bankename() {
-      let bname =  this.curbanke.name;
-      if (this.curbanke.states < 1){
-          bname = '[已结束]' + bname;
+      let bname = this.curbanke.name;
+      if (this.curbanke.states < 1) {
+        bname = "[已结束]" + bname;
       }
       return bname;
     },
@@ -314,21 +319,18 @@ export default {
     console.log("bankehome:" + this.id);
     //console.log(this.$store.getters);
 
-      //! 消除可能的wx缓存
-      this.$http
-          .post('/api/api/uservalidate')
-          .then(res =>{
-              if (res.data.code == 0){
-                  this.$store.commit("setLoginUser", res.data.data);
-              }
-              else{
-                  this.$store.commit("setLoginUser", {});
-                  this.$store.commit("setRouterForward", true);
-                  this.$router.push("/login");
+    //! 消除可能的wx缓存
+    this.$http.post("/api/api/uservalidate").then(res => {
+      if (res.data.code == 0) {
+        this.$store.commit("setLoginUser", res.data.data);
+      } else {
+        this.$store.commit("setLoginUser", {});
+        this.$store.commit("setRouterForward", true);
+        this.$router.push("/login");
 
-                  nativecode.jsLogin(0, {});
-              }
-          })
+        nativecode.jsLogin(0, {});
+      }
+    });
 
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
     this.bankeid = this.id;
@@ -382,21 +384,23 @@ export default {
 }
 
 .tabitemmid {
-  margin-top: 10px;
-
-  /*cjy: old size: 24px;*/
-  width: 40px;
-  height: 40px;
-  transform: translate(-8px, -8px);
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 50px;
+  height: 50px;
 }
-
+.mint-tab-item {
+  padding: 0;
+}
 .bankehome {
   position: relative;
   height: 72px;
 }
 .bankehome i {
   position: absolute;
-  top: 0;
+  top: 12px;
   left: 50%;
   transform: translate(-50%, 0);
 }
@@ -404,7 +408,7 @@ export default {
   position: absolute;
   width: 100%;
   left: 50%;
-  bottom: 5px;
+  bottom: 9px;
   transform: translate(-50%, 0);
 }
 </style>

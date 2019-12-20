@@ -92,10 +92,10 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header title="发布公告">
+      <mt-header :title="caneditbanke?'发布公告':'查看公告'">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Notice :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" />
+      <Notice :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" :caneditbanke="caneditbanke" />
     </mt-popup>
     <mt-popup
       v-model="popupProportion"
