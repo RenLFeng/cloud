@@ -125,7 +125,7 @@ export default {
       let imgIcon = "";
       this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
       this.editItemObj.name=pingceType(this.editItemObj.ptype)
-      CollectionFn(this.editItemObj, 4, imgIcon, this.editItemObj.id);
+      CollectionFn(this.editItemObj, 4, imgIcon, this.editItemObj.id,this.bankeid);
     },
     loadMore() {
       this.loading = true;

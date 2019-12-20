@@ -26,6 +26,8 @@
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
     <div class="devide"></div>
     <mt-cell title="查询已结束班课" is-link @click.native="queryfinished"></mt-cell>
+        <div class="devide"></div>
+    <mt-cell title="清除所有提示" is-link @click.native="clearEvnet"></mt-cell>
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -107,14 +109,14 @@ export default {
       bindtitle: "",
 
       popupBankeEnd: false,
-      curbankes: [],
+      curbankes: []
     };
   },
   components: {
     BankeEnd
   },
   created() {
-     this.$store.commit("SET_CLOUD_BAR", false);
+    this.$store.commit("SET_CLOUD_BAR", false);
   },
   computed: {
     hasloginpage() {
@@ -276,6 +278,25 @@ export default {
     onabout: function() {
       // Toast("暂未实现");
     },
+    //清除提示
+    clearEvnet() {
+      Indicator.open("加载中...");
+      this.$http
+        .post("/api/eventmsgs/clear", {})
+        .then(res => {
+          if (res.data.code == "0") {
+            this.$emit("clearevnt", true);
+            Toast("清除成功");
+          } else {
+            Toast("清除失败");
+          }
+          Indicator.close();
+        })
+        .catch(err => {
+          Toast("服务异常");
+          Indicator.close();
+        });
+    },
     //查询已结束班课
     queryfinished() {
       Indicator.open("加载中...");
@@ -308,7 +329,7 @@ export default {
     Backs() {
       if (this.popupBankeEnd) {
         this.popupBankeEnd = false;
-         this.$store.commit("SET_CLOUD_BAR", false);
+        this.$store.commit("SET_CLOUD_BAR", false);
       }
     }
   }

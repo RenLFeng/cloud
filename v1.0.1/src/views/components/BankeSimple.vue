@@ -1,7 +1,7 @@
 <template>
   <div class="item class-banke-list">
     <div class="item" :class="classitem.ordernum?'act':''">
-      <div class="reddot-Tips-wrap " :class="classitem.eventmsgs?'reddot-Tips':''">
+      <div class="reddot-Tips-wrap " :class="classitem.eventmsgs && homeEventmsgs?'reddot-Tips':''">
         <img class="itemavatar" :src="classitem.avatar" :onerror="$defaultImg('banke')" />
       </div>
       <div class="itempart">
@@ -38,6 +38,9 @@ export default {
       }
     },
     end:{
+      default: false
+    },
+     homeEventmsgs:{
       default: false
     }
   },

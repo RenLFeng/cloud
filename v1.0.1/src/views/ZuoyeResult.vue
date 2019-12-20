@@ -696,12 +696,13 @@ export default {
     },
     shuoc(){
       this.actionShow=true;
+      console.log(this.zuoyeitem);
     },
         //收藏
     Collection() {
       // console.log(this.zuoyeitem);
       let imgIcon = "zuoye";
-     CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id);
+     CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id,this.zuoyeitem.ownerid);
     },
 
   },

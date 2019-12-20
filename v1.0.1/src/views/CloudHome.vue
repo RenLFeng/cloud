@@ -28,6 +28,7 @@
                 :classitem="curbankes[selindex]"
                 @click.native="bankeclick(item)"
                 @showMenu="onShowMenu"
+                :homeEventmsgs="homeEventmsgs"
               ></BankeSimple>
             </div>
             <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
@@ -42,7 +43,7 @@
           <examhome></examhome>
         </mt-tab-container-item>
         <mt-tab-container-item id="mine">
-          <MineAbout @changeSelected="onChangeSelected"></MineAbout>
+          <MineAbout @changeSelected="onChangeSelected" @clearevnt="onClearevnt"></MineAbout>
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
@@ -64,7 +65,7 @@
       </mt-tab-item>
     </mt-tabbar>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
-    <mt-actionsheet  :actions="actions2" v-model="actionShow2"></mt-actionsheet>
+    <mt-actionsheet :actions="actions2" v-model="actionShow2"></mt-actionsheet>
     <mt-actionsheet :actions="actionsstu" v-model="actionShowStu"></mt-actionsheet>
 
     <mt-popup
@@ -138,7 +139,7 @@ export default {
       popupJoin: false,
       actionShow: false,
       actionShow2: false,
-        actionShowStu:false,
+      actionShowStu: false,
       actions: [
         {
           name: "进入班课",
@@ -159,11 +160,11 @@ export default {
           method: this.jion
         }
       ],
-        actionsstu:[
-            {
-                name: "使用班课号加入班课",
-                method: this.jion
-            }
+      actionsstu: [
+        {
+          name: "使用班课号加入班课",
+          method: this.jion
+        }
       ],
       SearchHistoryLen: false,
       SearchHistoryArr: [],
@@ -184,16 +185,16 @@ export default {
       }
       return false;
     },
-      isteacher(){
-        return this.$store.getters.isteacher;
-      },
+    isteacher() {
+      return this.$store.getters.isteacher;
+    },
     hasmainback() {
       return nativecode.hasmainback();
     },
     hasnavbar() {
-        if (nativecode.platform == 'miniprogram'){
-            return false;
-        }
+      if (nativecode.platform == "miniprogram") {
+        return false;
+      }
       return nativecode.hasnavbar();
     },
     curbankes() {
@@ -211,9 +212,8 @@ export default {
       // console.log(this.selected);
       if (this.selected == "banke") {
         this.initbanke();
-      }
-      else if (this.selected == 'mine'){
-          this.initmine();
+      } else if (this.selected == "mine") {
+        this.initmine();
       }
     },
     seachvalue: function(newvs, oldvs) {
@@ -254,15 +254,13 @@ export default {
     },
     //创建or加入
     addBankeIcon() {
-        let istea = this.$store.getters.isteacher;
-        console.log(istea);
-        if (this.isteacher){
-            this.actionShow2 = true;
-        }
-        else{
-            this.actionShowStu = true;
-        }
-
+      let istea = this.$store.getters.isteacher;
+      console.log(istea);
+      if (this.isteacher) {
+        this.actionShow2 = true;
+      } else {
+        this.actionShowStu = true;
+      }
     },
     //进入班课
     bankeDedail() {
@@ -311,23 +309,20 @@ export default {
           Toast("服务异常");
         });
     },
-      initmine(){
-          //! 避免wx 缓存
-          this.$http
-              .post('/api/api/uservalidate')
-              .then(res =>{
-                  if (res.data.code == 0){
-                      this.$store.commit("setLoginUser", res.data.data);
-                  }
-                  else{
-                      this.$store.commit("setLoginUser", {});
-                      this.$store.commit("setRouterForward", true);
-                      this.$router.push("/login");
+    initmine() {
+      //! 避免wx 缓存
+      this.$http.post("/api/api/uservalidate").then(res => {
+        if (res.data.code == 0) {
+          this.$store.commit("setLoginUser", res.data.data);
+        } else {
+          this.$store.commit("setLoginUser", {});
+          this.$store.commit("setRouterForward", true);
+          this.$router.push("/login");
 
-                      nativecode.jsLogin(0, {});
-                  }
-              })
-      },
+          nativecode.jsLogin(0, {});
+        }
+      });
+    },
     //获得焦点
     onFocus() {
       let banke_history = localStorage.getItem("banke_history") || "[]";
@@ -442,7 +437,7 @@ export default {
           this.$store.commit("banke/setBankes", datas);
         })
         .catch(err => {
-           this.$store.commit("banke/setBankes", datas);
+          this.$store.commit("banke/setBankes", datas);
         });
     },
     //红点班课主页
@@ -456,6 +451,11 @@ export default {
           }
         })
         .catch(err => {});
+    },
+    onClearevnt(v) {
+      if (v) {
+        this.homeEventmsgs = false;
+      }
     }
   },
   destroyed: function() {

@@ -10,6 +10,7 @@
         :item="v"
         type="common"
         @edit="onEdit"
+        @click.native="filedetail(v)"
       />
     </div>
     <Empty v-else />
@@ -20,6 +21,7 @@
 <script>
 import List from "@/common/list";
 import Empty from "@/common/empty";
+import nativecode from "../../nativecode";
 import {
   Indicator,
   Toast,
@@ -89,8 +91,8 @@ export default {
       this.actionShow = true;
     },
     setName() {
-      MessageBox.prompt("重命名收藏",'').then(({ value, action }) => {
-       alert(this.editItemObj.id)
+      MessageBox.prompt("重命名收藏", "").then(({ value, action }) => {
+        alert(this.editItemObj.id);
       });
     },
     dl() {
@@ -127,6 +129,40 @@ export default {
           Indicator.close();
           this.actionShow = false;
         });
+    },
+    filedetail(fileItem) {
+      switch (fileItem.eventtype) {
+        case 1:
+          let tourl = "/bankehome/" + fileItem.info.bankeid;
+          if (!nativecode.navigateTo(tourl)) {
+            this.$store.commit("setRouterForward", true);
+            this.$router.push(tourl);
+          }
+          break;
+        case 2:
+          return "";
+          break;
+        case 3:
+          this.$store.commit("setRouterForward", true);
+          this.$router.push("/zuoyeresult/" + fileItem.eventid);
+          break;
+        case 4:
+          this.$store.commit("setRouterForward", true);
+          this.$router.push({
+            name: "PingCe",
+            params: { bankeid: fileItem.info.bankeid }
+          });
+          break;
+        case 100:
+          this.$store.commit("setRouterForward", true);
+          this.$router.push({
+            name: "Banshu",
+            params: { bankeid: fileItem.info.bankeid }
+          });
+          break;
+        default:
+          return "";
+      }
     }
   },
   components: {
@@ -139,7 +175,6 @@ export default {
 <style scoped lang="less">
 .collection-wrap {
   .main {
-
   }
 }
 </style>

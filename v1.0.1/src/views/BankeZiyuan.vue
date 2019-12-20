@@ -289,7 +289,7 @@ export default {
       } else if (this.editItemFile.ftype == 'link') {
         imgIcon = "IT";
       }
-      CollectionFn(this.editItemFile, 1, imgIcon, this.editItemFile.id);
+      CollectionFn(this.editItemFile, 1, imgIcon, this.editItemFile.id,this.bankeid);
     },
     //编辑
     bankeEdit() {},

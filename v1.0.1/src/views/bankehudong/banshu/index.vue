@@ -109,7 +109,7 @@ export default {
       let imgIcon = "";
       this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
       this.editItemObj.name = '课堂板书'+this.editItemObj.uploadtime
-      CollectionFn(this.editItemObj, 100, imgIcon, this.editItemObj.id);
+      CollectionFn(this.editItemObj, 100, imgIcon, this.editItemObj.id,this.bankeid);
     },
     loadMore() {
       this.isScorll = true;

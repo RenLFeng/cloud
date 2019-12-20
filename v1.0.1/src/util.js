@@ -308,13 +308,14 @@ export const getZYFileTypeIcon = (name) => {
   }
   return r;
 }
-export const CollectionFn = (itemfile, type, imgIcon, id) => {
+export const CollectionFn = (itemfile, type, imgIcon, id,bankeid) => {
   Indicator.open("加载中...");
   let info = {
     typeText: getFileType(type),
     img: itemfile.pic ? itemfile.pic : imgIcon,
     time: formateTime('', '-'),
-    itemfile: itemfile
+    itemfile: itemfile,
+    bankeid:bankeid
   }
   // console.log(info)
   info = JSON.stringify(info);
