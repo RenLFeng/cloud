@@ -90,7 +90,29 @@ export default {
     },
     setName() {
       MessageBox.prompt("重命名收藏",'').then(({ value, action }) => {
-       alert(this.editItemObj.id)
+       //alert(this.editItemObj.id)
+          //alert(value);
+          let curobj = this.editItemObj;
+          if (value.length > 0){
+              this.$http
+                  .post("/api/userfav/save", {
+                      id: this.editItemObj.id,
+                      title: value
+                  })
+                  .then(res => {
+                      if (res.data.code == "0") {
+                       //   Toast("成功");
+                          curobj.title = value;
+                      } else {
+                          Toast("失败");
+                      }
+                      Indicator.close();
+                  })
+                  .catch(err => {
+                      Toast("异常");
+                      Indicator.close();
+                  });
+          }
       });
     },
     dl() {
