@@ -149,15 +149,23 @@ export default {
         Toast("你无权限");
         return;
       }
+      let deluserid = this.DetailItem.memberuserid;
       MessageBox.confirm("您确定要删除吗？")
         .then(res => {
           this.$http
-            .post("/api/banke/reqmemberleave", {
-              bankeid: this.bankeid
+            .post("/api/banke/memberdelete", {
+              bankeid: this.bankeid,
+                userid:deluserid
             })
             .then(res => {
               if (res.data.code == 0) {
                 Toast("删除成功");
+                for(let i=0; i<this.members.length; i++){
+                    if (this.members[i].memberuserid == deluserid){
+                        this.members.splice(i, 1);
+                        break;
+                    }
+                  }
               } else {
                 Toast("删除失败");
               }
@@ -182,20 +190,24 @@ export default {
       this.isloading = true;
       Indicator.open("加载中");
       var url = "/api/api/bankememberquery?bankeid=" + this.bankeid;
+
       this.$http
         .post(url)
         .then(res => {
           this.isloading = false;
           if (res.data.code == 0) {
             this.members = res.data.data["members"];
+            let curbanke = this.$store.state.curbanke;
+            if (typeof curbanke['scorerule1'] == 'undefined'){
+
+            }
             for (let v of this.members) {
-              this.Average =
-                this.Average +
-                v.score1 +
-                v.score2 +
-                v.score3 +
-                v.score4 +
-                v.score5;
+                v.score = 0;
+                v.score = v.score1 * curbanke.scorerule1 / 100
+                + v.score2 * curbanke.scorerule2 / 100
+                + v.score3 * curbanke.scorerule3 / 100
+                + v.score4 * curbanke.scorerule4 / 100;
+              this.Average += v.score;
             }
             this.Average = parseInt(
               this.Average / (this.members.length ? this.members.length : 1)

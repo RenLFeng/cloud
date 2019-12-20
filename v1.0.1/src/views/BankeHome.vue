@@ -1,7 +1,7 @@
 <template>
   <div>
     <mt-header v-show="hasnavbar" :title="bankename">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div
@@ -176,6 +176,12 @@ export default {
     hasnavbar() {
       return nativecode.hasnavbar();
     },
+      hasbackbtn(){
+        if (nativecode.platform == 'exsoftdaping'){
+            return false;
+        }
+        return true;
+      },
     footerbar() {
       return this.$store.state.footerBarState;
     },
@@ -186,9 +192,9 @@ export default {
       return this.$store.state.lang;
     },
     bankename() {
-      let bname = this.curbanke.name;
-      if (this.curbanke.states < 0) {
-        bname += "(已结束)";
+      let bname =  this.curbanke.name;
+      if (this.curbanke.states < 1){
+          bname = '[已结束]' + bname;
       }
       return bname;
     },
@@ -307,6 +313,23 @@ export default {
   created() {
     console.log("bankehome:" + this.id);
     //console.log(this.$store.getters);
+
+      //! 消除可能的wx缓存
+      this.$http
+          .post('/api/api/uservalidate')
+          .then(res =>{
+              if (res.data.code == 0){
+                  this.$store.commit("setLoginUser", res.data.data);
+              }
+              else{
+                  this.$store.commit("setLoginUser", {});
+                  this.$store.commit("setRouterForward", true);
+                  this.$router.push("/login");
+
+                  nativecode.jsLogin(0, {});
+              }
+          })
+
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
     this.bankeid = this.id;
     if (u) {

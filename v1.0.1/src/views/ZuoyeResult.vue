@@ -615,15 +615,20 @@ export default {
         //! 提交模式
         this.pagemode = "submit";
       }
+      if (data['zdetail']){
+          this.zdetail.ztext = data["zdetail"].ztext;
+          this.zdetail.localfiles = maintools.localfilesFromFilelist(
+              data["zdetail"].files
+          );
 
-      this.zdetail.ztext = data["zdetail"].ztext;
-      this.zdetail.localfiles = maintools.localfilesFromFilelist(
-        data["zdetail"].files
-      );
-      this.zanswer.ztext = data["zanswer"].ztext;
-      this.zanswer.localfiles = maintools.localfilesFromFilelist(
-        data["zanswer"].files
-      );
+      }
+      if (data['zanswer']){
+          this.zanswer.ztext = data["zanswer"].ztext;
+          this.zanswer.localfiles = maintools.localfilesFromFilelist(
+              data["zanswer"].files
+          );
+      }
+
       var dresults = data["results"];
       for (var i = 0; i < dresults.length; i++) {
         dresults[i].localfiles = maintools.localfilesFromFilelist(

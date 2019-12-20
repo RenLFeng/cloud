@@ -38,14 +38,13 @@
             </li>
             <div class="devide"></div>
 
+
             <li @click="edBk">
               <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
             </li>
-            <div class="devide"></div>
 
-            <li @click="closeBk" class="dange">
-              <mt-cell :title="$t('bankeXingQing.DeleteClass')" is-link></mt-cell>
-            </li>
+
+
           </ul>
         </li>
         <li v-else>
@@ -73,6 +72,8 @@
                 <mt-cell title="退出班课" is-link></mt-cell>
               </li>
             </div>
+
+
           </ul>
         </li>
       </ul>
@@ -185,8 +186,14 @@ export default {
     },
     //学情统计
     situation() {
-      window.location.href = `http://192.168.0.237:8088/#/ClassStatistics?id=${this.bankeInfo.id}`;
-      // window.location.href = `http://192.168.0.2:9982/backend/#/ClassStatistics?id=${this.bankeInfo.id}`;
+        let url = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+        url = 'http://localhost:9982/backend/#/ClassStatistics?id=' + this.bankeInfo.id;
+        if (process.env.NODE_ENV !== "development")
+        {
+            url = document.location.origin;
+            url += '/backend/#/ClassStatistics?id=' + this.bankeInfo.id;
+        }
+      window.location.href = url;
     },
     editBkFn() {
       if (!this.caneditbanke) return;
@@ -235,7 +242,30 @@ export default {
     },
 
     closeBk() {
-      if (!this.caneditbanke) return;
+      if (!this.caneditbanke){
+          MessageBox.confirm("", {
+              title: '提示',
+              message: '确认退出当前班课?',
+              confirmButtonText: '退出',
+              cancelButtonText: '取消',
+              showCancelButton: true
+          }).then(res=>{
+              this.$http
+                  .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
+                  .then(res => {
+                      if (res.data.code == 0) {
+                          MessageBox.alert('退出成功').then(() => {
+                              this.$store.commit("setRouterForward", true);
+                              this.$router.push("/");
+                          });
+                      } else {
+                          MessageBox.alert(res.data.msg).then(() => {});
+                      }
+                  })
+
+          });
+          return ;
+      }
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),

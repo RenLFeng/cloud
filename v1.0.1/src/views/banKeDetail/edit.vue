@@ -140,7 +140,7 @@ export default {
             });
           } else {
             MessageBox.alert(res.data.msg).then(() => {
-              
+
             });
           }
         })
@@ -162,8 +162,7 @@ export default {
     },
 
     uploadimagedata(base64str) {
-      // var url = "/api/api/userUpdateAvatar";
-       var url = "/api/banke/saveavatar";
+      var url = "/api/banke/saveavatar?bankeid=" + this.bankeInfo.id;
       Indicator.open(this.$t("Indicator.Uploading"));
       this.$http
         .post(url, {

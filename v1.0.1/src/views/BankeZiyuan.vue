@@ -437,13 +437,8 @@ export default {
           return;
         });
       }
-      //   console.log(document.location);
-      //  console.log(window.location.href);
-      //   console.log(self.location.href);
-      // var url = document.location.origin;
-      // url += fileitem.filepath;
+
       var desc = "请在正式环境查看";
-      // desc += url;
       Toast(desc);
 
       if (window.exsoftTest) {

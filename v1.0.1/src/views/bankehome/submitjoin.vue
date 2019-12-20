@@ -14,6 +14,9 @@
 </template>
 
 <script>
+
+    import { Indicator, Toast, MessageBox, Popup, Button, Field } from "mint-ui";
+
 export default {
   props: {
     bankeItem: {
@@ -31,9 +34,30 @@ export default {
   watch: {},
   methods: {
     submitJoin() {
-      let tourl = "/bankehome/" + this.bankeItem.id;
-      this.$store.commit("setRouterForward", true);
-      this.$router.push(tourl);
+
+        Indicator.open('处理中...');
+        this.$http
+            .post("/api/banke/reqmemberadd", {
+                "bankeid":this.bankeItem.id
+            })
+            .then(res => {
+                Indicator.close();
+                if (res.data.code == "0") {
+                    this.bankeItem=res.data.data.bankes[0];
+                    this.popupSubmitJoin=true;
+
+                    let tourl = "/bankehome/" + this.bankeItem.id;
+                    this.$store.commit("setRouterForward", true);
+                    this.$router.push(tourl);
+                } else {
+                    MessageBox.alert("加入失败:"+res.data.msg);
+                }
+            })
+            .catch(err => {
+                Indicator.close();
+                Toast("服务异常");
+            });
+
     }
   },
   components: {}

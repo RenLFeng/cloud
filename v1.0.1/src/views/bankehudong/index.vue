@@ -1,11 +1,8 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
-      <li v-show="haswxsign" class="fontlarge" :class="eventmsgs.hdTips.sign?'reddot-Tips':''"  @click="onwxsign()">
-        <span>微信签到</span>
-        <i class="iconfont iconqiandao2 eicotrigger bigfont fr" style="color:#E46100"></i>
-      </li>
-      <li class="fontlarge" :class="eventmsgs.hdTips.sign?'reddot-Tips':''" @click="teacherFn()">
+
+      <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
         <i class="iconfont iconqiandao2 eicotrigger bigfont fr" style="color:#E46100"></i>
       </li>
@@ -51,11 +48,6 @@ export default {
   props: {
     bankeid: {
       default: 0
-    },
-    eventmsgs: {
-      default() {
-        return {};
-      }
     }
   },
   components: {
@@ -171,10 +163,6 @@ export default {
           font-size: 50px;
         }
       }
-    }
-    .reddot-Tips::after {
-      right: 29px!important;
-      top: 21px!important;
     }
   }
 }

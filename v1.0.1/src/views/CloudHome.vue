@@ -32,7 +32,8 @@
             </div>
             <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
               <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
-              <p>暂无班课，点击创建或加入班课</p>
+              <p v-if="isteacher">暂无班课，点击创建或加入班课</p>
+              <p v-else>暂无班课，点击加入班课</p>
             </div>
             <div v-if="!bankeempty &&bankestatedesc!='当前无班课' " class="tc">{{bankestatedesc}}</div>
           </div>
@@ -63,7 +64,8 @@
       </mt-tab-item>
     </mt-tabbar>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
-    <mt-actionsheet :actions="actions2" v-model="actionShow2"></mt-actionsheet>
+    <mt-actionsheet  :actions="actions2" v-model="actionShow2"></mt-actionsheet>
+    <mt-actionsheet :actions="actionsstu" v-model="actionShowStu"></mt-actionsheet>
 
     <mt-popup
       v-model="popupSearchHiosty"
@@ -136,6 +138,7 @@ export default {
       popupJoin: false,
       actionShow: false,
       actionShow2: false,
+        actionShowStu:false,
       actions: [
         {
           name: "进入班课",
@@ -156,6 +159,12 @@ export default {
           method: this.jion
         }
       ],
+        actionsstu:[
+            {
+                name: "使用班课号加入班课",
+                method: this.jion
+            }
+      ],
       SearchHistoryLen: false,
       SearchHistoryArr: [],
       popupSearchHiosty: false,
@@ -175,10 +184,16 @@ export default {
       }
       return false;
     },
+      isteacher(){
+        return this.$store.getters.isteacher;
+      },
     hasmainback() {
       return nativecode.hasmainback();
     },
     hasnavbar() {
+        if (nativecode.platform == 'miniprogram'){
+            return false;
+        }
       return nativecode.hasnavbar();
     },
     curbankes() {
@@ -196,6 +211,9 @@ export default {
       // console.log(this.selected);
       if (this.selected == "banke") {
         this.initbanke();
+      }
+      else if (this.selected == 'mine'){
+          this.initmine();
       }
     },
     seachvalue: function(newvs, oldvs) {
@@ -236,7 +254,15 @@ export default {
     },
     //创建or加入
     addBankeIcon() {
-      this.actionShow2 = true;
+        let istea = this.$store.getters.isteacher;
+        console.log(istea);
+        if (this.isteacher){
+            this.actionShow2 = true;
+        }
+        else{
+            this.actionShowStu = true;
+        }
+
     },
     //进入班课
     bankeDedail() {
@@ -285,6 +311,23 @@ export default {
           Toast("服务异常");
         });
     },
+      initmine(){
+          //! 避免wx 缓存
+          this.$http
+              .post('/api/api/uservalidate')
+              .then(res =>{
+                  if (res.data.code == 0){
+                      this.$store.commit("setLoginUser", res.data.data);
+                  }
+                  else{
+                      this.$store.commit("setLoginUser", {});
+                      this.$store.commit("setRouterForward", true);
+                      this.$router.push("/login");
+
+                      nativecode.jsLogin(0, {});
+                  }
+              })
+      },
     //获得焦点
     onFocus() {
       let banke_history = localStorage.getItem("banke_history") || "[]";
