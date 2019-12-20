@@ -1,40 +1,43 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
-
       <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
-        <i class="iconfont iconqiandao2 eicotrigger bigfont fr" style="color:#E46100"></i>
+        <i
+          class="iconfont iconqiandao2 eicotrigger bigfont fr"
+          :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
+          style="color:#E46100"
+        ></i>
       </li>
-      <li class="fontlarge" :class="eventmsgs.hdTips.pingce?'reddot-Tips':''"   @click="gopingce" v-if="!isTeacher">
+      <li class="fontlarge" @click="gopingce" v-if="!isTeacher">
         <span>评测</span>
-        <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
+        <i
+          class="iconfont icontongji eicotrigger bigfont fr"
+          :class="eventmsgs.hdTips.pingce?'reddot-Tips2':''"
+          style="color:#38ADA9"
+        ></i>
       </li>
       <li class="fontlarge" @click="pingce">
         <span>评测记录</span>
         <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
       </li>
-      <li class="fontlarge dp" :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''" @click="BigLogin" v-if="isTeacher">
+      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
-        <i class="iconfont icondapingmu eicotrigger bigfont fr" style="color:#0055FF"></i>
+        <i
+          class="iconfont icondapingmu eicotrigger bigfont fr"
+          :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''"
+          style="color:#0055FF"
+        ></i>
       </li>
-      <li class="fontlarge bs" :class="eventmsgs.hdTips.banshu?'reddot-Tips':''" @click="Banshu">
+      <li class="fontlarge bs" @click="Banshu">
         <span>课堂板书</span>
-        <i class="iconfont iconwritin-blackboard eicotrigger bigfont fr" style="color:#38AD5A"></i>
+        <i
+          class="iconfont iconwritin-blackboard eicotrigger bigfont fr"
+          :class="eventmsgs.hdTips.banshu?'reddot-Tips':''"
+          style="color:#38AD5A"
+        ></i>
       </li>
     </ul>
-    <!-- <mt-popup
-      v-model="popupTeacherSignInfo"
-      position="right"
-      class="mint-popup"
-      :modal="false"
-      style="background:#f0f0f0"
-    >
-      <mt-header title="上课签到">
-        <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
-      </mt-header>
-      <TeacherSignInfo :bankeid="bankeid" :role="isTeacher" :global="global" @global="onglobal" />
-    </mt-popup>-->
   </div>
 </template>
 <script>
@@ -48,6 +51,11 @@ export default {
   props: {
     bankeid: {
       default: 0
+    },
+    eventmsgs: {
+      default() {
+        return {};
+      }
     }
   },
   components: {
@@ -71,7 +79,9 @@ export default {
     }
   },
   created() {
-    // this.signquery();
+    console.log("ffsd", this.eventmsgs);
+    // alert(0)
+    // this.eventmsgsOnbanke();
   },
   methods: {
     //老师签到
@@ -146,6 +156,7 @@ export default {
     width: 95%;
     margin: 10px auto;
     li {
+      position: relative;
       height: 80px;
       background: #fff;
       padding: 20px;
@@ -153,6 +164,10 @@ export default {
       line-height: 40px;
       border-radius: 10px;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.07);
+      i {
+        position: absolute;
+        right: 15px;
+      }
       &.dp {
         i {
           font-size: 39px;

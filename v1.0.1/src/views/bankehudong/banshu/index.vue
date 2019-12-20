@@ -125,9 +125,9 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-            for (let i = 0; i < 5; i++) {
-              res.data.data.push(arr);
-            }
+            // for (let i = 0; i < 5; i++) {
+            //   res.data.data.push(arr);
+            // }
             if (res.data.data.length < this.pagesize) {
               this.loading = true;
               this.scorllEd = true;

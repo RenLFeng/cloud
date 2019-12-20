@@ -1,9 +1,9 @@
 <template>
   <div class="collection-wrap">
-    <mt-header title="我的收藏">
+    <mt-header title="我的收藏" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="main" v-if="collectionHiostry.length">
+    <div class="main main-f" v-if="collectionHiostry.length">
       <List
         v-for="(v,index) in collectionHiostry"
         :key="index"
@@ -138,15 +138,8 @@ export default {
 
 <style scoped lang="less">
 .collection-wrap {
-  .mint-header{
-  position: fixed;
-  width: 100%;
-  left: 0;
-  top: 0;
-  z-index: 9999999999;
-  }
   .main {
-    margin-top: 40px;
+
   }
 }
 </style>

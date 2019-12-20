@@ -29,7 +29,7 @@
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
-          <BankeHuDong :bankeid="id" :eventmsgs="eventmsgs" />
+          <BankeHuDong :bankeid="id" :eventmsgs="eventmsgs" :selected="new Date().getTime()"/>
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
           <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />

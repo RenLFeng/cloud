@@ -17,7 +17,7 @@
           <div class="font-xs ellipse Notice">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>
-      <span class="go">
+      <span class="go" v-if="!end">
         <i class="iconfont iconjiantou1" @click.stop="showMenu(classitem)"></i>
       </span>
     </div>
@@ -36,6 +36,9 @@ export default {
           avatar: ""
         };
       }
+    },
+    end:{
+      default: false
     }
   },
   data() {

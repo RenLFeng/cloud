@@ -25,12 +25,14 @@
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
     <div class="devide"></div>
-    <mt-cell
+    <mt-cell title="查询已结束班课" is-link @click.native="queryfinished"></mt-cell>
+    <!-- 国际化 -->
+    <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
       :key="index"
       :title="item.name"
       @click.native="selectLang(item)"
-    ></mt-cell>
+    ></mt-cell>-->
 
     <mt-popup v-model="popupBind" position="right" class="mint-popup-3" :modal="false">
       <mt-header title="绑定账户">
@@ -77,6 +79,12 @@
         </div>
       </div>
     </mt-popup>
+    <mt-popup v-model="popupBankeEnd" position="right" class="mint-popup-3" :modal="false">
+      <mt-header title="已结束班课" class="mint-header-f">
+        <mt-button slot="left" icon="back" @click="Backs">{{$t('common.Back')}}</mt-button>
+      </mt-header>
+      <BankeEnd :curbankes="curbankes"></BankeEnd>
+    </mt-popup>
   </div>
 </template>
 
@@ -84,7 +92,7 @@
 import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
 
 import nativecode from "../nativecode";
-
+import BankeEnd from "./my/bankeEnd";
 export default {
   name: "MineAbout",
   data() {
@@ -98,9 +106,16 @@ export default {
       bindstatedesc: "",
       bindtitle: "",
 
+      popupBankeEnd: false,
+      curbankes: [],
     };
   },
-  components: {},
+  components: {
+    BankeEnd
+  },
+  created() {
+     this.$store.commit("SET_CLOUD_BAR", false);
+  },
   computed: {
     hasloginpage() {
       return nativecode.hasloginpage();
@@ -261,18 +276,48 @@ export default {
     onabout: function() {
       // Toast("暂未实现");
     },
+    //查询已结束班课
+    queryfinished() {
+      Indicator.open("加载中...");
+      this.$http
+        .post("/api/banke/queryfinished", {})
+        .then(res => {
+          if (res.data.code == "0") {
+            console.log(res);
+            if (res.data.data.length) {
+              this.curbankes = res.data.data;
+            } else {
+              Toast("无数据");
+            }
+            this.$store.commit("SET_CLOUD_BAR", true);
+            this.popupBankeEnd = true;
+          } else {
+            Toast("出错了");
+          }
+          Indicator.close();
+        })
+        .catch(err => {
+          Toast("服务异常...");
+          Indicator.close();
+        });
+    },
     onmine: function() {
       this.$store.commit("setRouterForward", true);
       this.$router.push("/mineinfo");
     },
-    goBack() {}
+    Backs() {
+      if (this.popupBankeEnd) {
+        this.popupBankeEnd = false;
+         this.$store.commit("SET_CLOUD_BAR", false);
+      }
+    }
   }
 };
 </script>
 
 <style scoped>
 .baout-main {
-  padding-bottom: 50px;
+  /* padding-bottom: 50px; */
 }
 .my-cell-allow-right::after {
   border: solid 2px #c8c8cd;
