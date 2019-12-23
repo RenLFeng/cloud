@@ -1,6 +1,14 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
+      <li class="fontlarge" @click="onwxsign()">
+        <span>微信签到</span>
+        <i
+          class="iconfont iconqiandao2 eicotrigger bigfont fr"
+          :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
+          style="color:#E46100"
+        ></i>
+      </li>
       <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
         <i
@@ -79,15 +87,11 @@ export default {
     }
   },
   created() {
-    console.log("ffsd", this.eventmsgs);
-    // alert(0)
-    // this.eventmsgsOnbanke();
   },
   methods: {
     //老师签到
     onwxsign() {
-      //let ppath = '/Sign?bankeid' + this.bankeid;
-      nativecode.navigateToSign(this.bankeid);
+      nativecode.navigateToSign(this.bankeid,this.isteacher);
     },
     teacherFn() {
       this.$store.commit("setRouterForward", true);
@@ -96,10 +100,6 @@ export default {
         params: { bankeid: this.bankeid }
       });
     },
-    // teacherFn() {
-    //   this.popupTeacherSignInfo = true;
-    //   this.$store.commit("SET_FOOTER_BAR_STATE", false);
-    // },
     //评测
     gopingce() {
       this.$store.commit("setRouterForward", true);
@@ -132,17 +132,13 @@ export default {
         params: { bankeid: this.bankeid }
       });
       //! cjy: 板书手动删除
-        this.$http
-            .post("/api/eventmsgs/clear", {
-                eventtype: 100,
-                bankeid: this.bankeid
-            })
-            .then(res =>{
-
-            }).catch(res=>{
-
-        });
-
+      this.$http
+        .post("/api/eventmsgs/clear", {
+          eventtype: 100,
+          bankeid: this.bankeid
+        })
+        .then(res => {})
+        .catch(res => {});
     },
     onglobal(v) {
       this.global = v;

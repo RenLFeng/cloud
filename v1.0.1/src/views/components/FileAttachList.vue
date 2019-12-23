@@ -5,7 +5,7 @@
         v-for="(fitem, findex) in localfiles"
         :key="findex"
         class="imgblock"
-        :class="{'liupload':isupload,'imgblocksmall':!isupload,'reddot-Tips2':fitem.eventmsgs}"
+        :class="{'liupload':isupload,'imgblocksmall':!isupload}"
       >
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
@@ -149,11 +149,14 @@ export default {
           }
         });
       } else {
-        this.$store.commit("SET_ISPREVIEW", false);
-        this.$store.commit("SET_PREVIEWLOADFILE", item);
-        this.$store.commit("SET_IMAGES", this.tempImgs);
-        this.$store.commit("SET_INDEX", index);
-        this.$store.commit("SET_SHOW", true);
+        let obj = {
+          isPreview: false,
+          previewLoadFile:item,
+          images: this.tempImgs,
+          show: true,
+          index: index
+        };
+        this.$store.commit("SET_PREVIEW", obj, "");
       }
     },
     goBacks() {

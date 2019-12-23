@@ -145,7 +145,7 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
-import { CollectionFn, getZYFileTypeIcon } from "@/util";
+import { CollectionFn, getZYFileTypeIcon, preview } from "@/util";
 import nativecode from "../nativecode";
 
 export default {
@@ -266,7 +266,7 @@ export default {
     //收藏
     Collection() {
       let imgIcon = "";
-      if (this.editItemFile.ftype == 'file') {
+      if (this.editItemFile.ftype == "file") {
         switch (this.editItemFile.finttype) {
           case 0:
             imgIcon = getZYFileTypeIcon(this.editItemFile.name);
@@ -286,10 +286,16 @@ export default {
           default:
             return "";
         }
-      } else if (this.editItemFile.ftype == 'link') {
+      } else if (this.editItemFile.ftype == "link") {
         imgIcon = "IT";
       }
-      CollectionFn(this.editItemFile, 1, imgIcon, this.editItemFile.id,this.bankeid);
+      CollectionFn(
+        this.editItemFile,
+        1,
+        imgIcon,
+        this.editItemFile.id,
+        this.bankeid
+      );
     },
     //编辑
     bankeEdit() {},
@@ -415,6 +421,7 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             fileitem.viewnum++;
+            fileitem.eventmsgs = false;
           }
         })
         .catch(res => {});
@@ -423,20 +430,33 @@ export default {
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
       fileitem.downurl = nativecode.getDownUrl(fileitem.url);
-      if (nativecode.ncall("jsFileLink", fileitem)) {
-        return;
-      }
-      if (fileitem.ftype == "file") {
-        MessageBox.confirm("您可以下载当前文件!").then(res => {
-          let down = document.createElement("a");
-          down.href = fileitem.downurl;
-          down.download = fileitem.name;
-          document.body.appendChild(down);
-          down.click();
-          down.remove();
+      if (fileitem.finttype == "1") {
+        let tempImgs = [fileitem.info.filepath];
+        let obj = {
+          isPreview: true,
+          previewLoadFile: [fileitem.info],
+          images: tempImgs,
+          show: true,
+          index: 0
+        };
+        this.$store.commit("SET_PREVIEW", obj, "");
+      } else {
+        if (nativecode.ncall("jsFileLink", fileitem)) {
           return;
-        });
+        }
       }
+
+      // if (fileitem.ftype == "file") {
+      //   MessageBox.confirm("您可以下载当前文件!").then(res => {
+      //     let down = document.createElement("a");
+      //     down.href = fileitem.downurl;
+      //     down.download = fileitem.name;
+      //     document.body.appendChild(down);
+      //     down.click();
+      //     down.remove();
+      //     return;
+      //   });
+      // }
 
       var desc = "请在正式环境查看";
       Toast(desc);
@@ -489,7 +509,20 @@ export default {
             for (let item of res.data.data) {
               ids.push(item.id);
               this.parseOneItem(item);
+              if (item.ftype == "link") {
+                item.imgsrc = require("../assets/file_icon/IT.svg");
+              } else if (item.ftype == "file") {
+                if (item.finttype == "1") {
+                  if (item.info) {
+                    item.imgsrc =
+                      item.info.filepath + item.info.metainfo.snapsuffix;
+                  }
+                } else {
+                  item.imgsrc = commontools.fileType(item.info);
+                }
+              }
             }
+            console.log("dsad", res.data.data);
             this.eventmsgsOnactivity(res.data.data, ids);
             // commontools.arrayMergeAsIds(this.files, res.data.data);
             // this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
@@ -534,7 +567,7 @@ export default {
           }
           commontools.arrayMergeAsIds(this.files, serverData);
           this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
-          // console.log("红点查询", this.files);
+          console.log("红点查询", this.files);
         })
         .catch(err => {
           commontools.arrayMergeAsIds(this.files, serverData);
@@ -594,7 +627,21 @@ export default {
             .then(res => {
               Indicator.close();
               if (res.data.code == 0) {
+                console.log("54", res.data.data);
                 this.parseOneItem(res.data.data);
+                let item = res.data.data;
+                if (item.ftype == "link") {
+                  item.imgsrc = require("../assets/file_icon/IT.svg");
+                } else if (item.ftype == "file") {
+                  if (item.finttype == "1") {
+                    if (item.info) {
+                      item.imgsrc =
+                        item.info.filepath + item.info.metainfo.snapsuffix;
+                    }
+                  } else {
+                    item.imgsrc = commontools.fileType(item.info);
+                  }
+                }
                 commontools.arrayMergeAsIds(this.files, res.data.data);
                 //  res.data.data.info = JSON.parse(res.data.data.info);
                 let arr = [];
