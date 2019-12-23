@@ -184,10 +184,7 @@ export default {
           name: "收藏",
           method: this.Collection
         },
-        {
-          name: "编辑",
-          method: this.bankeEdit
-        },
+
         {
           name: "信息",
           method: this.showInfo
@@ -266,13 +263,19 @@ export default {
     //收藏
     Collection() {
       let imgIcon = "";
+      let cobj = {};  //! cjy: 减少信息； 这里的editItemfile 非常大
       if (this.editItemFile.ftype == 'file') {
+          cobj = {
+              url:this.editItemFile.url,
+              ftype:'file'
+          };
         switch (this.editItemFile.finttype) {
           case 0:
-            imgIcon = getZYFileTypeIcon(this.editItemFile.name);
+            imgIcon = getZYFileTypeIcon(this.editItemFile.url);
             break;
           case 1:
-            this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
+           // this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
+              imgIcon = this.editItemFile.localfile[0].imgsrc;
             break;
           case 2:
             imgIcon = "MP4";
@@ -280,16 +283,22 @@ export default {
           case 3:
             imgIcon = "MP3";
             break;
-          case 4:
-            return "";
+          case 4:  //! 文档
+              imgIcon = getZYFileTypeIcon(this.editItemFile.url);
             break;
-          default:
-            return "";
+          default: //! iqiqta
+              imgIcon = getZYFileTypeIcon(this.editItemFile.url);
+            break;
         }
       } else if (this.editItemFile.ftype == 'link') {
         imgIcon = "IT";
+        cobj = {
+            url:this.editItemFile.url,
+            ftype:'link'
+        };
       }
-      CollectionFn(this.editItemFile, 1, imgIcon, this.editItemFile.id,this.bankeid);
+      let title = this.editItemFile.name;
+      CollectionFn(cobj, 1, imgIcon, this.editItemFile.id,this.bankeid, title);
     },
     //编辑
     bankeEdit() {},
@@ -422,28 +431,36 @@ export default {
     //下载资源
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
-      fileitem.downurl = nativecode.getDownUrl(fileitem.url);
-      if (nativecode.ncall("jsFileLink", fileitem)) {
-        return;
+
+      if (fileitem.ftype == 'file'){
+          nativecode.fileviewSingle(this, fileitem.info);
       }
-      if (fileitem.ftype == "file") {
-        MessageBox.confirm("您可以下载当前文件!").then(res => {
-          let down = document.createElement("a");
-          down.href = fileitem.downurl;
-          down.download = fileitem.name;
-          document.body.appendChild(down);
-          down.click();
-          down.remove();
-          return;
-        });
+      else if (fileitem.ftype == 'link'){
+          nativecode.fileviewUrl(this, fileitem);
       }
 
-      var desc = "请在正式环境查看";
-      Toast(desc);
-
-      if (window.exsoftTest) {
-        window.exsoftTest(fileitem.filepath, fileitem.filename1);
-      }
+      // fileitem.downurl = nativecode.getDownUrl(fileitem.url);
+      // if (nativecode.ncall("jsFileLink", fileitem)) {
+      //   return;
+      // }
+      // if (fileitem.ftype == "file") {
+      //   MessageBox.confirm("您可以下载当前文件!").then(res => {
+      //     let down = document.createElement("a");
+      //     down.href = fileitem.downurl;
+      //     down.download = fileitem.name;
+      //     document.body.appendChild(down);
+      //     down.click();
+      //     down.remove();
+      //     return;
+      //   });
+      // }
+      //
+      // var desc = "请在正式环境查看";
+      // Toast(desc);
+      //
+      // if (window.exsoftTest) {
+      //   window.exsoftTest(fileitem.filepath, fileitem.filename1);
+      // }
     },
     loadMore() {
       if (this.files.length >= 10) {

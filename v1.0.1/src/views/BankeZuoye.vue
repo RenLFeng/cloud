@@ -113,7 +113,9 @@ export default {
     Collection(){
       // console.log(this.curzuoye)
         let imgIcon = "zuoye";
-         CollectionFn(this.curzuoye, 3, imgIcon, this.curzuoye.id,this.curzuoye.ownerid);
+        let title = this.curzuoye.name;
+        let cobj = {};
+         CollectionFn(cobj, 3, imgIcon, this.curzuoye.id,this.curzuoye.ownerid, title);
     },
     onbtnclick(sindex) {
       this.curbtnindex = sindex;

@@ -198,7 +198,9 @@ nativecode.wxcall = function(funname, argobj)
 
     let tourl = "";
 
-    if (funname == "jsFileLink"){
+    if (funname == "jsFileLink"
+    || funname == 'jsUrlLink'
+    ){
         tourl = "/pages/files/view";
 
        //alert(JSON.stringify(wx.getLocation()));
@@ -241,6 +243,11 @@ nativecode.issupportfun = function(funname)
 
 nativecode.ncall = function(funname, argobj){
     //console.log("nativecode, ncall:"+funname);
+
+    if (process.env.NODE_ENV == "development" && nativecode.platform == ''){
+        console.log('nativecode.platform:'+ nativecode.platform +'ncall:' + funname + " argobj:"+JSON.stringify(argobj));
+    }
+
     try{
 
         if (!nativecode.issupportfun(funname)){
@@ -301,9 +308,7 @@ nativecode.ncall = function(funname, argobj){
     }catch(e){
           console.log(e);
     }
-    if (process.env.NODE_ENV == "development"){
-        console.log('nativecode.platform:'+ nativecode.platform +'ncall:' + funname + " argobj:"+JSON.stringify(argobj));
-    }
+
     return null;
 }
 
@@ -347,7 +352,143 @@ nativecode.getDownUrl2=function(suburl)
     }else{
         return  `${url}${suburl}`
     }
-    
+}
+nativecode.getUsedUrl=function(suburl)
+{
+    return nativecode.getDownUrl(suburl);
+}
+
+
+nativecode.previewImage = function(vuethis, objargs)
+{
+    if (typeof objargs == 'string'){
+        let robj = {
+            current:objargs
+        }
+        objargs = robj;
+    }
+    if (!objargs.current){
+        objargs.current = objargs.urls[objargs.index];
+    }
+    else if (!objargs.urls){
+        objargs.urls = [];
+        objargs.urls.push(objargs.current);
+        objargs.index = 0;
+    }
+    if (nativecode.platform == 'miniprogram'){
+        let wx = nativecode.getwx();
+        wx.previewImage({
+            current:objargs.current,
+            urls:objargs.urls
+        })
+    }
+    else{
+        vuethis.$store.commit("SET_ISPREVIEW", false);
+     // vuethis.$store.commit("SET_PREVIEWLOADFILE", objargs.urls);
+        vuethis.$store.commit("SET_IMAGES", objargs.urls);
+        vuethis.$store.commit("SET_INDEX", objargs.index);
+        vuethis.$store.commit("SET_SHOW", true);
+    }
+}
+
+nativecode.isimageobj = function(fitem)
+{
+    if (typeof fitem.filetype != 'undefined'){
+        if (fitem.filetype == 1){
+            return true;
+        }
+        return false;
+    }
+    if (typeof fitem.filepath == 'string'){
+        let fpath = fitem.filepath;
+        if (fpath.indexOf('.jpg') >0  || fpath.indexOf('.png') > 0 || fpath.indexOf('.jpeg') > 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+nativecode.fileviewSingle = function(vuethis, fitem)
+{
+    if (!fitem.filepath && fitem.url){
+        fitem.filepath = fitem.url;
+    }
+
+    fitem.downurl = nativecode.getUsedUrl(fitem.filepath);
+    if (nativecode.isimageobj(fitem)){
+        nativecode.previewImage(vuethis, fitem.downurl);
+        return;
+    }
+    nativecode.ncall('jsFileLink', fitem);
+    return;
+}
+
+nativecode.fileview = function(vuethis, fitem)
+{
+    if (typeof fitem.ftype == 'string'){
+        if (fitem.ftype == 'file'){
+            return nativecode.fileviewSingle(vuethis, fitem);
+        }
+        else if (fitem.ftype == 'link'){
+            return nativecode.fileviewUrl(vuethis, fitem);
+        }
+    }
+    return nativecode.fileviewSingle(vuethis, fitem);
+}
+
+nativecode.fileviewUrl = function(vuethis, fitem)
+{
+    nativecode.ncall('jsUrlLink', fitem);
+    return;
+}
+
+
+/*
+  objargs: items:
+  index: current
+ */
+nativecode.fileviewZuoye = function(vuethis, objargs){
+    let items = [];
+    let cindex = objargs.index;
+    let isimage = false;
+    for(let i=0; i<objargs.items.length; i++){
+        if (objargs.items[i].serverData){
+            items.push(objargs.items[i].serverData);
+        }
+        else {
+            items.push(objargs.items[i]);
+        }
+    }
+    if (
+        //items[cindex].filetype == 1
+        nativecode.isimageobj(items[cindex])
+    ){
+        isimage = 1;
+    }
+    //console.log(items);
+    //console.log('fileviewzuoye:' + isimage);
+    if (isimage){
+        let imgs = [];
+        let jindex = 0;
+        for(let i=0; i<items.length; i++){
+            if (items[i].filetype == 1){
+                imgs.push(nativecode.getUsedUrl(items[i].filepath));
+                if (i == cindex){
+                    jindex = imgs.length-1;
+                }
+            }
+        }
+        nativecode.previewImage(vuethis, {
+            current:imgs[jindex],
+            urls:imgs,
+            index:jindex
+        })
+        return;
+    }
+    let citem = items[cindex];
+    citem.downurl = nativecode.getUsedUrl(citem.filepath);
+    nativecode.ncall('jsFileLink', citem);
 }
 
 

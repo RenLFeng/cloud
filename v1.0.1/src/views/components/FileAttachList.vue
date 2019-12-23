@@ -113,48 +113,52 @@ export default {
   mounted() {},
   methods: {
     onImagePreview(item, index) {
-      console.log(item);
-      this.tempLocalfiles = [];
-      this.tempImgs = [];
-      let file = item;
-      // console.log("filefile", file);
-      for (let v of file) {
-        if (v.imgsrc) {
-          this.tempImgs.push(v.filepath);
-        } else {
-          v.imgsrc = "";
-          this.tempImgs.push(this.getimgico(v));
-        }
-      }
-      if (
-        //window.__wxjs_environment === "miniprogram"
-        nativecode.platform == "miniprogram"
-      ) {
-        // console.log(this.tempImgs);
-        let wx = nativecode.getwx();
-        let imgs = this.tempImgs;
-        for (let i = 0; i < imgs.length; i++) {
-          imgs[i] = nativecode.getDownUrl2(imgs[i]);
-        }
-        let i = index;
-        let that = this;
-        wx.previewImage({
-          current: imgs[i], // 当前显示图片的http链接
-          urls: imgs, // 需要预览的图片http链接列表
-          success(res) {
-            console.log("success", res);
-          },
-          fail(res) {
-            console.log("error", res);
-          }
+        nativecode.fileviewZuoye(this, {
+            items:item,
+            index:index
         });
-      } else {
-        this.$store.commit("SET_ISPREVIEW", false);
-        this.$store.commit("SET_PREVIEWLOADFILE", item);
-        this.$store.commit("SET_IMAGES", this.tempImgs);
-        this.$store.commit("SET_INDEX", index);
-        this.$store.commit("SET_SHOW", true);
-      }
+      // console.log(item);
+      // this.tempLocalfiles = [];
+      // this.tempImgs = [];
+      // let file = item;
+      // // console.log("filefile", file);
+      // for (let v of file) {
+      //   if (v.imgsrc) {
+      //     this.tempImgs.push(v.filepath);
+      //   } else {
+      //     v.imgsrc = "";
+      //     this.tempImgs.push(this.getimgico(v));
+      //   }
+      // }
+      // if (
+      //   //window.__wxjs_environment === "miniprogram"
+      //   nativecode.platform == "miniprogram"
+      // ) {
+      //   // console.log(this.tempImgs);
+      //   let wx = nativecode.getwx();
+      //   let imgs = this.tempImgs;
+      //   for (let i = 0; i < imgs.length; i++) {
+      //     imgs[i] = nativecode.getDownUrl2(imgs[i]);
+      //   }
+      //   let i = index;
+      //   let that = this;
+      //   wx.previewImage({
+      //     current: imgs[i], // 当前显示图片的http链接
+      //     urls: imgs, // 需要预览的图片http链接列表
+      //     success(res) {
+      //       console.log("success", res);
+      //     },
+      //     fail(res) {
+      //       console.log("error", res);
+      //     }
+      //   });
+      // } else {
+      //   this.$store.commit("SET_ISPREVIEW", false);
+      //   this.$store.commit("SET_PREVIEWLOADFILE", item);
+      //   this.$store.commit("SET_IMAGES", this.tempImgs);
+      //   this.$store.commit("SET_INDEX", index);
+      //   this.$store.commit("SET_SHOW", true);
+      // }
     },
     goBacks() {
       this.popupDownLoad = false;

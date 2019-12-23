@@ -10,12 +10,12 @@
         </div>
       </div>
     </div>
-    <div v-if="isTeacher">
-      <div class="devide"></div>
-      <mt-cell title="创建班课" is-link @click.native="onadd"></mt-cell>
-    </div>
+
     <div class="devide"></div>
-    <mt-cell title="收藏" is-link @click.native="seeCollection"></mt-cell>
+    <mt-cell title="我的收藏" is-link @click.native="seeCollection"></mt-cell>
+    <mt-cell title="已结束班课" is-link @click.native="queryfinished"></mt-cell>
+
+    <mt-cell title="清除所有消息提示" is-link @click.native="clearEvnet"></mt-cell>
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
@@ -24,10 +24,7 @@
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell> -->
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell title="查询已结束班课" is-link @click.native="queryfinished"></mt-cell>
-        <div class="devide"></div>
-    <mt-cell title="清除所有提示" is-link @click.native="clearEvnet"></mt-cell>
+
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -280,22 +277,33 @@ export default {
     },
     //清除提示
     clearEvnet() {
-      Indicator.open("加载中...");
-      this.$http
-        .post("/api/eventmsgs/clear", {})
-        .then(res => {
-          if (res.data.code == "0") {
-            this.$emit("clearevnt", true);
-            Toast("清除成功");
-          } else {
-            Toast("清除失败");
-          }
-          Indicator.close();
-        })
-        .catch(err => {
-          Toast("服务异常");
-          Indicator.close();
+
+        MessageBox.confirm("", {
+            title: this.$t("confirm.Tips"),
+            message: '清除所有消息提示？',
+            confirmButtonText: this.$t("confirm.Ok"),
+            cancelButtonText: this.$t("confirm.Cancel"),
+            showCancelButton: true
+        }).then(() => {
+            Indicator.open("加载中...");
+            this.$http
+                .post("/api/eventmsgs/clear", {})
+                .then(res => {
+                    if (res.data.code == "0") {
+                        this.$emit("clearevnt", true);
+                        Toast("清除成功");
+                    } else {
+                        Toast("清除失败");
+                    }
+                    Indicator.close();
+                })
+                .catch(err => {
+                    Toast("服务异常");
+                    Indicator.close();
+                });
         });
+
+
     },
     //查询已结束班课
     queryfinished() {

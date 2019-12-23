@@ -270,7 +270,7 @@ export const defaultImg = (type) => {
       return srcstr;
   }
 }
-export const getFileType = (v) => {
+export const getCollectionType = (v) => {
   switch (v) {
     case 1:
       return "资源";
@@ -286,32 +286,53 @@ export const getFileType = (v) => {
       return "未知类型";
   }
 }
-export const getZYFileTypeIcon = (name) => {
-  const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
+export const getZYFileTypeIcon = (namein) => {
+  //const fileType = [".txt", ".rar", ".xlsx", ".docx", ".ppt", ".pdf"];
   let r = '';
-  for (let item of fileType) {
-    if (name.includes(item)) {
-      r = item;
-    }
-    if (
-      name.includes("doc") ||
-      name.includes("rtf")
-    ) {
-      r = 'docx';
-    }
-    if (name.includes("zip")) {
-      r = 'rar';
-    }
-    if (name.includes("xls")) {
-      r = 'xlsx';
-    }
+  let name = namein || '';
+  if (name.length > 5){
+    name = name.substr(name.length-6);
   }
+  name = name.toLocaleLowerCase();
+  if (name.includes('.rar') || name.includes('.zip')){
+     r = 'rar';
+  }
+  else if (name.includes('.doc') || name.includes('.docx') || name.includes('.rtf')) {
+      r = 'docx';
+  }
+  else if (name.includes('.xlsx') || name.includes('.xls')){
+    r = 'xlsx';
+  }
+  else if (name.includes('.ppt') || name.includes('.pptx')){
+    r = 'ppt';
+  }
+  else if (name.includes('.pdf')){
+    r = 'pdf';
+  }
+  // for (let item of fileType) {
+  //   if (name.includes(item)) {
+  //     r = item;
+  //   }
+  //   if (
+  //     name.includes("doc") ||
+  //     name.includes("rtf")
+  //   ) {
+  //     r = 'docx';
+  //   }
+  //   if (name.includes("zip")) {
+  //     r = 'rar';
+  //   }
+  //   if (name.includes("xls")) {
+  //     r = 'xlsx';
+  //   }
+  //}
   return r;
 }
-export const CollectionFn = (itemfile, type, imgIcon, id,bankeid) => {
+export const CollectionFn = (itemfile, type, imgIcon, id,bankeid, title=null) => {
   Indicator.open("加载中...");
   let info = {
-    typeText: getFileType(type),
+  //  typeText: getFileType(type),
+      type:type,  //! 多语言考虑， 这里只存储int类型
     img: itemfile.pic ? itemfile.pic : imgIcon,
     time: formateTime('', '-'),
     itemfile: itemfile,
@@ -321,7 +342,7 @@ export const CollectionFn = (itemfile, type, imgIcon, id,bankeid) => {
   info = JSON.stringify(info);
   axios
     .post("/api/userfav/add", {
-      title: itemfile.name,
+      title: title? title:itemfile.name,
       info: info,
       eventtype: type,
       eventid: id
