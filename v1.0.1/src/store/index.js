@@ -32,24 +32,37 @@ const state = {
     bankecachedata: {},
 
     loginuser: {
-        role:0
+        role: 0
     }, //! 当前登录用户
-    curbanke:{},   //! cjy： 当前使用的班课
+    curbanke: {}, //! cjy： 当前使用的班课
     usercookiereaded: false,
     bankeZhiYuanLinkItem: [],
     lang: localStorage.getItem('lang') || 'zh',
 
-    isPreview: true,//是否开启了预览
-    previewLoadFile:[],//预览文件
-    images: [],//预览图片
-    show: false,//是否显示预览组件
-    index:0,//预览图片当前的索引
+    isPreview: true, //是否开启了预览
+    previewLoadFile: [], //预览文件
+    images: [], //预览图片
+    show: false, //是否显示预览组件
+    index: 0, //预览图片当前的索引
 
+    Preview: {
+        isPreview: true, //是否开启了预览
+        previewLoadFile: [], //预览文件
+        images: [], //预览图片
+        show: false, //是否显示预览组件
+        index: 0, //预览图片当前的索引
+    },
 
-    footerBarState:true,
-    CliudBar:false,
+    isPreview: true, //是否开启了预览
+    previewLoadFile: [], //预览文件
+    images: [], //预览图片
+    show: false, //是否显示预览组件
+    index: 0, //预览图片当前的索引
 
-    bankeSearchHistory:[]//班课搜索历史记录
+    footerBarState: true,
+    CliudBar: false,
+
+    bankeSearchHistory: [] //班课搜索历史记录
 
 }
 
@@ -71,7 +84,7 @@ const getters = {
         if (!lm || !lm.id) {
 
             let szcookie = cookie.get('EXSOFTSSID');
-            if (szcookie && szcookie.length > 10){
+            if (szcookie && szcookie.length > 10) {
                 return true;
             }
 
@@ -85,29 +98,29 @@ const getters = {
         }
         return false;
     },
-    haseditbankerole:(state, getters) =>{  //! 当前用户是否有编辑班课的权限
-        if (!getters.isteacher){
+    haseditbankerole: (state, getters) => { //! 当前用户是否有编辑班课的权限
+        if (!getters.isteacher) {
             return false;
         }
-        if (!state.curbanke.id){
+        if (!state.curbanke.id) {
             return false;
         }
-        if (state.curbanke.userid == state.loginuser.id){
+        if (state.curbanke.userid == state.loginuser.id) {
             return true;
         }
         return false;
     },
-    caneditbanke:(state,getters)=>{
-        if (nativecode.platform == 'exsoftdaping'){
+    caneditbanke: (state, getters) => {
+        if (nativecode.platform == 'exsoftdaping') {
             return false;
         }
-        if (!state.curbanke.id){
+        if (!state.curbanke.id) {
             return false;
         }
-        if (state.curbanke.states <1){  //! 班课已结束
+        if (state.curbanke.states < 1) { //! 班课已结束
             return false;
         }
-        if (!getters.haseditbankerole){
+        if (!getters.haseditbankerole) {
             return false;
         }
         return true;
@@ -145,10 +158,10 @@ const mutations = {
         state.routerforward = bforward;
     }
 
-    ,setCurBanke(state, banke){
-        state.curbanke = banke;
-    }
     ,
+    setCurBanke(state, banke) {
+        state.curbanke = banke;
+    },
     setLoginUser(state, user) {
         state.loginuser = user;
         state.usercookiereaded = true;
@@ -210,7 +223,7 @@ const mutations = {
     SET_INDEX(state, v) {
         state.index = v
     },
-    
+
     SET_FOOTER_BAR_STATE(state, v) {
         state.footerBarState = v
     },
@@ -219,6 +232,14 @@ const mutations = {
     },
     SET_BANKESEARCH_HISTORY(state, v) {
         state.bankeSearchHistory.push(v);
+    },
+    SET_PREVIEW(state, v, setval) {
+        if (setval) {
+            state.Preview[setval] = setval;
+        } else {
+            state.Preview = v;
+        }
+
     },
 }
 

@@ -1,12 +1,8 @@
 <template>
   <div class="mainpart zy-content" @click.stop="onclick">
-    <FileAttachList
-      v-if="localfiles.length"
-      :isupload="false"
-      class="falist"
-      :localfiles="localfiles"
-    />
-    <img v-if="!localfiles.length" :src="fileimg" class="mainimg mainleft" :onerror="$defaultImg(errorImg)" />
+    <div class="img-wrap " :class="fileitem.eventmsgs?'reddot-Tips':''">
+      <img class="img" :src="fileitem.imgsrc" :onerror="$defaultImg('')" />
+    </div>
     <div class="maincontent">
       <div class="mainctitle">
         <div class="ellipse">{{fileitem.name}}</div>
@@ -28,10 +24,12 @@
 const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
 import commontools from "../../commontools";
 import FileAttachList from "./FileAttachList";
+import FileImg from "../../common/fileimg";
 export default {
   name: "BankeFileSimple",
   components: {
-    FileAttachList
+    FileAttachList,
+    FileImg
   },
   created() {},
   computed: {
@@ -39,7 +37,8 @@ export default {
       let arr = [];
       if (this.fileitem.info) {
         arr[0] = this.fileitem.info;
-        if (this.fileitem.eventmsgs) { //红点提示
+        if (this.fileitem.eventmsgs) {
+          //红点提示
           arr[0].eventmsgs = true;
         }
         this.fileitem.localfile = arr;
@@ -56,46 +55,6 @@ export default {
         this.fileitem.localfile = [];
       }
       return this.fileitem.localfile;
-    },
-    errorImg() {
-      if (this.fileitem.ftype == "file") {
-       return 'file'
-      } else {
-        return 'IT'
-      }
-    },
-    fileimg() {
-      let r = this.fileitem.url;
-      //! cjy: 不能使用原url
-      r = require("../../assets/file_icon/file.svg");
-      if (this.fileitem.ftype != "file") {
-        r = require("../../assets/file_icon/IT.svg");
-        return r;
-      }
-      var fitem = this.fileitem.info;
-      if (fitem.filepath && fitem.metainfo) {
-        r = fitem.filepath + fitem.metainfo.snapsuffix;
-        return r;
-      }
-      for (let item of fileType) {
-        if (this.fileitem.name.includes(item)) {
-          r = require(`../../assets/file_icon/${item}.svg`);
-        }
-        if (
-          this.fileitem.name.includes("doc") ||
-          this.fileitem.name.includes("rtf")
-        ) {
-          r = require(`../../assets/file_icon/docx.svg`);
-        }
-        if (this.fileitem.name.includes("zip")) {
-          r = require(`../../assets/file_icon/rar.svg`);
-        }
-        if (this.fileitem.name.includes("xls")) {
-          r = require(`../../assets/file_icon/xlsx.svg`);
-        }
-      }
-
-      return r;
     },
     filesizedesc() {
       if (this.fileitem.info) {
@@ -229,5 +188,19 @@ export default {
   height: auto;
   position: absolute;
   left: 0;
+}
+.zy-content .img-wrap {
+  border: 0;
+  vertical-align: middle;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  position: absolute;
+}
+.zy-content .img-wrap .img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+    border-radius: 10px;
 }
 </style>

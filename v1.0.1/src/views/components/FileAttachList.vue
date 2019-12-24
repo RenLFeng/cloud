@@ -5,7 +5,7 @@
         v-for="(fitem, findex) in localfiles"
         :key="findex"
         class="imgblock"
-        :class="{'liupload':isupload,'imgblocksmall':!isupload,'reddot-Tips2':fitem.eventmsgs}"
+        :class="{'liupload':isupload,'imgblocksmall':!isupload}"
       >
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />

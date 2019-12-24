@@ -5,25 +5,24 @@ var nativecode = {};
 
 //! https://www.npmjs.com/package/weixin-js-sdk
 
-nativecode.detectplatform = function()
-{
+nativecode.detectplatform = function () {
     var ua = navigator.userAgent;
     console.log(ua);
-    if (ua.indexOf('ExsoftIosWeb') > -1){
+    if (ua.indexOf('ExsoftIosWeb') > -1) {
         return 'exsoftios';
     }
-    if (ua.indexOf('miniProgram') > -1
-     || ua.indexOf('wechatdevtools') > -1
-    ){
+    if (ua.indexOf('miniProgram') > -1 ||
+        ua.indexOf('wechatdevtools') > -1
+    ) {
         return 'miniprogram';
     }
-    if (window.ExsoftAndroid){
+    if (window.ExsoftAndroid) {
         return 'exsoftandroid';
     }
-    if (window.ExsoftWindows){
+    if (window.ExsoftWindows) {
 
         //! 检测是否是大屏端
-        if (ua.indexOf('WebDaPing') > -1){
+        if (ua.indexOf('WebDaPing') > -1) {
             return 'exsoftdaping';
         }
 

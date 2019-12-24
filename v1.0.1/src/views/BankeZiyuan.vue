@@ -145,7 +145,7 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
-import { CollectionFn, getZYFileTypeIcon } from "@/util";
+import { CollectionFn, getZYFileTypeIcon, preview } from "@/util";
 import nativecode from "../nativecode";
 
 export default {
@@ -184,7 +184,10 @@ export default {
           name: "收藏",
           method: this.Collection
         },
-
+        {
+          name: "编辑",
+          method: this.bankeEdit
+        },
         {
           name: "信息",
           method: this.showInfo
@@ -424,6 +427,7 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             fileitem.viewnum++;
+            fileitem.eventmsgs = false;
           }
         })
         .catch(res => {});
@@ -506,7 +510,20 @@ export default {
             for (let item of res.data.data) {
               ids.push(item.id);
               this.parseOneItem(item);
+              if (item.ftype == "link") {
+                item.imgsrc = require("../assets/file_icon/IT.svg");
+              } else if (item.ftype == "file") {
+                if (item.finttype == "1") {
+                  if (item.info) {
+                    item.imgsrc =
+                      item.info.filepath + item.info.metainfo.snapsuffix;
+                  }
+                } else {
+                  item.imgsrc = commontools.fileType(item.info);
+                }
+              }
             }
+            console.log("dsad", res.data.data);
             this.eventmsgsOnactivity(res.data.data, ids);
             // commontools.arrayMergeAsIds(this.files, res.data.data);
             // this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
@@ -551,7 +568,7 @@ export default {
           }
           commontools.arrayMergeAsIds(this.files, serverData);
           this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
-          // console.log("红点查询", this.files);
+          console.log("红点查询", this.files);
         })
         .catch(err => {
           commontools.arrayMergeAsIds(this.files, serverData);
@@ -611,7 +628,21 @@ export default {
             .then(res => {
               Indicator.close();
               if (res.data.code == 0) {
+                console.log("54", res.data.data);
                 this.parseOneItem(res.data.data);
+                let item = res.data.data;
+                if (item.ftype == "link") {
+                  item.imgsrc = require("../assets/file_icon/IT.svg");
+                } else if (item.ftype == "file") {
+                  if (item.finttype == "1") {
+                    if (item.info) {
+                      item.imgsrc =
+                        item.info.filepath + item.info.metainfo.snapsuffix;
+                    }
+                  } else {
+                    item.imgsrc = commontools.fileType(item.info);
+                  }
+                }
                 commontools.arrayMergeAsIds(this.files, res.data.data);
                 //  res.data.data.info = JSON.parse(res.data.data.info);
                 let arr = [];

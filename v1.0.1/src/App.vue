@@ -26,38 +26,38 @@ export default {
   computed: {
     show: {
       get: function() {
-        return this.$store.state.show;
+        return this.$store.state.Preview.show;
       },
       set: function(newValue) {
         console.log(newValue);
-        this.$store.commit("SET_SHOW", newValue);
+        this.$store.commit("SET_PREVIEW", {}, newValue);
       }
     },
     images: {
       get: function() {
-        return this.$store.state.images;
+        return this.$store.state.Preview.images;
       },
       set: function(newValue) {
         console.log(newValue);
-        this.$store.commit("SET_IMAGES", newValue);
+        this.$store.commit("SET_PREVIEW", {}, newValue);
       }
     },
     tempLocalfiles: {
       get: function() {
-        return this.$store.state.previewLoadFile;
+        return this.$store.state.Preview.previewLoadFile;
       },
       set: function(newValue) {
         console.log(newValue);
-        this.$store.commit("SET_PREVIEWLOADFILE", newValue);
+        this.$store.commit("SET_PREVIEW", {}, newValue);
       }
     },
     index: {
       get: function() {
-        return this.$store.state.index;
+        return this.$store.state.Preview.index;
       },
       set: function(newValue) {
         console.log(newValue);
-        this.$store.commit("SET_INDEX", newValue);
+        this.$store.commit("SET_PREVIEW", {}, newValue);
       }
     },
     username() {
@@ -149,7 +149,7 @@ export default {
         this.images = [];
         this.tempLocalfiles = [];
         this.index = 0;
-        this.$store.commit("SET_ISPREVIEW", true);
+        this.$store.commit("SET_PREVIEW",{}, true);
       }
     },
     goBack() {
