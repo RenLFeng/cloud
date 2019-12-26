@@ -29,7 +29,7 @@
       <div class="mainctitle ellipse">
         <img class="itemavatar" :src="item.avatar" :onerror="defaultimg" />
         {{item.name}}
-        <span class="fr font-xs colorf">正确</span>
+        <!--<span class="fr font-xs colorf">正确</span> -->
       </div>
       <div v-if="ptype!='6'" class="maincsubtitle ellipse">提交答案: {{answer}}</div>
       <div v-if="ptype=='6'">{{item.isResponder}}</div>

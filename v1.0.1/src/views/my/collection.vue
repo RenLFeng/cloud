@@ -167,7 +167,9 @@ export default {
           //   this.$store.commit("setRouterForward", true);
           //   this.$router.push(tourl);
           // }
-            nativecode.fileview(this,  fileItem.info.itemfile);
+            let obj = fileItem.info.itemfile;
+            obj.filename = fileItem.title;
+            nativecode.fileview(this,  obj);
           break;
         case 2:
           return "";
@@ -183,7 +185,7 @@ export default {
             params: { pingceid: fileItem.eventid }
           });
           break;
-        case 100:
+        case 100: //! 板书
             nativecode.fileview(this,  fileItem.info.itemfile);
           // this.$store.commit("setRouterForward", true);
           // this.$router.push({

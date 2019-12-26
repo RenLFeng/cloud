@@ -19,7 +19,7 @@
       </mt-loadmore>
       <div class="pingce-ing" v-if="isPingce">
         <div class="subject">
-          <img :src="pingceData.files" alt :onerror="defaultimg" />
+          <img :src="pingceData.filessnap" alt :onerror="defaultimg" @click="viewimg"/>
         </div>
         <div class="footer">
           <p class="tit border-b">请点击选项作答</p>
@@ -47,6 +47,7 @@ import Judge from "./judge";
 import ZhuGuan from "./zhuguan";
 import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
 import { pingceType, parseURL } from "@/util";
+import nativecode from '@/nativecode'
 export default {
   name: "PingCeing",
   components: {
@@ -54,6 +55,18 @@ export default {
     Judge,
     ZhuGuan
   },
+    props: {
+        urlbankeid: {
+            default() {
+                return 0;
+            }
+        }
+        ,urlhack:{
+            default(){
+                return 0;
+            }
+        }
+    },
   data() {
     return {
       isPingce: false,
@@ -70,6 +83,7 @@ export default {
 
       //! 是否为参数导入； 参数导入的以参数为准，不再http拉取
       isArgLoad: false,
+        submited:false,  //! 是否已提交
 
       tempAnswer: [],
 
@@ -80,6 +94,7 @@ export default {
   created() {
     const UrlParams = parseURL(window.location.href);
     let params = this.$route.params;
+    console.log(params);
     let doquery = true;
     if (UrlParams.id) {
       this.bankeid = UrlParams.id;
@@ -98,20 +113,32 @@ export default {
       }
     } else {
       this.bankeid = params.bankeid;
+      if (params.dataobj){
+          this.isArgLoad = true;
+          doquery = false;
+          this.onpingcedata(params.dataobj);
+      }
+    }
+    if (this.urlbankeid){
+        this.bankeid = this.urlbankeid;
     }
     if (doquery) {
       this.querycur();
     }
   },
   mounted() {},
+    watch: {
+        '$route' (to, from) {
+            // 对路由变化作出响应...
+            console.log('pingceing , route changed');
+        }
+    },
   computed: {
     pagetitle() {
       return this.isPingce ? pingceType(this.pingceData.ptype) : "评测";
     },
     hasnavbar() {
-      if (this.isArgLoad) {
-        return false;
-      }
+
       return true;
     },
     defaultimg() {
@@ -125,17 +152,24 @@ export default {
     loadTop() {
       this.Refresh();
     },
+      viewimg(){
+        nativecode.previewImage(this, this.pingceData.files);
+      },
     onpingcedata(rdata) {
-      this.pingceData = rdata;
+      let rd = rdata;
+      rd.filessnap = rd.files + '_snap.jpg';
+      this.pingceData = rd;
       if (this.pingceData) {
         this.isPingce = true;
       }
+
+
 
       this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
       console.log("this.pingceData", this.pingceData);
 
       if (this.isArgLoad) {
-        document.title = this.pagetitle;
+       // document.title = this.pagetitle;
       }
     },
     querycur() {
@@ -186,7 +220,9 @@ export default {
             console.log("res", res);
             Toast("提交成功");
             this.tempAnswer = [];
-            this.isPingce = false;
+            //this.isPingce = false;
+              //! cjy: 提交答案后， 仍停留在原界面
+              this.submited = true;
           } else {
             this.tempAnswer = [];
             Toast("提交失败");

@@ -239,7 +239,7 @@ import dispic from "../assets/dis.jpg";
 import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
 import Answer from "./banKeZuoye/answer";
-import { parseURL, CollectionFn, getZYFileTypeIcon } from "@/util";
+import { parseURL, CollectionFn } from "@/util";
 export default {
   name: "ZuoyeResult",
   props: {
@@ -251,7 +251,7 @@ export default {
   },
   data() {
     return {
-      showZdetail: false,
+      showZdetail: true,  //! cjy: 默认显示详细
 
       studentInfo: {},
       ScoreItemInfo: {},
@@ -611,7 +611,8 @@ export default {
           this.noPingFengStudentInfo.push(item);
         }
       }
-      if (this.zuoyeitem.state == 100 && !this.$store.getters.caneditbanke) {
+      if (this.zuoyeitem.state == 100
+          && !this.$store.getters.haseditbankerole) {
         //! 提交模式
         this.pagemode = "submit";
       }

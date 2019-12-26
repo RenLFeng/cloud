@@ -24,12 +24,12 @@
 const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
 import commontools from "../../commontools";
 import FileAttachList from "./FileAttachList";
-import FileImg from "../../common/fileimg";
+//import FileImg from "../../common/fileimg";
 export default {
   name: "BankeFileSimple",
   components: {
     FileAttachList,
-    FileImg
+    //FileImg
   },
   created() {},
   computed: {

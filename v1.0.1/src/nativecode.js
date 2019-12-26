@@ -28,6 +28,10 @@ nativecode.detectplatform = function () {
 
         return 'exsoftwindows';
     }
+
+    //! 测试
+    return 'exsoftdaping';
+
     return '';
 }
 
@@ -243,7 +247,9 @@ nativecode.issupportfun = function(funname)
 nativecode.ncall = function(funname, argobj){
     //console.log("nativecode, ncall:"+funname);
 
-    if (process.env.NODE_ENV == "development" && nativecode.platform == ''){
+    if (process.env.NODE_ENV == "development"
+        //&& nativecode.platform == ''
+    ){
         console.log('nativecode.platform:'+ nativecode.platform +'ncall:' + funname + " argobj:"+JSON.stringify(argobj));
     }
 
@@ -382,11 +388,19 @@ nativecode.previewImage = function(vuethis, objargs)
         })
     }
     else{
-        vuethis.$store.commit("SET_ISPREVIEW", false);
+      //  vuethis.$store.commit("SET_ISPREVIEW", false);
      // vuethis.$store.commit("SET_PREVIEWLOADFILE", objargs.urls);
-        vuethis.$store.commit("SET_IMAGES", objargs.urls);
-        vuethis.$store.commit("SET_INDEX", objargs.index);
-        vuethis.$store.commit("SET_SHOW", true);
+     //   vuethis.$store.commit("SET_IMAGES", objargs.urls);
+     //   vuethis.$store.commit("SET_INDEX", objargs.index);
+      //  vuethis.$store.commit("SET_SHOW", true);
+        let obj = {
+            isPreview: false,
+    //        previewLoadFile:item,
+            images: objargs.urls,
+            show: true,
+            index: objargs.index
+        };
+        vuethis.$store.commit("SET_PREVIEW", obj, "");
     }
 }
 
@@ -419,8 +433,23 @@ nativecode.fileviewSingle = function(vuethis, fitem)
         nativecode.previewImage(vuethis, fitem.downurl);
         return;
     }
-    nativecode.ncall('jsFileLink', fitem);
+   // nativecode.ncall('jsFileLink', fitem);
+    nativecode.ncallFileLink(fitem);
     return;
+}
+
+import {
+    Toast,
+} from "mint-ui";
+
+nativecode.ncallFileLink = function(fitem){
+    //onsole.log('';
+    let oret = nativecode.ncall('jsFileLink', fitem);
+  //  console.log(oret);
+    if (!oret){
+       //console.log('toast');
+        Toast('请在应用程序中查看');
+    }
 }
 
 nativecode.fileview = function(vuethis, fitem)
@@ -487,7 +516,8 @@ nativecode.fileviewZuoye = function(vuethis, objargs){
     }
     let citem = items[cindex];
     citem.downurl = nativecode.getUsedUrl(citem.filepath);
-    nativecode.ncall('jsFileLink', citem);
+  //  nativecode.ncall('jsFileLink', citem);
+    nativecode.ncallFileLink(citem);
 }
 
 

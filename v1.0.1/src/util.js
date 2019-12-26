@@ -209,66 +209,67 @@ export const parseURL = (url) => {
     })
   return params
 }
-export const defaultImg = (type) => {
-  var srcstr = 'this.src="';
-  switch (type) {
-    case 'account':
-      srcstr += require("./assets/account_default.png");
-      srcstr += '"';
-      return srcstr;
-    case 'banke':
-      srcstr += require("./assets/banke_default.png");
-      srcstr += '"';
-      return srcstr;
-    case 'zuoye':
-      srcstr += require("./assets/zuoye_default.png");
-      srcstr += '"';
-      return srcstr;
-    case 'file':
-      srcstr += require("./assets/file_default.png");
-      srcstr += '"';
-      return srcstr;
-    case 'txt':
-      srcstr += require("./assets/file_icon/txt.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'rar':
-      srcstr += require("./assets/file_icon/rar.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'xlsx':
-      srcstr += require("./assets/file_icon/xlsx.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'docx':
-      srcstr += require("./assets/file_icon/docx.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'ppt':
-      srcstr += require("./assets/file_icon/ppt.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'pdf':
-      srcstr += require("./assets/file_icon/pdf.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'IT':
-      srcstr += require("./assets/file_icon/IT.svg");
-      srcstr += '"';
-      return srcstr;
-    case 'MP4':
-      srcstr += require("./assets/file_icon/MP4.png");
-      srcstr += '"';
-      return srcstr;
-    case 'MP3':
-      srcstr += require("./assets/file_icon/MP3.png");
-      srcstr += '"';
-      return srcstr;
-    default:
-      srcstr += require("./assets/file_default.png");
-      srcstr += '"';
-      return srcstr;
-  }
+
+export const getFileTypeImg = (typein)=>{
+    if (typein.length > 6 && typein.lastIndexOf('.') > 0){
+        return typein;  //! 已经是路径
+    }
+    var srcstr = '';
+    let type = typein.toLocaleLowerCase();
+    switch (type) {
+        case 'account':
+            srcstr += require("./assets/account_default.png");
+            return srcstr;
+        case 'banke':
+            srcstr += require("./assets/banke_default.png");
+            return srcstr;
+        case 'zuoye':
+            srcstr += require("./assets/zuoye_default.png");
+            return srcstr;
+        case 'file':
+            srcstr += require("./assets/file_default.png");
+            return srcstr;
+        case 'txt':
+            srcstr += require("./assets/file_icon/txt.svg");
+            return srcstr;
+        case 'rar':
+            srcstr += require("./assets/file_icon/rar.svg");
+            return srcstr;
+        case 'xlsx':
+            srcstr += require("./assets/file_icon/xlsx.svg");
+            return srcstr;
+        case 'docx':
+            srcstr += require("./assets/file_icon/docx.svg");
+            return srcstr;
+        case 'ppt':
+            srcstr += require("./assets/file_icon/ppt.svg");
+            return srcstr;
+        case 'pdf':
+            srcstr += require("./assets/file_icon/pdf.svg");
+            return srcstr;
+        case 'it':
+            srcstr += require("./assets/file_icon/IT.svg");
+            return srcstr;
+        case 'mp4':
+            srcstr += require("./assets/file_icon/MP4.png");
+            return srcstr;
+        case 'mp3':
+            srcstr += require("./assets/file_icon/MP3.png");
+            return srcstr;
+        default:
+            srcstr += require("./assets/file_default.png");
+            break;
+    }
+    return srcstr;
+}
+
+export const defaultImg = (typein) => {
+  let ipath = getFileTypeImg(typein);
+    var srcstr = 'this.src="';
+    srcstr += ipath;
+    srcstr += '"';
+    return srcstr;
+
 }
 export const getCollectionType = (v) => {
   switch (v) {
@@ -286,14 +287,23 @@ export const getCollectionType = (v) => {
       return "未知类型";
   }
 }
-export const getZYFileTypeIcon = (namein) => {
+
+export const getZYFileTypeIcon = (namein)=>{
+  return getFileTypeImg(getZYFileType(namein));
+}
+
+export const getZYFileType = (namein) => {
   //const fileType = [".txt", ".rar", ".xlsx", ".docx", ".ppt", ".pdf"];
   let r = '';
   let name = namein || '';
-  if (name.length > 5){
-    name = name.substr(name.length-6);
+  if (name.length > 6){
+    name = name.substr(name.length-7);
+  }
+  if (name.indexOf('.') < 0){
+    return name;
   }
   name = name.toLocaleLowerCase();
+ // console.log(name);
   if (name.includes('.rar') || name.includes('.zip')){
      r = 'rar';
   }
@@ -309,23 +319,16 @@ export const getZYFileTypeIcon = (namein) => {
   else if (name.includes('.pdf')){
     r = 'pdf';
   }
-  // for (let item of fileType) {
-  //   if (name.includes(item)) {
-  //     r = item;
-  //   }
-  //   if (
-  //     name.includes("doc") ||
-  //     name.includes("rtf")
-  //   ) {
-  //     r = 'docx';
-  //   }
-  //   if (name.includes("zip")) {
-  //     r = 'rar';
-  //   }
-  //   if (name.includes("xls")) {
-  //     r = 'xlsx';
-  //   }
-  //}
+  else if (name.includes('.txt')){
+    r = 'txt';
+  }
+  else if (name.includes('.mp4')){
+    r = 'mp4';
+  }
+  else if (name.includes('.mp3')){
+    r = 'mp3';
+  }
+ // console.log(r);
   return r;
 }
 export const CollectionFn = (itemfile, type, imgIcon, id,bankeid, title=null) => {
@@ -333,7 +336,7 @@ export const CollectionFn = (itemfile, type, imgIcon, id,bankeid, title=null) =>
   let info = {
   //  typeText: getFileType(type),
       type:type,  //! 多语言考虑， 这里只存储int类型
-    img: itemfile.pic ? itemfile.pic : imgIcon,
+    img:  getFileTypeImg(imgIcon),
     time: formateTime('', '-'),
     itemfile: itemfile,
     bankeid:bankeid

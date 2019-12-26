@@ -45,6 +45,7 @@ import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import nativecode from "../../nativecode";
+import {getZYFileTypeIcon} from '@/util'
 Vue.use(ImagePreview);
 export default {
   name: "FileAttachList",
@@ -166,10 +167,11 @@ export default {
     onItemClick(fitem) {
       if (!this.isupload) {
         // Toast('文件浏览请使用原生实现:' + fitem.filepath);
-        fitem.name = fitem.filename;
-        fitem.downurl = nativecode.getDownUrl(fitem.filepath);
-        fitem.ftype = "file";
-        nativecode.ncall("jsFileLink", fitem);
+          console.log('file attachlist:onItemclick');
+        //fitem.name = fitem.filename;
+      // fitem.downurl = nativecode.getDownUrl(fitem.filepath);
+      //  fitem.ftype = "file";
+       // nativecode.ncall("jsFileLink", fitem);
       }
     },
     uploadstate(findex) {
@@ -233,11 +235,15 @@ export default {
           vo.file = file[i];
           vo.ftype = commontools.fileGetType(file[i].type);
           vo.mimetype = file[i].type;
-          if (vo.ftype == "img") {
-            vo.imgsrc = URL.createObjectURL(file[i]);
-          }
+
           vo.filesize = file[i].size;
           vo.filename = file[i].name;
+            if (vo.ftype == "img") {
+                vo.imgsrc = URL.createObjectURL(file[i]);
+            }
+            else{
+                vo.imgsrc = getZYFileTypeIcon(vo.filename);
+            }
           vo.uploadState = "wait";
           vo.uploadProgress = 0;
 
@@ -323,6 +329,7 @@ export default {
           fitem.w = bok.metainfo.w;
           fitem.h = bok.metainfo.h;
         }
+        fitem.filepath = fitem.serverData.filepath;
       } else {
         this.$set(fitem, "uploadState", "fail");
       }
@@ -337,7 +344,8 @@ export default {
       this.$set(fitem, "uploadProgress", complete);
     },
     getimgico(fitem) {
-      return commontools.fileType(fitem);
+        return getZYFileTypeIcon(fitem.filepath);
+     // return commontools.fileType(fitem);
     },
     getimgnativeico(fitem) {
       console.log(fitem);

@@ -1,14 +1,7 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
-      <li class="fontlarge" @click="onwxsign()">
-        <span>微信签到</span>
-        <i
-          class="iconfont iconqiandao2 eicotrigger bigfont fr"
-          :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
-          style="color:#E46100"
-        ></i>
-      </li>
+
       <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
         <i

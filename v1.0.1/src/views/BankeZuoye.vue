@@ -54,7 +54,7 @@ import BankeZuoyeSimple from "./components/BankeZuoyeSimple";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import commontools from "../commontools";
-import { CollectionFn, getZYFileTypeIcon } from "@/util";
+import { CollectionFn, getZYFileType } from "@/util";
 export default {
   name: "BankeZuoye",
   props: {
@@ -299,14 +299,15 @@ export default {
           if (res.data.code == 0) {
             if (ball) {
               //! clear cur all
-              this.zuoyelist = [];
+             // this.zuoyelist = [];  //! cjy: 这里清空会导致vue界面闪烁（呈现为无item的界面）
             }
+              commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
             let ids = [];
             for (let v of res.data.data) {
               ids.push(v.id);
             }
             this.eventmsgsOnactivity(res.data.data, ids);
-            //  commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+
           }
         })
         .catch(() => {});

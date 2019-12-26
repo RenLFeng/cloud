@@ -145,7 +145,7 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
-import { CollectionFn, getZYFileTypeIcon, preview } from "@/util";
+import { CollectionFn, getZYFileType, preview, defaultImg,getZYFileTypeIcon } from "@/util";
 import nativecode from "../nativecode";
 
 export default {
@@ -268,17 +268,24 @@ export default {
       let imgIcon = "";
       let cobj = {};  //! cjy: 减少信息； 这里的editItemfile 非常大
       if (this.editItemFile.ftype == 'file') {
+          let filesize = 0;
+          if (this.editItemFile.info && this.editItemFile.info.filesize){
+              filesize = this.editItemFile.info.filesize;
+          }
           cobj = {
               url:this.editItemFile.url,
-              ftype:'file'
+              ftype:'file',
+              filesize:filesize
           };
+          //console.log(this.editItemFile);
         switch (this.editItemFile.finttype) {
           case 0:
-            imgIcon = getZYFileTypeIcon(this.editItemFile.url);
+            imgIcon = (getZYFileType(this.editItemFile.url));
             break;
           case 1:
            // this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
-              imgIcon = this.editItemFile.localfile[0].imgsrc;
+            //  imgIcon = this.editItemFile.localfile[0].imgsrc;
+              imgIcon = this.editItemFile.imgsrc;
             break;
           case 2:
             imgIcon = "MP4";
@@ -287,14 +294,14 @@ export default {
             imgIcon = "MP3";
             break;
           case 4:  //! 文档
-              imgIcon = getZYFileTypeIcon(this.editItemFile.url);
+              imgIcon = (getZYFileType(this.editItemFile.url));
             break;
           default: //! iqiqta
-              imgIcon = getZYFileTypeIcon(this.editItemFile.url);
+              imgIcon = (getZYFileType(this.editItemFile.url));
             break;
         }
       } else if (this.editItemFile.ftype == 'link') {
-        imgIcon = "IT";
+        imgIcon = ("IT");
         cobj = {
             url:this.editItemFile.url,
             ftype:'link'
@@ -518,8 +525,11 @@ export default {
                     item.imgsrc =
                       item.info.filepath + item.info.metainfo.snapsuffix;
                   }
+                  else{
+                      item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+                  }
                 } else {
-                  item.imgsrc = commontools.fileType(item.info);
+                  item.imgsrc = getZYFileTypeIcon(item.info.filepath);//commontools.fileType(item.info);
                 }
               }
             }
@@ -640,7 +650,7 @@ export default {
                         item.info.filepath + item.info.metainfo.snapsuffix;
                     }
                   } else {
-                    item.imgsrc = commontools.fileType(item.info);
+                    item.imgsrc = getZYFileTypeIcon(item.info.filepath);
                   }
                 }
                 commontools.arrayMergeAsIds(this.files, res.data.data);

@@ -47,7 +47,7 @@ import "vant/lib/loading/style";
 import Empty from "@/common/empty";
 import List from "@/common/list";
 import Deatil from "./detail";
-import { pingceType, CollectionFn, getZYFileTypeIcon } from "@/util";
+import { pingceType, CollectionFn } from "@/util";
 import {
   Button,
   Indicator,
@@ -81,6 +81,7 @@ export default {
     Empty,
     [Loading.name]: Loading
   },
+
   data() {
     return {
       pingceHistoryList: [],

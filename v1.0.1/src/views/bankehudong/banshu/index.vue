@@ -43,7 +43,7 @@ import "vant/lib/loading/style";
 import "@vant/touch-emulator/index";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
-import { parseURL, CollectionFn, getZYFileTypeIcon } from "@/util";
+import { parseURL, CollectionFn, getZYFileType } from "@/util";
 import nativecode from '../../../nativecode'
 import {
   Button,
