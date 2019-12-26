@@ -30,7 +30,7 @@ nativecode.detectplatform = function () {
     }
 
     //! 测试
-    return 'exsoftdaping';
+    //return 'exsoftdaping';
 
     return '';
 }
