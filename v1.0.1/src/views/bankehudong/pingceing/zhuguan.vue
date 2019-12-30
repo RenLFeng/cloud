@@ -97,6 +97,10 @@
 <script>
 import html2canvas from "html2canvas";
 import { Button, Indicator, Toast, MessageBox, Field } from "mint-ui";
+
+import {fixCaptureImage} from '@/util'
+
+
 const colors = [
   "#FF0000",
   "#FF8900",
@@ -208,15 +212,21 @@ export default {
       this.$refs.uploadPic.click();
     },
     uploadChange(e) {
-     //   console.log('updatechange');
+        console.log('updatechange');
        // console.log(file);
       let that = this;
       let file = e.target.files[0];
      // this.uploadImg(file);
         if (file){
-            this.selfile = file;
-            let url = URL.createObjectURL(file);
-            this.pingceData.editimgurl = url;
+           // this.selfile = file;
+          //  let url = URL.createObjectURL(file);
+         //   this.pingceData.editimgurl = url;
+            fixCaptureImage(file).then(res=>{
+              //  this.selfile = res;
+              //  let url = URL.createObjectURL(res);
+                this.isSubmit = true;
+                this.pingceData.editimgurl = res;
+            })
         }
 
       this.$refs.uploadPic.value = "";
@@ -831,7 +841,7 @@ export default {
       // });
         let ca = this.$refs.drawcanvas;
         if (this.drawdata.cwidth > 0){
-            let imgurl = ca.toDataURL('image/jpeg', 6.0);
+            let imgurl = ca.toDataURL('image/jpeg', 0.8);
             this.selfile = null;
             this.isSubmit = true;
             this.pingceData.editimgurl = imgurl;

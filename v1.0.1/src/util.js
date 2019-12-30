@@ -114,6 +114,94 @@ export const getChartDate = (ndays, date) => {
   return dates.reverse();
 }
 
+// cjy: 纠正移动设备上的拍照旋转文件
+export const  fixCaptureImage =  (file)=> {
+    return new Promise((resolve, reject) => {
+        // 获取图片
+        console.log('fixCaptureImage');
+        const img = new Image();
+        let curl = window.URL.createObjectURL(file)
+        let oparam = curl;
+        img.src = curl;
+        img.onerror = () => reject(null);
+        let EXIF = require('exif-js');
+        img.onload = () => {
+            // 获取图片元数据（EXIF 变量是引入的 exif-js 库暴露的全局变量）
+            EXIF.getData(img, function() {
+                // 获取图片旋转标志位
+                var orientation = EXIF.getTag(this, "Orientation");
+                // 根据旋转角度，在画布上对图片进行旋转
+                //! test
+                console.log('fixLocalImage, orientation:'+orientation);
+
+                if (img.width == 0 || img.height == 0){
+                    return reject(null);
+                }
+
+             //   orientation = 8;
+              //! cjy: 因为手机端的拍照像素一般都很大， 这里限制最大值， 方便处理
+                let maxwidth = 1920;
+                let maxheight = 1080;
+              //  maxwidth = maxheight = 200; //! test
+                let cwidth = img.width;
+                let cheight = img.height;
+                if (cwidth > maxwidth){
+                    cwidth = maxwidth;
+                    cheight = cwidth * img.height / img.width;
+                }
+                if (cheight > maxheight){
+                    cheight = maxheight;
+                    cwidth = cheight * img.width / img.height;
+                }
+
+               // if (orientation === 3 || orientation === 6 || orientation === 8)
+                {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    switch (orientation) {
+                        case 3: // 旋转180°
+                            canvas.width = cwidth;
+                            canvas.height = cheight;
+                            ctx.rotate((180 * Math.PI) / 180);
+                           // ctx.drawImage(img, -img.width, -img.height, img.width, img.height);
+                            ctx.drawImage(img, -cwidth, -cheight, cwidth, cheight);
+                            break;
+                        case 6: // 旋转90°
+                            canvas.width = cheight;
+                            canvas.height = cwidth;
+                            ctx.rotate((90 * Math.PI) / 180);
+                          //  ctx.drawImage(img, 0, -img.height, img.width, img.height);
+                            ctx.drawImage(img, 0, -canvas.width, canvas.height, canvas.width);
+                            break;
+                        case 8: // 旋转-90°
+                            canvas.width = cheight;
+                            canvas.height = cwidth;
+                            ctx.rotate((-90 * Math.PI) / 180);
+                           // ctx.drawImage(img, -img.width, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(img, -canvas.height, 0, canvas.height, canvas.width);
+                            break;
+                        default:
+                            canvas.width = cwidth;
+                            canvas.height = cheight;
+                           // ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, cwidth, cheight);
+                            ctx.drawImage(img, 0, 0, cwidth, cheight);
+                            break;
+                    }
+                    // 返回新图片
+                    let imgurl = canvas.toDataURL('image/jpeg', 0.8);
+                    return resolve(imgurl);
+                    //canvas.toBlob(file => resolve(file), 'image/jpeg', 0.8)
+                }
+                // else {
+                //   //  return resolve(oparam);
+                //     return reject(null);
+                // }
+            });
+        };
+    });
+}
+
+
 //! cjy: 分析得分情况
 export const parseChartScoreData = (ed, wa, days, enddate) => {
   //! 清空原数据
