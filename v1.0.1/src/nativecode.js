@@ -8,6 +8,7 @@ var nativecode = {};
 nativecode.detectplatform = function () {
     var ua = navigator.userAgent;
     console.log(ua);
+    //alert(ua);
     if (ua.indexOf('ExsoftIosWeb') > -1) {
         return 'exsoftios';
     }
@@ -30,7 +31,7 @@ nativecode.detectplatform = function () {
     }
 
     //! 测试
-    //return 'exsoftdaping';
+   // return 'exsoftdaping';
 
     return '';
 }
@@ -360,6 +361,11 @@ nativecode.getDownUrl2=function(suburl)
 }
 nativecode.getUsedUrl=function(suburl)
 {
+    if (suburl.length > 0){
+        if (suburl[0] != '/'){
+            return suburl;
+        }
+    }
     return nativecode.getDownUrl(suburl);
 }
 
@@ -367,8 +373,11 @@ nativecode.getUsedUrl=function(suburl)
 nativecode.previewImage = function(vuethis, objargs)
 {
     if (typeof objargs == 'string'){
+        let useurl = objargs;
+        //if (useurl.indexOf(''))
+        useurl = nativecode.getUsedUrl(useurl);
         let robj = {
-            current:objargs
+            current:useurl
         }
         objargs = robj;
     }

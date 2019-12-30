@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <div class="bannertop" v-if="websockstate == 'reject'" @click="wsinit">连接失败，点击重连</div>
+    <div class="bannertop" v-if="websockstate == 'reject'" @click="uservalidate">连接失败，点击重连</div>
+    <!--<div class="bannertop" v-if="showtest">{{testtext}}</div>-->
     <transition :name="transitionName">
       <router-view class="Router"></router-view>
     </transition>
@@ -34,6 +35,7 @@ export default {
         this.$store.commit("SET_PREVIEW", {}, newValue);
       }
     },
+
     images: {
       get: function() {
         return this.$store.state.Preview.images;
@@ -73,6 +75,8 @@ export default {
   data() {
     return {
       transitionName: "slide-forward",
+        testtext:navigator.userAgent,
+        showtest:false,
       map: {},
 
 
@@ -105,38 +109,7 @@ export default {
     }
     // console.log("routerview page created, cur path:"+this.$router.path);
     //! 请求登录信息
-    var url = "/api/api/uservalidate";
-    console.log("user validate ret, cur path:" + this.$route.path);
-    //! cjy: 考虑到微信可能在不同界面单独加载， 这里检测仅指定path才去query， 减少频率
-    if (this.$route.path != '/login')  //! cjy: 服务器实现缓存
-    {
-      this.$http
-        .post(url)
-        .then(res => {
-          //  console.log(document.cookie);
-          if (res.data.code == 0) {
-            this.$store.commit("setLoginUser", res.data.data);
-            // cjy: 大屏端，如果已登录， 应当自动跳转主页
-            if (this.$route.path == "/login") {
-              this.$store.commit("setRouterForward", true);
-              this.$router.push("/");
-            }
-            nativecode.jsLogin(1, res.data.data);
-          } else {
-            //!  未登录， 强制跳转登录
-            if (this.$route.path != '/login'){
-                this.$store.commit("setLoginUser", {});
-                this.$store.commit("setRouterForward", true);
-                this.$router.push("/login");
-            }
-
-            nativecode.jsLogin(0, {});
-          }
-        })
-        .catch(() => {
-          //! 其他异常
-        });
-    }
+    this.uservalidate();
   },
   watch: {
       localuser(lnew, old) {
@@ -189,6 +162,44 @@ export default {
         this.$store.commit("SET_PREVIEW",{}, true);
       }
     },
+      uservalidate(){
+          var url = "/api/api/uservalidate";
+          console.log("user validate ret, cur path:" + this.$route.path);
+          //! cjy: 考虑到微信可能在不同界面单独加载， 这里检测仅指定path才去query， 减少频率
+          if (this.$route.path != '/login')  //! cjy: 服务器实现缓存
+          {
+              this.$http
+                  .post(url)
+                  .then(res => {
+                      //  console.log(document.cookie);
+                      if (res.data.code == 0) {
+                          this.$store.commit("setLoginUser", res.data.data);
+                          // cjy: 大屏端，如果已登录， 应当自动跳转主页
+                          if (this.$route.path == "/login") {
+                              this.$store.commit("setRouterForward", true);
+                              this.$router.push("/");
+                          }
+                          if (this.websockstate == 'reject'){
+                              this.wsinit();  //! 重新连接
+                          }
+                          nativecode.jsLogin(1, res.data.data);
+
+                      } else {
+                          //!  未登录， 强制跳转登录
+                          if (this.$route.path != '/login'){
+                              this.$store.commit("setLoginUser", {});
+                              this.$store.commit("setRouterForward", true);
+                              this.$router.push("/login");
+                          }
+
+                          nativecode.jsLogin(0, {});
+                      }
+                  })
+                  .catch(() => {
+                      //! 其他异常
+                  });
+          }
+      },
     goBack() {
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
     }

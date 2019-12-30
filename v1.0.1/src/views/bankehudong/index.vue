@@ -2,7 +2,7 @@
   <div class="hu-dong-container">
     <ul class="list-main">
 
-      <li class="fontlarge" @click="teacherFn()">
+      <li class="fontlarge" @click="teacherFn()" v-if="showstuc">
         <span>上课签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
@@ -10,7 +10,7 @@
           style="color:#E46100"
         ></i>
       </li>
-      <li class="fontlarge" @click="gopingce" v-if="!isTeacher">
+      <li class="fontlarge" @click="gopingce" v-if="showpingce">
         <span>评测</span>
         <i
           class="iconfont icontongji eicotrigger bigfont fr"
@@ -78,6 +78,18 @@ export default {
       }
       return false;
     }
+    ,showstuc(){
+        if (nativecode.platform == 'exsoftdaping'){
+            return false;
+        }
+        return true;
+      }
+      ,showpingce(){
+        if (!this.isTeacher){
+            return this.showstuc;
+        }
+        return false;
+      }
   },
   created() {
   },

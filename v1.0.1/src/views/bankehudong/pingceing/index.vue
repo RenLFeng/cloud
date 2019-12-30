@@ -19,7 +19,7 @@
       </mt-loadmore>
       <div class="pingce-ing" v-if="isPingce">
         <div class="subject">
-          <img :src="pingceData.filessnap" alt :onerror="defaultimg" @click="viewimg"/>
+          <img :src="pingceimg" alt :onerror="defaultimg" @click="viewimg"/>
         </div>
         <div class="footer">
           <p class="tit border-b">请点击选项作答</p>
@@ -34,7 +34,7 @@
             :type="pingceData.ptype"
             v-if="pingceData.ptype=='1' || pingceData.ptype=='5' || pingceData.ptype=='6'"
           />
-          <ZhuGuan v-if="pingceData.ptype=='4'" :pingceData="pingceData" @submitFn="onSubmit" />
+          <ZhuGuan v-if="pingceData.ptype=='4'" :pingceData="pingceData" @submitFn="onSubmit"  ref="zhuguan"/>
         </div>
       </div>
     </div>
@@ -131,12 +131,18 @@ export default {
         '$route' (to, from) {
             // 对路由变化作出响应...
             console.log('pingceing , route changed');
-        }
+        },
     },
   computed: {
     pagetitle() {
       return this.isPingce ? pingceType(this.pingceData.ptype) : "评测";
     },
+      pingceimg(){
+        if (this.pingceData.editimgurl ){
+            return this.pingceData.editimgurl;
+        }
+        return this.pingceData.filessnap;
+      },
     hasnavbar() {
 
       return true;
@@ -153,11 +159,17 @@ export default {
       this.Refresh();
     },
       viewimg(){
+        if (this.pingceData.ptype == 4){
+           // Toast('主观题， 请调用题目编辑');
+            this.$refs.zhuguan.draw();
+            return;
+        }
         nativecode.previewImage(this, this.pingceData.files);
       },
     onpingcedata(rdata) {
       let rd = rdata;
       rd.filessnap = rd.files + '_snap.jpg';
+      rd.editimgurl = '';  //! 占位， 主观题使用
       this.pingceData = rd;
       if (this.pingceData) {
         this.isPingce = true;
@@ -182,11 +194,31 @@ export default {
             console.log("res", res);
             this.onpingcedata(res.data.data);
           } else {
+
+              //！ 测试数据
+              // let rdata = {
+              //     "answerdesc" : "",
+              //     "classid" : 1000,
+              //     "createtime" : "2019-12-26 15:48:27",
+              //     "files" : "/downloads/pingce/20191226/a5bee907514f3296081ce52cfe821753.jpg",
+              //     "id" : 1104,
+              //     "info" : null,
+              //     "joinnum" : 0,
+              //     "optdesc" : "{}",
+              //     "ptype" : 4,
+              //     "score" : 10,
+              //     "timelimit" : 0,
+              //     "totalnum" : 0,
+              //     "userid" : 1001
+              // };
+              // this.onpingcedata(rdata);
+
             Toast("当前没有评测");
           }
           this.$refs.loadmore.onTopLoaded();
         })
         .catch(err => {
+            console.log(err);
           Toast("异常");
         });
     },
