@@ -9,14 +9,14 @@
           style="color:#E46100"
         ></i>
       </li>
-      <li class="fontlarge" @click="teacherFn()">
+      <!-- <li class="fontlarge" @click="teacherFn()">
         <span>上课签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
           :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
           style="color:#E46100"
         ></i>
-      </li>
+      </li> -->
       <li class="fontlarge" @click="gopingce" v-if="!isTeacher">
         <span>评测</span>
         <i

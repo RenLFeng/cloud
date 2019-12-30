@@ -33,7 +33,7 @@
           </div>
           <div
             class="btn-item sign-end"
-            v-else-if="studentSignClassInfo && this.studentSignState == '1'"
+            v-else-if="studentSignClassInfo && this.studentSignState >='0'"
           >
             <i class="iconfont iconok- colord"></i>
             <div>
@@ -78,7 +78,7 @@ import List from "@/common/list";
 import studentSignInfo from "./studentSignInfo";
 import Empty from "@/common/empty";
 
-import nativecode from '../../../nativecode'
+import nativecode from "../../../nativecode";
 
 export default {
   name: "",
@@ -143,7 +143,7 @@ export default {
     studentSignStateText() {
       if (this.studentSignClassInfo && this.studentSignState == "0") {
         return "点击签到 ";
-      } else if (this.studentSignClassInfo && this.studentSignState == "1") {
+      } else if (this.studentSignClassInfo && this.studentSignState > "0") {
         return "已签到";
       } else {
         return "教师未开启签到";
@@ -166,53 +166,53 @@ export default {
     loadTop() {
       this.signquery();
     },
-      dotest(){
-        // if (nativecode.platform == 'miniprogram'){
-        //     let wx = nativecode.getwx();
-        //     console.log('test getlocation');
-        //     let url = window.location.href;
-        //     //url = "http://192.168.40.104:8080/index.html";
-        //     //url = 'http://192.168.40.104:8080/index.html';
-        //     url = 'https://www2.exsoft.com.cn/';
-        //     console.log(url);
-        //     this.$http.post('/api/weixin/querysign',{
-        //         url:url
-        //     }).then(res=>{
-        //         console.log(res);
-        //         if (res.data.code == 0){
-        //             let datad = res.data.data;
-        //             wx.config({
-        //                 debug:false,
-        //                 appId:datad.appId,
-        //                 timestamp:datad.timestamp,
-        //                 nonceStr:datad.nonceStr,
-        //                 signature:datad.signature,
-        //                 jsApiList:['getLocation']
-        //             })
-        //             wx.ready(()=>{
-        //                 console.log('wx ready');
-        //                 wx.getLocation({
-        //                     type: 'wgs84',
-        //                     success :res =>{
-        //                         console.log(res);
-        //
-        //                     }
-        //                     ,fail:(res)=>{
-        //                         console.log(res);
-        //                     }
-        //                 })
-        //             })
-        //             wx.error(res=>{
-        //                 console.log(res);
-        //             })
-        //
-        //         }
-        //     }).catch(res=>{
-        //         console.log(res);
-        //     })
-        //
-        // }
-      },
+    dotest() {
+      // if (nativecode.platform == 'miniprogram'){
+      //     let wx = nativecode.getwx();
+      //     console.log('test getlocation');
+      //     let url = window.location.href;
+      //     //url = "http://192.168.40.104:8080/index.html";
+      //     //url = 'http://192.168.40.104:8080/index.html';
+      //     url = 'https://www2.exsoft.com.cn/';
+      //     console.log(url);
+      //     this.$http.post('/api/weixin/querysign',{
+      //         url:url
+      //     }).then(res=>{
+      //         console.log(res);
+      //         if (res.data.code == 0){
+      //             let datad = res.data.data;
+      //             wx.config({
+      //                 debug:false,
+      //                 appId:datad.appId,
+      //                 timestamp:datad.timestamp,
+      //                 nonceStr:datad.nonceStr,
+      //                 signature:datad.signature,
+      //                 jsApiList:['getLocation']
+      //             })
+      //             wx.ready(()=>{
+      //                 console.log('wx ready');
+      //                 wx.getLocation({
+      //                     type: 'wgs84',
+      //                     success :res =>{
+      //                         console.log(res);
+      //
+      //                     }
+      //                     ,fail:(res)=>{
+      //                         console.log(res);
+      //                     }
+      //                 })
+      //             })
+      //             wx.error(res=>{
+      //                 console.log(res);
+      //             })
+      //
+      //         }
+      //     }).catch(res=>{
+      //         console.log(res);
+      //     })
+      //
+      // }
+    },
     oncalssStatefn(v) {
       this.signState = v;
       this.classSignId = 0;
@@ -252,7 +252,7 @@ export default {
                 console.log("lkns", this.studentSignClassInfo);
                 this.classSignId = this.studentSignClassInfo.signid;
               } else {
-                Toast('暂无签到')
+                Toast("暂无签到");
                 this.studentSignClassInfo = {};
                 this.studentSignState = "";
               }
@@ -260,25 +260,37 @@ export default {
               // alert(this.studentSignState)
             }
           } else {
-             Toast('出错了')
+            Toast("出错了");
           }
           this.$refs.loadmore.onTopLoaded();
           Indicator.close();
         })
         .catch(() => {
-          
           Indicator.close();
         });
     },
     //教师上课
     teacherSignClass() {
       if (this.signState == "0" || !this.isTeacher) return;
+      let signType=['wifi','gps'];
+      let info = {
+        wifi: {
+          SSID: "EXSOFT",
+          BSSID: "ec:41:18:48:99:20"
+        },
+        gps: {
+          latitude: 22.56006,
+          longitude: 113.8964
+        },
+        type:signType
+      };
       let url = "";
       let obj = {};
       let stateText = "";
       url = "/api/sign/signadd";
       obj = {
-        bankeid: this.bankeid
+        bankeid: this.bankeid,
+        info:JSON.stringify(info)
       };
       stateText = this.$t("confirm.BeginsClass");
       MessageBox.confirm("", {
@@ -361,6 +373,9 @@ export default {
               console.log(res);
               this.studentSignClassInfo = res.data.data;
               this.studentSignState = this.studentSignClassInfo.state;
+              this.studentSignClassInfo.starttime = res.data.data.signtime.split(
+                " "
+              )[1];
             } else {
             }
             Indicator.close();

@@ -3,7 +3,7 @@
     <div class="tit">
       <p>签到开始时间:&nbsp;{{startTime}}&nbsp;{{Data.time}}</p>
       <p class="clearfix">
-        <span class="colord fl" @click="confign()" v-if="isTeacher">一键设置签到</span>
+        <span class="colord fl" @click="confign()" v-if="isTeacher && SginState">一键设置签到</span>
         <span class="colord fr" @click="More()">{{seeText}}</span>
       </p>
     </div>
