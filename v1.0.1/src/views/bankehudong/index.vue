@@ -2,22 +2,21 @@
   <div class="hu-dong-container">
     <ul class="list-main">
       <li class="fontlarge" @click="onwxsign()">
-        <span>微信签到</span>
+        <span>签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
           :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
           style="color:#E46100"
         ></i>
       </li>
-      <li class="fontlarge" @click="teacherFn()" v-if="showstuc">
+      <!-- <li class="fontlarge" @click="teacherFn()" v-if="showstuc">
         <span>上课签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
           :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
           style="color:#E46100"
         ></i>
-
-      </li>
+      </li> -->
       <li class="fontlarge" @click="gopingce" v-if="showpingce">
         <span>评测</span>
         <i
@@ -102,9 +101,13 @@ export default {
   created() {
   },
   methods: {
-    //老师签到
+    //签到
     onwxsign() {
-      nativecode.navigateToSign(this.bankeid,this.isteacher);
+      if(this.haswxsign){
+        nativecode.navigateToSign(this.bankeid,this.isTeacher);
+      }else{
+        this.teacherFn();
+      }
     },
     teacherFn() {
       this.$store.commit("setRouterForward", true);
