@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="bannertop" v-if="websockstate == 'reject'" @click="uservalidate">连接失败，点击重连</div>
+    <div class="bannertop" v-if="showloginfail" @click="uservalidate">连接失败，点击重连</div>
     <!--<div class="bannertop" v-if="showtest">{{testtext}}</div>-->
     <transition :name="transitionName">
       <router-view class="Router"></router-view>
@@ -26,6 +26,16 @@ export default {
     preview
   },
   computed: {
+      showloginfail(){
+          let curpath = this.$route.path;
+          if (curpath == '/login'){
+              return false;
+          }
+          if (this.websockstate == 'reject'){
+              return true;
+          }
+          return false;
+      },
     show: {
       get: function() {
         return this.$store.state.Preview.show;

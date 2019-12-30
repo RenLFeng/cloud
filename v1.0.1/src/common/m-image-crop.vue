@@ -65,6 +65,9 @@
  * cancel: 图片操作取消时触发
  */
 //import './iconfont.js';
+
+    import {fixCaptureImage} from "@/util";
+
 export default {
     name: 'm-image-crop',
     data() {
@@ -181,51 +184,55 @@ export default {
         },
         loadfile(file){
             if (!file) return;
-            let url = URL.createObjectURL(file);
-            this.currentValue.origin = file;
+           // let url = URL.createObjectURL(file);
+            //this.currentValue.origin = file;
             // 渲染图片
-            this.img.src = url;
+            //! fixcaptureimage : 处理照片的图片旋转； 缩放图片
+           fixCaptureImage(file).then(res=>{
+               let url = res;
+               this.img.src = url;
 
-            this.img.onload = () => {
-                this.filRealitySize = {
-                    width: this.img.width,
-                    height: this.img.height
-                };
+               this.img.onload = () => {
+                   this.filRealitySize = {
+                       width: this.img.width,
+                       height: this.img.height
+                   };
 
-                let showView = () => {
-                    this.indicator.visible = true;
-                    this.loadImg();
-                    setTimeout(() => {
-                        this.indicator.visible = false;
-                        this.state = 2;
-                        this.$nextTick(function() {
-                            this.file2SizePosition();
-                        });
-                    }, 800);
-                };
-                if (this.skipCrop) {
-                    this.uploadCanvas();
-                } else {
-                    if (
-                        this.config.isSlice &&
-                        this.filRealitySize.width /
-                        this.filRealitySize.height ==
-                        this.proportion.w / this.proportion.h
-                    ) {
-                        // var flag = window.confirm(
-                        //     '文件已符合规定尺寸，是否直接使用？'
-                        // );
-                        // if (flag) {
-                        //     this.uploadCanvas();
-                        // } else
-                        {
-                            showView();
-                        }
-                    } else {
-                        showView();
-                    }
-                }
-            };
+                   let showView = () => {
+                       this.indicator.visible = true;
+                       this.loadImg();
+                       setTimeout(() => {
+                           this.indicator.visible = false;
+                           this.state = 2;
+                           this.$nextTick(function() {
+                               this.file2SizePosition();
+                           });
+                       }, 800);
+                   };
+                   if (this.skipCrop) {
+                       this.uploadCanvas();
+                   } else {
+                       if (
+                           this.config.isSlice &&
+                           this.filRealitySize.width /
+                           this.filRealitySize.height ==
+                           this.proportion.w / this.proportion.h
+                       ) {
+                           // var flag = window.confirm(
+                           //     '文件已符合规定尺寸，是否直接使用？'
+                           // );
+                           // if (flag) {
+                           //     this.uploadCanvas();
+                           // } else
+                           {
+                               showView();
+                           }
+                       } else {
+                           showView();
+                       }
+                   }
+               };
+           })
         },
         loadImg() {
             let imgWidth = this.filRealitySize.width;
@@ -273,7 +280,8 @@ export default {
                     break;
             }
             this.url = canvas.toDataURL(
-                this.currentValue.origin.type,
+              //  this.currentValue.origin.type,
+                'image/jpeg',
                 this.quality
             );
             if (imgWidth / imgHeight >= this.view.width / this.view.height) {
