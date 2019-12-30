@@ -1,7 +1,7 @@
 export default {
   common: {
     Back: '返回',
-    HomeTite: '云平台',
+    HomeTite: '中科卓软云班课',
     AddClass: '新增班课',
     Keep: '保存',
     Saving: '保存中',

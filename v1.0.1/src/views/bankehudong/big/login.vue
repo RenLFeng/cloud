@@ -96,6 +96,11 @@ export default {
     //   console.log(this.tempCode);
     },
     dapinglogin() {
+        //! cjy: 检测当前bankeid的有效性
+        if (this.bankeid == 0){
+            Toast('当前班课无效， 请返回重试');
+            return;
+        }
       this.$http
         .post("api/banke/dapinglogin", {
           code: this.code,
@@ -107,7 +112,7 @@ export default {
             Toast('连接成功')
             // console.log("dapinglogin", res);
           }else{
-              Toast('连接错误,请查看链接码是否正确')
+              Toast('连接错误：' + res.data.msg)
           }
         })
         .catch(err => {

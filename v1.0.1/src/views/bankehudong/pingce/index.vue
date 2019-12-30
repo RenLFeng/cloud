@@ -47,7 +47,7 @@ import "vant/lib/loading/style";
 import Empty from "@/common/empty";
 import List from "@/common/list";
 import Deatil from "./detail";
-import { pingceType, CollectionFn, getZYFileTypeIcon } from "@/util";
+import { pingceType, CollectionFn } from "@/util";
 import {
   Button,
   Indicator,
@@ -81,6 +81,7 @@ export default {
     Empty,
     [Loading.name]: Loading
   },
+
   data() {
     return {
       pingceHistoryList: [],
@@ -104,13 +105,20 @@ export default {
         }
       ],
       actionShow: false,
-      editItemObj: {}
+      editItemObj: {},
+
+        showsingle:false,
+        pingceid:0
     };
   },
   mounted() {
     let params = this.$route.params;
     if (params.bankeid) {
       this.bankeid = params.bankeid;
+    }
+    else if (params.pingceid){
+        this.pingceid = params.pingceid;
+        this.showsingle = true;
     }
     this.HistoryListRQuery();
   },
@@ -123,9 +131,12 @@ export default {
     //收藏
     Collection() {
       let imgIcon = "";
-      this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
-      this.editItemObj.name=pingceType(this.editItemObj.ptype)
-      CollectionFn(this.editItemObj, 4, imgIcon, this.editItemObj.id,this.bankeid);
+      //this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
+     //this.editItemObj.name=pingceType(this.editItemObj.ptype)
+        imgIcon = this.editItemObj.files + "_snap.jpg";
+        let title = pingceType(this.editItemObj.ptype);
+        let cobj = {};
+      CollectionFn(cobj, 4, imgIcon, this.editItemObj.id,this.bankeid, title);
     },
     loadMore() {
       this.loading = true;
@@ -133,12 +144,18 @@ export default {
       this.HistoryListRQuery();
     },
     HistoryListRQuery() {
+        let qobj = {
+            page: this.page,
+            pagesize: this.pagesize
+        };
+        if (this.showsingle){
+            qobj.id = this.pingceid;
+        }
+        else{
+            qobj.bankeid = this.bankeid;
+        }
       this.$http
-        .post("api/pingce/query", {
-          bankeid: this.bankeid,
-          page: this.page,
-          pagesize: this.pagesize
-        })
+        .post("api/pingce/query", qobj)
         .then(res => {
           if (res.data.code == "0") {
             // for (let i = 0; i < 5; i++) {
@@ -157,6 +174,14 @@ export default {
               ...res.data.data
             ];
             console.log("pingce/query", res);
+            if (this.showsingle){
+                if (res.data.data.length == 0){
+                    Toast('未找到记录');
+                }
+                else{
+                    this.details(this.pingceHistoryList[0]);
+                }
+            }
           } else {
             Toast("连接错误");
           }
@@ -175,6 +200,10 @@ export default {
     goBacks() {
       if (this.popupDeatil) {
         this.popupDeatil = false;
+
+        if (this.showsingle){
+            this.Backs();
+        }
       }
     }
   }

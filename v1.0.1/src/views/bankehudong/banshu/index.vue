@@ -43,7 +43,8 @@ import "vant/lib/loading/style";
 import "@vant/touch-emulator/index";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
-import { parseURL, CollectionFn, getZYFileTypeIcon } from "@/util";
+import { parseURL, CollectionFn, getZYFileType } from "@/util";
+import nativecode from '../../../nativecode'
 import {
   Button,
   Indicator,
@@ -107,9 +108,12 @@ export default {
     //收藏
     Collection() {
       let imgIcon = "";
-      this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
-      this.editItemObj.name = '课堂板书'+this.editItemObj.uploadtime
-      CollectionFn(this.editItemObj, 100, imgIcon, this.editItemObj.id,this.bankeid);
+      imgIcon = this.editItemObj.files + "_snap.jpg";
+      let name = '课堂板书'+this.editItemObj.uploadtime;
+      let cobj = {
+          filepath:this.editItemObj.files
+      };
+      CollectionFn(cobj, 100, imgIcon, this.editItemObj.id,this.bankeid, name);
     },
     loadMore() {
       this.isScorll = true;
@@ -149,13 +153,18 @@ export default {
     preview(index) {
       let tempImgs = [];
       for (let item of this.banshuList) {
-        tempImgs.push(item.files);
+        tempImgs.push(nativecode.getUsedUrl(item.files));
       }
-      ImagePreview({
-        images: tempImgs,
-        startPosition: index,
-        onClose() {}
-      });
+      nativecode.previewImage(this, {
+          urls:tempImgs,
+          index:index
+      })
+
+      // ImagePreview({
+      //   images: tempImgs,
+      //   startPosition: index,
+      //   onClose() {}
+      // });
       // this.$store.commit("SET_ISPREVIEW", false);
       // this.$store.commit("SET_IMAGES", tempImgs);
       // this.$store.commit("SET_INDEX", index);

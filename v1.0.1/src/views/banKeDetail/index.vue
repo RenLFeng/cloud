@@ -63,12 +63,12 @@
               </li>
               <div class="devide"></div>
 
-              <li @click="closeBk" class="dange">
+              <li @click="closeBk" class="dange" v-if="showbankedange">
                 <mt-cell title="删除班课" is-link></mt-cell>
               </li>
             </div>
             <div v-else>
-              <li @click="closeBk" class="dange">
+              <li @click="closeBk" class="dange" v-if="showbankedange">
                 <mt-cell title="退出班课" is-link></mt-cell>
               </li>
             </div>
@@ -117,6 +117,7 @@ import { Cell, Button, MessageBox, Field } from "mint-ui";
 import edit from "./edit";
 import Notice from "./Notice";
 import Proportion from "./Proportion";
+import nativecode from '@/nativecode'
 export default {
   name: "",
   props: {
@@ -153,6 +154,12 @@ export default {
       let caneditbanke = this.$store.getters.caneditbanke;
       return caneditbanke;
     },
+      showbankedange(){
+        if (nativecode.platform == 'exsoftdaping'){
+            return false;
+        }
+        return true;
+      },
     haseditrole() {
       return this.$store.getters.haseditbankerole;
     },

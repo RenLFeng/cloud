@@ -251,35 +251,38 @@ commontools.maxLength = function (v) {
     }
 
 }
-commontools.fileType = function (fitem) {
-        const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
-        var r = require("../src/assets/file_icon/file.svg");
-        for (let v of fileType) {
-            if (fitem.filename.includes(v)) {
-                r = require(`../src/assets/file_icon/${v}.svg`);
-            } else
-            if (fitem.filename.includes("doc") || fitem.filename.includes("rtf")) {
-                r = require(`../src/assets/file_icon/docx.svg`);
-            } else
-            if (fitem.filename.includes("zip")) {
-                r = require(`../src/assets/file_icon/rar.svg`);
-            } else
-            if (fitem.filename.includes("xls")) {
-                r = require(`../src/assets/file_icon/xlsx.svg`);
-            }  else
-            if (fitem.filename.includes("mp4")) {
-                r = require(`../src/assets/file_icon/MP4.png`);
-            }else
-            if (fitem.filename.includes("mp3")) {
-                r = require(`../src/assets/file_icon/MP3.png`);
-            }
-            else {
-                r = require(`../src/assets/file_default.png`);
-            }
 
-        }
-        return r;
-    },
+
+// cjy： 统一使用 getZYFileType 和 defaultimg
+// commontools.fileType = function (fitem) {
+//         const fileType = ["txt", "rar", "xlsx", "docx", "ppt", "pdf"];
+//         var r = require("../src/assets/file_icon/file.svg");
+//         for (let v of fileType) {
+//             if (fitem.filename.includes(v)) {
+//                 r = require(`../src/assets/file_icon/${v}.svg`);
+//             } else
+//             if (fitem.filename.includes("doc") || fitem.filename.includes("rtf")) {
+//                 r = require(`../src/assets/file_icon/docx.svg`);
+//             } else
+//             if (fitem.filename.includes("zip")) {
+//                 r = require(`../src/assets/file_icon/rar.svg`);
+//             } else
+//             if (fitem.filename.includes("xls")) {
+//                 r = require(`../src/assets/file_icon/xlsx.svg`);
+//             }  else
+//             if (fitem.filename.includes("mp4")) {
+//                 r = require(`../src/assets/file_icon/MP4.png`);
+//             }else
+//             if (fitem.filename.includes("mp3")) {
+//                 r = require(`../src/assets/file_icon/MP3.png`);
+//             }
+//             else {
+//                 r = require(`../src/assets/file_default.png`);
+//             }
+//
+//         }
+//         return r;
+//     },
 
     commontools.fileSnapPath = function (fitem) {
         if (fitem && fitem.metainfo && fitem.metainfo.snapsuffix) {

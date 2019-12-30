@@ -1,20 +1,21 @@
 <template>
   <div class="pingce-dtail-warp">
-    <div class="main" v-if="memberData.length">
+    <div class="main" >
       <div class="pic">
-        <img :src="pingceItemfile.files" alt />
+        <img :src="pingceItemfile.files" alt @click="previewimg" />
         <p class="color9">
-          {{pingceItemfile.userid}}
+          题目
           <span class="fr">{{pingceItemfile.createtime}}</span>
         </p>
       </div>
-      <div class="list-main">
+      <div class="list-main" v-if="memberData.length">
         <div class="content">
           <p class="clearfix tit">
             <span class="fl">{{memberData.length}} 人提交</span>
             <span class="fr">正确率 00%</span>
           </p>
           <List
+
             v-for="(v,index) in memberData"
             :key="index"
             :item="v"
@@ -22,10 +23,13 @@
             :ptype="pingceItemfile.ptype"
             @click.native="onMemberClick(v)"
           />
+
         </div>
       </div>
+      <!--<Empty v-else :text="['无提交']" /> -->
+      <div v-else class="list-main">无提交</div>
     </div>
-    <Empty v-else :text="['暂无记录...']" />
+
     <mt-popup v-model="popupDeatil" position="right" class="mint-popup" :modal="false" style>
       <mt-header :title="`${memBerItem.name}的答案`">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
@@ -39,6 +43,7 @@ import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
 import List from "@/common/list";
 import AnswerDetail from "./answerdetail";
 import Empty from "@/common/empty";
+import nativecode from '@/nativecode'
 export default {
   name: "",
   props: {
@@ -70,6 +75,9 @@ export default {
   },
   mounted() {},
   methods: {
+      previewimg(){
+          nativecode.previewImage(this, this.pingceItemfile.files);
+      },
     querySubmitDetail() {
       this.$http
         .post("api/pingce/querysubmit", {
@@ -84,7 +92,7 @@ export default {
               for (let v of res.data.data.users) {
                 if (item.userid == v.id) {
                   item.avatar = v.avatar;
-                  item.name = v.account;
+                  item.name = v.name;
                 }
               }
             }

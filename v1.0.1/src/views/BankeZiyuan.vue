@@ -145,7 +145,7 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
-import { CollectionFn, getZYFileTypeIcon, preview } from "@/util";
+import { CollectionFn, getZYFileType, preview, defaultImg,getZYFileTypeIcon } from "@/util";
 import nativecode from "../nativecode";
 
 export default {
@@ -266,13 +266,26 @@ export default {
     //收藏
     Collection() {
       let imgIcon = "";
-      if (this.editItemFile.ftype == "file") {
+      let cobj = {};  //! cjy: 减少信息； 这里的editItemfile 非常大
+      if (this.editItemFile.ftype == 'file') {
+          let filesize = 0;
+          if (this.editItemFile.info && this.editItemFile.info.filesize){
+              filesize = this.editItemFile.info.filesize;
+          }
+          cobj = {
+              url:this.editItemFile.url,
+              ftype:'file',
+              filesize:filesize
+          };
+          //console.log(this.editItemFile);
         switch (this.editItemFile.finttype) {
           case 0:
-            imgIcon = getZYFileTypeIcon(this.editItemFile.name);
+            imgIcon = (getZYFileType(this.editItemFile.url));
             break;
           case 1:
-            this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
+           // this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
+            //  imgIcon = this.editItemFile.localfile[0].imgsrc;
+              imgIcon = this.editItemFile.imgsrc;
             break;
           case 2:
             imgIcon = "MP4";
@@ -280,22 +293,22 @@ export default {
           case 3:
             imgIcon = "MP3";
             break;
-          case 4:
-            return "";
+          case 4:  //! 文档
+              imgIcon = (getZYFileType(this.editItemFile.url));
             break;
-          default:
-            return "";
+          default: //! iqiqta
+              imgIcon = (getZYFileType(this.editItemFile.url));
+            break;
         }
-      } else if (this.editItemFile.ftype == "link") {
-        imgIcon = "IT";
+      } else if (this.editItemFile.ftype == 'link') {
+        imgIcon = ("IT");
+        cobj = {
+            url:this.editItemFile.url,
+            ftype:'link'
+        };
       }
-      CollectionFn(
-        this.editItemFile,
-        1,
-        imgIcon,
-        this.editItemFile.id,
-        this.bankeid
-      );
+      let title = this.editItemFile.name;
+      CollectionFn(cobj, 1, imgIcon, this.editItemFile.id,this.bankeid, title);
     },
     //编辑
     bankeEdit() {},
@@ -429,23 +442,18 @@ export default {
     //下载资源
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
-      fileitem.downurl = nativecode.getDownUrl(fileitem.url);
-      if (fileitem.finttype == "1") {
-        let tempImgs = [fileitem.info.filepath];
-        let obj = {
-          isPreview: true,
-          previewLoadFile: [fileitem.info],
-          images: tempImgs,
-          show: true,
-          index: 0
-        };
-        this.$store.commit("SET_PREVIEW", obj, "");
-      } else {
-        if (nativecode.ncall("jsFileLink", fileitem)) {
-          return;
-        }
+
+      if (fileitem.ftype == 'file'){
+          nativecode.fileviewSingle(this, fileitem.info);
+      }
+      else if (fileitem.ftype == 'link'){
+          nativecode.fileviewUrl(this, fileitem);
       }
 
+      // fileitem.downurl = nativecode.getDownUrl(fileitem.url);
+      // if (nativecode.ncall("jsFileLink", fileitem)) {
+      //   return;
+      // }
       // if (fileitem.ftype == "file") {
       //   MessageBox.confirm("您可以下载当前文件!").then(res => {
       //     let down = document.createElement("a");
@@ -457,13 +465,13 @@ export default {
       //     return;
       //   });
       // }
-
-      var desc = "请在正式环境查看";
-      Toast(desc);
-
-      if (window.exsoftTest) {
-        window.exsoftTest(fileitem.filepath, fileitem.filename1);
-      }
+      //
+      // var desc = "请在正式环境查看";
+      // Toast(desc);
+      //
+      // if (window.exsoftTest) {
+      //   window.exsoftTest(fileitem.filepath, fileitem.filename1);
+      // }
     },
     loadMore() {
       if (this.files.length >= 10) {
@@ -517,8 +525,11 @@ export default {
                     item.imgsrc =
                       item.info.filepath + item.info.metainfo.snapsuffix;
                   }
+                  else{
+                      item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+                  }
                 } else {
-                  item.imgsrc = commontools.fileType(item.info);
+                  item.imgsrc = getZYFileTypeIcon(item.info.filepath);//commontools.fileType(item.info);
                 }
               }
             }
@@ -639,7 +650,7 @@ export default {
                         item.info.filepath + item.info.metainfo.snapsuffix;
                     }
                   } else {
-                    item.imgsrc = commontools.fileType(item.info);
+                    item.imgsrc = getZYFileTypeIcon(item.info.filepath);
                   }
                 }
                 commontools.arrayMergeAsIds(this.files, res.data.data);

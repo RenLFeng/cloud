@@ -67,6 +67,7 @@ export function createRouter() {
         {path:'/Sign',name:'Sign', component:Sign},
         {path:'/PingCe',name:'PingCe', component:PingCe},
         {path:'/PingCeing',name:'PingCeing', component:PingCeing},
+        {path:'/urlpingce/:urlbankeid/:urlhack', component:PingCeing, props:true},
         {path:'/Group',name:'Group', component:Group},
         {path:'/Banshu',name:'Banshu', component:Banshu},
         {path:'/Collection',name:'Collection', component:Collection},

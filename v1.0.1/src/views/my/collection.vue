@@ -21,7 +21,10 @@
 <script>
 import List from "@/common/list";
 import Empty from "@/common/empty";
-import nativecode from "../../nativecode";
+import nativecode from "@/nativecode";
+
+import { getCollectionType} from "@/util";
+
 import {
   Indicator,
   Toast,
@@ -71,10 +74,14 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             Toast("成功");
-            this.collectionHiostry = res.data.data;
-            for (let v of this.collectionHiostry) {
+            let ch = res.data.data;
+            for (let v of ch) {
               v.info = JSON.parse(v.info);
+              if (v.info.type){
+                  v.info.typeText = getCollectionType(v.info.type);
+              }
             }
+            this.collectionHiostry = ch;
             console.log("success", this.collectionHiostry);
           } else {
             Toast("失败");
@@ -155,32 +162,36 @@ export default {
     filedetail(fileItem) {
       switch (fileItem.eventtype) {
         case 1:
-          let tourl = "/bankehome/" + fileItem.info.bankeid;
-          if (!nativecode.navigateTo(tourl)) {
-            this.$store.commit("setRouterForward", true);
-            this.$router.push(tourl);
-          }
+          // let tourl = "/bankehome/" + fileItem.info.bankeid;
+          // if (!nativecode.navigateTo(tourl)) {
+          //   this.$store.commit("setRouterForward", true);
+          //   this.$router.push(tourl);
+          // }
+            let obj = fileItem.info.itemfile;
+            obj.filename = fileItem.title;
+            nativecode.fileview(this,  obj);
           break;
         case 2:
           return "";
           break;
         case 3:
-          this.$store.commit("setRouterForward", true);
+          this.$store.commit("setRouterForward", true); //! 作业
           this.$router.push("/zuoyeresult/" + fileItem.eventid);
           break;
-        case 4:
+        case 4:  //! 评测
           this.$store.commit("setRouterForward", true);
           this.$router.push({
             name: "PingCe",
-            params: { bankeid: fileItem.info.bankeid }
+            params: { pingceid: fileItem.eventid }
           });
           break;
-        case 100:
-          this.$store.commit("setRouterForward", true);
-          this.$router.push({
-            name: "Banshu",
-            params: { bankeid: fileItem.info.bankeid }
-          });
+        case 100: //! 板书
+            nativecode.fileview(this,  fileItem.info.itemfile);
+          // this.$store.commit("setRouterForward", true);
+          // this.$router.push({
+          //   name: "Banshu",
+          //   params: { bankeid: fileItem.info.bankeid }
+          // });
           break;
         default:
           return "";
