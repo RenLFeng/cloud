@@ -181,11 +181,12 @@ nativecode.navigateTo = function(path)
     return false;
 }
 
-nativecode.navigateToSign = function(bankeid)
+nativecode.navigateToSign = function(bankeid,isteacher)
 {
     let wx = nativecode.getwx();
     let argobj = {
-        bankeid:bankeid
+        bankeid:bankeid,
+        role:isteacher?10:5
     };
     let tourl = '/pages/location/sign';
     tourl += '?args=' + encodeURIComponent(JSON.stringify(argobj));
