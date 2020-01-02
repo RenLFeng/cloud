@@ -121,6 +121,19 @@ textarea {
     white-space: nowrap
 }
 
+.maxlong {
+    display: inline-block;
+    width: 60%;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+.maxlong8 {
+    width: 80%;
+    max-width: 80%;
+}
+
 .inline {
     display: inline-block
 }
@@ -273,9 +286,7 @@ textarea {
     flex: 1;
 }
 
-.mint-header {
-
-}
+.mint-header {}
 
 .mint-header-f {
     position: fixed !important;
@@ -284,14 +295,19 @@ textarea {
     top: -1px !important;
     z-index: 9999999999 !important;
 }
+
 .main-f {
     margin-top: 45px;
 }
+
 .popup-scroll {
     overflow: auto !important;
-    height: 100%!important;
+    height: 100% !important;
 }
 
+.mint-tabbar.is-fixed {
+    z-index: 100 !important;
+}
 
 .mint-header,
 .mint-searchbar {
@@ -536,7 +552,7 @@ textarea {
     top: -10px;
     background: #f00;
     border-radius: 50%;
-    z-index: 9999999999;
+    z-index: 99;
 }
 
 .reddot-Tips2::after {
@@ -548,5 +564,5 @@ textarea {
     top: -5px;
     background: #f00;
     border-radius: 50%;
-    z-index: 9999999999;
+    z-index: 99;
 }

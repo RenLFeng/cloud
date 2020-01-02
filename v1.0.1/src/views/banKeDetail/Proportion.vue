@@ -5,32 +5,32 @@
       <div class="item-box">
         <p class="tit">资源得分占比：</p>
         <p class="input">
-          <input type="number" v-model="scorerule1" />
+          <input type="number" v-model="scorerule1" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">签到得分占比：</p>
         <p class="input">
-          <input type="number" v-model="scorerule2" />
+          <input type="number" v-model="scorerule2" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">作业得分占比：</p>
         <p class="input">
-          <input type="number" v-model="scorerule3" />
+          <input type="number" v-model="scorerule3" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">评测得分占比：</p>
         <p class="input">
-          <input type="number" v-model="scorerule4" />
+          <input type="number" v-model="scorerule4" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
-      <p class="footer-btn">
+      <p class="footer-btn" v-if="caneditbanke">
         <mt-button type="default" @click.native="Submit" class="submit">确认</mt-button>
         <mt-button type="default" @click.native="reSet" class="seSet">恢复默认</mt-button>
       </p>
@@ -45,21 +45,21 @@ export default {
   props: {
     bankeInfo: {
       default() {
-        return {
-          
-        };
+        return {};
       }
+    },
+    caneditbanke: {
+      default: true
     }
   },
-  watch: {
-  },
+  watch: {},
   data() {
     return {
       scorerule1: this.bankeInfo.scorerule1,
       scorerule2: this.bankeInfo.scorerule2,
       scorerule3: this.bankeInfo.scorerule3,
       scorerule4: this.bankeInfo.scorerule4,
-      scorerule5: this.bankeInfo.scorerule5,
+      scorerule5: this.bankeInfo.scorerule5
     };
   },
 
@@ -108,6 +108,7 @@ export default {
           padding: 10px 5px;
           border: 1px solid #0089ff;
           border-radius: 10px;
+          background: #fff;
         }
         span {
           position: absolute;

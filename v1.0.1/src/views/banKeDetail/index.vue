@@ -121,7 +121,7 @@
       <mt-header title="得分占比">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Proportion :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" />
+      <Proportion :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" :caneditbanke="caneditbanke"/>
     </mt-popup>
   </div>
 </template>

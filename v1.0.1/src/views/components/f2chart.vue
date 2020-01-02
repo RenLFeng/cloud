@@ -1,6 +1,6 @@
 <template>
   <div class="f2-main-content">
-    <mt-header title="得分统计" style="margin-bottom: 10px;">
+    <mt-header title="得分统计" style="margin-bottom: 10px;" class="mint-header-f">
       <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
     </mt-header>
     <div class="chart-item">

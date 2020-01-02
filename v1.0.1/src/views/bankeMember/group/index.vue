@@ -30,7 +30,7 @@
         :EditItem="EditItem"
         @editBack="onEditBack"
         :allMemBers="allMemBers"
-        @setGgoupName="onSetGgoupName"
+        @setsubgroupmnum="onSetsubgroupmnum"
       />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
@@ -213,16 +213,18 @@ export default {
     },
 
     //新增
-    addGroup(name) {
+    addGroup(v) {
       if (!this.isteacher) {
         Toast("你无权限");
         return;
       }
       Indicator.open("加载中...");
       let obj = {
-        id: name ? this.EditItem.id : "",
-        name: name ? name : "分组1",
-        bankeid: this.bankeid
+        id: v?this.EditItem.id:'',
+        name: v.name ?v.name : "分组1",
+        bankeid: this.bankeid,
+        subgroupmnum:v?v.subgroupmnum:0,
+        subgroupnum:v?v.subgroupnum:0,
       };
       console.log("this.EditItemthis.EditItem", this.EditItem);
       this.$http
@@ -242,8 +244,8 @@ export default {
           Indicator.close();
         });
     },
-    onSetGgoupName(name) {
-      this.addGroup(name);
+    onSetsubgroupmnum(v) {
+      this.addGroup(v);
     },
     onEditBack(v) {
       if (v.type) {

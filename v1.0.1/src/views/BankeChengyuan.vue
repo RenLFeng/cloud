@@ -42,10 +42,10 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header title="成员详情">
+      <mt-header title="成员详情" class="">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <div class="content-main">
+      <div class="content-main popup-scroll">
         <MemberDetail :memberuser="DetailItem" :chartData="chartData" />
       </div>
     </mt-popup>

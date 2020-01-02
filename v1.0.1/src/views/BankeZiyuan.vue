@@ -25,23 +25,10 @@
         </mt-tab-item>-->
       </mt-tabbar>
     </div>
-    <!-- <mt-loadmore
-      :top-method="loadTop"
-      :bottom-method="loadBottom"
-      ref="loadmore"
-      :auto-fill="autofill"
-      :bottom-all-loaded="loadingState"
-    >-->
     <div class="items-container">
-      <p
-        v-if="bankeZhiYuanLinkItem.length"
-        class="Resources-total fonttiny"
-      >资源总数:{{bankeZhiYuanLinkItem.length}}</p>
+      <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
       <mt-tab-container class v-model="selected">
         <mt-tab-container-item id="1">
-          <!-- v-infinite-scroll="loadMore"
-              infinite-scroll-disabled="loadingState"
-          infinite-scroll-distance="50"-->
           <div class="listcontainer">
             <div>
               <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
@@ -67,7 +54,6 @@
         </mt-popup>
       </mt-tab-container>
     </div>
-    <!-- </mt-loadmore> -->
     <input
       ref="uploadfilebtn"
       type="file"
@@ -145,7 +131,13 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
-import { CollectionFn, getZYFileType, preview, defaultImg,getZYFileTypeIcon } from "@/util";
+import {
+  CollectionFn,
+  getZYFileType,
+  preview,
+  defaultImg,
+  getZYFileTypeIcon
+} from "@/util";
 import nativecode from "../nativecode";
 
 export default {
@@ -197,7 +189,11 @@ export default {
           method: this.deletezy
         }
       ],
-      actionShow: false
+      actionShow: false,
+
+      page: 0,
+      pagesize: 1000,
+      filetotal: 0
     };
   },
   watch: {
@@ -266,26 +262,26 @@ export default {
     //收藏
     Collection() {
       let imgIcon = "";
-      let cobj = {};  //! cjy: 减少信息； 这里的editItemfile 非常大
-      if (this.editItemFile.ftype == 'file') {
-          let filesize = 0;
-          if (this.editItemFile.info && this.editItemFile.info.filesize){
-              filesize = this.editItemFile.info.filesize;
-          }
-          cobj = {
-              url:this.editItemFile.url,
-              ftype:'file',
-              filesize:filesize
-          };
-          //console.log(this.editItemFile);
+      let cobj = {}; //! cjy: 减少信息； 这里的editItemfile 非常大
+      if (this.editItemFile.ftype == "file") {
+        let filesize = 0;
+        if (this.editItemFile.info && this.editItemFile.info.filesize) {
+          filesize = this.editItemFile.info.filesize;
+        }
+        cobj = {
+          url: this.editItemFile.url,
+          ftype: "file",
+          filesize: filesize
+        };
+        //console.log(this.editItemFile);
         switch (this.editItemFile.finttype) {
           case 0:
-            imgIcon = (getZYFileType(this.editItemFile.url));
+            imgIcon = getZYFileType(this.editItemFile.url);
             break;
           case 1:
-           // this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
+            // this.editItemFile.pic = this.editItemFile.localfile[0].imgsrc;
             //  imgIcon = this.editItemFile.localfile[0].imgsrc;
-              imgIcon = this.editItemFile.imgsrc;
+            imgIcon = this.editItemFile.imgsrc;
             break;
           case 2:
             imgIcon = "MP4";
@@ -293,40 +289,26 @@ export default {
           case 3:
             imgIcon = "MP3";
             break;
-          case 4:  //! 文档
-              imgIcon = (getZYFileType(this.editItemFile.url));
+          case 4: //! 文档
+            imgIcon = getZYFileType(this.editItemFile.url);
             break;
-          default: //! iqiqta
-              imgIcon = (getZYFileType(this.editItemFile.url));
+          default:
+            //! iqiqta
+            imgIcon = getZYFileType(this.editItemFile.url);
             break;
         }
-      } else if (this.editItemFile.ftype == 'link') {
-        imgIcon = ("IT");
+      } else if (this.editItemFile.ftype == "link") {
+        imgIcon = "IT";
         cobj = {
-            url:this.editItemFile.url,
-            ftype:'link'
+          url: this.editItemFile.url,
+          ftype: "link"
         };
       }
       let title = this.editItemFile.name;
-      CollectionFn(cobj, 1, imgIcon, this.editItemFile.id,this.bankeid, title);
+      CollectionFn(cobj, 1, imgIcon, this.editItemFile.id, this.bankeid, title);
     },
     //编辑
     bankeEdit() {},
-    loadTop() {
-      this.$store.commit("SET_BANKEZHIYUANLINKITEM");
-      this.loadMorePosition = "top";
-      this.loadMoreFile();
-    },
-    loadBottom() {
-      this.loadMorePosition = "bottom";
-      this.loadMoreFile();
-    },
-    // topStateChange(status) {
-    //    this.topStatus = status;
-    // },
-    // bottomStateChange(status) {
-    //    this.topStatus = status;
-    // },
     oneditclick(fileitem) {
       // this.popupZiyuanEdit = true;
       this.actionShow = true;
@@ -443,11 +425,10 @@ export default {
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
 
-      if (fileitem.ftype == 'file'){
-          nativecode.fileviewSingle(this, fileitem.info);
-      }
-      else if (fileitem.ftype == 'link'){
-          nativecode.fileviewUrl(this, fileitem);
+      if (fileitem.ftype == "file") {
+        nativecode.fileviewSingle(this, fileitem.info);
+      } else if (fileitem.ftype == "link") {
+        nativecode.fileviewUrl(this, fileitem);
       }
 
       // fileitem.downurl = nativecode.getDownUrl(fileitem.url);
@@ -473,11 +454,6 @@ export default {
       //   window.exsoftTest(fileitem.filepath, fileitem.filename1);
       // }
     },
-    loadMore() {
-      if (this.files.length >= 10) {
-        this.loadMoreFile();
-      }
-    },
     parseOneItem(item) {
       if (item.info) {
         item.info = JSON.parse(item.info);
@@ -487,34 +463,21 @@ export default {
       }
     },
     loadMoreFile() {
-      let url = "";
-      if (this.topid && this.loadMorePosition == "bottom") {
-        url =
-          "/api/bankefile/query?bankeid=" +
-          this.bankeid +
-          "&topid=" +
-          this.topid +
-          "&pagesize=10";
-      } else {
-        this.files = [];
-        this.loadingState = false;
-        url = "/api/bankefile/query?bankeid=" + this.bankeid + "&pagesize=50";
-      }
       this.$http
-        .get(url)
+        .post("/api/bankefile/querypage", {
+          bankeid: this.bankeid,
+          page: this.page,
+          pagesize: this.pagesize
+        })
         .then(res => {
-          if (this.topid && this.loadMorePosition == "bottom") {
-            this.$refs.loadmore.onBottomLoaded();
-          } else if (this.loadMorePosition == "top") {
-            this.$refs.loadmore.onTopLoaded();
-          }
           if (res.data.code == 0) {
+            this.filetotal = res.data.data.total;
             if (res.data.data.length < 10) {
               this.loadingState = true;
             }
             console.log("success", res);
             let ids = [];
-            for (let item of res.data.data) {
+            for (let item of res.data.data.files) {
               ids.push(item.id);
               this.parseOneItem(item);
               if (item.ftype == "link") {
@@ -524,17 +487,16 @@ export default {
                   if (item.info) {
                     item.imgsrc =
                       item.info.filepath + item.info.metainfo.snapsuffix;
-                  }
-                  else{
-                      item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+                  } else {
+                    item.imgsrc = getZYFileTypeIcon(item.info.filepath);
                   }
                 } else {
-                  item.imgsrc = getZYFileTypeIcon(item.info.filepath);//commontools.fileType(item.info);
+                  item.imgsrc = getZYFileTypeIcon(item.info.filepath); //commontools.fileType(item.info);
                 }
               }
             }
             console.log("dsad", res.data.data);
-            this.eventmsgsOnactivity(res.data.data, ids);
+            this.eventmsgsOnactivity(res.data.data.files, ids);
             // commontools.arrayMergeAsIds(this.files, res.data.data);
             // this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
             // console.log(" this.files", this.files);
