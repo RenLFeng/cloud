@@ -280,6 +280,10 @@ export default {
         this.websockcount = 0;
         if (strstate == 'reject' || strstate == ''){
             let olss = this.websock;
+            this.websock.onopen = null;
+            this.websock.onerror = null;
+            this.websock.onmessage = null;
+            this.websock.onclose = null;
             this.websock = null;
             if (olss){
                 olss.close();

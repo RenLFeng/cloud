@@ -79,6 +79,9 @@ export default {
     isTeacher() {
       return this.$store.getters.caneditbanke;
     },
+      hassign(){
+        return nativecode.hassign();
+      },
     haswxsign() {
       if (nativecode.platform == "miniprogram") {
         return true;
@@ -104,9 +107,11 @@ export default {
     //签到
     onwxsign() {
       if(this.haswxsign){
-        nativecode.navigateToSign(this.bankeid,this.isTeacher);
+          let curbanke = this.$store.state.curbanke;
+        nativecode.navigateToSign(this.bankeid,this.isTeacher, curbanke);
       }else{
-        this.teacherFn();
+        //this.teacherFn();
+          Toast('请在小程序中查看签到');
       }
     },
     teacherFn() {

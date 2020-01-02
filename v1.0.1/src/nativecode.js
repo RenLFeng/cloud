@@ -42,6 +42,15 @@ nativecode.os = ''; //! os 类型
 
 
 
+nativecode.hassign = function()
+{
+    //! cjy: 简单起见，目前仅微信开启签到功能
+    if (nativecode.platform == 'miniprogram'){
+        return true;
+    }
+    return false;
+}
+
 nativecode.parseurlparam = function(paraName)
 {
     var url = document.location.toString();
@@ -156,6 +165,31 @@ nativecode.getwx = function(){
     return wx;
 }
 
+nativecode.hassharebanke = function()
+{
+    if (nativecode.platform == 'miniprogram'){
+        return true;
+    }
+    return false;
+}
+nativecode.dosharebanke = function(bankeitem)
+{
+    if (nativecode.platform == 'miniprogram'){
+        let shareobj = {
+            id:bankeitem.id,
+            name:bankeitem.name,
+            avatar:bankeitem.avatar
+        };
+        let tourl = '/pages/share/banke';
+        tourl += '?args=';
+        tourl += encodeURIComponent(JSON.stringify(shareobj));
+
+        let wx = nativecode.getwx();
+
+        wx.miniProgram.navigateTo({url:tourl});
+    }
+}
+
 nativecode.navigateTo = function(path)
 {
 
@@ -181,13 +215,17 @@ nativecode.navigateTo = function(path)
     return false;
 }
 
-nativecode.navigateToSign = function(bankeid,isteacher)
+nativecode.navigateToSign = function(bankeid,isteacher, curbanke)
 {
     let wx = nativecode.getwx();
     let argobj = {
         bankeid:bankeid,
-        role:isteacher?10:5
+        role:isteacher?10:5,
+      //  bankename:''
     };
+    // if (curbanke){
+    //     argobj.bankename = curbanke.name;
+    // }
     let tourl = '/pages/location/sign';
     tourl += '?args=' + encodeURIComponent(JSON.stringify(argobj));
     wx.miniProgram.navigateTo({url:tourl});

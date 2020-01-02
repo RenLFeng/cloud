@@ -48,7 +48,7 @@ export default {
 
                     let tourl = "/bankehome/" + this.bankeItem.id;
                     this.$store.commit("setRouterForward", true);
-                    this.$router.push(tourl);
+                    this.$router.replace(tourl);
                 } else {
                     MessageBox.alert("加入失败:"+res.data.msg);
                 }

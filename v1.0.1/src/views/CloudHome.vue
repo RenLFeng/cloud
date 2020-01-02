@@ -140,16 +140,6 @@ export default {
       actionShow: false,
       actionShow2: false,
       actionShowStu: false,
-      actions: [
-        {
-          name: "进入班课",
-          method: this.bankeDedail
-        },
-        {
-          name: "置顶班课",
-          method: this.Roof
-        }
-      ],
       actions2: [
         {
           name: "创建班课",
@@ -185,6 +175,20 @@ export default {
       }
       return false;
     },
+      actions(){
+        let ret = [];
+        if (nativecode.hassharebanke()){
+            ret.push({
+                name:'分享班课',
+                method:this.bankeShare
+            })
+        }
+        ret.push({
+            name:'置顶班课',
+            method:this.Roof
+        })
+         return ret;
+      },
     isteacher() {
       return this.$store.getters.isteacher;
     },
@@ -272,6 +276,11 @@ export default {
         }
       }
     },
+      bankeShare(){
+        if (this.bankeitem.id){
+          nativecode.dosharebanke(this.bankeitem);
+        }
+      },
     // 创建班课
     onadd() {
       var isteacher = this.$store.getters.isteacher;
