@@ -86,7 +86,9 @@ export default {
       count: 0,
       addMembersItem: {},
       addMembersItem2: {},
-      groupName: ""
+      groupName: "",
+
+      deletegroupIds: []
     };
   },
   computed: {
@@ -188,78 +190,30 @@ export default {
                 // this.querysubgroup();
                 if (this.groupName != this.EditItemObj.name && this.groupName) {
                   this.EditItemObj.name = this.groupName;
-                  this.$emit("setGgoupName", this.groupName);
                 }
-                this.savegroup();
-                this.count = 0;
+                if (this.deletegroupIds.length) {
+                  this.deletegroup();
+                }
                 this.$emit("editBack", { state: false, type: 1 });
+                this.$emit("setsubgroupmnum", {
+                  id: this.EditItem.id,
+                  bankeid: this.EditItem.bankeid,
+                  subgroupmnum: this.tempData.length,
+                  subgroupnum: this.count,
+                  name: this.EditItemObj.name
+                });
+                this.count = 0;
               } else {
                 Toast("失败");
               }
             })
             .catch(err => {
-              Toast("异常");
+              Toast("异常11");
             });
         })
         .catch(() => {});
     },
-    //设置  subgroupmnum subgroupnum  分组信息
-    savegroup() {
-      let obj = {
-        id: this.EditItem.id,
-        bankeid: this.EditItem.bankeid,
-        subgroupmnum: this.tempData.length,
-        subgroupnum: this.count
-      };
-      this.$http
-        .post("/api/group/savegroup", obj)
-        .then(res => {
-          if (res.data.code == "0") {
-            Toast("成功");
-            console.log(res.data.data);
-            this.querygroup(this.bankeid);
-          } else {
-            Toast("失败");
-          }
-          Indicator.close();
-        })
-        .catch(error => {
-          Toast("异常");
-          Indicator.close();
-        });
-    },
-    //添加新组
-    addGroup() {
-      let obj = {
-        groupid: this.EditItemObj.id,
-        name: "新组",
-        membersnum: 0,
-        members: "[]"
-      };
-      Toast("成功");
-      obj.members = JSON.parse(obj.members);
-      obj.files = [];
-      this.tempData.push(obj);
-      this.changeState=true;
-      // this.$http
-      //   .post("/api/group/savesubgroup", {
-      //     subgroups: [obj]
-      //   })
-      //   .then(res => {
-      //     if (res.data.code == "0") {
-      //       Toast("成功");
-      //       obj.members = JSON.parse(obj.members);
-      //       obj.files=[];
-      //       this.tempData.push(obj);
-      //       // this.querysubgroup();
-      //     } else {
-      //       Toast("失败");
-      //     }
-      //   })
-      //   .catch(err => {
-      //     Toast("异常");
-      //   });
-    },
+
     //取消编辑
     gobacks() {
       if (this.groupName != this.EditItemObj.name) {
@@ -301,32 +255,69 @@ export default {
       this.changeState = obj.changeState;
       this.tempData = obj.groupLists;
     },
-    //删除小组
+    //添加新组
+    addGroup() {
+      this.changeState = true;
+      let obj = {
+        groupid: this.EditItemObj.id,
+        name: "分组",
+        membersnum: 0,
+        members: "[]"
+      };
+      Toast("成功");
+      obj.members = JSON.parse(obj.members);
+      obj.files = [];
+      this.tempData.push(obj);
+      // this.$http
+      //   .post("/api/group/savesubgroup", {
+      //     subgroups: [obj]
+      //   })
+      //   .then(res => {
+      //     if (res.data.code == "0") {
+      //       Toast("成功");
+      //       obj.members = JSON.parse(obj.members);
+      //       obj.files=[];
+      //       this.tempData.push(obj);
+      //       // this.querysubgroup();
+      //     } else {
+      //       Toast("失败");
+      //     }
+      //   })
+      //   .catch(err => {
+      //     Toast("异常");
+      //   });
+    },
+    //页面删除小组
     ondelectFn(index) {
       let item = this.tempData[index];
-      // this.tempData.splice(this.tempData[index],1)
+      console.log("删除小组", item);
       MessageBox.confirm("您确定要删除小组吗？")
         .then(res => {
-          this.$http
-            .post("/api/group/deletegroup", {
-              subgroupid: item.id
-            })
-            .then(res => {
-              if (res.data.code == 0) {
-                MessageBox.alert("删除成功").then(() => {
-                  //this.querysubgroup();
-                  this.tempData.splice(index, 1);
-                  this.querysubgroup();
-                });
-              } else {
-                MessageBox.alert(res.data.msg);
-              }
-
-              console.log(res);
-            })
-            .catch(() => {});
+          this.changeState = true;
+          if (item.id) {
+            this.deletegroupIds.push(item.id);
+          }
+          this.ondelectgroupMemberFn(item);
+          this.tempData.splice(index, 1);
         })
         .catch(() => {});
+    },
+    //实际删除小组
+    deletegroup() {
+      for (let v of this.deletegroupIds) {
+        this.$http
+          .post("/api/group/deletegroup", {
+            subgroupid: v
+          })
+          .then(res => {
+            if (res.data.code == 0) {
+            } else {
+              // MessageBox.alert(res.data.msg);
+            }
+            console.log(res);
+          })
+          .catch(() => {});
+      }
     },
     //删除成员
     ondelectMemberFn(v) {
@@ -344,6 +335,25 @@ export default {
       this.count--;
       console.log(this.tempData);
       console.log(this.allMemBers);
+    },
+    //删除小组成员
+    ondelectgroupMemberFn(v) {
+      if (v.members.length) {
+        for (let id of v.members) {
+          this.count--;
+          v.membersnum--;
+          for (let v of this.allMemBers) {
+            if (v.memberuserid == id) {
+              v.isTrue = false;
+              v.groupName = "";
+            }
+          }
+        }
+        v.files = [];
+        v.members = [];
+        this.addMembersItem = "";
+        // this.count= this.count-v.members.length;
+      }
     },
     //添加成员
     onaddMemberFn(v) {

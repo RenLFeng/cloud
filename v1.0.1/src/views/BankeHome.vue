@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mt-header v-show="hasnavbar" :title="bankename">
+    <mt-header v-show="hasnavbar" :title="bankename" class="">
       <mt-button
         v-if="hasbackbtn"
         icon="back"
@@ -313,7 +313,7 @@ export default {
           }
         })
         .catch(err => {});
-    }
+    },
   },
   created() {
     console.log("bankehome:" + this.id);

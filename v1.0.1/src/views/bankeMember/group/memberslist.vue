@@ -7,11 +7,10 @@
       <p class="tit tc" @click="seeMemberType">{{MemBerTypeText}}</p>
       <div class="lists-main">
         <ul>
-          <li class="member-item" v-for="(v,index) in tempMemBersList" :key="index">
+          <li class="member-item" v-for="(v,index) in tempMemBersList" :key="index"     @click="selectMember(index)">
             <i
               class="iconfont iconok- eicotrigger"
               :class="{'ed':v.isTrue,'act':v.isAct}"
-              @click="selectMember(index)"
             ></i>
             <img class :src="v.avatar" alt />
             <p class="group" :class="{'istrue':v.groupName}">

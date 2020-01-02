@@ -26,12 +26,32 @@
       style="display:none"
       accept="image/*"
     />
+    <mt-popup
+      v-model="popupMimgcrop"
+      position="right"
+      class="mint-popup-3"
+      :modal="false"
+      style="background:#000"
+    >
+      <mt-header :title="$t('personal.Edit_head')">
+        <mt-button icon="back" slot="left" @click="popupMimgcrop = false">{{$t('common.Back')}}</mt-button>
+      </mt-header>
+      <div class="cropComp">
+        <mimgcrop
+          v-model="imgobj"
+          class="cropComp"
+          ref="mimgcrop"
+          @cancel="popupMimgcrop = false"
+          @submit="onimgsubmit"
+        ></mimgcrop>
+      </div>
+    </mt-popup>
   </div>
 </template>
 
 <script>
 import { Indicator, Toast, MessageBox } from "mint-ui";
-
+import mimgcrop from "@/common/m-image-crop";
 export default {
   name: "BankeNew",
   data() {
@@ -39,9 +59,12 @@ export default {
       classitem: {
         name: "",
         avatar: ""
-      }
+      },
+      popupMimgcrop: false,
+      imgobj: {}
     };
   },
+  components: { mimgcrop },
   computed: {
     savedisable() {
       if (this.classitem.name.length > 0) {
@@ -81,30 +104,35 @@ export default {
       this.$refs.uploadPic.click();
     },
     uploadChange(e) {
-      let that = this;
       let file = e.target.files[0];
-      this.uploadImg(file);
+      // this.uploadImg(file);
       this.$refs.uploadPic.value = "";
+      this.$refs.mimgcrop.loadfile(file);
+      this.popupMimgcrop = true;
     },
-    uploadImg(file) {
-      let that = this;
-      let formdata = new FormData();
-      formdata.append("file", file);
-      let url = "/api/api/zuoyefileupload";
+    onimgsubmit() {
+      this.popupMimgcrop = false;
+      console.log(this.imgobj);
+      this.uploadimagedata(this.imgobj.base64);
+    },
+    uploadimagedata(base64str) {
+      var url = "/api/banke/saveavatar";
+      Indicator.open(this.$t("Indicator.Uploading"));
       this.$http
-        .post(url, formdata)
+        .post(url, {
+          jpeg: base64str
+        })
         .then(res => {
+          Indicator.close();
           if (res.data.code == 0) {
-            this.classitem.avatar = res.data.data.filepath;
-            console.log("成功", res.data.data);
-          } else {
-            console.log("失败", res.data.data);
+           this.classitem.avatar = res.data.data.filepath;
+
           }
         })
-        .catch(() => {
-          console.log("catch", res.data.data);
+        .catch(res => {
+          Indicator.close();
         });
-    }
+    },
   }
 };
 </script>
