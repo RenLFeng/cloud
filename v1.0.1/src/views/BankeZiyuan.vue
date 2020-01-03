@@ -192,7 +192,7 @@ export default {
       actionShow: false,
 
       page: 0,
-      pagesize: 1000,
+      pagesize: 10,
       filetotal: 0
     };
   },
