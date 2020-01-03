@@ -237,7 +237,6 @@ export default {
                     }
                   }
                   this.$store.commit("banke/appendBankes", BankeData);
-                  // this.$router.go(-1);
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});
@@ -291,7 +290,7 @@ export default {
                     item => item.id !== this.bankeInfo.id
                   );
                   this.$store.state.banke.curbankes = newBankeData;
-                  this.$router.go(-1);
+                  this.$back();
                 });
               } else {
                 MessageBox.alert(res.data.msg).then(() => {});

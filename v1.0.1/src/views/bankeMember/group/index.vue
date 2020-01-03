@@ -1,7 +1,7 @@
 <template>
   <div class="group-main">
     <mt-header title="成员分组方案管理">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="content">
       <div v-if="groupList.length">

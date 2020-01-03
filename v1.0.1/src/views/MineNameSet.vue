@@ -3,7 +3,7 @@
 
         <mt-header :title="$t('personal.Nickname')">
 
-            <mt-button icon="back" @click="$router.go(-1)" slot="left">{{$t('common.Back')}}</mt-button>
+            <mt-button icon="back" @click="$back" slot="left">{{$t('common.Back')}}</mt-button>
 
             <mt-button slot="right" :disabled="savedisable" @click="dosave">{{$t('common.Keep')}}</mt-button>
         </mt-header>
@@ -63,7 +63,7 @@
                                 var usclone = commontools.clone(us);
                                 usclone.name = this.myname;
                                 this.$store.commit('setLoginUser', usclone);
-                                this.$router.go(-1);
+                                  this.$back();
                             }
                         }
                     })

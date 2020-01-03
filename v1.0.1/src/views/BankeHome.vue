@@ -5,7 +5,7 @@
         v-if="hasbackbtn"
         icon="back"
         slot="left"
-        @click="$router.go(-1)"
+        @click="$back"
       >{{$t('common.Back')}}</mt-button>
     </mt-header>
 

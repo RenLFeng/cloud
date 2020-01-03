@@ -1,7 +1,7 @@
 <template>
     <div>
         <mt-header title="编辑试卷">
-            <mt-button icon="back" @click="$router.go(-1)" slot="left">返回</mt-button>
+            <mt-button icon="back" @click="$back" slot="left">返回</mt-button>
             <mt-button slot="right" @click="onsave">保存</mt-button>
         </mt-header>
 

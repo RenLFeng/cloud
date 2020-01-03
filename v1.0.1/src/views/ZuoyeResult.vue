@@ -539,12 +539,12 @@ export default {
         }
         if (btip) {
           MessageBox.confirm("退出作业提交？").then(() => {
-            this.$router.go(-1);
+            this.$back()
           });
           return;
         }
       }
-      this.$router.go(-1);
+       this.$back()
     },
     showitem(ritem) {
       if (!ritem.submitnum) {

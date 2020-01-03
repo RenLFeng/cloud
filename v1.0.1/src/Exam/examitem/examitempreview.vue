@@ -2,7 +2,7 @@
     <div>
         <mt-header title="题目预览">
 
-            <mt-button slot="right" @click="$router.go(-1)">关闭</mt-button>
+            <mt-button slot="right" @click="$back">关闭</mt-button>
 
         </mt-header>
         <div>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <mt-header :title="$t('common.AddClass')">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
 
       <mt-button slot="right" @click="onsave" :disabled="savedisable">{{$t('common.Keep')}}</mt-button>
     </mt-header>

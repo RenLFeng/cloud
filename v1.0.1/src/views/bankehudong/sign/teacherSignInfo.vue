@@ -391,7 +391,7 @@ export default {
       }
     },
     Back() {
-      this.$router.go(-1);
+      this.$back();
     },
     onShowStudentSignInfo(v) {
       this.classSignItem = v;

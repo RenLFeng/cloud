@@ -3,7 +3,7 @@
         <!--
         <mt-header title="作业详情">
 
-            <mt-button icon="back"  slot="left" @click="$router.go(-1)">返回</mt-button>
+            <mt-button icon="back"  slot="left" @click="$back">返回</mt-button>
 
             <mt-button slot="right" :disabled="savedisable">确定</mt-button>
 

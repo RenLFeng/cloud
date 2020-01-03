@@ -269,7 +269,7 @@ export default {
       this.querycur();
     },
     Backs() {
-      this.$router.go(-1);
+      this.$back();
     }
   }
 };

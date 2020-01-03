@@ -2,7 +2,7 @@
   <div class="addbanke-wrap">
     <div class="main">
       <mt-header title="加入班课">
-        <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+        <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <mt-field placeholder="请输入班课名" v-model="bankeNumber"></mt-field>
       <div class="button-worp">

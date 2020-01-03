@@ -4,6 +4,7 @@ import Home from './App.vue'
 import {
     createRouter
 } from './router'
+
 import './plugins/element.js'
 import axios from 'axios'
 import './assets/iconfont/iconfont.css'
@@ -13,13 +14,19 @@ import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'
 import {
-    defaultImg
-} from "@/util"
-Vue.prototype.$defaultImg = defaultImg
+    defaultImg,
+} from "@/util";
+Vue.prototype.$defaultImg = defaultImg;
+Vue.prototype.$back = function () {
+    if (window.history.length > 1) {
+        Vm.$router.back(-1);
+    } else {
+        Vm.$router.push('/');
+    }
+}
 // import Vconsole from 'vconsole'
 // const vConsole = new Vconsole()
 // Vue.use(vConsole)
-
 Vue.prototype.$http = axios
 Vue.config.productionTip = false;
 Vue.use(Viewer, {
@@ -46,7 +53,7 @@ window.addEventListener("resize", function () {
 // window.addEventListener('touchmove',function(e){
 //     e.preventDefault();
 // }, { passive: false })
-new Vue({
+let Vm = new Vue({
     router: createRouter(),
     store,
     i18n,

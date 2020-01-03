@@ -1,7 +1,7 @@
 <template>
   <div>
     <mt-header :title="pageTitle">
-      <mt-button slot="left" @click="$router.go(-1)">取消</mt-button>
+      <mt-button slot="left" @click="$back">取消</mt-button>
 
       <mt-button slot="right" :disabled="savedisable" @click="doSave">{{savebtntext}}</mt-button>
     </mt-header>

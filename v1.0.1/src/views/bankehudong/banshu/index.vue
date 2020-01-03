@@ -1,7 +1,7 @@
 <template>
   <div class="banshu-wrap">
     <mt-header title="课堂板书">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div class="main">
