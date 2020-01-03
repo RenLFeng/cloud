@@ -94,7 +94,7 @@ export default {
       this.userInfo = v;
     },
     Backs() {
-      this.$router.go(-1);
+      this.$back();
     }
   }
 };

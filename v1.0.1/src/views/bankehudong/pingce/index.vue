@@ -195,7 +195,7 @@ export default {
       this.popupDeatil = true;
     },
     Backs() {
-      this.$router.go(-1);
+      this.$back();
     },
     goBacks() {
       if (this.popupDeatil) {

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
-Vue.use(Router)
 
 import Page2 from '../App'
 import NavOther from '../NavOther.vue'
@@ -41,6 +40,7 @@ import Collection from '../views/my/collection'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
+
 export function createRouter() {
   let routers = new Router({
     // mode: 'history',

@@ -1,7 +1,7 @@
 <template>
   <div class="header1">
       111
-      <div class="header-left" @click="$router.go(-1)">
+      <div class="header-left" @click="$back">
           <i class="iconfont icon-zuojiantou"></i>
       </div>
       !!!!

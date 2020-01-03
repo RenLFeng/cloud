@@ -115,90 +115,90 @@ export const getChartDate = (ndays, date) => {
 }
 
 // cjy: 纠正移动设备上的拍照旋转文件
-export const  fixCaptureImage =  (file)=> {
-    return new Promise((resolve, reject) => {
-        // 获取图片
-        console.log('fixCaptureImage');
-        const img = new Image();
-        let curl = window.URL.createObjectURL(file)
-        let oparam = curl;
-        img.src = curl;
-        img.onerror = () => reject(null);
-        let EXIF = require('exif-js');
-        img.onload = () => {
-            // 获取图片元数据（EXIF 变量是引入的 exif-js 库暴露的全局变量）
-            EXIF.getData(img, function() {
-                // 获取图片旋转标志位
-                var orientation = EXIF.getTag(this, "Orientation");
-                // 根据旋转角度，在画布上对图片进行旋转
-                //! test
-                console.log('fixLocalImage, orientation:'+orientation);
+export const fixCaptureImage = (file) => {
+  return new Promise((resolve, reject) => {
+    // 获取图片
+    console.log('fixCaptureImage');
+    const img = new Image();
+    let curl = window.URL.createObjectURL(file)
+    let oparam = curl;
+    img.src = curl;
+    img.onerror = () => reject(null);
+    let EXIF = require('exif-js');
+    img.onload = () => {
+      // 获取图片元数据（EXIF 变量是引入的 exif-js 库暴露的全局变量）
+      EXIF.getData(img, function () {
+        // 获取图片旋转标志位
+        var orientation = EXIF.getTag(this, "Orientation");
+        // 根据旋转角度，在画布上对图片进行旋转
+        //! test
+        console.log('fixLocalImage, orientation:' + orientation);
 
-                if (img.width == 0 || img.height == 0){
-                    return reject(null);
-                }
+        if (img.width == 0 || img.height == 0) {
+          return reject(null);
+        }
 
-             //   orientation = 8;
-              //! cjy: 因为手机端的拍照像素一般都很大， 这里限制最大值， 方便处理
-                let maxwidth = 1920;
-                let maxheight = 1080;
-              //  maxwidth = maxheight = 200; //! test
-                let cwidth = img.width;
-                let cheight = img.height;
-                if (cwidth > maxwidth){
-                    cwidth = maxwidth;
-                    cheight = cwidth * img.height / img.width;
-                }
-                if (cheight > maxheight){
-                    cheight = maxheight;
-                    cwidth = cheight * img.width / img.height;
-                }
+        //   orientation = 8;
+        //! cjy: 因为手机端的拍照像素一般都很大， 这里限制最大值， 方便处理
+        let maxwidth = 1920;
+        let maxheight = 1080;
+        //  maxwidth = maxheight = 200; //! test
+        let cwidth = img.width;
+        let cheight = img.height;
+        if (cwidth > maxwidth) {
+          cwidth = maxwidth;
+          cheight = cwidth * img.height / img.width;
+        }
+        if (cheight > maxheight) {
+          cheight = maxheight;
+          cwidth = cheight * img.width / img.height;
+        }
 
-               // if (orientation === 3 || orientation === 6 || orientation === 8)
-                {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    switch (orientation) {
-                        case 3: // 旋转180°
-                            canvas.width = cwidth;
-                            canvas.height = cheight;
-                            ctx.rotate((180 * Math.PI) / 180);
-                           // ctx.drawImage(img, -img.width, -img.height, img.width, img.height);
-                            ctx.drawImage(img, -cwidth, -cheight, cwidth, cheight);
-                            break;
-                        case 6: // 旋转90°
-                            canvas.width = cheight;
-                            canvas.height = cwidth;
-                            ctx.rotate((90 * Math.PI) / 180);
-                          //  ctx.drawImage(img, 0, -img.height, img.width, img.height);
-                            ctx.drawImage(img, 0, -canvas.width, canvas.height, canvas.width);
-                            break;
-                        case 8: // 旋转-90°
-                            canvas.width = cheight;
-                            canvas.height = cwidth;
-                            ctx.rotate((-90 * Math.PI) / 180);
-                           // ctx.drawImage(img, -img.width, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-                            ctx.drawImage(img, -canvas.height, 0, canvas.height, canvas.width);
-                            break;
-                        default:
-                            canvas.width = cwidth;
-                            canvas.height = cheight;
-                           // ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, cwidth, cheight);
-                            ctx.drawImage(img, 0, 0, cwidth, cheight);
-                            break;
-                    }
-                    // 返回新图片
-                    let imgurl = canvas.toDataURL('image/jpeg', 0.8);
-                    return resolve(imgurl);
-                    //canvas.toBlob(file => resolve(file), 'image/jpeg', 0.8)
-                }
-                // else {
-                //   //  return resolve(oparam);
-                //     return reject(null);
-                // }
-            });
-        };
-    });
+        // if (orientation === 3 || orientation === 6 || orientation === 8)
+        {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          switch (orientation) {
+            case 3: // 旋转180°
+              canvas.width = cwidth;
+              canvas.height = cheight;
+              ctx.rotate((180 * Math.PI) / 180);
+              // ctx.drawImage(img, -img.width, -img.height, img.width, img.height);
+              ctx.drawImage(img, -cwidth, -cheight, cwidth, cheight);
+              break;
+            case 6: // 旋转90°
+              canvas.width = cheight;
+              canvas.height = cwidth;
+              ctx.rotate((90 * Math.PI) / 180);
+              //  ctx.drawImage(img, 0, -img.height, img.width, img.height);
+              ctx.drawImage(img, 0, -canvas.width, canvas.height, canvas.width);
+              break;
+            case 8: // 旋转-90°
+              canvas.width = cheight;
+              canvas.height = cwidth;
+              ctx.rotate((-90 * Math.PI) / 180);
+              // ctx.drawImage(img, -img.width, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, -canvas.height, 0, canvas.height, canvas.width);
+              break;
+            default:
+              canvas.width = cwidth;
+              canvas.height = cheight;
+              // ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, cwidth, cheight);
+              ctx.drawImage(img, 0, 0, cwidth, cheight);
+              break;
+          }
+          // 返回新图片
+          let imgurl = canvas.toDataURL('image/jpeg', 0.8);
+          return resolve(imgurl);
+          //canvas.toBlob(file => resolve(file), 'image/jpeg', 0.8)
+        }
+        // else {
+        //   //  return resolve(oparam);
+        //     return reject(null);
+        // }
+      });
+    };
+  });
 }
 
 
@@ -298,65 +298,65 @@ export const parseURL = (url) => {
   return params
 }
 
-export const getFileTypeImg = (typein)=>{
-    if (typein.length > 6 && typein.lastIndexOf('.') > 0){
-        return typein;  //! 已经是路径
-    }
-    var srcstr = '';
-    let type = typein.toLocaleLowerCase();
-    switch (type) {
-        case 'account':
-            srcstr += require("./assets/account_default.png");
-            return srcstr;
-        case 'banke':
-            srcstr += require("./assets/banke_default.png");
-            return srcstr;
-        case 'zuoye':
-            srcstr += require("./assets/zuoye_default.png");
-            return srcstr;
-        case 'file':
-            srcstr += require("./assets/file_default.png");
-            return srcstr;
-        case 'txt':
-            srcstr += require("./assets/file_icon/txt.svg");
-            return srcstr;
-        case 'rar':
-            srcstr += require("./assets/file_icon/rar.svg");
-            return srcstr;
-        case 'xlsx':
-            srcstr += require("./assets/file_icon/xlsx.svg");
-            return srcstr;
-        case 'docx':
-            srcstr += require("./assets/file_icon/docx.svg");
-            return srcstr;
-        case 'ppt':
-            srcstr += require("./assets/file_icon/ppt.svg");
-            return srcstr;
-        case 'pdf':
-            srcstr += require("./assets/file_icon/pdf.svg");
-            return srcstr;
-        case 'it':
-            srcstr += require("./assets/file_icon/IT.svg");
-            return srcstr;
-        case 'mp4':
-            srcstr += require("./assets/file_icon/MP4.png");
-            return srcstr;
-        case 'mp3':
-            srcstr += require("./assets/file_icon/MP3.png");
-            return srcstr;
-        default:
-            srcstr += require("./assets/file_default.png");
-            break;
-    }
-    return srcstr;
+export const getFileTypeImg = (typein) => {
+  if (typein.length > 6 && typein.lastIndexOf('.') > 0) {
+    return typein; //! 已经是路径
+  }
+  var srcstr = '';
+  let type = typein.toLocaleLowerCase();
+  switch (type) {
+    case 'account':
+      srcstr += require("./assets/account_default.png");
+      return srcstr;
+    case 'banke':
+      srcstr += require("./assets/banke_default.png");
+      return srcstr;
+    case 'zuoye':
+      srcstr += require("./assets/zuoye_default.png");
+      return srcstr;
+    case 'file':
+      srcstr += require("./assets/file_default.png");
+      return srcstr;
+    case 'txt':
+      srcstr += require("./assets/file_icon/txt.svg");
+      return srcstr;
+    case 'rar':
+      srcstr += require("./assets/file_icon/rar.svg");
+      return srcstr;
+    case 'xlsx':
+      srcstr += require("./assets/file_icon/xlsx.svg");
+      return srcstr;
+    case 'docx':
+      srcstr += require("./assets/file_icon/docx.svg");
+      return srcstr;
+    case 'ppt':
+      srcstr += require("./assets/file_icon/ppt.svg");
+      return srcstr;
+    case 'pdf':
+      srcstr += require("./assets/file_icon/pdf.svg");
+      return srcstr;
+    case 'it':
+      srcstr += require("./assets/file_icon/IT.svg");
+      return srcstr;
+    case 'mp4':
+      srcstr += require("./assets/file_icon/MP4.png");
+      return srcstr;
+    case 'mp3':
+      srcstr += require("./assets/file_icon/MP3.png");
+      return srcstr;
+    default:
+      srcstr += require("./assets/file_default.png");
+      break;
+  }
+  return srcstr;
 }
 
 export const defaultImg = (typein) => {
   let ipath = getFileTypeImg(typein);
-    var srcstr = 'this.src="';
-    srcstr += ipath;
-    srcstr += '"';
-    return srcstr;
+  var srcstr = 'this.src="';
+  srcstr += ipath;
+  srcstr += '"';
+  return srcstr;
 
 }
 export const getCollectionType = (v) => {
@@ -376,7 +376,7 @@ export const getCollectionType = (v) => {
   }
 }
 
-export const getZYFileTypeIcon = (namein)=>{
+export const getZYFileTypeIcon = (namein) => {
   return getFileTypeImg(getZYFileType(namein));
 }
 
@@ -384,56 +384,49 @@ export const getZYFileType = (namein) => {
   //const fileType = [".txt", ".rar", ".xlsx", ".docx", ".ppt", ".pdf"];
   let r = '';
   let name = namein || '';
-  if (name.length > 6){
-    name = name.substr(name.length-7);
+  if (name.length > 6) {
+    name = name.substr(name.length - 7);
   }
-  if (name.indexOf('.') < 0){
+  if (name.indexOf('.') < 0) {
     return name;
   }
   name = name.toLocaleLowerCase();
- // console.log(name);
-  if (name.includes('.rar') || name.includes('.zip')){
-     r = 'rar';
-  }
-  else if (name.includes('.doc') || name.includes('.docx') || name.includes('.rtf')) {
-      r = 'docx';
-  }
-  else if (name.includes('.xlsx') || name.includes('.xls')){
+  // console.log(name);
+  if (name.includes('.rar') || name.includes('.zip')) {
+    r = 'rar';
+  } else if (name.includes('.doc') || name.includes('.docx') || name.includes('.rtf')) {
+    r = 'docx';
+  } else if (name.includes('.xlsx') || name.includes('.xls')) {
     r = 'xlsx';
-  }
-  else if (name.includes('.ppt') || name.includes('.pptx')){
+  } else if (name.includes('.ppt') || name.includes('.pptx')) {
     r = 'ppt';
-  }
-  else if (name.includes('.pdf')){
+  } else if (name.includes('.pdf')) {
     r = 'pdf';
-  }
-  else if (name.includes('.txt')){
+  } else if (name.includes('.txt')) {
     r = 'txt';
-  }
-  else if (name.includes('.mp4')){
+  } else if (name.includes('.mp4')) {
     r = 'mp4';
-  }
-  else if (name.includes('.mp3')){
+  } else if (name.includes('.mp3')) {
     r = 'mp3';
   }
- // console.log(r);
+  // console.log(r);
   return r;
 }
-export const CollectionFn = (itemfile, type, imgIcon, id,bankeid, title=null) => {
+export const CollectionFn = (itemfile, type, imgIcon, id, bankeid, title = null) => {
   Indicator.open("加载中...");
   let info = {
-  //  typeText: getFileType(type),
-      type:type,  //! 多语言考虑， 这里只存储int类型
-    img:  getFileTypeImg(imgIcon),
+    //  typeText: getFileType(type),
+    type: type, //! 多语言考虑， 这里只存储int类型
+    img: getFileTypeImg(imgIcon),
     time: formateTime('', '-'),
     itemfile: itemfile,
-    bankeid:bankeid
+    bankeid: bankeid
   }
   // console.log(info)
   info = JSON.stringify(info);
   axios
     .post("/api/userfav/add", {
-      title: title? title:itemfile.name,
+      title: title ? title : itemfile.name,
       info: info,
       eventtype: type,
       eventid: id

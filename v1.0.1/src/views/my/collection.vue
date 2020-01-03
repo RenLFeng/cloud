@@ -1,7 +1,7 @@
 <template>
   <div class="collection-wrap">
     <mt-header title="我的收藏" class="mint-header-f">
-      <mt-button icon="back" slot="left" @click="$router.go(-1)">{{$t('common.Back')}}</mt-button>
+      <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="main main-f" v-if="collectionHiostry.length">
       <List
@@ -23,7 +23,7 @@ import List from "@/common/list";
 import Empty from "@/common/empty";
 import nativecode from "@/nativecode";
 
-import { getCollectionType} from "@/util";
+import { getCollectionType } from "@/util";
 
 import {
   Indicator,
@@ -54,13 +54,14 @@ export default {
           method: this.dl
         }
       ],
-      actionShow: false
+      actionShow: false,
     };
   },
   computed: {},
   created() {
     this.userfavQuery();
   },
+
   mounted() {},
   watch: {},
   methods: {
@@ -77,8 +78,8 @@ export default {
             let ch = res.data.data;
             for (let v of ch) {
               v.info = JSON.parse(v.info);
-              if (v.info.type){
-                  v.info.typeText = getCollectionType(v.info.type);
+              if (v.info.type) {
+                v.info.typeText = getCollectionType(v.info.type);
               }
             }
             this.collectionHiostry = ch;
@@ -98,30 +99,30 @@ export default {
       this.actionShow = true;
     },
     setName() {
-      MessageBox.prompt("重命名收藏",'').then(({ value, action }) => {
-       //alert(this.editItemObj.id)
-          //alert(value);
-          let curobj = this.editItemObj;
-          if (value.length > 0){
-              this.$http
-                  .post("/api/userfav/save", {
-                      id: this.editItemObj.id,
-                      title: value
-                  })
-                  .then(res => {
-                      if (res.data.code == "0") {
-                       //   Toast("成功");
-                          curobj.title = value;
-                      } else {
-                          Toast("失败");
-                      }
-                      Indicator.close();
-                  })
-                  .catch(err => {
-                      Toast("异常");
-                      Indicator.close();
-                  });
-          }
+      MessageBox.prompt("重命名收藏", "").then(({ value, action }) => {
+        //alert(this.editItemObj.id)
+        //alert(value);
+        let curobj = this.editItemObj;
+        if (value.length > 0) {
+          this.$http
+            .post("/api/userfav/save", {
+              id: this.editItemObj.id,
+              title: value
+            })
+            .then(res => {
+              if (res.data.code == "0") {
+                //   Toast("成功");
+                curobj.title = value;
+              } else {
+                Toast("失败");
+              }
+              Indicator.close();
+            })
+            .catch(err => {
+              Toast("异常");
+              Indicator.close();
+            });
+        }
       });
     },
     dl() {
@@ -167,9 +168,9 @@ export default {
           //   this.$store.commit("setRouterForward", true);
           //   this.$router.push(tourl);
           // }
-            let obj = fileItem.info.itemfile;
-            obj.filename = fileItem.title;
-            nativecode.fileview(this,  obj);
+          let obj = fileItem.info.itemfile;
+          obj.filename = fileItem.title;
+          nativecode.fileview(this, obj);
           break;
         case 2:
           return "";
@@ -178,7 +179,7 @@ export default {
           this.$store.commit("setRouterForward", true); //! 作业
           this.$router.push("/zuoyeresult/" + fileItem.eventid);
           break;
-        case 4:  //! 评测
+        case 4: //! 评测
           this.$store.commit("setRouterForward", true);
           this.$router.push({
             name: "PingCe",
@@ -186,7 +187,7 @@ export default {
           });
           break;
         case 100: //! 板书
-            nativecode.fileview(this,  fileItem.info.itemfile);
+          nativecode.fileview(this, fileItem.info.itemfile);
           // this.$store.commit("setRouterForward", true);
           // this.$router.push({
           //   name: "Banshu",
@@ -196,7 +197,7 @@ export default {
         default:
           return "";
       }
-    }
+    },
   },
   components: {
     List,

@@ -3,7 +3,7 @@
 
         <mt-header :title="$t('personal.Personal_information')">
 
-            <mt-button icon="back" @click="$router.go(-1)" slot="left">{{$t('common.Back')}}</mt-button>
+            <mt-button icon="back" @click="$back" slot="left">{{$t('common.Back')}}</mt-button>
         </mt-header>
 
         <mt-cell :title="$t('personal.Head_portrait')" is-link @click.native="onavatarset">

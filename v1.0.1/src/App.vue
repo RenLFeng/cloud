@@ -101,6 +101,7 @@ export default {
        clearInterval(this.websockinterval);
        this.websockinterval = null;
         console.log('app.vue destroyed');
+        
     },
   created: function() {
 
@@ -121,6 +122,7 @@ export default {
     //! 请求登录信息
     this.uservalidate();
   },
+  
   watch: {
       localuser(lnew, old) {
           console.log('localuser watch!!');
@@ -211,7 +213,7 @@ export default {
           }
       },
     goBack() {
-      window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
+      this.$back();
     }
 
     ,wsgeturl(){
@@ -344,8 +346,7 @@ export default {
                      });
                  }
                 if (curpath == '/PingCeing'){
-
-                    this.$router.go(-1);
+                     this.$back()
                     setTimeout(()=>{
                         navigate()
                     }, 100);

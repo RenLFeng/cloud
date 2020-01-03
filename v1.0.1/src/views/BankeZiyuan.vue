@@ -27,7 +27,12 @@
     </div>
     <div class="items-container">
       <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
-      <mt-tab-container class v-model="selected">
+      <mt-tab-container
+        v-model="selected"
+        v-infinite-scroll="loadMore"
+        infinite-scroll-disabled="loading"
+        infinite-scroll-distance="100"
+      >
         <mt-tab-container-item id="1">
           <div class="listcontainer">
             <div>
@@ -41,6 +46,7 @@
                   @normalclick="onviewfile"
                 ></BankeFileSimple>
               </div>
+              <div v-if="loading &&  bankeZhiYuanLinkItem.length>10" class="tc color9 font-xs">我是有底线的...</div>
             </div>
             <div v-if="filesempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
           </div>
@@ -116,6 +122,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import {
   Indicator,
   Toast,
@@ -139,7 +146,6 @@ import {
   getZYFileTypeIcon
 } from "@/util";
 import nativecode from "../nativecode";
-
 export default {
   name: "BankeZiyuan",
   props: {
@@ -193,7 +199,9 @@ export default {
 
       page: 0,
       pagesize: 10,
-      filetotal: 0
+      filetotal: 0,
+
+      loading: false
     };
   },
   watch: {
@@ -252,7 +260,8 @@ export default {
   },
   created() {
     this.$store.commit("SET_BANKEZHIYUANLINKITEM");
-    this.loadMoreFile();
+    // this.loadMoreFile();
+    this.loadMore();
   },
   components: {
     BankeFileSimple,
@@ -462,6 +471,10 @@ export default {
         }
       }
     },
+    loadMore() {
+      this.loading = true;
+      this.loadMoreFile();
+    },
     loadMoreFile() {
       this.$http
         .post("/api/bankefile/querypage", {
@@ -472,8 +485,11 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             this.filetotal = res.data.data.total;
-            if (res.data.data.length < 10) {
+            if (res.data.data.files.length >= 10) {
               this.loadingState = true;
+              this.loading = false;
+            } else {
+              this.loading = true;
             }
             console.log("success", res);
             let ids = [];
@@ -495,6 +511,7 @@ export default {
                 }
               }
             }
+            this.page++;
             console.log("dsad", res.data.data);
             this.eventmsgsOnactivity(res.data.data.files, ids);
             // commontools.arrayMergeAsIds(this.files, res.data.data);
@@ -503,10 +520,6 @@ export default {
             if (this.filesempty) {
               this.liststatedesc = "common.No_files";
               this.loadingState = true;
-            } else {
-              if (res.data.data.length) {
-                this.topid = this.files[this.files.length - 1].id;
-              }
             }
           } else {
             this.loadingState = true;
@@ -659,6 +672,10 @@ export default {
 </script>
 
 <style scoped>
+.mint-tab-container {
+  height: calc(100vh - 230px);
+  overflow-y: auto;
+}
 .mint-tabbar > .mint-tab-item.is-selected {
   background: none;
 }
