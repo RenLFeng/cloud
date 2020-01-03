@@ -72,6 +72,7 @@ export function createRouter() {
         {path:'/Banshu',name:'Banshu', component:Banshu},
         {path:'/Collection',name:'Collection', component:Collection},
         {path:'/Join',name:'Join', component:Join},
+        {path:'/bankejoin/:bankeid', name:'Join', component:Join, props:true},
 
 
      

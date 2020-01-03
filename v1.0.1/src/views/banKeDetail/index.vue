@@ -39,6 +39,12 @@
             <div class="devide"></div>
 
 
+            <li @click="sharebanke" v-if="cansharebanke">
+              <mt-cell title="分享班课" is-link></mt-cell>
+            </li>
+            <div class="devide"  v-if="cansharebanke"></div>
+
+
             <li @click="edBk">
               <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
             </li>
@@ -57,11 +63,19 @@
             </li>
             <div class="devide"></div>
 
+            <li @click="sharebanke" v-if="cansharebanke">
+              <mt-cell title="分享班课" is-link></mt-cell>
+            </li>
+            <div class="devide"  v-if="cansharebanke"></div>
+
             <div v-if="haseditrole">
               <li @click="situation">
                 <mt-cell title="学情统计" is-link></mt-cell>
               </li>
               <div class="devide"></div>
+
+
+
 
               <li @click="closeBk" class="dange" v-if="showbankedange">
                 <mt-cell title="删除班课" is-link></mt-cell>
@@ -169,6 +183,12 @@ export default {
       srcstr += '"';
       return srcstr;
     }
+    ,cansharebanke(){
+        if (this.bankeInfo.states > 0 && nativecode.hassharebanke()){
+            return true;
+        }
+        return false;
+      }
   },
   created() {},
   methods: {
@@ -208,6 +228,9 @@ export default {
       this.$emit("editBkFn", this.editBkState);
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
+      sharebanke(){
+        nativecode.dosharebanke(this.bankeInfo);
+      },
     edBk() {
       if (!this.caneditbanke) return;
       let BankeData = this.$store.state.banke.curbankes;

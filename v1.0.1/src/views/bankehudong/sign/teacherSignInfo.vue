@@ -364,25 +364,26 @@ export default {
         cancelButtonText: this.$t("confirm.Cancel"),
         showCancelButton: true
       }).then(res => {
-        this.$http
-          .post("/api/sign/signdo", {
-            signid: this.studentSignClassInfo.signid
-          })
-          .then(res => {
-            if (res.data.code == 0) {
-              console.log(res);
-              this.studentSignClassInfo = res.data.data;
-              this.studentSignState = this.studentSignClassInfo.state;
-              this.studentSignClassInfo.starttime = res.data.data.signtime.split(
-                " "
-              )[1];
-            } else {
-            }
-            Indicator.close();
-          })
-          .catch(() => {
-            Indicator.close();
-          });
+          //! cjy: 网页端暂不开放签到，因此这里不调用
+        // this.$http
+        //   .post("/api/sign/signdo", {
+        //     signid: this.studentSignClassInfo.signid
+        //   })
+        //   .then(res => {
+        //     if (res.data.code == 0) {
+        //       console.log(res);
+        //       this.studentSignClassInfo = res.data.data;
+        //       this.studentSignState = this.studentSignClassInfo.state;
+        //       this.studentSignClassInfo.starttime = res.data.data.signtime.split(
+        //         " "
+        //       )[1];
+        //     } else {
+        //     }
+        //     Indicator.close();
+        //   })
+        //   .catch(() => {
+        //     Indicator.close();
+        //   });
       });
     },
     goBacks() {
