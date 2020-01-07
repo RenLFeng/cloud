@@ -4,8 +4,18 @@
     :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''"
     @click="onclick"
   >
-  <img v-if="type=='common'" class="itemavatar" :src="`${item.info.img}`" :onerror="$defaultImg(item.info.img)"/>
-    <img v-if="type=='pingce'" class="itemavatar" :src="`${item.files}_snap.jpg`" :onerror="defaultimg" />
+    <img
+      v-if="type=='common'"
+      class="itemavatar"
+      :src="`${item.info.img}`"
+      :onerror="$defaultImg(item.info.img)"
+    />
+    <img
+      v-if="type=='pingce'"
+      class="itemavatar"
+      :src="`${item.files}_snap.jpg`"
+      :onerror="$defaultImg('file')"
+    />
     <div class="maincontent" v-if="type=='sign'">
       <div class="mainctitle ellipse">
         {{item.date}}&nbsp;{{week}} &nbsp;签到
@@ -27,7 +37,7 @@
     <!-- 评测记录详情 -->
     <div class="maincontent pingcedetail" v-if="type=='pingcedetail'">
       <div class="mainctitle ellipse">
-        <img class="itemavatar" :src="item.avatar" :onerror="defaultimg" />
+        <img class="itemavatar" :src="item.avatar" :onerror="$defaultImg('account')" />
         {{item.name}}
         <!--<span class="fr font-xs colorf">正确</span> -->
       </div>
@@ -48,23 +58,31 @@
         class="maincsubtitle color9"
       >{{item.subgroupnum}} 人已被划分小组，划分为 {{item.subgroupmnum}}个小组{{item.createtime}}</div>
     </div>
-     <!-- 收藏记录 -->
+    <!-- 收藏记录 -->
     <div class="maincontent common" v-if="type=='common'">
-      <div class="mainctitle ellipse">
-        {{item.title}}
+      <div class="mainctitle ellipse">{{item.title}}</div>
+      <div class="maincsubtitle color9">
+        <span>{{item.info.typeText}}</span>
+        &nbsp;{{item.info.time}}
       </div>
-      <div class="maincsubtitle color9"><span>{{item.info.typeText}}</span> &nbsp;{{item.info.time}}</div>
     </div>
-     <i v-if="type=='common' ||type=='pingce'" class="iconfont iconjiantou1 eicotrigger color9" @click.stop="edit(item)"></i>
+    <i
+      v-if="type=='common' ||type=='pingce'"
+      class="iconfont iconjiantou1 eicotrigger color9"
+      @click.stop="edit(item)"
+    ></i>
     <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9"></i>
-    <i v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' " class="iconfont iconjiantou eicotrigger colord"></i>
+    <i
+      v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' "
+      class="iconfont iconjiantou eicotrigger colord"
+    ></i>
   </div>
 </template>
 
 <script>
 import { Whatweek } from "../util";
 import { watch } from "fs";
-import { pingceType } from "@/util";
+import { pingceType, defaultImg } from "@/util";
 export default {
   name: "BankeMemberSimple",
   props: {
@@ -85,8 +103,8 @@ export default {
     classSignId: {
       default: 0
     },
-    ptype:{
-      default:null
+    ptype: {
+      default: null
     }
   },
   computed: {
@@ -129,8 +147,8 @@ export default {
     };
   },
   methods: {
-    edit(item){
-      this.$emit('edit',item);
+    edit(item) {
+      this.$emit("edit", item);
     },
     onclick() {
       this.$emit("showStudentSignInfo", this.item);
@@ -190,11 +208,13 @@ export default {
   position: relative;
   padding-left: 45px;
   width: 100%;
+  height: 32px;
 }
 .pingcedetail .mainctitle img {
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   left: 0;
+  border-radius: 30px;
 }
 .pingcedetail .mainctitle .colorf {
   background: #3ee17f;
@@ -234,7 +254,7 @@ export default {
   top: 50%;
   transform: translate(0, -50%);
 }
-.maincontent.common{
+.maincontent.common {
   padding-left: 60px;
 }
 </style>

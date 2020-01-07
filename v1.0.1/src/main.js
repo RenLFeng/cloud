@@ -18,10 +18,13 @@ import {
 } from "@/util";
 Vue.prototype.$defaultImg = defaultImg;
 Vue.prototype.$back = function () {
-    if (window.history.length > 1) {
-        Vm.$router.back(-1);
-    } else {
+    // console.log('window.history.length',window.history.length);
+    // console.log('window.history',window.history);
+    // Vm.$router.push('/');
+    if (window.history.length <= 1) {
         Vm.$router.push('/');
+    } else {
+        Vm.$router.back();
     }
 }
 // import Vconsole from 'vconsole'

@@ -21,7 +21,7 @@
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
     <!-- <div class="devide"></div>
-    <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell> -->
+    <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
 
@@ -69,7 +69,7 @@
             <mt-field label="账户：" placeholder="请输入用户名" v-model="inputaccount"></mt-field>
           </div>
           <div class="input-item-wrap">
-            <mt-field label="密码" placeholder="请输入密码"  v-model="inputpassword"></mt-field>
+            <mt-field label="密码:" placeholder="请输入密码" v-model="inputpassword"></mt-field>
           </div>
           <div class="button-worp">
             <mt-button class="button-auto-96 b" @click="uibindsubmit">提交</mt-button>
@@ -84,6 +84,12 @@
       </mt-header>
       <BankeEnd :curbankes="curbankes"></BankeEnd>
     </mt-popup>
+    <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false">
+      <mt-header title="关于" class="">
+        <mt-button slot="left" icon="back" @click="Backs">{{$t('common.Back')}}</mt-button>
+      </mt-header>
+      <About/>
+    </mt-popup>
   </div>
 </template>
 
@@ -92,6 +98,7 @@ import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
 
 import nativecode from "../nativecode";
 import BankeEnd from "./my/bankeEnd";
+import About from "./my/about";
 export default {
   name: "MineAbout",
   data() {
@@ -106,11 +113,13 @@ export default {
       bindtitle: "",
 
       popupBankeEnd: false,
-      curbankes: []
+      curbankes: [],
+      popupAbout:false
     };
   },
   components: {
-    BankeEnd
+    BankeEnd,
+    About
   },
   created() {
     this.$store.commit("SET_CLOUD_BAR", false);
@@ -273,37 +282,36 @@ export default {
       // Toast("暂未实现");
     },
     onabout: function() {
+      this.$store.commit("SET_CLOUD_BAR", true);
+      this.popupAbout=true;
       // Toast("暂未实现");
     },
     //清除提示
     clearEvnet() {
-
-        MessageBox.confirm("", {
-            title: this.$t("confirm.Tips"),
-            message: '清除所有消息提示？',
-            confirmButtonText: this.$t("confirm.Ok"),
-            cancelButtonText: this.$t("confirm.Cancel"),
-            showCancelButton: true
-        }).then(() => {
-            Indicator.open("加载中...");
-            this.$http
-                .post("/api/eventmsgs/clear", {})
-                .then(res => {
-                    if (res.data.code == "0") {
-                        this.$emit("clearevnt", true);
-                        Toast("清除成功");
-                    } else {
-                        Toast("清除失败");
-                    }
-                    Indicator.close();
-                })
-                .catch(err => {
-                    Toast("服务异常");
-                    Indicator.close();
-                });
-        });
-
-
+      MessageBox.confirm("", {
+        title: this.$t("confirm.Tips"),
+        message: "清除所有消息提示？",
+        confirmButtonText: this.$t("confirm.Ok"),
+        cancelButtonText: this.$t("confirm.Cancel"),
+        showCancelButton: true
+      }).then(() => {
+        Indicator.open("加载中...");
+        this.$http
+          .post("/api/eventmsgs/clear", {})
+          .then(res => {
+            if (res.data.code == "0") {
+              this.$emit("clearevnt", true);
+              Toast("清除成功");
+            } else {
+              Toast("清除失败");
+            }
+            Indicator.close();
+          })
+          .catch(err => {
+            Toast("服务异常");
+            Indicator.close();
+          });
+      });
     },
     //查询已结束班课
     queryfinished() {
@@ -335,8 +343,12 @@ export default {
       this.$router.push("/mineinfo");
     },
     Backs() {
-      if (this.popupBankeEnd) {
+      if (this.popupBankeEnd) {popupAbout
         this.popupBankeEnd = false;
+        this.$store.commit("SET_CLOUD_BAR", false);
+      }
+       if (this.popupAbout) {
+        this.popupAbout = false;
         this.$store.commit("SET_CLOUD_BAR", false);
       }
     }

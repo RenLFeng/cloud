@@ -2,7 +2,7 @@
   <div class="answer-detail-wrap">
     <div class="main">
       <p class="tit">
-        <img class="itemavatar" :src="memBerItem.avatar" :onerror="defaultimg" />
+        <img class="itemavatar" :src="memBerItem.avatar" :onerror="$defaultImg('account')" />
         {{memBerItem.name}}
         <span class="time">{{memBerItem.countdate}}</span>
       </p>
