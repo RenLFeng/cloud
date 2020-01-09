@@ -137,8 +137,6 @@ export default {
               }
             }
             if (this.pingceItemfile.ptype == "10") {
-              // this.memberData[0].answerdesc.opts[0].name = "student3";
-              // this.memberData[1].answerdesc.opts[0].name = "执你之手";
               this.voteInfos = this.memberData[0].answerdesc.voteinfo;
               for (let v of this.voteInfos) {
                 v.count = 0;
