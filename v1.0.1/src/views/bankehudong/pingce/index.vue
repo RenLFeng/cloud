@@ -10,6 +10,7 @@
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="500"
       infinite-scroll-immediate-check="false"
+      ref="pmain"
     >
       <List
         v-for="(v,index) in pingceHistoryList"
@@ -32,10 +33,10 @@
       :modal="false"
       style="background:#f0f0f0;    overflow: auto;"
     >
-      <mt-header :title="pingceType(pingceItemfile.ptype)" >
+      <mt-header :title="pingceType(pingceItemfile.ptype)" class>
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <Deatil :data="pingceItemfile" />
+        <Deatil :data="pingceItemfile" />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
@@ -58,23 +59,11 @@ import {
   InfiniteScroll,
   Actionsheet
 } from "mint-ui";
-const arr = {
-  answerdesc: "",
-  classid: 1000,
-  createtime: "2019-12-17 10:48:45",
-  files: "/downloads/pingce/2019-12-17/ae950d99cfbdabd73cf6d92eaa5237f7.jpeg",
-  id: 1003,
-  info: null,
-  joinnum: 1,
-  optdesc: "{opts : []}",
-  ptype: 5,
-  score: 10,
-  timelimit: 600,
-  totalnum: 3,
-  userid: 1001
-};
 export default {
   name: "PingCe",
+  watch: {
+    popupDeatil: function(val) {}
+  },
   components: {
     List,
     Deatil,
@@ -107,18 +96,17 @@ export default {
       actionShow: false,
       editItemObj: {},
 
-        showsingle:false,
-        pingceid:0
+      showsingle: false,
+      pingceid: 0
     };
   },
   mounted() {
     let params = this.$route.params;
     if (params.bankeid) {
       this.bankeid = params.bankeid;
-    }
-    else if (params.pingceid){
-        this.pingceid = params.pingceid;
-        this.showsingle = true;
+    } else if (params.pingceid) {
+      this.pingceid = params.pingceid;
+      this.showsingle = true;
     }
     this.HistoryListRQuery();
   },
@@ -132,11 +120,11 @@ export default {
     Collection() {
       let imgIcon = "";
       //this.editItemObj.pic = this.editItemObj.files + "_snap.jpg";
-     //this.editItemObj.name=pingceType(this.editItemObj.ptype)
-        imgIcon = this.editItemObj.files + "_snap.jpg";
-        let title = pingceType(this.editItemObj.ptype);
-        let cobj = {};
-      CollectionFn(cobj, 4, imgIcon, this.editItemObj.id,this.bankeid, title);
+      //this.editItemObj.name=pingceType(this.editItemObj.ptype)
+      imgIcon = this.editItemObj.files + "_snap.jpg";
+      let title = pingceType(this.editItemObj.ptype);
+      let cobj = {};
+      CollectionFn(cobj, 4, imgIcon, this.editItemObj.id, this.bankeid, title);
     },
     loadMore() {
       this.loading = true;
@@ -144,16 +132,15 @@ export default {
       this.HistoryListRQuery();
     },
     HistoryListRQuery() {
-        let qobj = {
-            page: this.page,
-            pagesize: this.pagesize
-        };
-        if (this.showsingle){
-            qobj.id = this.pingceid;
-        }
-        else{
-            qobj.bankeid = this.bankeid;
-        }
+      let qobj = {
+        page: this.page,
+        pagesize: this.pagesize
+      };
+      if (this.showsingle) {
+        qobj.id = this.pingceid;
+      } else {
+        qobj.bankeid = this.bankeid;
+      }
       this.$http
         .post("api/pingce/query", qobj)
         .then(res => {
@@ -171,13 +158,12 @@ export default {
               ...res.data.data
             ];
             console.log("pingce/query", res);
-            if (this.showsingle){
-                if (res.data.data.length == 0){
-                    Toast('未找到记录');
-                }
-                else{
-                    this.details(this.pingceHistoryList[0]);
-                }
+            if (this.showsingle) {
+              if (res.data.data.length == 0) {
+                Toast("未找到记录");
+              } else {
+                this.details(this.pingceHistoryList[0]);
+              }
             }
           } else {
             Toast("连接错误");
@@ -197,10 +183,13 @@ export default {
     goBacks() {
       if (this.popupDeatil) {
         this.popupDeatil = false;
-        if (this.showsingle){
-            this.Backs();
+        if (this.showsingle) {
+          this.Backs();
         }
       }
+    },
+    handler(e) {
+      e.preventDefault();
     }
   }
 };

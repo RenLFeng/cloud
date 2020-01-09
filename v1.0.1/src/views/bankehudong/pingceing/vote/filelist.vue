@@ -44,14 +44,11 @@ export default {
     },
     type: {
       default: ""
-    },
+    }
   },
-  watch: {
-  },
+  watch: {},
   data() {
-    return {
-
-    };
+    return {};
   },
   computed: {
     defaultimg() {
@@ -67,7 +64,7 @@ export default {
         if (tempnb == item.count) {
           return true;
           break;
-        }else {
+        } else {
           return false;
         }
       }
@@ -91,9 +88,12 @@ export default {
     view(i) {
       let tempImgs = [];
       for (let v of this.listData) {
-        tempImgs.push(v.file);
+         tempImgs.push(nativecode.getUsedUrl(v.file));
       }
-      nativecode.previewImage2(tempImgs, i);
+      nativecode.previewImage(this, {
+        urls: tempImgs,
+        index: i
+      });
     }
   },
   components: {}

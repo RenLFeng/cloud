@@ -1,6 +1,6 @@
 <template>
   <div class="zouye-results-wrap">
-    <mt-header :title="titledesc" class="">
+    <mt-header :title="titledesc" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
       <mt-button
         slot="right"

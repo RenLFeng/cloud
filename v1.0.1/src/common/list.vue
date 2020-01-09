@@ -200,14 +200,17 @@ export default {
   padding-bottom: 5px;
 }
 .mainpart.pingcedetail .pingc-img-wrap {
-  width: 80%;
-  height: 200px;
+  padding: 21%;
+  position: relative;
+  width: 67%;
   margin: 10px auto;
 }
 .mainpart.pingcedetail .pingc-img {
-  position: inherit;
+  position: absolute;
   width: 100%;
   height: 100%;
+  left: 0;
+  top: 0;
   transform: translate(0, 0);
 }
 .mainpart > .index {
