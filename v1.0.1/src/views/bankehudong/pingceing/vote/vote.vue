@@ -2,7 +2,7 @@
   <div class="vote-wrap footer-item footer-item-x">
     <div class="mian">
       <div class="answer-wrap">
-
+        <Filelist :listData="pingceData.info.opts" @voteSelect="onSelect" />
       </div>
     </div>
     <div class="footer-wrap">
@@ -15,41 +15,86 @@
 </template>
 
 <script>
+import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
+import Filelist from "./filelist";
 export default {
-  name: "",
+  name: "Vote",
   props: {
     type: {
       default: 10
     },
     submited: {
       default: false
+    },
+    pingceData: {
+      default() {
+        return {};
+      }
     }
   },
   watch: {
     submited: function(newValue, oldValue) {
       this.isSubmitEnd = newValue;
+    },
+    pingceData: function(newValue, oldValue) {
+      console.log("是的范德萨范德萨", newValue);
+      this.listData = newValue;
     }
   },
   data() {
     return {
       isSubmitEnd: false,
-      isSubmit: false,
-      tempAnswer:[]
+      // isSubmit: false,
+      tempAnswer: [],
+      listData: {},
+      info:[]
     };
+  },
+  computed: {
+    isSubmit() {
+      for (let v of this.pingceData.info.opts) {
+        if (v.isAct) {
+          return true;
+        }
+      }
+      if(this.isSubmitEnd){
+        return false;
+      }
+    }
+  },
+
+  components: {
+    Filelist
   },
 
   methods: {
+    onSelect(obj) {
+      this.info=obj;
+      this.pingceData.info.opts = [];
+      for (let v of obj) {
+        this.pingceData.info.opts.push(v);
+        if (v.isAct) {
+          this.tempAnswer = [{
+            name:v.name,
+            file:v.file
+          }];
+        }
+      }
+      console.log("pvoteSelect", this.pingceData.info.opts);
+      // this.$emit("pvoteSelect", v);
+    },
     sumint() {
       if (!this.isSubmit && !this.isSubmitEnd) {
-        Toast("请选择");
+        Toast("请投票");
         return;
       }
       if (this.isSubmitEnd) {
         Toast("你已提交过");
         return;
       }
-      this.isSubmit = false;
-      this.$emit("submitFn", this.tempAnswer);
+      console.log('投票',this.tempAnswer);
+      // this.isSubmit = false;
+      this.$emit("submitFn",{voteAnswer:this.tempAnswer,voteinfo:this.info} );
       this.tempAnswer = [];
     }
   }
@@ -64,6 +109,7 @@ export default {
       min-height: 70vh;
       overflow-y: scroll;
       background: #f0f0f0;
+      padding: 10px 5px;
     }
   }
 }

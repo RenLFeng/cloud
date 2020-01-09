@@ -18,11 +18,11 @@
         </div>
       </mt-loadmore>
       <div class="pingce-ing" v-if="isPingce">
-        <div class="subject"  v-if="pingceData.ptype!='7'">
+        <div class="subject" v-if="pingceData.ptype!='10'">
           <img :src="pingceimg" alt :onerror="defaultimg" @click="viewimg" />
         </div>
         <div class="footer">
-          <p class="tit border-b" v-if="pingceData.ptype!='7'">请点击选项作答</p>
+          <p class="tit border-b" v-if="pingceData.ptype!='10'">请点击选项作答</p>
           <Duoxuan
             @submitFn="onSubmit"
             :optdesc="pingceData.optdesc.opts"
@@ -48,6 +48,7 @@
             :submited="submited"
             :pingceData="pingceData"
             @submitFn="onSubmit"
+            @pvoteSelect="onPvoteSelect"
           />
         </div>
       </div>
@@ -88,7 +89,7 @@ export default {
       isPingce: false,
       bankeid: 0,
       pingceData: {
-        // ptype: 7,
+        // ptype: 2,
         // files:
         //   "https://res.wx.qq.com/wxdoc/dist/assets/img/0.4cb08bb4.jpg",
         optdesc: {}
@@ -189,7 +190,20 @@ export default {
       if (this.pingceData) {
         this.isPingce = true;
       }
-      this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
+      if (
+        this.pingceData.optdesc &&
+        typeof this.pingceData.optdesc == "string"
+      ) {
+        this.pingceData.optdesc = JSON.parse(this.pingceData.optdesc);
+      }
+      if (this.pingceData.info && typeof this.pingceData.info == "string") {
+        this.pingceData.info = JSON.parse(this.pingceData.info);
+        for (let i = 0; i < this.pingceData.info.opts.length; i++) {
+          this.pingceData.info.opts[i] = JSON.parse(
+            this.pingceData.info.opts[i]
+          );
+        }
+      }
       console.log("this.pingceData", this.pingceData);
 
       if (this.isArgLoad) {
@@ -203,25 +217,39 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
- console.log("res", res.data.data);
-//  console.log("JSON.parseoptdesc", JSON.parse(res.data.data.optdesc));
+            console.log("res", res.data.data);
             this.onpingcedata(res.data.data);
           } else {
             //！ 测试数据
             // let rdata = {
-            //     "answerdesc" : "",
-            //     "classid" : 1000,
-            //     "createtime" : "2019-12-26 15:48:27",
-            //     "files" : "/downloads/pingce/20191226/a5bee907514f3296081ce52cfe821753.jpg",
-            //     "id" : 1104,
-            //     "info" : null,
-            //     "joinnum" : 0,
-            //     "optdesc" : "{}",
-            //     "ptype" : 4,
-            //     "score" : 10,
-            //     "timelimit" : 0,
-            //     "totalnum" : 0,
-            //     "userid" : 1001
+            //   answerdesc: "",
+            //   classid: 1001,
+            //   createtime: "2020-01-07 16:59:28",
+            //   editimgurl: "",
+            //   files: null,
+            //   filessnap: "null_snap.jpg",
+            //   id: 1034,
+            //   info: {
+            //     opts: [
+            //       {
+            //         file:
+            //           "/downloads/pingce/20200107/477a000a99fb4c4104540194521eb575.jpg",
+            //         name: "执你之手"
+            //       },
+            //       {
+            //         file:
+            //           "/downloads/pingce/20200107/eefd6ce94ae309cbbb8d42dd273d5601.jpg",
+            //         name: "student3"
+            //       }
+            //     ]
+            //   },
+            //   joinnum: 0,
+            //   optdesc: "",
+            //   ptype: 10,
+            //   score: 10,
+            //   timelimit: 0,
+            //   totalnum: 0,
+            //   userid: 1001
             // };
             // this.onpingcedata(rdata);
 
@@ -236,17 +264,24 @@ export default {
     },
     //提交答案
     onSubmit(Answer) {
+      let tempAs = Answer;
       if (
         this.pingceData.ptype == "1" ||
         this.pingceData.ptype == "2" ||
-        this.pingceData.ptype == "3"
+        this.pingceData.ptype == "3" ||
+        this.pingceData.ptype == "10"
       ) {
-        this.tempAnswer = Answer.sort();
+        if (this.pingceData.ptype == "10") {
+          this.tempAnswer = Answer.voteAnswer;
+        } else {
+          this.tempAnswer = Answer.sort();
+        }
       }
       let answers = {
         file: this.pingceData.ptype == "4" ? Answer : "",
         opts: this.tempAnswer || [],
-        textarea: this.pingceData.ptype == "5" ? Answer : ""
+        textarea: this.pingceData.ptype == "5" ? Answer : "",
+        voteinfo: tempAs.voteinfo ? tempAs.voteinfo : ""
       };
       let submitobj = {
         bankeid: this.bankeid,
@@ -276,6 +311,9 @@ export default {
           this.tempAnswer = [];
           Toast("服务异常");
         });
+    },
+    onPvoteSelect(v) {
+      this.pingceData.info.opts.push(v);
     },
     Refresh() {
       this.querycur();

@@ -343,7 +343,7 @@ export default {
       this.$router.push("/mineinfo");
     },
     Backs() {
-      if (this.popupBankeEnd) {popupAbout
+      if (this.popupBankeEnd) {
         this.popupBankeEnd = false;
         this.$store.commit("SET_CLOUD_BAR", false);
       }

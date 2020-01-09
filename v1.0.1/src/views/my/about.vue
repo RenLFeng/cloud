@@ -3,7 +3,7 @@
     <div class="main">
       <div class="file tc position-c">
         <p class="icon-b">
-          <i class="iconfont iconyunpingtai position-c" :class="icon"></i>
+          <i class="iconfont iconyunpingtai position-c"></i>
         </p>
         <p class="fontnormal">中科卓软云班课</p>
         <p class="color9 font16">V 1.0 Build 0000</p>

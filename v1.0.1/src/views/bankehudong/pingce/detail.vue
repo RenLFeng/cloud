@@ -1,29 +1,33 @@
 <template>
   <div class="pingce-dtail-warp">
-    <div class="main" >
-      <div class="pic">
-        <img :src="pingceItemfile.files" alt @click="previewimg" />
+    <div class="main">
+      <div class="pic" v-if="pingceItemfile.ptype!='10'">
+        <img :src="`${pingceItemfile.files}_snap.jpg`" alt @click="previewimg" />
         <p class="color9">
           题目
           <span class="fr">{{pingceItemfile.createtime}}</span>
         </p>
       </div>
+      <div v-if="pingceItemfile.ptype=='10'" class="clearfix">
+        <div class="vote-wrap fl">
+          <FileList :listData="voteInfos" type="isdetail" />
+        </div>
+      </div>
       <div class="list-main" v-if="memberData.length">
         <div class="content">
-          <p class="clearfix tit">
+          <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
             <span class="fl">{{memberData.length}} 人提交</span>
-            <span class="fr">正确率 00%</span>
+            <!-- <span class="fr">正确率 00%</span> -->
           </p>
           <List
-
             v-for="(v,index) in memberData"
             :key="index"
             :item="v"
             type="pingcedetail"
             :ptype="pingceItemfile.ptype"
             @click.native="onMemberClick(v)"
+            @previewimg="onPreviewimg"
           />
-
         </div>
       </div>
       <!--<Empty v-else :text="['无提交']" /> -->
@@ -34,16 +38,26 @@
       <mt-header :title="`${memBerItem.name}的答案`">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <AnswerDetail :memBerItem="memBerItem" />
+      <div class="answer-detail-wrap">
+        <div class="main">
+          <p class="tit">
+            <img class="itemavatar" :src="memBerItem.avatar" :onerror="$defaultImg('account')" />
+            {{memBerItem.name}}
+            <span class="time">{{memBerItem.countdate}}</span>
+          </p>
+          <p class="answer">{{memBerItem.answerdesc.textarea}}</p>
+        </div>
+      </div>
     </mt-popup>
   </div>
 </template>
 <script>
 import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
 import List from "@/common/list";
-import AnswerDetail from "./answerdetail";
 import Empty from "@/common/empty";
-import nativecode from '@/nativecode'
+import nativecode from "@/nativecode";
+import FileList from "../pingceing/vote/filelist";
+import { sortFn } from "@/util";
 export default {
   name: "",
   props: {
@@ -55,14 +69,14 @@ export default {
   },
   components: {
     List,
-    AnswerDetail,
-    Empty
+    Empty,
+    FileList
   },
   watch: {
     data: function(newValue, oldValue) {
       this.pingceItemfile = newValue;
+      console.log("000000", this.pingceItemfile);
       this.querySubmitDetail();
-      console.log("000", this.pingceItemfile);
     }
   },
   data() {
@@ -70,14 +84,19 @@ export default {
       pingceItemfile: {},
       memberData: [],
       popupDeatil: false,
-      memBerItem: {}
+      memBerItem: {
+        answerdesc: {
+          textarea: {}
+        }
+      },
+      voteInfos: []
     };
   },
   mounted() {},
   methods: {
-      previewimg(){
-          nativecode.previewImage(this, this.pingceItemfile.files);
-      },
+    previewimg() {
+      nativecode.previewImage(this, this.pingceItemfile.files);
+    },
     querySubmitDetail() {
       this.$http
         .post("api/pingce/querysubmit", {
@@ -85,7 +104,7 @@ export default {
           bankeid: this.pingceItemfile.classid
         })
         .then(res => {
-          if (res.data.code == "0") {
+          if (res.data.code == "0" && res.data.data.submit.length) {
             this.memberData = res.data.data.submit;
             for (let item of this.memberData) {
               item.answerdesc = JSON.parse(item.answerdesc);
@@ -114,8 +133,27 @@ export default {
             }
             if (this.pingceItemfile.ptype == "6") {
               for (let item of this.memberData) {
-                item.isResponder='抢答成功'
+                item.isResponder = "抢答成功";
               }
+            }
+            if (this.pingceItemfile.ptype == "10") {
+              // this.memberData[0].answerdesc.opts[0].name = "student3";
+              // this.memberData[1].answerdesc.opts[0].name = "执你之手";
+              this.voteInfos = this.memberData[0].answerdesc.voteinfo;
+              for (let v of this.voteInfos) {
+                v.count = 0;
+              }
+              for (let item of this.memberData) {
+                for (let v of item.answerdesc.opts) {
+                  for (let i of this.voteInfos) {
+                    if (v.name == i.name) {
+                      i.count++;
+                    }
+                  }
+                }
+              }
+              this.voteInfos.sort(sortFn("count", 1));
+              console.log("qqqqqq", this.voteInfos);
             }
           } else {
             Toast("连接错误");
@@ -126,8 +164,14 @@ export default {
         });
     },
     onMemberClick(v) {
-      this.memBerItem = v;
-      this.popupDeatil = true;
+      if (this.pingceItemfile.ptype == "5") {
+        this.memBerItem = v;
+        console.log("vv", v);
+        this.popupDeatil = true;
+      }
+    },
+    onPreviewimg(item) {
+      console.log(item);
     },
     goBacks() {
       if (this.popupDeatil) {
@@ -142,6 +186,8 @@ export default {
 .pingce-dtail-warp {
   .main {
     background: #fff;
+    .vote-wrap {
+    }
     .pic {
       width: 75%;
       margin: 0 auto;
@@ -163,6 +209,24 @@ export default {
           border-bottom: 1px solid #f0f0f0;
           padding: 10px 0;
         }
+      }
+    }
+  }
+  .answer-detail-wrap {
+    .main {
+      padding: 10px;
+      .tit {
+        img {
+          width: 30px;
+          margin-right: 10px;
+          border-radius: 50%;
+        }
+        .time {
+          margin-left: 10px;
+        }
+      }
+      .answer {
+        margin-top: 20px;
       }
     }
   }

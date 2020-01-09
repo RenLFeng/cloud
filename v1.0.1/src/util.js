@@ -441,3 +441,14 @@ export const CollectionFn = (itemfile, type, imgIcon, id, bankeid, title = null)
     });
 
 }
+export const sortFn = (property, sort) => {
+  return function (a, b) {
+    var value1 = a[property];
+    var value2 = b[property];
+    if (sort) {
+      return value2 - value1;
+    } else {
+      return value1 - value2;
+    }
+  }
+}

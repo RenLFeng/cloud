@@ -39,10 +39,22 @@
       <div class="mainctitle ellipse">
         <img class="itemavatar" :src="item.avatar" :onerror="$defaultImg('account')" />
         {{item.name}}
-        <!--<span class="fr font-xs colorf">正确</span> -->
+        <span
+          class="fr font-xs"
+          :class="item.score>0?'colorA':'colorB'"
+          v-if="ptype=='1'||ptype=='2'||ptype=='3'"
+        >{{item.score>0?'正确':'错误'}}</span>
       </div>
-      <div v-if="ptype!='6'" class="maincsubtitle ellipse">提交答案: {{answer}}</div>
+      <div v-if="ptype!='6'" class="maincsubtitle ellipse">{{ptype=='10'?`投票给:`:`提交答案:`}} {{answer}}</div>
       <div v-if="ptype=='6'">{{item.isResponder}}</div>
+      <div v-if="ptype=='4'" class="pingc-img-wrap">
+        <img
+          class="pingc-img"
+          :src="`${item.answerdesc.file}_snap.jpg`"
+          alt
+          @click="previewimg(item)"
+        />
+      </div>
       <div class="footer">
         <span class="color9 font-xs">{{item.submittime}}</span>
         <span class="fr colory">得分&nbsp;{{item.score}}</span>
@@ -110,20 +122,35 @@ export default {
   computed: {
     answer() {
       let str = "";
-      if (this.item.answerdesc.opts.length) {
-        for (let key in this.item.answerdesc.opts) {
-          let v = this.item.answerdesc.opts[key];
-          if (key == this.item.answerdesc.opts.length - 1) {
-            str += v + " ";
-          } else {
-            str += v + " 、";
+      if (this.ptype != "10" && this.ptype != "6" && this.ptype != "5") {
+        if (this.item.answerdesc.opts.length) {
+          for (let key in this.item.answerdesc.opts) {
+            let v = this.item.answerdesc.opts[key];
+            if (key == this.item.answerdesc.opts.length - 1) {
+              str += v + " ";
+            } else {
+              str += v + " 、";
+            }
           }
+          return str;
         }
-        return str;
-      }
-      if (this.item.answerdesc.textarea) {
-        str = this.item.answerdesc.textarea;
-        return str;
+      } else if (this.ptype == "5") {
+        if (this.item.answerdesc.textarea) {
+          str = this.item.answerdesc.textarea;
+          return str;
+        }
+      } else if (this.ptype == "10") {
+        if (this.item.answerdesc.opts.length) {
+          for (let key in this.item.answerdesc.opts) {
+            let v = this.item.answerdesc.opts[key];
+            if (key == this.item.answerdesc.opts.length - 1) {
+              str += v.name + " ";
+            } else {
+              str += v.name + " 、";
+            }
+          }
+          return str;
+        }
       }
     },
     week() {
@@ -147,6 +174,9 @@ export default {
     };
   },
   methods: {
+    previewimg(item) {
+      this.$emit("previewimg", item);
+    },
     edit(item) {
       this.$emit("edit", item);
     },
@@ -166,7 +196,19 @@ export default {
   background: #fff;
 }
 .mainpart.pingcedetail {
-  padding: 0;
+  height: auto;
+  padding-bottom: 5px;
+}
+.mainpart.pingcedetail .pingc-img-wrap {
+  width: 80%;
+  height: 200px;
+  margin: 10px auto;
+}
+.mainpart.pingcedetail .pingc-img {
+  position: inherit;
+  width: 100%;
+  height: 100%;
+  transform: translate(0, 0);
 }
 .mainpart > .index {
   position: absolute;
@@ -216,10 +258,16 @@ export default {
   left: 0;
   border-radius: 30px;
 }
-.pingcedetail .mainctitle .colorf {
-  background: #3ee17f;
+.pingcedetail .mainctitle > span {
   border-radius: 5px;
   padding: 3px 10px;
+  color: #fff;
+}
+.pingcedetail .mainctitle .colorA {
+  background: #3ee17f;
+}
+.pingcedetail .mainctitle .colorB {
+  background: #ff8900;
 }
 .pingcedetail .maincsubtitle {
   width: 90%;
