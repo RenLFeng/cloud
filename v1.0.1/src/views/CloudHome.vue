@@ -175,20 +175,20 @@ export default {
       }
       return false;
     },
-      actions(){
-        let ret = [];
-        if (nativecode.hassharebanke()){
-            ret.push({
-                name:'分享班课',
-                method:this.bankeShare
-            })
-        }
+    actions() {
+      let ret = [];
+      if (nativecode.hassharebanke()) {
         ret.push({
-            name:'置顶班课',
-            method:this.Roof
-        })
-         return ret;
-      },
+          name: "分享班课",
+          method: this.bankeShare
+        });
+      }
+      ret.push({
+        name: "置顶班课",
+        method: this.Roof
+      });
+      return ret;
+    },
     isteacher() {
       return this.$store.getters.isteacher;
     },
@@ -249,10 +249,11 @@ export default {
     onShowMenu(v) {
       console.log(v);
       this.bankeitem = v;
+      console.log("gdfg", this.actions);
       if (this.bankeitem.ordernum) {
-        this.actions[1].name = "取消置顶";
+        this.actions[this.actions.length - 1].name = "取消置顶";
       } else {
-        this.actions[1].name = "置顶班课";
+        this.actions[this.actions.length - 1].name = "置顶班课";
       }
       this.actionShow = true;
     },
@@ -276,11 +277,11 @@ export default {
         }
       }
     },
-      bankeShare(){
-        if (this.bankeitem.id){
-          nativecode.dosharebanke(this.bankeitem);
-        }
-      },
+    bankeShare() {
+      if (this.bankeitem.id) {
+        nativecode.dosharebanke(this.bankeitem);
+      }
+    },
     // 创建班课
     onadd() {
       var isteacher = this.$store.getters.isteacher;
