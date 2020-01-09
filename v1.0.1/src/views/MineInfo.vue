@@ -15,7 +15,7 @@
         </mt-cell>
 
         <mt-cell :title="$t('personal.Account')" >
-            <span>{{user.account}}</span>
+            <span>{{useraccount}}</span>
         </mt-cell>
 
         <mt-cell :title="$t('personal.Role')">
@@ -94,9 +94,20 @@
                 return this.$store.getters.curuser;
             },
             userrole(){
-                var u = this.user;
+                var u = this.$store.getters.curuser;
                 return maintools.userroledesc(u.role);
-            }
+            },
+            useraccount(){
+                let u = this.$store.getters.curuser;
+               //console.log(u);
+                if (u.accountid == 1){
+                    return '微信账户';
+                }
+                // else if (u.accountid == 0){
+                //     return '00000';
+                // }
+                return u.account;
+            },
         }
         ,components:{
             mimgcrop

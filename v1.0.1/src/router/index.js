@@ -47,6 +47,7 @@ export function createRouter() {
     routes: [
         { path: '/bar',component: Page2,},
         {path:'/', name:'cloudmain',component:cloudmain},
+        {path:'*', name:'cloudmain',component:cloudmain},
         {path:'/navother', component:NavOther},
         {path:'/navedit', component:NavEdit},
         {path:'/examitemhome', component:examitemhome},

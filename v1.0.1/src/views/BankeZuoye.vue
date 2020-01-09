@@ -300,8 +300,15 @@ export default {
             if (ball) {
               //! clear cur all
              // this.zuoyelist = [];  //! cjy: 这里清空会导致vue界面闪烁（呈现为无item的界面）
+                //! 这里需要清空， 否则遗留上个班课或上个账户的作业
+                this.zuoyelist = res.data.data;
             }
-              commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+            else{
+                commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+            }
+
+
+
             let ids = [];
             for (let v of res.data.data) {
               ids.push(v.id);

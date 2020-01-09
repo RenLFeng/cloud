@@ -162,7 +162,11 @@ export default {
       tempCurbankes: [],
       searchData: [],
 
-      homeEventmsgs: false
+      homeEventmsgs: false,
+        bankeitem:{
+          ordernum:0
+        },
+
     };
   },
   computed: {
@@ -183,8 +187,12 @@ export default {
                 method:this.bankeShare
             })
         }
+        let oname = '置顶班课';
+        if (this.bankeitem && this.bankeitem.ordernum){
+            oname = '取消置顶';
+        }
         ret.push({
-            name:'置顶班课',
+            name:oname,
             method:this.Roof
         })
          return ret;
@@ -249,11 +257,11 @@ export default {
     onShowMenu(v) {
       console.log(v);
       this.bankeitem = v;
-      if (this.bankeitem.ordernum) {
-        this.actions[1].name = "取消置顶";
-      } else {
-        this.actions[1].name = "置顶班课";
-      }
+      // if (this.bankeitem.ordernum) {
+      //   this.actions[1].name = "取消置顶";
+      // } else {
+      //   this.actions[1].name = "置顶班课";
+      // }
       this.actionShow = true;
     },
     //创建or加入
@@ -304,7 +312,7 @@ export default {
       this.$http
         .post("/api/banke/settop", {
           bankeid: this.bankeitem.id,
-          dotop: this.bankeitem.ordernum ? "0" : 1
+          dotop: this.bankeitem.ordernum ? 0 : 1
         })
         .then(res => {
           if (res.data.code == 0) {
