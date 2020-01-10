@@ -211,6 +211,7 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  object-fit: contain;
 }
 .mainpart > .index {
   position: absolute;
