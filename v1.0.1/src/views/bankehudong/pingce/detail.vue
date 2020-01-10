@@ -19,6 +19,7 @@
             <span class="fl">{{memberData.length}} 人提交</span>
             <!-- <span class="fr">正确率 00%</span> -->
           </p>
+          <!-- <div v-for="i in 10" :key="i"> -->
           <List
             v-for="(v,index) in memberData"
             :key="index"
@@ -28,12 +29,12 @@
             @click.native="onMemberClick(v)"
             @previewimg="onPreviewimg"
           />
+          <!-- </div> -->
         </div>
       </div>
       <!--<Empty v-else :text="['无提交']" /> -->
       <div v-else class="list-main">无提交</div>
     </div>
-
     <mt-popup v-model="popupDeatil" position="right" class="mint-popup" :modal="false" style>
       <mt-header :title="`${memBerItem.name}的答案`">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
@@ -137,7 +138,7 @@ export default {
               }
             }
             if (this.pingceItemfile.ptype == "10") {
-              this.voteInfos = this.memberData[0].answerdesc.voteinfo;
+              this.voteInfos = this.pingceItemfile.info.opts;
               for (let v of this.voteInfos) {
                 v.count = 0;
               }
@@ -169,7 +170,12 @@ export default {
       }
     },
     onPreviewimg(item) {
-      console.log(item);
+      let tempImgs = [];
+      tempImgs.push(nativecode.getUsedUrl(item.answerdesc.file));
+      nativecode.previewImage(this, {
+        urls: tempImgs,
+        index: 0
+      });
     },
     goBacks() {
       if (this.popupDeatil) {

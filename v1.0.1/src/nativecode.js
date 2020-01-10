@@ -397,26 +397,12 @@ nativecode.getUsedUrl = function (suburl) {
     }
     return nativecode.getDownUrl(suburl);
 }
-
-nativecode.previewImage2 = function (images, index) {
-    if (nativecode.platform == 'miniprogram') {
-        let wx = nativecode.getwx();
-        wx.previewImage({
-            current: images[index],
-            urls: images
-        })
-    } else {
-        ImagePreview({
-            images: images,
-            startPosition: index,
-        });
-    }
-}
 nativecode.previewImage = function (vuethis, objargs) {
     if (typeof objargs == 'string') {
         let useurl = objargs;
         //if (useurl.indexOf(''))
         useurl = nativecode.getUsedUrl(useurl);
+        console.log('useurl',useurl);
         let robj = {
             current: useurl
         }
@@ -436,19 +422,18 @@ nativecode.previewImage = function (vuethis, objargs) {
             urls: objargs.urls
         })
     } else {
-        //  vuethis.$store.commit("SET_ISPREVIEW", false);
-        // vuethis.$store.commit("SET_PREVIEWLOADFILE", objargs.urls);
-        //   vuethis.$store.commit("SET_IMAGES", objargs.urls);
-        //   vuethis.$store.commit("SET_INDEX", objargs.index);
-        //  vuethis.$store.commit("SET_SHOW", true);
-        let obj = {
-            isPreview: false,
-            //        previewLoadFile:item,
+        // let obj = {
+        //     isPreview: false,
+        //     //        previewLoadFile:item,
+        //     images: objargs.urls,
+        //     show: true,
+        //     index: objargs.index
+        // };
+        ImagePreview({
             images: objargs.urls,
-            show: true,
-            index: objargs.index
-        };
-        vuethis.$store.commit("SET_PREVIEW", obj, "");
+            startPosition: objargs.index,
+        });
+        // vuethis.$store.commit("SET_PREVIEW", obj, "");
     }
 }
 

@@ -47,7 +47,7 @@ export default {
       // isSubmit: false,
       tempAnswer: [],
       listData: {},
-      info:[]
+      info: []
     };
   },
   computed: {
@@ -57,7 +57,7 @@ export default {
           return true;
         }
       }
-      if(this.isSubmitEnd){
+      if (this.isSubmitEnd) {
         return false;
       }
     }
@@ -68,20 +68,17 @@ export default {
   },
 
   methods: {
-    onSelect(obj) {
-      this.info=obj;
+    onSelect(items) {
+      let i = items.index;
+      this.info = items.obj;
       this.pingceData.info.opts = [];
-      for (let v of obj) {
+      for (let v of items.obj) {
         this.pingceData.info.opts.push(v);
         if (v.isAct) {
-          this.tempAnswer = [{
-            name:v.name,
-            file:v.file
-          }];
+          this.tempAnswer = [i];
         }
       }
       console.log("pvoteSelect", this.pingceData.info.opts);
-      // this.$emit("pvoteSelect", v);
     },
     sumint() {
       if (!this.isSubmit && !this.isSubmitEnd) {
@@ -92,9 +89,12 @@ export default {
         Toast("你已提交过");
         return;
       }
-      console.log('投票',this.tempAnswer);
+      console.log("投票", this.tempAnswer);
       // this.isSubmit = false;
-      this.$emit("submitFn",{voteAnswer:this.tempAnswer,voteinfo:this.info} );
+      this.$emit("submitFn", {
+        voteAnswer: this.tempAnswer,
+        voteinfo: this.info
+      });
       this.tempAnswer = [];
     }
   }
