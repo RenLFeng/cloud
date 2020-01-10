@@ -264,24 +264,18 @@ export default {
     },
     //提交答案
     onSubmit(Answer) {
-      let tempAs = Answer;
       if (
         this.pingceData.ptype == "1" ||
         this.pingceData.ptype == "2" ||
         this.pingceData.ptype == "3" ||
         this.pingceData.ptype == "10"
       ) {
-        if (this.pingceData.ptype == "10") {
-          this.tempAnswer = Answer.voteAnswer;
-        } else {
-          this.tempAnswer = Answer.sort();
-        }
+        this.tempAnswer = Answer.sort();
       }
       let answers = {
         file: this.pingceData.ptype == "4" ? Answer : "",
         opts: this.tempAnswer || [],
-        textarea: this.pingceData.ptype == "5" ? Answer : "",
-        voteinfo: tempAs.voteinfo ? tempAs.voteinfo : ""
+        textarea: this.pingceData.ptype == "5" ? Answer : ""
       };
       let submitobj = {
         bankeid: this.bankeid,
@@ -313,7 +307,7 @@ export default {
         });
     },
     onPvoteSelect(v) {
-      this.pingceData.info.opts.push(v);
+      // this.pingceData.info.opts.push(v);
     },
     Refresh() {
       this.querycur();

@@ -36,7 +36,7 @@
       <mt-header :title="pingceType(pingceItemfile.ptype)" class>
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-        <Deatil :data="pingceItemfile" />
+      <Deatil :data="pingceItemfile" />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
@@ -175,6 +175,18 @@ export default {
     },
     details(v) {
       this.pingceItemfile = v;
+      if (
+        this.pingceItemfile.info &&
+        typeof this.pingceItemfile.info == "string"
+      ) {
+        this.pingceItemfile.info = JSON.parse(this.pingceItemfile.info);
+        for (let i = 0; i < this.pingceItemfile.info.opts.length; i++) {
+          this.pingceItemfile.info.opts[i] = JSON.parse(
+            this.pingceItemfile.info.opts[i]
+          );
+        }
+      }
+      console.log("vcvc", v);
       this.popupDeatil = true;
     },
     Backs() {

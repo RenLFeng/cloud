@@ -138,7 +138,7 @@ export default {
               }
             }
             if (this.pingceItemfile.ptype == "10") {
-              this.voteInfos = this.memberData[0].answerdesc.voteinfo;
+              this.voteInfos = this.pingceItemfile.info.opts;
               for (let v of this.voteInfos) {
                 v.count = 0;
               }

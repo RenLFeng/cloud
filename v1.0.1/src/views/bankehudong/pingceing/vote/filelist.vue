@@ -83,7 +83,7 @@ export default {
         }
         item.isAct = true;
       }
-      this.$emit("voteSelect", this.listData);
+      this.$emit("voteSelect",{obj:this.listData,index:index} );
     },
     view(i) {
       let tempImgs = [];
