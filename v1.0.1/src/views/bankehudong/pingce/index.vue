@@ -1,6 +1,6 @@
 <template>
   <div class="pingce-wrap">
-    <mt-header title="评测记录">
+    <mt-header title="评测记录" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div
@@ -30,9 +30,9 @@
       position="right"
       class="mint-popup"
       :modal="false"
-      style="background:#f0f0f0"
+      style="background:#f0f0f0;    overflow: auto;"
     >
-      <mt-header :title="pingceType(pingceItemfile.ptype)">
+      <mt-header :title="pingceType(pingceItemfile.ptype)" >
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <Deatil :data="pingceItemfile" />
@@ -158,9 +158,6 @@ export default {
         .post("api/pingce/query", qobj)
         .then(res => {
           if (res.data.code == "0") {
-            // for (let i = 0; i < 5; i++) {
-            //   res.data.data.push(arr);
-            // }
             if (res.data.data.length < this.pagesize) {
               this.loading = true;
               this.scorllEd = true;
@@ -202,7 +199,6 @@ export default {
     goBacks() {
       if (this.popupDeatil) {
         this.popupDeatil = false;
-
         if (this.showsingle){
             this.Backs();
         }
@@ -215,7 +211,7 @@ export default {
 <style lang='less' scoped>
 .pingce-wrap {
   .main {
-    margin-top: 10px;
+    margin-top: 50px;
   }
 }
 </style>

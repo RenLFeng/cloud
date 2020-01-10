@@ -32,6 +32,7 @@
         v-infinite-scroll="loadMore"
         infinite-scroll-disabled="loading"
         infinite-scroll-distance="100"
+        infinite-scroll-immediate-check="true"
       >
         <mt-tab-container-item id="1">
           <div class="listcontainer">
@@ -46,7 +47,7 @@
                   @normalclick="onviewfile"
                 ></BankeFileSimple>
               </div>
-              <div v-if="loading &&  bankeZhiYuanLinkItem.length>10" class="tc color9 font-xs">我是有底线的...</div>
+              <!-- <div v-if="loading &&  bankeZhiYuanLinkItem.length>10" class="tc color9 font-xs">我是有底线的...</div> -->
             </div>
             <div v-if="filesempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
           </div>
@@ -673,7 +674,8 @@ export default {
 
 <style scoped>
 .mint-tab-container {
-  height: calc(100vh - 230px);
+  height: 75vh;
+  min-height: 75vh;
   overflow-y: auto;
 }
 .mint-tabbar > .mint-tab-item.is-selected {
@@ -693,7 +695,7 @@ export default {
 
 .uploadimgsize {
   width: 35px;
-  heigth: 35px;
+  height: 35px;
 
   margin-bottom: 2px;
 }

@@ -24,12 +24,21 @@ export default {
     },
     type: {
       default: 3
+    },
+    submited: {
+      default: false
+    }
+  },
+  watch: {
+    submited: function(newValue, oldValue) {
+      this.isSubmitEnd = newValue;
     }
   },
   data() {
     return {
       indexNumber: [],
       isSubmit: false,
+      isSubmitEnd: false,
       tempAnswer: []
     };
   },
@@ -45,6 +54,9 @@ export default {
   computed: {},
   methods: {
     select(item) {
+      if (this.isSubmitEnd) {
+        return;
+      }
       if (this.type == "3") {
         //单选
         for (let v of this.indexNumber) {
@@ -54,7 +66,7 @@ export default {
         this.tempAnswer = [item.v];
         this.isSubmit = true;
         // this.$emit("selectFn", { item: item, type: "3" });
-      } else {
+      } else if (this.type == "2") {
         //多选
         item.isTrue = !item.isTrue;
         if (item.isTrue) {
@@ -78,16 +90,24 @@ export default {
       }
     },
     sumint() {
-      if (!this.isSubmit) {
+      if (!this.isSubmit && !this.isSubmitEnd) {
         Toast("请选择");
         return;
       }
-      this.$emit("submitFn", this.tempAnswer);
-      this.tempAnswer = [];
-      this.isSubmit = false;
-      for (let v of this.indexNumber) {
-        v.isTrue = false;
+      if (this.isSubmitEnd) {
+        Toast("你已提交过");
+        return;
       }
+      MessageBox.confirm("请确认你的答案")
+        .then(res => {
+          this.isSubmit = false;
+          this.$emit("submitFn", this.tempAnswer);
+          this.tempAnswer = [];
+          // for (let v of this.indexNumber) {
+          //   v.isTrue = false;
+          // }
+        })
+        .catch(() => {});
     }
   }
 };

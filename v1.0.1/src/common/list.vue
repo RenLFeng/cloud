@@ -4,8 +4,18 @@
     :class="type=='pingcedetail'?'pingcedetail':type=='pingce'?'pingce':''"
     @click="onclick"
   >
-  <img v-if="type=='common'" class="itemavatar" :src="`${item.info.img}`" :onerror="$defaultImg(item.info.img)"/>
-    <img v-if="type=='pingce'" class="itemavatar" :src="`${item.files}_snap.jpg`" :onerror="defaultimg" />
+    <img
+      v-if="type=='common'"
+      class="itemavatar"
+      :src="`${item.info.img}`"
+      :onerror="$defaultImg(item.info.img)"
+    />
+    <img
+      v-if="type=='pingce'"
+      class="itemavatar"
+      :src="`${item.files}_snap.jpg`"
+      :onerror="$defaultImg('file')"
+    />
     <div class="maincontent" v-if="type=='sign'">
       <div class="mainctitle ellipse">
         {{item.date}}&nbsp;{{week}} &nbsp;签到
@@ -27,12 +37,24 @@
     <!-- 评测记录详情 -->
     <div class="maincontent pingcedetail" v-if="type=='pingcedetail'">
       <div class="mainctitle ellipse">
-        <img class="itemavatar" :src="item.avatar" :onerror="defaultimg" />
+        <img class="itemavatar" :src="item.avatar" :onerror="$defaultImg('account')" />
         {{item.name}}
-        <!--<span class="fr font-xs colorf">正确</span> -->
+        <span
+          class="fr font-xs"
+          :class="item.score>0?'colorA':'colorB'"
+          v-if="ptype=='1'||ptype=='2'||ptype=='3'"
+        >{{item.score>0?'正确':'错误'}}</span>
       </div>
-      <div v-if="ptype!='6'" class="maincsubtitle ellipse">提交答案: {{answer}}</div>
+      <div v-if="ptype!='6'" class="maincsubtitle ellipse">{{ptype=='10'?`投票给:`:`提交答案:`}} {{answer}}</div>
       <div v-if="ptype=='6'">{{item.isResponder}}</div>
+      <div v-if="ptype=='4'" class="pingc-img-wrap">
+        <img
+          class="pingc-img"
+          :src="`${item.answerdesc.file}_snap.jpg`"
+          alt
+          @click="previewimg(item)"
+        />
+      </div>
       <div class="footer">
         <span class="color9 font-xs">{{item.submittime}}</span>
         <span class="fr colory">得分&nbsp;{{item.score}}</span>
@@ -48,23 +70,31 @@
         class="maincsubtitle color9"
       >{{item.subgroupnum}} 人已被划分小组，划分为 {{item.subgroupmnum}}个小组{{item.createtime}}</div>
     </div>
-     <!-- 收藏记录 -->
+    <!-- 收藏记录 -->
     <div class="maincontent common" v-if="type=='common'">
-      <div class="mainctitle ellipse">
-        {{item.title}}
+      <div class="mainctitle ellipse">{{item.title}}</div>
+      <div class="maincsubtitle color9">
+        <span>{{item.info.typeText}}</span>
+        &nbsp;{{item.info.time}}
       </div>
-      <div class="maincsubtitle color9"><span>{{item.info.typeText}}</span> &nbsp;{{item.info.time}}</div>
     </div>
-     <i v-if="type=='common' ||type=='pingce'" class="iconfont iconjiantou1 eicotrigger color9" @click.stop="edit(item)"></i>
+    <i
+      v-if="type=='common' ||type=='pingce'"
+      class="iconfont iconjiantou1 eicotrigger color9"
+      @click.stop="edit(item)"
+    ></i>
     <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9"></i>
-    <i v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' " class="iconfont iconjiantou eicotrigger colord"></i>
+    <i
+      v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' "
+      class="iconfont iconjiantou eicotrigger colord"
+    ></i>
   </div>
 </template>
 
 <script>
 import { Whatweek } from "../util";
 import { watch } from "fs";
-import { pingceType } from "@/util";
+import { pingceType, defaultImg } from "@/util";
 export default {
   name: "BankeMemberSimple",
   props: {
@@ -85,27 +115,42 @@ export default {
     classSignId: {
       default: 0
     },
-    ptype:{
-      default:null
+    ptype: {
+      default: null
     }
   },
   computed: {
     answer() {
       let str = "";
-      if (this.item.answerdesc.opts.length) {
-        for (let key in this.item.answerdesc.opts) {
-          let v = this.item.answerdesc.opts[key];
-          if (key == this.item.answerdesc.opts.length - 1) {
-            str += v + " ";
-          } else {
-            str += v + " 、";
+      if (this.ptype != "10" && this.ptype != "6" && this.ptype != "5") {
+        if (this.item.answerdesc.opts.length) {
+          for (let key in this.item.answerdesc.opts) {
+            let v = this.item.answerdesc.opts[key];
+            if (key == this.item.answerdesc.opts.length - 1) {
+              str += v + " ";
+            } else {
+              str += v + " 、";
+            }
           }
+          return str;
         }
-        return str;
-      }
-      if (this.item.answerdesc.textarea) {
-        str = this.item.answerdesc.textarea;
-        return str;
+      } else if (this.ptype == "5") {
+        if (this.item.answerdesc.textarea) {
+          str = this.item.answerdesc.textarea;
+          return str;
+        }
+      } else if (this.ptype == "10") {
+        if (this.item.answerdesc.opts.length) {
+          for (let key in this.item.answerdesc.opts) {
+            let v = this.item.answerdesc.opts[key];
+            if (key == this.item.answerdesc.opts.length - 1) {
+              str += v.name + " ";
+            } else {
+              str += v.name + " 、";
+            }
+          }
+          return str;
+        }
       }
     },
     week() {
@@ -129,8 +174,11 @@ export default {
     };
   },
   methods: {
-    edit(item){
-      this.$emit('edit',item);
+    previewimg(item) {
+      this.$emit("previewimg", item);
+    },
+    edit(item) {
+      this.$emit("edit", item);
     },
     onclick() {
       this.$emit("showStudentSignInfo", this.item);
@@ -148,7 +196,19 @@ export default {
   background: #fff;
 }
 .mainpart.pingcedetail {
-  padding: 0;
+  height: auto;
+  padding-bottom: 5px;
+}
+.mainpart.pingcedetail .pingc-img-wrap {
+  width: 80%;
+  height: 200px;
+  margin: 10px auto;
+}
+.mainpart.pingcedetail .pingc-img {
+  position: inherit;
+  width: 100%;
+  height: 100%;
+  transform: translate(0, 0);
 }
 .mainpart > .index {
   position: absolute;
@@ -190,16 +250,24 @@ export default {
   position: relative;
   padding-left: 45px;
   width: 100%;
+  height: 32px;
 }
 .pingcedetail .mainctitle img {
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   left: 0;
+  border-radius: 30px;
 }
-.pingcedetail .mainctitle .colorf {
-  background: #3ee17f;
+.pingcedetail .mainctitle > span {
   border-radius: 5px;
   padding: 3px 10px;
+  color: #fff;
+}
+.pingcedetail .mainctitle .colorA {
+  background: #3ee17f;
+}
+.pingcedetail .mainctitle .colorB {
+  background: #ff8900;
 }
 .pingcedetail .maincsubtitle {
   width: 90%;
@@ -234,7 +302,7 @@ export default {
   top: 50%;
   transform: translate(0, -50%);
 }
-.maincontent.common{
+.maincontent.common {
   padding-left: 60px;
 }
 </style>
