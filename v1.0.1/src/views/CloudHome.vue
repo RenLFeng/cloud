@@ -162,7 +162,11 @@ export default {
       tempCurbankes: [],
       searchData: [],
 
-      homeEventmsgs: false
+      homeEventmsgs: false,
+        bankeitem:{
+          ordernum:0
+        },
+
     };
   },
   computed: {
@@ -175,20 +179,24 @@ export default {
       }
       return false;
     },
-    actions() {
-      let ret = [];
-      if (nativecode.hassharebanke()) {
+      actions(){
+        let ret = [];
+        if (nativecode.hassharebanke()){
+            ret.push({
+                name:'分享班课',
+                method:this.bankeShare
+            })
+        }
+        let oname = '置顶班课';
+        if (this.bankeitem && this.bankeitem.ordernum){
+            oname = '取消置顶';
+        }
         ret.push({
-          name: "分享班课",
-          method: this.bankeShare
-        });
-      }
-      ret.push({
-        name: "置顶班课",
-        method: this.Roof
-      });
-      return ret;
-    },
+            name:oname,
+            method:this.Roof
+        })
+         return ret;
+      },
     isteacher() {
       return this.$store.getters.isteacher;
     },
@@ -249,12 +257,11 @@ export default {
     onShowMenu(v) {
       console.log(v);
       this.bankeitem = v;
-      console.log("gdfg", this.actions);
-      if (this.bankeitem.ordernum) {
-        this.actions[this.actions.length - 1].name = "取消置顶";
-      } else {
-        this.actions[this.actions.length - 1].name = "置顶班课";
-      }
+      // if (this.bankeitem.ordernum) {
+      //   this.actions[1].name = "取消置顶";
+      // } else {
+      //   this.actions[1].name = "置顶班课";
+      // }
       this.actionShow = true;
     },
     //创建or加入
@@ -277,11 +284,11 @@ export default {
         }
       }
     },
-    bankeShare() {
-      if (this.bankeitem.id) {
-        nativecode.dosharebanke(this.bankeitem);
-      }
-    },
+      bankeShare(){
+        if (this.bankeitem.id){
+          nativecode.dosharebanke(this.bankeitem);
+        }
+      },
     // 创建班课
     onadd() {
       var isteacher = this.$store.getters.isteacher;
@@ -305,7 +312,7 @@ export default {
       this.$http
         .post("/api/banke/settop", {
           bankeid: this.bankeitem.id,
-          dotop: this.bankeitem.ordernum ? "0" : 1
+          dotop: this.bankeitem.ordernum ? 0 : 1
         })
         .then(res => {
           if (res.data.code == 0) {

@@ -479,7 +479,15 @@ nativecode.ncallFileLink = function (fitem) {
     //  console.log(oret);
     if (!oret) {
         //console.log('toast');
-        Toast('请在应用程序中查看');
+        //Toast('请在应用程序中查看');
+        //！ 创建下载链接
+        let url = fitem.downurl;
+        let down = document.createElement("a");
+        down.href = url;
+        //! cjy: 不用处理下载文件名； 服务器自动设置
+        document.body.appendChild(down);
+        down.click();
+        down.remove();
     }
 }
 
@@ -495,7 +503,15 @@ nativecode.fileview = function (vuethis, fitem) {
 }
 
 nativecode.fileviewUrl = function (vuethis, fitem) {
-    nativecode.ncall('jsUrlLink', fitem);
+    let oret = nativecode.ncall('jsUrlLink', fitem);
+    if (!oret){
+       // console.log(fitem);
+        let url = fitem.url;
+        if (!(url.indexOf('http://') == 0 || url.indexOf('https://') == 0)){
+            url = 'http://' + url;
+        }
+        window.open(url);
+    }
     return;
 }
 

@@ -525,6 +525,7 @@ export default {
     },
     changeMark() {},
     goback() {
+        console.log('goback()');
       if (this.pagemode == "submit") {
         var btip = false;
         if (!this.zuoyeitem.submitnum) {
@@ -639,6 +640,7 @@ export default {
       this.results = dresults;
     },
     onbtnsubmit() {
+        console.log('onbtnsubmit');
       MessageBox.confirm("现在提交作业？").then(() => {
         this.dosubmit();
       });

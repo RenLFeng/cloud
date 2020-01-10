@@ -92,8 +92,16 @@ export default {
             this.$store.commit("banke/appendBankes", this.classitem);
             this.$router.push("/");
           } else {
+              let tipmsg = res.data.msg;
+              if (tipmsg == 'no privilige'){
+                  tipmsg = '无权限';
+              }
+              else if (tipmsg == 'over num limit'){
+                  tipmsg = '超出数量限制';
+              }
+              Toast(tipmsg);
           }
-          Toast(res.data.msg);
+
         })
         .catch(() => {
           Indicator.close();

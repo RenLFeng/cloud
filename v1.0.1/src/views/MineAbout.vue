@@ -5,7 +5,7 @@
       <div class="avatartextpart">
         <div class="fontlarge namepart ellipse">{{user.name}}</div>
         <div class="fontsmall accountpart">
-          {{$t('personal.Account')}}:{{user.account}}
+          {{$t('personal.Account')}}:{{useraccount}}
           <i class="my-cell-allow-right"></i>
         </div>
       </div>
@@ -40,6 +40,7 @@
 
       <div class="binddiv">
         <div v-show="!shownewaccount" class="title fontnormal">当前绑定账户：{{bindaccount}}</div>
+        <!-- cjy: 微信端限制为只能生成登陆账户， 不再提供绑定功能 -->
         <div class="btn-wrap">
           <mt-button
             class
@@ -63,13 +64,14 @@
             @click="uibindaction('newaccount')"
           >生成登陆账户</mt-button>
         </div>
+        <!-- -->
         <div v-show="showbindpanel">
           <div class="tit">{{bindtitle}}</div>
           <div v-show="bindaction != 'changepassword'" class="input-item-wrap">
-            <mt-field label="账户：" placeholder="请输入用户名" v-model="inputaccount"></mt-field>
+            <mt-field label="账户：" placeholder="请输入账户名" v-model="inputaccount"></mt-field>
           </div>
           <div class="input-item-wrap">
-            <mt-field label="密码:" placeholder="请输入密码" v-model="inputpassword"></mt-field>
+            <mt-field label="密码" placeholder="设置密码"  v-model="inputpassword"></mt-field>
           </div>
           <div class="button-worp">
             <mt-button class="button-auto-96 b" @click="uibindsubmit">提交</mt-button>
@@ -143,6 +145,13 @@ export default {
     user() {
       return this.$store.getters.curuser;
     },
+      useraccount(){
+        let u =  this.$store.getters.curuser;
+        if (u.accountid == 1){
+            return '微信账户';
+        }
+        return u.account;
+      },
     defaultImage() {
       var srcstr = 'this.src="';
       srcstr += require("../assets/account_default.png");
@@ -232,7 +241,7 @@ export default {
       this.inputpassword = "";
       if (this.shownewaccount) {
         if (sza == "newaccount") {
-          this.bindtitle = "生成登陆账户";
+          this.bindtitle = "创建平台登陆用账户";
         } else if (sza == "changebind") {
           this.bindtitle = "新增账户绑定";
         }
@@ -257,9 +266,14 @@ export default {
           if (res.data.code == 0) {
             if (res.data.data) {
               this.bindaccount = res.data.data;
+              //this.bindaction = 'changepassword';
+                this.uibindaction('changepassword');
             } else {
               this.bindaccount = "";
+            //  this.bindaction = 'newaccount'
+                this.uibindaction('newaccount');
             }
+            this.showbindpanel = true;
             this.popupBind = true;
             this.$store.commit("SET_CLOUD_BAR", true);
           }

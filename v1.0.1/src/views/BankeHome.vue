@@ -5,7 +5,7 @@
         v-if="hasbackbtn"
         icon="back"
         slot="left"
-        @click="$back"
+        @click="goback"
       >{{$t('common.Back')}}</mt-button>
     </mt-header>
 
@@ -224,6 +224,12 @@ export default {
         this.addmenuvisible = true;
       }
     },
+      goback(){
+       // alert(window.history.length);
+        //  window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
+          //! cjy: 微信小程序， 这里不准确， 这里直接返回主页
+          this.$router.replace('/')
+      },
     ontabshowmenu(bshow) {
       this.tabbarhide = bshow;
     },

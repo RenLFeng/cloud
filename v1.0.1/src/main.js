@@ -18,14 +18,15 @@ import {
 } from "@/util";
 Vue.prototype.$defaultImg = defaultImg;
 Vue.prototype.$back = function () {
-    // console.log('window.history.length',window.history.length);
-    // console.log('window.history',window.history);
-    // Vm.$router.push('/');
-    if (window.history.length <= 1) {
-        Vm.$router.push('/');
-    } else {
-        Vm.$router.back();
-    }
+    //! cjy: 小程序的history 不准确， 这里直接调用 go(-1)
+    Vm.$router.go(-1);
+  //  alert(window.history.length);
+    // if (window.history.length > 1) {
+    //     Vm.$router.go(-1);
+    // //    Vm.$router.replace('/');
+    // } else {
+    //     Vm.$router.replace('/');
+    // }
 }
 // import Vconsole from 'vconsole'
 // const vConsole = new Vconsole()

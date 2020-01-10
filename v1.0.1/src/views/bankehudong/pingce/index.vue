@@ -190,7 +190,9 @@ export default {
       this.popupDeatil = true;
     },
     Backs() {
-      this.$back();
+     this.$back();
+        //alert('pcindex:'+window.history.length);
+     //   window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
     },
     goBacks() {
       if (this.popupDeatil) {
