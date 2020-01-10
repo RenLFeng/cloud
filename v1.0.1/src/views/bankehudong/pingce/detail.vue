@@ -19,7 +19,6 @@
             <span class="fl">{{memberData.length}} 人提交</span>
             <!-- <span class="fr">正确率 00%</span> -->
           </p>
-          <!-- <div v-for="i in 10" :key="i"> -->
           <List
             v-for="(v,index) in memberData"
             :key="index"
@@ -29,7 +28,6 @@
             @click.native="onMemberClick(v)"
             @previewimg="onPreviewimg"
           />
-          <!-- </div> -->
         </div>
       </div>
       <!--<Empty v-else :text="['无提交']" /> -->
@@ -144,9 +142,10 @@ export default {
               }
               for (let item of this.memberData) {
                 for (let v of item.answerdesc.opts) {
-                  for (let i of this.voteInfos) {
-                    if (v.name == i.name) {
-                      i.count++;
+                  for (let key in this.voteInfos) {
+                    if (v == key) {
+                      this.voteInfos[key].count++;
+                      item.toName = this.voteInfos[key].name;
                     }
                   }
                 }

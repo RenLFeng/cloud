@@ -37,6 +37,7 @@ import Banshu from '../views/bankehudong/banshu/index'
 import Join from '../views/bankehome/join'
 //收藏
 import Collection from '../views/my/collection'
+import Audio from '../common/audio'
 import nativecode from '../nativecode'
 
 Vue.use(Router)

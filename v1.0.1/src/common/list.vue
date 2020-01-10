@@ -140,17 +140,7 @@ export default {
           return str;
         }
       } else if (this.ptype == "10") {
-        if (this.item.answerdesc.opts.length) {
-          for (let key in this.item.answerdesc.opts) {
-            let v = this.item.answerdesc.opts[key];
-            if (key == this.item.answerdesc.opts.length - 1) {
-              str += v.name + " ";
-            } else {
-              str += v.name + " 、";
-            }
-          }
-          return str;
-        }
+         return this.item.toName;
       }
     },
     week() {

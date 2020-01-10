@@ -52,17 +52,17 @@ export default {
   },
   computed: {
     isSubmit() {
-      for (let v of this.pingceData.info.opts) {
-        if (v.isAct) {
-          return true;
-        }
-      }
-      if (this.isSubmitEnd) {
+      if (this.submited) {
         return false;
+      } else {
+        for (let v of this.pingceData.info.opts) {
+          if (v.isAct) {
+            return true;
+          }
+        }
       }
     }
   },
-
   components: {
     Filelist
   },
@@ -90,11 +90,7 @@ export default {
         return;
       }
       console.log("投票", this.tempAnswer);
-      // this.isSubmit = false;
-      this.$emit("submitFn", {
-        voteAnswer: this.tempAnswer,
-        voteinfo: this.info
-      });
+      this.$emit("submitFn", this.tempAnswer);
       this.tempAnswer = [];
     }
   }
