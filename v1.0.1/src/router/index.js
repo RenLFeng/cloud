@@ -37,7 +37,10 @@ import Banshu from '../views/bankehudong/banshu/index'
 import Join from '../views/bankehome/join'
 //收藏
 import Collection from '../views/my/collection'
-import Audio from '../common/audio'
+//学校绑定
+import BindSchool from '../views/my/bindSchool'
+//学校绑定列表
+import BindSchoolList from '../views/my/bindSchool/bindend-list'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
@@ -75,6 +78,8 @@ export function createRouter() {
         {path:'/Collection',name:'Collection', component:Collection},
         {path:'/Join',name:'Join', component:Join},
         {path:'/bankejoin/:bankeid', name:'Join', component:Join, props:true},
+        {path:'/BindSchool',name:'BindSchool', component:BindSchool},
+        {path:'/BindSchoolList',name:'BindSchoolList', component:BindSchoolList},
 
 
      

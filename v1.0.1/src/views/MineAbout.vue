@@ -24,7 +24,8 @@
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
-
+    <div class="devide"></div>
+    <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -71,7 +72,7 @@
             <mt-field label="账户：" placeholder="请输入账户名" v-model="inputaccount"></mt-field>
           </div>
           <div class="input-item-wrap">
-            <mt-field label="密码" placeholder="设置密码"  v-model="inputpassword"></mt-field>
+            <mt-field label="密码" placeholder="设置密码" v-model="inputpassword"></mt-field>
           </div>
           <div class="button-worp">
             <mt-button class="button-auto-96 b" @click="uibindsubmit">提交</mt-button>
@@ -87,10 +88,10 @@
       <BankeEnd :curbankes="curbankes"></BankeEnd>
     </mt-popup>
     <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false">
-      <mt-header title="关于" class="">
+      <mt-header title="关于" class>
         <mt-button slot="left" icon="back" @click="Backs">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <About/>
+      <About />
     </mt-popup>
   </div>
 </template>
@@ -116,7 +117,7 @@ export default {
 
       popupBankeEnd: false,
       curbankes: [],
-      popupAbout:false
+      popupAbout: false
     };
   },
   components: {
@@ -145,13 +146,13 @@ export default {
     user() {
       return this.$store.getters.curuser;
     },
-      useraccount(){
-        let u =  this.$store.getters.curuser;
-        if (u.accountid == 1){
-            return '微信账户';
-        }
-        return u.account;
-      },
+    useraccount() {
+      let u = this.$store.getters.curuser;
+      if (u.accountid == 1) {
+        return "微信账户";
+      }
+      return u.account;
+    },
     defaultImage() {
       var srcstr = 'this.src="';
       srcstr += require("../assets/account_default.png");
@@ -267,11 +268,11 @@ export default {
             if (res.data.data) {
               this.bindaccount = res.data.data;
               //this.bindaction = 'changepassword';
-                this.uibindaction('changepassword');
+              this.uibindaction("changepassword");
             } else {
               this.bindaccount = "";
-            //  this.bindaction = 'newaccount'
-                this.uibindaction('newaccount');
+              //  this.bindaction = 'newaccount'
+              this.uibindaction("newaccount");
             }
             this.showbindpanel = true;
             this.popupBind = true;
@@ -295,9 +296,16 @@ export default {
     onset: function() {
       // Toast("暂未实现");
     },
+    bindSchool() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "BindSchool",
+        params: {}
+      });
+    },
     onabout: function() {
       this.$store.commit("SET_CLOUD_BAR", true);
-      this.popupAbout=true;
+      this.popupAbout = true;
       // Toast("暂未实现");
     },
     //清除提示
@@ -361,7 +369,7 @@ export default {
         this.popupBankeEnd = false;
         this.$store.commit("SET_CLOUD_BAR", false);
       }
-       if (this.popupAbout) {
+      if (this.popupAbout) {
         this.popupAbout = false;
         this.$store.commit("SET_CLOUD_BAR", false);
       }

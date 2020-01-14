@@ -1,14 +1,23 @@
 <template>
-  <div class="mainpart" @click="onclick">
+  <div class="mainpart" :class="memberDetail?'memberDetail':''" @click="onclick">
     <span v-if="indexShow" class="index colory">{{index+1}}</span>
-    <img :src="userimg" :onerror="$defaultImg('account')" class="mainimg mainleft avatar" />
+    <img
+      :src="userimg"
+      :onerror="$defaultImg('account')"
+      class="mainimg mainleft avatar"
+      :class="memberDetail?'memberDetail':''"
+    />
     <div class="mainright" v-if="hasedit">
       <i class="iconfont icon-bianji eicotrigger" @click="icoclick"></i>
     </div>
     <div class="maincontent">
-      <div class="mainctitle ellipse">{{memberuser.name}}</div>
+      <div class="mainctitle ellipse fontlarge">{{memberuser.name}}</div>
+      <div v-if="memberuser.sno" class="maincsubtitle">学号: {{memberuser.sno}}</div>
       <div v-if="!sign" class="maincsubtitle colory">{{scoreText}}:&nbsp;{{scoreTotal}}分</div>
-       <div v-if="sign"  class="maincsubtitle colory">{{memberuser.state?$t('bankehHudong.CheckIn'):$t('bankehHudong.No_sign_in')}}</div>
+      <div
+        v-if="sign"
+        class="maincsubtitle colory"
+      >{{memberuser.state?$t('bankehHudong.CheckIn'):$t('bankehHudong.No_sign_in')}}</div>
       <!-- <div class="maincsubtitle">{{memberdesc}}</div> -->
     </div>
     <i v-if="icon" class="iconfont iconjiantou1 eicotrigger colord" @click.stop="icoclick"></i>
@@ -33,8 +42,11 @@ export default {
     icon: {
       default: 0
     },
-    scoreText:{
-      default:'得分'
+    scoreText: {
+      default: "得分"
+    },
+    memberDetail: {
+      default: false
     },
     memberuser: {
       type: Object,
@@ -54,20 +66,13 @@ export default {
       },
       required: false
     },
-    sign:{
-      default:0
+    sign: {
+      default: 0
     }
   },
   computed: {
     scoreTotal() {
-      return (
-        // this.memberuser.score1 +
-        // this.memberuser.score2 +
-        // this.memberuser.score3 +
-        // this.memberuser.score4 +
-        // this.memberuser.score5
-          this.memberuser.score
-      );
+      return this.memberuser.score;
     },
     defaultimg() {
       var srcstr = 'this.src="';
@@ -133,13 +138,20 @@ export default {
   padding: 10px;
   background: #fff;
 }
+.memberDetail.mainpart {
+  height: auto;
+}
+.memberDetail.mainpart .maincontent >div {
+  margin: 5px 0;
+}
 .mainpart > .index {
   position: absolute;
   left: 10px;
   top: 50%;
   transform: translate(0, -50%);
 }
-.mainpart > i ,.mainpart > a{
+.mainpart > i,
+.mainpart > a {
   position: absolute;
   right: 10px;
   top: 50%;
@@ -155,6 +167,14 @@ export default {
 .mainleft {
   float: left;
   margin-left: 15px;
+  object-fit: cover;
+}
+.memberDetail.mainleft {
+  float: initial;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 
 .maincontent {
@@ -172,7 +192,7 @@ export default {
 }
 .maincsubtitle {
   height: 16px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .mainright {

@@ -88,7 +88,7 @@ export default {
   computed: {
     isFile() {
       if (
-        !this.$store.state.isPreview &&
+        !this.$store.state.Preview.isPreview &&
         this.tempLocalfiles.length &&
         !this.tempLocalfiles[this.index].imgsrc
       ) {

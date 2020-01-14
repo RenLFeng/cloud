@@ -340,6 +340,9 @@ export const getFileTypeImg = (typein) => {
     case 'mp3':
       srcstr += require("./assets/file_icon/MP3.png");
       return srcstr;
+    case 'school':
+      srcstr += require("./assets/school.png");
+      return srcstr;
     default:
       srcstr += require("./assets/file_default.png");
       break;

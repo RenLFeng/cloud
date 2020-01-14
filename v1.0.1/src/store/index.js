@@ -38,13 +38,6 @@ const state = {
     usercookiereaded: false,
     bankeZhiYuanLinkItem: [],
     lang: localStorage.getItem('lang') || 'zh',
-
-    isPreview: true, //是否开启了预览
-    previewLoadFile: [], //预览文件
-    images: [], //预览图片
-    show: false, //是否显示预览组件
-    index: 0, //预览图片当前的索引
-
     Preview: {
         isPreview: true, //是否开启了预览
         previewLoadFile: [], //预览文件
@@ -53,16 +46,11 @@ const state = {
         index: 0, //预览图片当前的索引
     },
 
-    // isPreview: true, //是否开启了预览
-    // previewLoadFile: [], //预览文件
-    // images: [], //预览图片
-    // show: false, //是否显示预览组件
-    // index: 0, //预览图片当前的索引
-
     footerBarState: true,
     CliudBar: false,
 
-    bankeSearchHistory: [] //班课搜索历史记录
+    bankeSearchHistory: [], //班课搜索历史记录
+    bindschool: false,
 
 }
 
@@ -208,21 +196,6 @@ const mutations = {
     SET_LANG(state, lang) {
         state.lang = lang;
     },
-    // SET_ISPREVIEW(state, v) {
-    //     state.isPreview = v;
-    // },
-    // SET_SHOW(state, v) {
-    //     state.show = v
-    // },
-    // SET_IMAGES(state, v) {
-    //     state.images = v
-    // },
-    // SET_PREVIEWLOADFILE(state, v) {
-    //     state.previewLoadFile = v
-    // },
-    // SET_INDEX(state, v) {
-    //     state.index = v
-    // },
 
     SET_FOOTER_BAR_STATE(state, v) {
         state.footerBarState = v
@@ -241,6 +214,9 @@ const mutations = {
         }
 
     },
+    SET_BIND_SCHOLL(state, v) {
+        state.bindschool = v;
+    }
 }
 
 

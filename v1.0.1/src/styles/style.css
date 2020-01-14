@@ -129,6 +129,7 @@ textarea {
     text-overflow: ellipsis;
     white-space: nowrap
 }
+
 .maxlong8 {
     width: 80%;
     max-width: 80%;
@@ -172,7 +173,7 @@ textarea {
 }
 
 .border-b {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .hide {
@@ -235,7 +236,9 @@ textarea {
 .fontmaintitle {
     font-size: 37px;
 }
-
+.fontlarge24 {
+    font-size: 24px !important;
+}
 .fontlarge {
     font-size: 22px !important;
 }
@@ -247,6 +250,7 @@ textarea {
 .fontsmall {
     font-size: 18px;
 }
+
 .font16 {
     font-size: 16px;
 }
@@ -264,7 +268,7 @@ textarea {
 }
 
 .button-auto-96 {
-    width: 96%;
+    width: 87%;
 }
 
 .popup-right {
@@ -288,6 +292,7 @@ textarea {
     -ms-flex: 1;
     flex: 1;
 }
+
 .mint-header-f {
     position: fixed !important;
     width: 100% !important;
@@ -515,6 +520,13 @@ textarea {
     top: 50%;
     transform: translate(0, -50%);
 }
+.position-b {
+    position: fixed;
+    width:100%;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
 
 .mint-toast {
     z-index: 999999 !important;
@@ -566,6 +578,7 @@ textarea {
     border-radius: 50%;
     z-index: 99;
 }
+
 .mask {
     position: absolute;
     left: 0;
@@ -573,4 +586,17 @@ textarea {
     width: 100%;
     height: 100%;
     background: rgba(98, 181, 249, 0.6);
-  }
+}
+
+.object-fit-img {
+    object-fit: cover !important;
+}
+
+.van-search__content {
+    background: rgba(249, 249, 249, 1) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(240, 240, 240, 1) !important;
+}
+.search-popup .div_sech .van-search__action{
+    color: #0089ff;
+}
