@@ -7,14 +7,18 @@
       <div class="audio-wrap position-c">
         <audio :src="AudioiInfo.filepath" id="audio"></audio>
         <div class="clearfix control-ui">
-          <span class="time-font fl">{{playTime}}</span>
-          <p class="fl progress-wrap">
-            <mt-progress :value="progressing" :bar-height="5"></mt-progress>
-          </p>
-          <span class="time-font fr">{{musicSize}}</span>
-          <p class="control-btn tc">
-            <i class="iconfont" :class="isPlay ?'iconbofang':'iconzanting'" @click="controlAudio()"></i>
-          </p>
+          <i
+            class="iconfont fl"
+            :class="isPlay ?'iconbofang':'iconzanting'"
+            @click="controlAudio()"
+          ></i>
+          <div class="fl progress-wrap">
+            <!-- <mt-progress :value="progressing" :bar-height="5"></mt-progress> -->
+            <div class="progress">
+              <p class="progressing" :style="{ width: progressing + 'px' }"></p>
+            </div>
+          </div>
+          <span class="time-font fr">{{playTime}}</span>
         </div>
       </div>
     </div>
@@ -43,7 +47,7 @@ export default {
       isPlay: true,
       timer: "",
       second: 0,
-      myAudio: null
+      myAudio: null,
     };
   },
   computed: {
@@ -112,7 +116,10 @@ export default {
       this.$emit("Backs", true);
     }
   },
-  components: {}
+  components: {},
+  destroyed(){
+
+  },
 };
 </script>
 
@@ -124,19 +131,35 @@ export default {
     min-height: 93vh;
     background: rgba(0, 0, 0, 0.8);
     .audio-wrap {
-      width: 100%;
+      width: 90%;
       .control-ui {
         background: #fff;
-        .progress-wrap {
-          width: 66%;
-          margin: 0 4%;
-        }
-      }
-      .control-btn {
-        width: 100%;
-        i {
-          font-size: 50px;
+        height: 50px;
+        line-height: 50px;
+        border-radius: 13px;
+        padding: 0 10px;
+        > i {
+          font-size: 38px;
           color: #0089ff;
+        }
+        .progress-wrap {
+          width: 64%;
+          position: absolute;
+          top: 50%;
+          left: 49%;
+          -webkit-transform: translate(0, -50%);
+          transform: translate(-50%, -50%);
+          .progress {
+            width: 100%;
+            height: 5px;
+            background: #ccc;
+            border-radius: 20px;
+            .progressing {
+              height: 100%;
+              background: #0089ff;
+              width: 0;
+            }
+          }
         }
       }
     }

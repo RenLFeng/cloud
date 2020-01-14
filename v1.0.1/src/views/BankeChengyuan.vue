@@ -29,6 +29,7 @@
             :icon="1"
             :memberuser="members[selindex]"
             :index="selindex"
+            :schollid="members[selindex].sno"
             @editclick="onEditclick"
           ></BankeMemberSimple>
         </div>
@@ -42,7 +43,7 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header title="成员详情" class="">
+      <mt-header title="成员详情" class>
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
       <div class="content-main popup-scroll">
@@ -67,11 +68,15 @@ export default {
       default() {
         return 0;
       }
+    },
+    schollid: {
+      default: 0
     }
   },
   data() {
     return {
       members: [],
+      membersid: [],
       liststatedesc: "",
       loadingState: false,
       isloading: false,
@@ -155,17 +160,17 @@ export default {
           this.$http
             .post("/api/banke/memberdelete", {
               bankeid: this.bankeid,
-                userid:deluserid
+              userid: deluserid
             })
             .then(res => {
               if (res.data.code == 0) {
                 Toast("删除成功");
-                for(let i=0; i<this.members.length; i++){
-                    if (this.members[i].memberuserid == deluserid){
-                        this.members.splice(i, 1);
-                        break;
-                    }
+                for (let i = 0; i < this.members.length; i++) {
+                  if (this.members[i].memberuserid == deluserid) {
+                    this.members.splice(i, 1);
+                    break;
                   }
+                }
               } else {
                 Toast("删除失败");
               }
@@ -196,22 +201,30 @@ export default {
         .then(res => {
           this.isloading = false;
           if (res.data.code == 0) {
-            this.members = res.data.data["members"];
-            let curbanke = this.$store.state.curbanke;
-            if (typeof curbanke['scorerule1'] == 'undefined'){
-
+            let members = res.data.data["members"];
+            for (let v of members) {
+              this.membersid.push(v.memberuserid);
             }
-            for (let v of this.members) {
-                v.score = 0;
-                v.score = v.score1 * curbanke.scorerule1 / 100
-                + v.score2 * curbanke.scorerule2 / 100
-                + v.score3 * curbanke.scorerule3 / 100
-                + v.score4 * curbanke.scorerule4 / 100;
+            let curbanke = this.$store.state.curbanke;
+            if (typeof curbanke["scorerule1"] == "undefined") {
+            }
+            for (let v of members) {
+              v.score = 0;
+              v.score =
+                (v.score1 * curbanke.scorerule1) / 100 +
+                (v.score2 * curbanke.scorerule2) / 100 +
+                (v.score3 * curbanke.scorerule3) / 100 +
+                (v.score4 * curbanke.scorerule4) / 100;
               this.Average += v.score;
             }
             this.Average = parseInt(
-              this.Average / (this.members.length ? this.members.length : 1)
+              this.Average / (members.length ? members.length : 1)
             );
+            if (this.schollid) {
+              this.querybind(members);
+            } else {
+              this.members = members;
+            }
           }
           this.liststatedesc = "";
           Indicator.close();
@@ -220,6 +233,31 @@ export default {
           this.isloading = false;
           this.loadingState = false;
           Indicator.close();
+        });
+    },
+    //查询是否有绑定
+    querybind(members) {
+      this.$http
+        .post("/api/school/querybind", {
+          schoolid: this.schollid,
+          userids: this.membersid
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            if (res.data.data.bind.length) {
+              for (let v of members) {
+                for (let item of res.data.data.bind) {
+                  if (v.memberuserid == item.userid) {
+                    v.sno = item.sno;
+                  }
+                }
+              }
+            }
+          }
+          this.members = members;
+        })
+        .catch(err => {
+          this.members = members;
         });
     },
     goBack() {
@@ -284,7 +322,6 @@ export default {
 }
 .listcontainer {
 }
-.content-main{
-
+.content-main {
 }
 </style>

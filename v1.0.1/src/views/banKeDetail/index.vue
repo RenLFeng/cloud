@@ -20,11 +20,12 @@
     </div>
     <div class="cell-wrap">
       <ul class="border-bottom-e5">
+        <li class="school" @click="showSchoo">
+          <mt-cell title="所属学校" is-link></mt-cell>
+        </li>
+        <div class="devide"></div>
         <li v-if="caneditbanke">
           <ul class="list-wrap">
-            <li class="school" v-if="bankeInfo.schoolName">
-              <mt-cell title="所属学校" :value="bankeInfo.schoolName"></mt-cell>
-            </li>
             <li @click="setNotice">
               <mt-cell title="发布公告" is-link></mt-cell>
             </li>
@@ -53,6 +54,7 @@
         </li>
         <li v-else>
           <ul>
+            <div class="devide"></div>
             <li @click="setNotice">
               <mt-cell title="查看公告" is-link></mt-cell>
             </li>
@@ -120,11 +122,30 @@
         :caneditbanke="caneditbanke"
       />
     </mt-popup>
+    <mt-popup
+      v-model="popupSchool"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="所属学校" class="mint-header-f">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <div class="main main-f">
+        <div class="scholl-wrap">
+          <div v-for="(v,i) in schoolInfo" :key="i" class="item">
+            <img class="avatar" :src="v.avatar" :onerror="$defaultImg('school')" />
+            <p class="fontsmall">{{v.name}}</p>
+          </div>
+        </div>
+      </div>
+    </mt-popup>
   </div>
 </template>
 
 <script>
-import { Cell, Button, MessageBox, Field } from "mint-ui";
+import { Cell, Button, MessageBox, Field, Indicator, Toast } from "mint-ui";
 import edit from "./edit";
 import Notice from "./Notice";
 import Proportion from "./Proportion";
@@ -156,7 +177,9 @@ export default {
       imgfilepath: "",
       bankeInfoData: {},
       editBkState: false,
-      titData: {}
+      titData: {},
+      popupSchool: false,
+      schoolInfo: []
     };
   },
 
@@ -189,6 +212,27 @@ export default {
   },
   created() {},
   methods: {
+    showSchoo() {
+      Indicator.open("加载中...");
+      this.$http
+        .post("/api/school/queryschool", {
+          page: 0,
+          pagesize: 50,
+          id: 1000
+        })
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.length) {
+            this.schoolInfo = res.data.data;
+            this.popupSchool = true;
+          } else {
+            Toast("未找到数据");
+          }
+          Indicator.close();
+        })
+        .catch(err => {
+          Indicator.close();
+        });
+    },
     //发布公告
     setNotice() {
       this.popupNotice = true;
@@ -335,6 +379,9 @@ export default {
       if (this.editBkState) {
         this.editBkState = false;
       }
+      if (this.popupSchool) {
+        this.popupSchool = false;
+      }
       this.$store.commit("SET_FOOTER_BAR_STATE", true);
     }
   },
@@ -346,6 +393,9 @@ export default {
 
 <style lang="less" scoped>
 .bk-zy-xq {
+  .main {
+    margin-top: 56px;
+  }
   .curbanke-info {
     background: #fff;
     ul {
@@ -395,6 +445,27 @@ export default {
   }
   .popup-right {
     width: 100%;
+  }
+  .scholl-wrap {
+    .item {
+      position: relative;
+      padding: 30px 30px 30px 80px;
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 10px;
+      img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translate(0, -50%);
+        border-radius: 30px;
+      }
+      .name {
+      }
+    }
   }
 }
 </style>
