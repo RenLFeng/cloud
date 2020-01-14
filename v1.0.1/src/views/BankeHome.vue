@@ -22,7 +22,7 @@
             <i class="iconfont iconxiaozu eicotrigger"></i>
             <p>分组方案</p>
           </div>
-          <BankeChengyuan :bankeid="id" v-if="showchengyuan"></BankeChengyuan>
+          <BankeChengyuan :bankeid="id" v-if="showchengyuan" :schollid="curbanke.schoolid"></BankeChengyuan>
         </mt-tab-container-item>
 
         <mt-tab-container-item id="zuoye">
@@ -198,6 +198,9 @@ export default {
       }
       return bname;
     },
+    schollid(){
+      return this.curbanke.id
+    },
     itemzuoyenormal() {
       if (!this.$store.getters.caneditbanke) {
         return true;
@@ -354,7 +357,6 @@ export default {
     this.bankeid = this.id;
     if (u) {
       this.curbanke = u;
-      //this.querybind();
       this.onBankeChange();
     } else {
       // this.curbanke = this.$t("common.Curbanke");

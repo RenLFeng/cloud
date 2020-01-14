@@ -49,7 +49,6 @@ export default {
   watch: {
     memberuser: function(newValue, oldValue) {
       console.log("newValuenewValue", newValue);
-      this.querybind();
     },
     chartData: function(newValue, oldValue) {
       console.log("chartDatachartDatachartData", newValue);
@@ -69,22 +68,7 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    //查询是否有绑定
-    querybind() {
-      this.$http
-        .post("/api/school/querybind", {
-          schoolid: 1000,
-          userids: [this.memberuser.memberuserid]
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-            if (res.data.data.bind.length) {
-              this.memberuser.sno = res.data.data.bind[0].sno;
-            }
-          }
-        })
-        .catch(err => {});
-    }
+
   }
 };
 </script>

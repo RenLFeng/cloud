@@ -4,15 +4,15 @@
     <img
       :src="userimg"
       :onerror="$defaultImg('account')"
-      class="mainimg mainleft avatar"
+      class="mainimg mainleft avatar position-l"
       :class="memberDetail?'memberDetail':''"
     />
     <div class="mainright" v-if="hasedit">
       <i class="iconfont icon-bianji eicotrigger" @click="icoclick"></i>
     </div>
     <div class="maincontent">
-      <div class="mainctitle ellipse fontlarge">{{memberuser.name}}</div>
-      <div v-if="memberuser.sno" class="maincsubtitle">学号: {{memberuser.sno}}</div>
+      <div class="mainctitle ellipse">{{memberuser.name}}</div>
+      <div class="maincsubtitle color9" v-if="!sign &&　memberuser.sno">学号: {{memberuser.sno}}</div>
       <div v-if="!sign" class="maincsubtitle colory">{{scoreText}}:&nbsp;{{scoreTotal}}分</div>
       <div
         v-if="sign"
@@ -133,15 +133,15 @@ export default {
 <style scoped>
 .mainpart {
   position: relative;
-  height: 83px;
+  /* height: 83px; */
   border-bottom: 1px solid #eaeaea;
-  padding: 10px;
+  padding: 18px 0;
   background: #fff;
 }
 .memberDetail.mainpart {
   height: auto;
 }
-.memberDetail.mainpart .maincontent >div {
+.memberDetail.mainpart .maincontent > div {
   margin: 5px 0;
 }
 .mainpart > .index {
@@ -165,10 +165,11 @@ export default {
 }
 
 .mainleft {
-  float: left;
+  /* float: left; */
   margin-left: 15px;
   object-fit: cover;
 }
+
 .memberDetail.mainleft {
   float: initial;
   position: absolute;
@@ -183,15 +184,15 @@ export default {
 }
 
 .mainctitle {
-  font-size: 20px;
+  font-size: 18px;
   color: #313131;
 
-  height: 24px;
-  margin-bottom: 6px;
-  margin-top: 6px;
+  /* height: 24px; */
+  /* margin-bottom: 6px;
+  margin-top: 6px; */
 }
 .maincsubtitle {
-  height: 16px;
+  /* height: 16px; */
   font-size: 14px;
 }
 
