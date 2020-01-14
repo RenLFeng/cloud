@@ -299,7 +299,8 @@ export default {
     bindSchool() {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
-        name: "BindSchool",
+       // name: "BindSchool",
+          name:'BindSchoolList',  //! cjy: 这里直接跳转到schoollist即可
         params: {}
       });
     },

@@ -229,38 +229,7 @@ export default {
     sharebanke() {
       nativecode.dosharebanke(this.bankeInfo);
     },
-    edBk() {
-      if (!this.caneditbanke) return;
-      let BankeData = this.$store.state.banke.curbankes;
-      MessageBox.confirm("", {
-        title: this.$t("confirm.Tips"),
-        message: this.$t("common.End") + " " + this.$t("common.Class") + "?",
-        confirmButtonText: this.$t("confirm.Ok"),
-        cancelButtonText: this.$t("confirm.Cancel"),
-        showCancelButton: true
-      })
-        .then(() => {
-          this.$http
-              .post("/api/banke/updateinfo", {
-                  id: this.bankeInfo.id,
-                  states: 0,
-              })
-              .then(res => {
-                  if (res.data.code == 0) {
-                      MessageBox.alert(this.$t("confirm.Success")).then(() => {
-                          for (let item of BankeData) {
-                              if (item.id == res.data.data.id) {
-                                  item.states = 0;
-                              }
-                          }
-                          this.$store.commit("banke/appendBankes", BankeData);
-                      });
-                  } else {
-                      MessageBox.alert(res.data.msg).then(() => {});
-                  }
-              })
-              .catch(() => {});
-      },
+
     edBk() {
       if (!this.caneditbanke) return;
 
@@ -285,7 +254,29 @@ export default {
         })
         .catch(err => {});
     },
-
+    finishbanke(){
+        let BankeData = this.$store.state.banke.curbankes;
+        this.$http
+            .post("/api/banke/updateinfo", {
+                id: this.bankeInfo.id,
+                states: 0,
+            })
+            .then(res => {
+                if (res.data.code == 0) {
+                    MessageBox.alert(this.$t("confirm.Success")).then(() => {
+                        for (let item of BankeData) {
+                            if (item.id == res.data.data.id) {
+                                item.states = 0;
+                            }
+                        }
+                        this.$store.commit("banke/appendBankes", BankeData);
+                    });
+                } else {
+                    MessageBox.alert(res.data.msg).then(() => {});
+                }
+            })
+            .catch(() => {});
+    },
     closeBk() {
       if (!this.caneditbanke) {
         MessageBox.confirm("", {

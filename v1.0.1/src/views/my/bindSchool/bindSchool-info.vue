@@ -5,7 +5,7 @@
     </mt-header>
     <div class="main main-f">
       <div class="title">
-        <img class="avatar" src :onerror="$defaultImg('school')" />
+        <img class="avatar" :src="schoolInfo.avatar" :onerror="$defaultImg('school')" />
         <p class="fontsmall">{{schoolInfo.name}}</p>
       </div>
       <p class="tit">我在该学校的信息</p>

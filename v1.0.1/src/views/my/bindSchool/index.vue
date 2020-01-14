@@ -6,7 +6,7 @@
     <div class="main">
       <mt-cell title="选择学校" is-link @click.native="bindSchool" class="border-b">{{schoolInfo.name}}</mt-cell>
       <mt-field label="工号/学号" placeholder="请输入工号或学号" v-model="sno" class="border-b"></mt-field>
-      <mt-field label="校验码" placeholder="请输入校验码" v-model="schoolpwd"></mt-field>
+      <mt-field label="校验码" placeholder="请输入校验码，没有则不填" v-model="schoolpwd"></mt-field>
       <div class="button-worp">
         <mt-button class="button-auto-96" @click="onbindSchool">绑定</mt-button>
       </div>
@@ -19,10 +19,9 @@
             <form action="/">
               <van-search
                 id="search"
-                placeholder="搜索"
+                placeholder="输入学校名"
                 :autofocus="true"
                 :show-action="true"
-                :disabled="isQuery"
                 v-model="value"
                 @search="onSearch"
                 @cancel="onCancel"
@@ -64,6 +63,8 @@ export default {
       schoolpwd: "",
       popupSearch: false,
       value: "",
+        lastsearchkey:'', //! cjy： 最后的搜索key
+        searchtimerid:null,  //! 搜索的定时器
       autofocus: true,
       searchData: [],
       isQuery: false
@@ -81,6 +82,12 @@ export default {
   },
   mounted() {},
   watch: {},
+    destroyed: function() {
+       if (this.searchtimerid){
+           clearTimeout(this.searchtimerid)
+           this.searchtimerid = null
+       }
+    },
   methods: {
     onbindSchool() {
       if (!this.schoolInfo.id) {
@@ -91,10 +98,10 @@ export default {
         Toast("请输入工号或学号");
         return;
       }
-      if (!this.schoolpwd) {
-        Toast("请输入校验码");
-        return;
-      }
+      // if (!this.schoolpwd) {
+      //   Toast("请输入校验码");
+      //   return;
+      // }
       Indicator.open("全速绑定中...");
       this.$http
         .post("/api/school/bind", {
@@ -109,12 +116,19 @@ export default {
             }
             Toast("绑定成功");
             this.$store.commit("setRouterForward", true);
-            this.$router.push({
+            this.$router.replace({
               name: "BindSchoolList",
               params: {}
             });
           } else {
-            Toast("绑定失败");
+              let tipmsg = '绑定失败：' + res.data.msg
+              if (res.data.msg == 'has bind in school'){
+                  tipmsg = '已绑定到该学校'
+              }
+              else if (res.data.msg == 'invalid password'){
+                  tipmsg = '校验码不匹配'
+              }
+            Toast(tipmsg);
           }
           Indicator.close();
         })
@@ -129,7 +143,8 @@ export default {
     },
     //搜索btn or end
     onSearch() {
-      this.onInput("");
+     // this.onInput("");
+        this.queryschool(this.value)
     },
     //取消
     onCancel() {
@@ -137,35 +152,62 @@ export default {
     },
     //输入框内容变化
     onInput(value) {
-      if (!value) {
-        value = this.value;
-        if (value == "") {
-          return;
-        }
-      }
+      // if (!value) {
+      //   value = this.value;
+      //   if (value == "") {
+      //     return;
+      //   }
+      // }
       // if(this.isQuery) return;
-      this.queryschool();
+      this.queryschool(this.value);
     },
-    queryschool() {
-      Indicator.open("搜索中...");
+    queryschool(skey) {
+     // Indicator.open("搜索中...");
+
+        if (!skey){
+            //! cjy： 不搜索空字符串
+            return;
+        }
+
+        //! 清除当前的搜索定时器
+        if (this.searchtimerid){
+            clearTimeout(this.searchtimerid)
+            this.searchtimerid = null
+        }
+        if (this.isQuery){
+            //! 当前搜索中；启用定时延迟搜索
+            let searchfun= (()=>{
+                this.queryschool(skey)
+            });
+            this.searchtimerid = setTimeout(searchfun, 300)
+            return
+        }
+        if (this.lastsearchkey == skey){
+            //! key相同，无需再搜索
+            return;
+        }
       this.isQuery = true;
       this.$http
         .post("/api/school/queryschool", {
           page: 0,
           pagesize: 50,
-          name: this.value
+          name: skey
         })
         .then(res => {
           console.log("queryschool", res);
-          if (res.data.code == "0" && res.data.data.length) {
-            this.searchData = res.data.data;
+          if (res.data.code == "0"
+           //   && res.data.data.length
+          ) {
+         //   this.searchData = res.data.data;
+              this.lastsearchkey = skey
+              this.searchData = res.data.data
           }
           this.isQuery = false;
-          Indicator.close();
+        //  Indicator.close();
         })
         .catch(err => {
           this.isQuery = false;
-          Indicator.close();
+        //  Indicator.close();
         });
     },
     //选择学校

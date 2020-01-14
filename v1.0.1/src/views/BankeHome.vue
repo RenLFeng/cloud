@@ -268,7 +268,7 @@ export default {
               this.curbanke = res.data.data[0];
               this.$store.commit("banke/appendBankes", this.curbanke);
               this.onBankeChange();
-              this.querybind();
+           //   this.querybind();
             }
           }
         })
@@ -317,20 +317,21 @@ export default {
         .catch(err => {});
     },
     //查询是否有绑定
-    querybind() {
-      this.$http
-        .post("/api/school/querybind", {
-          schoolid: 1000
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-            if (res.data.data.school.length) {
-              this.curbanke.schoolName = res.data.data.school[0].name;
-            }
-          }
-        })
-        .catch(err => {});
-    }
+      //! cjy: querybind 不应当乱用
+    // querybind() {
+    //   this.$http
+    //     .post("/api/school/querybind", {
+    //       schoolid: 1000
+    //     })
+    //     .then(res => {
+    //       if (res.data.code == "0") {
+    //         if (res.data.data.school.length) {
+    //           this.curbanke.schoolName = res.data.data.school[0].name;
+    //         }
+    //       }
+    //     })
+    //     .catch(err => {});
+    // }
   },
   created() {
     console.log("bankehome:" + this.id);
@@ -353,7 +354,7 @@ export default {
     this.bankeid = this.id;
     if (u) {
       this.curbanke = u;
-      this.querybind();
+      //this.querybind();
       this.onBankeChange();
     } else {
       // this.curbanke = this.$t("common.Curbanke");

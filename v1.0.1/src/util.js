@@ -8,11 +8,11 @@ export const formateTime = (v, type) => {
   if (v) {
     date = new Date(v);
   }
-  var y = date.getFullYear();
+  var y = date.getFullYear() + '';
   var m = date.getMonth() + 1;
-  m = m < 10 ? ('0' + m) : m;
+  m = m < 10 ? ('0' + m) : m+'';
   var d = date.getDate();
-  d = d < 10 ? ('0' + d) : d;
+  d = d < 10 ? ('0' + d) : d+'';
 
   var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
   var minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
@@ -26,7 +26,11 @@ export const formateTime = (v, type) => {
     return y + '/' + m + '/' + d;
   } else if (type == '-') {
     return `${y}-${m}-${d} ${hour}:${minute}:${second}`
-  } else {
+  }
+  else if (type == 'cstr'){
+    return ''+y+m+d + ' '+hour+minute+second
+  }
+  else {
     return y + '年' + m + '月' + d + '日';
   }
 }

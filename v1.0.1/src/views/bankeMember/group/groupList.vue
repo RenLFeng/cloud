@@ -4,8 +4,8 @@
       <div class="tit">
         {{item.name}} ({{item.membersnum}}人)
         <p class="fr">
-          <span class="colord" @click="changeName(index)">改名</span>
-          <span class="dl" @click="dl(index)">删除</span>
+          <span class="colord" @click="changeName(index)" v-if="canedit">改名</span>
+          <span class="dl" @click="dl(index)" v-if="canedit">删除</span>
         </p>
       </div>
       <div class="subgroup-list">
@@ -13,10 +13,10 @@
           <li class="fl tc" v-for="(v,i) in item.files" :key="i">
             <img :src="v.img" :onerror="$defaultImg('account')"/>
             <p>{{v.name}}</p>
-            <i class="iconfont iconshanchu1 eicotrigger" @click="dle(index,i)"></i>
+            <i class="iconfont iconshanchu1 eicotrigger" @click="dle(index,i)" v-if="canedit"></i>
           </li>
         </ul>
-        <span class="add" @click="addMembers(item)">+</span>
+        <span class="add" @click="addMembers(item)" v-if="canedit">+</span>
       </div>
     </div>
   </div>
@@ -37,6 +37,11 @@ export default {
       default() {
         return [];
       }
+    },
+    canedit:{
+        default(){
+            return true
+        }
     }
   },
   watch: {

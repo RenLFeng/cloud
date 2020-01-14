@@ -81,16 +81,7 @@ export default {
       chartData: {},
 
       actionShow: false,
-      actions: [
-        {
-          name: "查看",
-          method: this.see
-        },
-        {
-          name: "删除",
-          method: this.dlMember
-        }
-      ]
+
     };
   },
   computed: {
@@ -100,6 +91,21 @@ export default {
       }
       return false;
     },
+      actions(){
+        let objret = [];
+        objret.push({
+            name: "查看",
+            method: this.see
+        });
+        let canopt = this.$store.getters.caneditbanke
+          if (canopt){
+              objret.push({
+                  name: "删除",
+                  method: this.dlMember
+              })
+          }
+          return objret
+      },
     membersempty() {
       if (this.members.length) {
         return false;
