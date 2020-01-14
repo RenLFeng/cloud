@@ -1,12 +1,7 @@
 <template>
   <div>
-    <mt-header v-show="hasnavbar" :title="bankename" class="">
-      <mt-button
-        v-if="hasbackbtn"
-        icon="back"
-        slot="left"
-        @click="goback"
-      >{{$t('common.Back')}}</mt-button>
+    <mt-header v-show="hasnavbar" :title="bankename" class>
+      <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div
@@ -191,7 +186,7 @@ export default {
       return this.$store.state.footerBarState;
     },
     Preview() {
-      return this.$store.state.isPreview;
+      return this.$store.state.Preview.isPreview;
     },
     isEN() {
       return this.$store.state.lang;
@@ -224,12 +219,12 @@ export default {
         this.addmenuvisible = true;
       }
     },
-      goback(){
-       // alert(window.history.length);
-        //  window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
-          //! cjy: 微信小程序， 这里不准确， 这里直接返回主页
-          this.$router.replace('/')
-      },
+    goback() {
+      // alert(window.history.length);
+      //  window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
+      //! cjy: 微信小程序， 这里不准确， 这里直接返回主页
+      this.$router.replace("/");
+    },
     ontabshowmenu(bshow) {
       this.tabbarhide = bshow;
     },
@@ -273,6 +268,7 @@ export default {
               this.curbanke = res.data.data[0];
               this.$store.commit("banke/appendBankes", this.curbanke);
               this.onBankeChange();
+              this.querybind();
             }
           }
         })
@@ -320,6 +316,21 @@ export default {
         })
         .catch(err => {});
     },
+    //查询是否有绑定
+    querybind() {
+      this.$http
+        .post("/api/school/querybind", {
+          schoolid: 1000
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            if (res.data.data.school.length) {
+              this.curbanke.schoolName = res.data.data.school[0].name;
+            }
+          }
+        })
+        .catch(err => {});
+    }
   },
   created() {
     console.log("bankehome:" + this.id);
@@ -342,6 +353,7 @@ export default {
     this.bankeid = this.id;
     if (u) {
       this.curbanke = u;
+      this.querybind();
       this.onBankeChange();
     } else {
       // this.curbanke = this.$t("common.Curbanke");

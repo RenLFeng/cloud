@@ -1,6 +1,6 @@
 <template>
   <div class="member-detail-main">
-    <BankeMemberSimple :memberuser="memberuser" scoreText="在本班课中得分"></BankeMemberSimple>
+    <BankeMemberSimple :memberuser="memberuser" scoreText="在本班课中得分" :memberDetail="true"></BankeMemberSimple>
     <ul class="Statistics clearfix tc">
       <li class="fl">
         <span class="colory fontsmall">{{memberuser.score1}}</span>
@@ -47,12 +47,13 @@ export default {
     }
   },
   watch: {
-    memberuser:  function(newValue, oldValue) {
+    memberuser: function(newValue, oldValue) {
       console.log("newValuenewValue", newValue);
+      this.querybind();
     },
-    chartData:  function(newValue, oldValue) {
+    chartData: function(newValue, oldValue) {
       console.log("chartDatachartDatachartData", newValue);
-    },
+    }
   },
   components: {
     BankeMemberSimple,
@@ -62,12 +63,29 @@ export default {
     return {
       Data: [],
       itemData: {},
-      index:2
+      index: 2
     };
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {
+    //查询是否有绑定
+    querybind() {
+      this.$http
+        .post("/api/school/querybind", {
+          schoolid: 1000,
+          userids: [this.memberuser.memberuserid]
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            if (res.data.data.bind.length) {
+              this.memberuser.sno = res.data.data.bind[0].sno;
+            }
+          }
+        })
+        .catch(err => {});
+    }
+  }
 };
 </script>
 

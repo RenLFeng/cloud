@@ -315,7 +315,7 @@ export default {
   },
   computed: {
     Preview() {
-      return this.$store.state.isPreview;
+      return this.$store.state.Preview.isPreview;
     },
     answerdesc() {
       return this.zuoyeitem.answerdesc

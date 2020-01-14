@@ -26,16 +26,16 @@ export default {
     preview
   },
   computed: {
-      showloginfail(){
-          let curpath = this.$route.path;
-          if (curpath == '/login'){
-              return false;
-          }
-          if (this.websockstate == 'reject'){
-              return true;
-          }
-          return false;
-      },
+    showloginfail() {
+      let curpath = this.$route.path;
+      if (curpath == "/login") {
+        return false;
+      }
+      if (this.websockstate == "reject") {
+        return true;
+      }
+      return false;
+    },
     show: {
       get: function() {
         return this.$store.state.Preview.show;
@@ -76,40 +76,37 @@ export default {
     username() {
       // 我们很快就会看到 `params` 是什么
       return this.$route.params.username;
+    },
+    localuser() {
+      return this.$store.state.loginuser;
     }
-    ,localuser(){
-        return this.$store.state.loginuser;
-      }
   },
 
   data() {
     return {
       transitionName: "slide-forward",
-        testtext:navigator.userAgent,
-        showtest:false,
+      testtext: navigator.userAgent,
+      showtest: false,
       map: {},
 
-
-        //! cjy: websocket 相关
-        websock:null,
-        websockstate:'',  //! 登陆状态：  connecting logining  logined  reject
-        websockcount:0,  //! 计数
-        websockinterval:null
+      //! cjy: websocket 相关
+      websock: null,
+      websockstate: "", //! 登陆状态：  connecting logining  logined  reject
+      websockcount: 0, //! 计数
+      websockinterval: null
     };
   },
-    destroyed: function() {
-       clearInterval(this.websockinterval);
-       this.websockinterval = null;
-        console.log('app.vue destroyed');
-        
-    },
+  destroyed: function() {
+    clearInterval(this.websockinterval);
+    this.websockinterval = null;
+    console.log("app.vue destroyed");
+  },
   created: function() {
+    console.log("app.vue created");
 
-      console.log('app.vue created');
-
-      this.websockinterval = setInterval(()=>{
-          this.wsontimeout()
-      }, 5000);
+    this.websockinterval = setInterval(() => {
+      this.wsontimeout();
+    }, 5000);
 
     nativecode.initfirst();
 
@@ -122,19 +119,18 @@ export default {
     //! 请求登录信息
     this.uservalidate();
   },
-  
+
   watch: {
-      localuser(lnew, old) {
-          console.log('localuser watch!!');
-           if (lnew.id != old.id)
-          {
-              console.log('user changed!!!');
-              this.wssetstate('');
-              if (lnew.id && lnew.cookie){
-                  this.wsinit();
-              }
-          }
-      },
+    localuser(lnew, old) {
+      console.log("localuser watch!!");
+      if (lnew.id != old.id) {
+        console.log("user changed!!!");
+        this.wssetstate("");
+        if (lnew.id && lnew.cookie) {
+          this.wsinit();
+        }
+      }
+    },
     $route(to, from) {
       //console.log('route');
       //   console.log(to);
@@ -167,209 +163,202 @@ export default {
   methods: {
     onToggleClick(data) {
       if (!data) {
-        this.show = data;
-        this.images = [];
         this.tempLocalfiles = [];
-        this.index = 0;
-        this.$store.commit("SET_PREVIEW",{}, true);
+        let obj = {
+          isPreview: true,
+          images: [],
+          show: data,
+          index: 0
+        };
+        this.$store.commit("SET_PREVIEW", obj, "");
       }
     },
-      uservalidate(){
-          var url = "/api/api/uservalidate";
-          console.log("user validate ret, cur path:" + this.$route.path);
-          //! cjy: 考虑到微信可能在不同界面单独加载， 这里检测仅指定path才去query， 减少频率
-          if (this.$route.path != '/login')  //! cjy: 服务器实现缓存
-          {
-              this.$http
-                  .post(url)
-                  .then(res => {
-                      //  console.log(document.cookie);
-                      if (res.data.code == 0) {
-                          this.$store.commit("setLoginUser", res.data.data);
-                          // cjy: 大屏端，如果已登录， 应当自动跳转主页
-                          if (this.$route.path == "/login") {
-                              this.$store.commit("setRouterForward", true);
-                              this.$router.push("/");
-                          }
-                          if (this.websockstate == 'reject'){
-                              this.wsinit();  //! 重新连接
-                          }
-                          nativecode.jsLogin(1, res.data.data);
+    uservalidate() {
+      var url = "/api/api/uservalidate";
+      console.log("user validate ret, cur path:" + this.$route.path);
+      //! cjy: 考虑到微信可能在不同界面单独加载， 这里检测仅指定path才去query， 减少频率
+      if (this.$route.path != "/login") {
+        //! cjy: 服务器实现缓存
+        this.$http
+          .post(url)
+          .then(res => {
+            //  console.log(document.cookie);
+            if (res.data.code == 0) {
+              this.$store.commit("setLoginUser", res.data.data);
+              // cjy: 大屏端，如果已登录， 应当自动跳转主页
+              if (this.$route.path == "/login") {
+                this.$store.commit("setRouterForward", true);
+                this.$router.push("/");
+              }
+              if (this.websockstate == "reject") {
+                this.wsinit(); //! 重新连接
+              }
+              nativecode.jsLogin(1, res.data.data);
+            } else {
+              //!  未登录， 强制跳转登录
+              if (this.$route.path != "/login") {
+                this.$store.commit("setLoginUser", {});
+                this.$store.commit("setRouterForward", true);
+                this.$router.push("/login");
+              }
 
-                      } else {
-                          //!  未登录， 强制跳转登录
-                          if (this.$route.path != '/login'){
-                              this.$store.commit("setLoginUser", {});
-                              this.$store.commit("setRouterForward", true);
-                              this.$router.push("/login");
-                          }
-
-                          nativecode.jsLogin(0, {});
-                      }
-                  })
-                  .catch(() => {
-                      //! 其他异常
-                  });
-          }
-      },
+              nativecode.jsLogin(0, {});
+            }
+          })
+          .catch(() => {
+            //! 其他异常
+          });
+      }
+    },
     goBack() {
       this.$back();
-    }
+    },
 
-    ,wsgeturl(){
-          let proto = "wss";
-          // console.log(location.protocol);
-          let port = Number(location.port);
-          if (port == 0){
-              port = 443;
-          }
-          if (location.protocol == "http:"){
-              proto = "ws";
-              if (port == 0){
-                  port = 80;
-              }
-          }
-          let hostname = location.hostname;
-          if (process.env.NODE_ENV !== 'production'){
-              hostname = '192.168.40.104';
-              port = 9982;
-          }
-
-
-          let serverpath = proto + '://' + hostname + ':'+(port+1) + '/ws';
-          return serverpath;
+    wsgeturl() {
+      let proto = "wss";
+      // console.log(location.protocol);
+      let port = Number(location.port);
+      if (port == 0) {
+        port = 443;
       }
-    ,wsinit(){
-        //console.log('wsinit');
+      if (location.protocol == "http:") {
+        proto = "ws";
+        if (port == 0) {
+          port = 80;
+        }
+      }
+      let hostname = location.hostname;
+      if (process.env.NODE_ENV !== "production") {
+        hostname = "192.168.40.104";
+        port = 9982;
+      }
 
-          this.wssetstate('');
+      let serverpath = proto + "://" + hostname + ":" + (port + 1) + "/ws";
+      return serverpath;
+    },
+    wsinit() {
+      //console.log('wsinit');
 
-          //! 某些平台，不使用wss连接
+      this.wssetstate("");
+
+      //! 某些平台，不使用wss连接
+      if (
+        // nativecode.platform == '' ||
+        nativecode.platform == "exsoftdaping"
+      ) {
+        if (this.websockcount == 0) {
+          console.log("not wsinit, return");
+        }
+        this.websockcount++;
+        return;
+      }
+
+      try {
+        let url = this.wsgeturl();
+        console.log("wsinit:" + url);
+        this.websock = new WebSocket(url);
+        this.websock.onopen = this.wsonopen;
+        this.websock.onerror = this.wsonerror;
+        this.websock.onmessage = this.wsonmessage;
+        this.websock.onclose = this.wsonclose;
+        this.wssetstate("connecting");
+      } catch (e) {}
+    },
+    wsonerror() {
+      if (this.websockstate != "reject") {
+        this.wssetstate("");
+      }
+    },
+    wsonclose() {
+      if (this.websockstate != "reject") {
+        this.wssetstate("");
+      }
+    },
+    wssetstate(strstate) {
+      console.log("wssetstate:" + strstate);
+      this.websockstate = strstate;
+      this.websockcount = 0;
+      if (strstate == "reject" || strstate == "") {
+        let olss = this.websock;
+        if (olss) {
+          olss.onopen = null;
+          olss.onerror = null;
+          olss.onmessage = null;
+          olss.onclose = null;
+          olss.close();
+        }
+        this.websock = null;
+      }
+    },
+    wsontimeout() {
+      if (this.websockstate == "") {
+        if (this.localuser.cookie) {
+          this.wsinit();
+        }
+      } else {
+        this.websockcount++;
+        if (this.websockcount >= 2) {
           if (
-              // nativecode.platform == '' ||
-              nativecode.platform == 'exsoftdaping'){
-              if (this.websockcount == 0){
-                  console.log('not wsinit, return');
+            this.websockstate == "connecting" ||
+            this.websockstate == "logining"
+          ) {
+            this.wssetstate(""); //! 超时， 主动断开
+          }
+        }
+      }
+    },
+    wsonmessage(e) {
+      try {
+        let cmdobj = JSON.parse(e.data);
+        console.log("wsonmessage:" + e.data);
+        if (cmdobj.cmd == "loginresult") {
+          if (cmdobj.code == 0) {
+            this.wssetstate("logined");
+          } else {
+            this.wssetstate("reject");
+          }
+        } else if (cmdobj.cmd == "kickout") {
+          this.wssetstate("reject");
+        } else if (cmdobj.cmd == "pingcestart") {
+          //! 随意使用一个时间参数，用户
+          let uri = "/urlpingce/" + cmdobj.bankeid + "/" + new Date().getTime();
+          // uri += '&time=' + new Date().getTime();
+          //  this.$store.commit("setRouterForward", true);
+          // this.$router.push(uri);
+          // return ;
+          let curpath = this.$route.path;
+          console.log(curpath);
+          let navigate = () => {
+            this.$store.commit("setRouterForward", true);
+            this.$router.push({
+              name: "PingCeing",
+              params: {
+                bankeid: cmdobj.bankeid,
+                dataobj: cmdobj.data
               }
-              this.websockcount++;
-              return;
+            });
+          };
+          if (curpath == "/PingCeing") {
+            this.$back();
+            setTimeout(() => {
+              navigate();
+            }, 100);
+          } else {
+            navigate();
           }
-
-        try{
-            let url = this.wsgeturl();
-            console.log('wsinit:'+url);
-            this.websock = new WebSocket(url);
-            this.websock.onopen = this.wsonopen;
-            this.websock.onerror = this.wsonerror;
-            this.websock.onmessage = this.wsonmessage;
-            this.websock.onclose = this.wsonclose;
-            this.wssetstate('connecting');
-        }catch(e){
-
         }
-      }
-      ,wsonerror(){
-        if (this.websockstate != 'reject'){
-            this.wssetstate('');
+      } catch (e) {}
+    },
+    wsonopen() {
+      this.wssetstate("logining");
+      let logindata = {
+        cmd: "login",
+        data: {
+          cookie: this.localuser.cookie
         }
-      }
-      ,wsonclose(){
-          if (this.websockstate != 'reject'){
-              this.wssetstate('');
-          }
-      }
-      ,wssetstate(strstate){
-        console.log('wssetstate:'+strstate);
-        this.websockstate = strstate;
-        this.websockcount = 0;
-        if (strstate == 'reject' || strstate == ''){
-            let olss = this.websock;
-            if (olss){
-                olss.onopen = null;
-                olss.onerror = null;
-                olss.onmessage = null;
-                olss.onclose = null;
-                olss.close();
-            }
-            this.websock = null;
-
-        }
-      }
-      ,wsontimeout(){
-        if (this.websockstate == ''){
-            if (this.localuser.cookie){
-                this.wsinit();
-            }
-        }
-        else {
-            this.websockcount++;
-            if (this.websockcount >= 2){
-                if (this.websockstate == 'connecting' || this.websockstate == 'logining'){
-                    this.wssetstate(''); //! 超时， 主动断开
-                }
-            }
-        }
-
-      }
-      ,wsonmessage(e){
-        try{
-            let cmdobj = JSON.parse(e.data);
-            console.log('wsonmessage:' + e.data);
-            if (cmdobj.cmd == 'loginresult'){
-                if (cmdobj.code == 0){
-                    this.wssetstate('logined');
-                }
-                else{
-                    this.wssetstate('reject');
-                }
-            }
-            else if (cmdobj.cmd == 'kickout'){
-                this.wssetstate('reject');
-            }
-            else if (cmdobj.cmd == 'pingcestart'){
-                //! 随意使用一个时间参数，用户
-                let uri = '/urlpingce/' +  cmdobj.bankeid + '/' + new Date().getTime();
-               // uri += '&time=' + new Date().getTime();
-               //  this.$store.commit("setRouterForward", true);
-               // this.$router.push(uri);
-               // return ;
-                 let curpath = this.$route.path;
-                 console.log(curpath);
-                 let navigate = ()=>{
-                     this.$store.commit("setRouterForward", true);
-                     this.$router.push({
-                         name: "PingCeing",
-                         params: {
-                             bankeid: cmdobj.bankeid,
-                             dataobj:cmdobj.data
-                         }
-                     });
-                 }
-                if (curpath == '/PingCeing'){
-                     this.$back()
-                    setTimeout(()=>{
-                        navigate()
-                    }, 100);
-                }
-                else{
-                    navigate();
-                }
-
-            }
-        }catch(e){
-
-        }
-      }
-      ,wsonopen(){
-        this.wssetstate('logining');
-        let logindata = {
-            cmd:'login',
-            data:{
-                cookie:this.localuser.cookie
-            }
-        };
-        this.websock.send(JSON.stringify(logindata));
-      }
+      };
+      this.websock.send(JSON.stringify(logindata));
+    }
   }
 };
 </script>
@@ -392,15 +381,15 @@ export default {
   /* overflow: hidden; */
 }
 
-.bannertop{
-  z-index:9999;
-  position:absolute;
-  background-color:orange;
-  width:100%;
-  height:30px;
-  font-size:14px;
-  top:50px;
-  text-align:center
+.bannertop {
+  z-index: 9999;
+  position: absolute;
+  background-color: orange;
+  width: 100%;
+  height: 30px;
+  font-size: 14px;
+  top: 50px;
+  text-align: center;
 }
 
 .noheadercontainer-bg {

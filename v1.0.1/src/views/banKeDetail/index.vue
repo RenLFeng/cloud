@@ -10,9 +10,9 @@
           />
           <div class="po">
             <div class="sub-po">
-              <span class>班课名:{{bankeInfo.name}}</span>
-              <span class>教师:{{bankeInfo.username}}</span>
-              <span class>班课号:{{bankeInfo.id}}</span>
+              <span class="tit fontlarge ellipse">{{bankeInfo.name}}</span>
+              <span class="teacher font16 ellipse">教师:&nbsp;{{bankeInfo.username}}</span>
+              <span class="nub font16 ellipse">班课号:&nbsp;{{bankeInfo.id}}</span>
             </div>
           </div>
         </li>
@@ -21,9 +21,12 @@
     <div class="cell-wrap">
       <ul class="border-bottom-e5">
         <li v-if="caneditbanke">
-          <ul>
-            <li @click="editBkFn">
-              <mt-cell :title="$t('bankeXingQing.EditClass')" is-link></mt-cell>
+          <ul class="list-wrap">
+            <li class="school" v-if="bankeInfo.schoolName">
+              <mt-cell title="所属学校" :value="bankeInfo.schoolName"></mt-cell>
+            </li>
+            <li @click="setNotice">
+              <mt-cell title="发布公告" is-link></mt-cell>
             </li>
             <li @click="setNotice">
               <mt-cell title="发布公告" is-link></mt-cell>
@@ -38,19 +41,14 @@
             </li>
             <div class="devide"></div>
 
-
             <li @click="sharebanke" v-if="cansharebanke">
               <mt-cell title="分享班课" is-link></mt-cell>
             </li>
-            <div class="devide"  v-if="cansharebanke"></div>
-
+            <div class="devide" v-if="cansharebanke"></div>
 
             <li @click="edBk">
               <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
             </li>
-
-
-
           </ul>
         </li>
         <li v-else>
@@ -66,16 +64,13 @@
             <li @click="sharebanke" v-if="cansharebanke">
               <mt-cell title="分享班课" is-link></mt-cell>
             </li>
-            <div class="devide"  v-if="cansharebanke"></div>
+            <div class="devide" v-if="cansharebanke"></div>
 
             <div v-if="haseditrole">
               <li @click="situation">
                 <mt-cell title="学情统计" is-link></mt-cell>
               </li>
               <div class="devide"></div>
-
-
-
 
               <li @click="closeBk" class="dange" v-if="showbankedange">
                 <mt-cell title="删除班课" is-link></mt-cell>
@@ -86,8 +81,6 @@
                 <mt-cell title="退出班课" is-link></mt-cell>
               </li>
             </div>
-
-
           </ul>
         </li>
       </ul>
@@ -121,7 +114,11 @@
       <mt-header title="得分占比">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <Proportion :bankeInfo="bankeInfo" @submitSuccess="onSubmitSuccess" :caneditbanke="caneditbanke"/>
+      <Proportion
+        :bankeInfo="bankeInfo"
+        @submitSuccess="onSubmitSuccess"
+        :caneditbanke="caneditbanke"
+      />
     </mt-popup>
   </div>
 </template>
@@ -131,7 +128,7 @@ import { Cell, Button, MessageBox, Field } from "mint-ui";
 import edit from "./edit";
 import Notice from "./Notice";
 import Proportion from "./Proportion";
-import nativecode from '@/nativecode'
+import nativecode from "@/nativecode";
 export default {
   name: "",
   props: {
@@ -168,12 +165,12 @@ export default {
       let caneditbanke = this.$store.getters.caneditbanke;
       return caneditbanke;
     },
-      showbankedange(){
-        if (nativecode.platform == 'exsoftdaping'){
-            return false;
-        }
-        return true;
-      },
+    showbankedange() {
+      if (nativecode.platform == "exsoftdaping") {
+        return false;
+      }
+      return true;
+    },
     haseditrole() {
       return this.$store.getters.haseditbankerole;
     },
@@ -182,13 +179,13 @@ export default {
       srcstr += require("../../assets/100x100.png");
       srcstr += '"';
       return srcstr;
-    }
-    ,cansharebanke(){
-        if (this.bankeInfo.states > 0 && nativecode.hassharebanke()){
-            return true;
-        }
-        return false;
+    },
+    cansharebanke() {
+      if (this.bankeInfo.states > 0 && nativecode.hassharebanke()) {
+        return true;
       }
+      return false;
+    }
   },
   created() {},
   methods: {
@@ -213,13 +210,14 @@ export default {
     },
     //学情统计
     situation() {
-        let url = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
-        url = 'http://localhost:9982/backend/#/ClassStatistics?id=' + this.bankeInfo.id;
-        if (process.env.NODE_ENV !== "development")
-        {
-            url = document.location.origin;
-            url += '/backend/#/ClassStatistics?id=' + this.bankeInfo.id;
-        }
+      let url = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+      url =
+        "http://localhost:9982/backend/#/ClassStatistics?id=" +
+        this.bankeInfo.id;
+      if (process.env.NODE_ENV !== "development") {
+        url = document.location.origin;
+        url += "/backend/#/ClassStatistics?id=" + this.bankeInfo.id;
+      }
       window.location.href = url;
     },
     editBkFn() {
@@ -228,9 +226,9 @@ export default {
       this.$emit("editBkFn", this.editBkState);
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
-      sharebanke(){
-        nativecode.dosharebanke(this.bankeInfo);
-      },
+    sharebanke() {
+      nativecode.dosharebanke(this.bankeInfo);
+    },
     edBk() {
       if (!this.caneditbanke) return;
       let BankeData = this.$store.state.banke.curbankes;
@@ -271,29 +269,28 @@ export default {
     },
 
     closeBk() {
-      if (!this.caneditbanke){
-          MessageBox.confirm("", {
-              title: '提示',
-              message: '确认退出当前班课?',
-              confirmButtonText: '退出',
-              cancelButtonText: '取消',
-              showCancelButton: true
-          }).then(res=>{
-              this.$http
-                  .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
-                  .then(res => {
-                      if (res.data.code == 0) {
-                          MessageBox.alert('退出成功').then(() => {
-                              this.$store.commit("setRouterForward", true);
-                              this.$router.push("/");
-                          });
-                      } else {
-                          MessageBox.alert(res.data.msg).then(() => {});
-                      }
-                  })
-
-          });
-          return ;
+      if (!this.caneditbanke) {
+        MessageBox.confirm("", {
+          title: "提示",
+          message: "确认退出当前班课?",
+          confirmButtonText: "退出",
+          cancelButtonText: "取消",
+          showCancelButton: true
+        }).then(res => {
+          this.$http
+            .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("退出成功").then(() => {
+                  this.$store.commit("setRouterForward", true);
+                  this.$router.push("/");
+                });
+              } else {
+                MessageBox.alert(res.data.msg).then(() => {});
+              }
+            });
+        });
+        return;
       }
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
@@ -380,6 +377,7 @@ export default {
             transform: translate(0, -50%);
             span {
               display: block;
+              padding: 3px 0;
             }
           }
         }
@@ -388,6 +386,12 @@ export default {
   }
   .cell-wrap {
     margin-top: 20px;
+    .list-wrap {
+      background: #fff;
+      .school {
+        padding-right: 15px;
+      }
+    }
   }
   .popup-right {
     width: 100%;

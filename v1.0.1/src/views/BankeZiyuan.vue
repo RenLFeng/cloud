@@ -118,6 +118,9 @@
         </ul>
       </div>
     </mt-popup>
+    <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
+      <Audio :AudioiInfo="viewfileItem.info" @Backs="goBack" />
+    </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
@@ -139,6 +142,7 @@ import URL from "./bankeZY/url";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
+import Audio from "../common/audio";
 import {
   CollectionFn,
   getZYFileType,
@@ -202,7 +206,10 @@ export default {
       pagesize: 10,
       filetotal: 0,
 
-      loading: false
+      loading: false,
+
+      popupAudio: false,
+      viewfileItem: {}
     };
   },
   watch: {
@@ -266,7 +273,8 @@ export default {
   },
   components: {
     BankeFileSimple,
-    URL
+    URL,
+    Audio
   },
   methods: {
     //收藏
@@ -434,9 +442,14 @@ export default {
     //下载资源
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
-
       if (fileitem.ftype == "file") {
-        nativecode.fileviewSingle(this, fileitem.info);
+        if (fileitem.finttype == "3") {
+          this.viewfileItem = fileitem;
+          this.$store.commit("SET_FOOTER_BAR_STATE", false);
+          this.popupAudio = true;
+        } else {
+          nativecode.fileviewSingle(this, fileitem.info);
+        }
       } else if (fileitem.ftype == "link") {
         nativecode.fileviewUrl(this, fileitem);
       }
@@ -653,6 +666,10 @@ export default {
       if (this.popupUploadLink) {
         this.popupUploadLink = false;
         this.selected = "1";
+        this.$store.commit("SET_FOOTER_BAR_STATE", true);
+      }
+      if (this.popupAudio) {
+        this.popupAudio = false;
         this.$store.commit("SET_FOOTER_BAR_STATE", true);
       }
       if (this.popupUploadZhiYuan) {
