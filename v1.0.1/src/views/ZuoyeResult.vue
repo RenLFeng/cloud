@@ -20,7 +20,7 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">
             {{zuoyeitem.name}}
-            <i class="iconfont iconcollect eicotrigger color9 fr" @click="shuoc"></i>
+            <i class="iconfont iconcollect eicotrigger fr" :class="isShuoc?'colory':'color9'" @click="shuoc"></i>
           </div>
           <div class="zuoyesubtitle">
             <span
@@ -220,7 +220,6 @@
         </div>
       </div>
     </mt-popup>
-    <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
 
@@ -304,13 +303,7 @@ export default {
       markArr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       loadingState: false,
 
-      actionShow: false,
-      actions: [
-        {
-          name: "收藏",
-          method: this.Collection
-        }
-      ]
+      isShuoc:false
     };
   },
   computed: {
@@ -444,11 +437,11 @@ export default {
       this.ScoreItemInfo = ritem.info;
       console.log("作业 info", ritem);
       if (!isteacher) {
-        if (ritem.info.score >= 0) {
-          MessageBox("已经评过分啦~~");
-        } else {
-          MessageBox("等待老师评分哦 ~");
-        }
+        // if (ritem.info.score >= 0) {
+        //   MessageBox("已经评过分啦~~");
+        // } else {
+        //   MessageBox("等待老师评分哦 ~");
+        // }
       } else {
         this.popupZuoyePF = ritem.state;
         this.studentName = ritem.info.username;
@@ -698,8 +691,11 @@ export default {
       }
     },
     shuoc(){
-      this.actionShow=true;
-      console.log(this.zuoyeitem);
+      if(this.isShuoc){
+        Toast('你已经收藏过了')
+        return ;
+      }
+      this.Collection()
     },
         //收藏
     Collection() {
@@ -707,7 +703,24 @@ export default {
       let imgIcon = "zuoye";
      CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id,this.zuoyeitem.ownerid);
     },
-
+    //是否收藏
+    queryuserfav(){
+     this.$http
+        .post("/api/userfav/query", {
+           eventtype:3, 
+           eventids:[this.zuoyeitem.id]
+           })
+        .then(res => {
+          if (res.data.code == "0") {
+            console.log('queryuserfav',res);
+            if (res.data.data.length) {
+                this.isShuoc=true;
+            }
+          }
+        })
+        .catch(err => {
+        });
+    },
   },
   created() {
     var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
@@ -717,6 +730,7 @@ export default {
     } else {
       this.loadAll();
     }
+    this.queryuserfav();
   },
   components: {
     ZuoyeAnswerItem,

@@ -12,7 +12,7 @@
             <mt-progress
               :value="progressing"
               :bar-height="5"
-              @click.native="progressFn($event)"
+           
             ></mt-progress>
             <!-- <div class="progress"  ref="prgs" @click="progressFn($event)">
               <p class="progressing" :style="{ width: progressing + 'px' }"></p>

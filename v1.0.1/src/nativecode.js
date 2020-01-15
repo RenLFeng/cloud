@@ -403,7 +403,7 @@ nativecode.previewImage = function (vuethis, objargs) {
         let useurl = objargs;
         //if (useurl.indexOf(''))
         useurl = nativecode.getUsedUrl(useurl);
-        console.log('useurl',useurl);
+        console.log('useurl', useurl);
         let robj = {
             current: useurl
         }
@@ -477,7 +477,6 @@ import {
 nativecode.ncallFileLink = function (fitem) {
     //onsole.log('';
     let oret = nativecode.ncall('jsFileLink', fitem);
-    //  console.log(oret);
     if (!oret) {
         //console.log('toast');
         //Toast('请在应用程序中查看');
@@ -505,10 +504,10 @@ nativecode.fileview = function (vuethis, fitem) {
 
 nativecode.fileviewUrl = function (vuethis, fitem) {
     let oret = nativecode.ncall('jsUrlLink', fitem);
-    if (!oret){
-       // console.log(fitem);
+    if (!oret) {
+        // console.log(fitem);
         let url = fitem.url;
-        if (!(url.indexOf('http://') == 0 || url.indexOf('https://') == 0)){
+        if (!(url.indexOf('http://') == 0 || url.indexOf('https://') == 0)) {
             url = 'http://' + url;
         }
         window.open(url);
