@@ -179,20 +179,6 @@ export default {
 
       seeState: 0,
 
-      actions: [
-        {
-          name: "收藏",
-          method: this.Collection
-        },
-        {
-          name: "信息",
-          method: this.showInfo
-        },
-        {
-          name: "删除",
-          method: this.deletezy
-        }
-      ],
       actionShow: false,
 
       page: 0,
@@ -221,6 +207,25 @@ export default {
       let isteacher = this.$store.getters.caneditbanke;
       return isteacher;
     },
+      actions(){
+        let objret = [];
+          let isteacher = this.$store.getters.caneditbanke;
+          objret.push({
+              name: "收藏",
+              method: this.Collection
+          })
+          objret.push({
+              name: "信息",
+              method: this.showInfo
+          })
+          if (isteacher){
+              objret.push({
+                  name: "删除",
+                  method: this.deletezy
+              })
+          }
+          return objret
+      },
     fileInfo() {
       for (let v of this.bankeZhiYuanLinkItem) {
         let localfiles = [];
@@ -319,9 +324,6 @@ export default {
       CollectionFn(cobj, 1, imgIcon, this.editItemFile.id, this.bankeid, title);
     },
     oneditclick(fileitem) {
-      if (!this.isteacher) {
-        this.actions = filterItem(this.actions, "name", ["删除"]);
-      }
       this.actionShow = true;
       this.editItemFile = fileitem;
       this.setSeeResources(fileitem);

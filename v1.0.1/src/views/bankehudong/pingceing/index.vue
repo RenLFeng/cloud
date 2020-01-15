@@ -298,7 +298,7 @@ export default {
             this.submited = true;
           } else {
             this.tempAnswer = [];
-            Toast("提交失败");
+            Toast("提交失败:"+res.data.msg);
           }
         })
         .catch(err => {

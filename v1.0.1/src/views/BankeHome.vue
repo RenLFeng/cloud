@@ -317,7 +317,7 @@ export default {
           }
         })
         .catch(err => {});
-    }
+    },
   },
   created() {
     console.log("bankehome:" + this.id);

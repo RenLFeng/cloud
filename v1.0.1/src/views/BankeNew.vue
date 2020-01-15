@@ -99,6 +99,15 @@ export default {
               else if (tipmsg == 'over num limit'){
                   tipmsg = '超出数量限制';
               }
+              else if (tipmsg == 'disabled'){
+                  tipmsg = '功能已被禁用'
+              }
+              else if (tipmsg == 'over num limit in school total'){
+                  tipmsg = '学校班课数已达上限'
+              }
+              else if (tipmsg == 'over num limit in user'){
+                  tipmsg = '您创建的班课数已达上限。\r\n请先结束部分班课'
+              }
               Toast(tipmsg);
           }
 

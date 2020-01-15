@@ -83,7 +83,7 @@
       class="iconfont iconjiantou1 eicotrigger color9"
       @click.stop="edit(item)"
     ></i>
-    <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9"></i>
+    <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9" @click.stop="edit(item)"></i>
     <i
       v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' "
       class="iconfont iconjiantou eicotrigger colord"
@@ -171,7 +171,7 @@ export default {
       this.$emit("edit", item);
     },
     onclick() {
-      this.$emit("showStudentSignInfo", this.item);
+      this.$emit("singleclick", this.item);
     }
   }
 };

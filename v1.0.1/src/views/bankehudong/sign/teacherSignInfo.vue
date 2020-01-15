@@ -12,7 +12,7 @@
       <div v-if="teacherSignHistory.length">
         <p style="padding:5px;margin:5px;" class>签到历史记录</p>
         <List
-          @showStudentSignInfo="onShowStudentSignInfo"
+          @singleclick="onShowStudentSignInfo"
           v-for="(v,index) in teacherSignHistory"
           :key="index"
           :item="v"

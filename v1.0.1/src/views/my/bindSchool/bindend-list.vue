@@ -12,7 +12,7 @@
           :key="i"
           @click="showSchollInfo(item)"
         >
-          <img class="pic" src :onerror="$defaultImg('school')" />
+          <img class="pic" :src="item.avatar" :onerror="$defaultImg('school')" />
           <div class="text-info-wrap">
             <p class="fontsmall">{{item.name}}</p>
             <p>
@@ -111,6 +111,7 @@ export default {
     goback() {
       this.$store.commit("SET_BIND_SCHOLL", true);
       this.$router.go(-1);
+        //! cjy: 这里直接返回到 home； 否则一定场景比较怪异：   bindschool->back->
     }
   },
   components: {

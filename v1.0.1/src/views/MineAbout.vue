@@ -41,7 +41,7 @@
 
       <div class="binddiv">
         <div v-show="!shownewaccount" class="title fontnormal">当前绑定账户：{{bindaccount}}</div>
-        <!-- cjy: 微信端限制为只能生成登陆账户， 不再提供绑定功能 -->
+        <!-- cjy: 微信端限制为只能生成登陆账户， 不再提供绑定功能
         <div class="btn-wrap">
           <mt-button
             class
@@ -65,7 +65,7 @@
             @click="uibindaction('newaccount')"
           >生成登陆账户</mt-button>
         </div>
-        <!-- -->
+         -->
         <div v-show="showbindpanel">
           <div class="tit">{{bindtitle}}</div>
           <div v-show="bindaction != 'changepassword'" class="input-item-wrap">
@@ -299,7 +299,8 @@ export default {
     bindSchool() {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
-        name: "BindSchool",
+       // name: "BindSchool",
+          name:'BindSchoolList',  //! cjy: 这里直接跳转到schoollist即可
         params: {}
       });
     },

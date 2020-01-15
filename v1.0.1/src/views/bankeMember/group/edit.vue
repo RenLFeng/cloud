@@ -1,14 +1,21 @@
 <template>
   <div class="group-edit-worp">
+<<<<<<< HEAD
     <mt-header title="编辑分组方案">
       <mt-button v-if="isteacher" slot="left" @click="gobacks">{{$t('confirm.Cancel')}}</mt-button>
       <mt-button v-if="isteacher" slot="right" @click="savesubgroup">{{$t('confirm.Ok')}}</mt-button>
       <mt-button v-if="!isteacher" slot="left" @click="gobacks">返回</mt-button>
+=======
+    <mt-header :title="title">
+      <mt-button slot="left" @click="gobacks" v-if="canedit">{{$t('confirm.Cancel')}}</mt-button>
+      <mt-button slot="left" @click="gobacks" v-else>返回</mt-button>
+      <mt-button slot="right" @click="savesubgroup" v-if="canedit">{{$t('confirm.Ok')}}</mt-button>
+>>>>>>> d09fb372fe7eedd2aadd8ac14c9a3851b723e29c
     </mt-header>
     <div class="main">
       <div>
         <P class="name-tit">方案名称</P>
-        <mt-field v-model="groupName" :disabled="!isteacher"></mt-field>
+        <mt-field v-model="groupName" :disabled="!canedit" class="name"></mt-field>
         <!-- <p class="name">{{EditItemObj.name}}</p> -->
       </div>
       <div class="Explain">
@@ -18,6 +25,7 @@
       <div class="group-list-main">
         <GroupList
           :items="tempData"
+          :canedit="canedit"
           @changeFn="onChangeFn"
           @delectFn="ondelectFn"
           @addMembersFn="onaddMembersFn"
@@ -27,7 +35,7 @@
         />
       </div>
     </div>
-    <div class="button-worp" v-if="isteacher">
+    <div class="button-worp" v-if="canedit">
       <mt-button
         class="button-auto-96"
         @click="addGroup"
@@ -39,6 +47,7 @@
       class="mint-popup"
       :modal="false"
       style="background:#f0f0f0;"
+      v-if="canedit"
     >
       <MembersList
         :allMemBers="allMemBers"
@@ -71,6 +80,11 @@ export default {
     isteacher: {
       default: true
     }
+    ,canedit:{
+        default(){
+            return true
+        }
+      }
   },
   watch: {
     EditItem: function(newValue, oldValue) {
@@ -92,6 +106,7 @@ export default {
       addMembersItem: {},
       addMembersItem2: {},
       groupName: "",
+        groupnameindex:1,
 
       deletegroupIds: []
     };
@@ -104,6 +119,13 @@ export default {
           ? this.allMemBers.length - this.count
           : 0;
       return nub;
+    }
+    ,title(){
+        if (this.canedit){
+
+            return '编辑分组方案'
+        }
+        return '分组方案'
     }
   },
   methods: {
@@ -126,6 +148,7 @@ export default {
               v.files = [];
               v.members = JSON.parse(v.members);
               for (let i of v.members) {
+                  let bfound = false
                 for (let item of this.allMemBers) {
                   if (i == item.memberuserid) {
                     v.files.push({
@@ -136,7 +159,17 @@ export default {
                     item.isTrue = true;
                     item.groupName = v.name;
                     this.count++;
+                    bfound = true;
+                    break;
                   }
+                }
+                if (!bfound){
+                    //! 已不在班课中
+                    v.files.push({
+                        id:i,
+                        img:'',
+                        name:'未知成员'
+                    })
                 }
               }
             }
@@ -221,10 +254,12 @@ export default {
 
     //取消编辑
     gobacks() {
-      if (!this.isteacher) {
-        this.$emit("editBack", { state: false, type: 0 });
-        return;
-      }
+
+        if (!this.canedit){
+            this.$emit("editBack", { state: false, type: 0 });
+            return
+        }
+
       if (this.groupName != this.EditItemObj.name) {
         this.changeState = true;
       }
@@ -267,9 +302,11 @@ export default {
     //添加新组
     addGroup() {
       this.changeState = true;
+      let gname = '分组';
+      gname += (this.tempData.length +1) + ''
       let obj = {
         groupid: this.EditItemObj.id,
-        name: "分组",
+        name: gname,
         membersnum: 0,
         members: "[]"
       };
@@ -429,9 +466,10 @@ export default {
       padding: 10px;
     }
     .name {
-      padding: 15px;
+      padding: 0px 10px 0px 10px;
       background: #fff;
     }
+
     .Explain {
       padding: 10px;
     }
