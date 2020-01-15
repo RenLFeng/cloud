@@ -29,9 +29,6 @@
             <li @click="setNotice">
               <mt-cell title="发布公告" is-link></mt-cell>
             </li>
-            <li @click="setNotice">
-              <mt-cell title="发布公告" is-link></mt-cell>
-            </li>
             <li @click="setProportion">
               <mt-cell title="得分占比设置" is-link></mt-cell>
             </li>

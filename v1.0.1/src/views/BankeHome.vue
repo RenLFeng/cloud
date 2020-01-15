@@ -199,7 +199,7 @@ export default {
       return bname;
     },
     schollid(){
-      return this.curbanke.id
+      return this.curbanke.schoolid
     },
     itemzuoyenormal() {
       if (!this.$store.getters.caneditbanke) {

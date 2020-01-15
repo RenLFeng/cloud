@@ -26,6 +26,7 @@
                 @search="onSearch"
                 @cancel="onCancel"
                 @input="onInput"
+                @focus="onFocus"
               />
             </form>
           </div>
@@ -63,7 +64,7 @@ export default {
       schoolpwd: "",
       popupSearch: false,
       value: "",
-        lastsearchkey:'', //! cjy： 最后的搜索key
+        lastsearchkey:null, //! cjy： 最后的搜索key
         searchtimerid:null,  //! 搜索的定时器
       autofocus: true,
       searchData: [],
@@ -138,7 +139,7 @@ export default {
         });
     },
     bindSchool() {
-      this.searchData = [];
+      //this.searchData = [];  //！ cjy： 这里的搜索记录不清空； 与lastsearchkey对应
       this.popupSearch = true;
     },
     //搜索btn or end
@@ -161,13 +162,19 @@ export default {
       // if(this.isQuery) return;
       this.queryschool(this.value);
     },
+      onFocus(){
+        this.popupSearch = true
+        this.queryschool(this.value)
+      },
     queryschool(skey) {
      // Indicator.open("搜索中...");
 
-        if (!skey){
+        if (!skey){  //! 1-15 允许搜索空字符串 ---》 保护学校关系， 这里不搜索空key？ 但是用户只要已输入‘学’字， 大部分学校均会显示出来
             //! cjy： 不搜索空字符串
             return;
         }
+
+        console.log('queryschool:'+skey)
 
         //! 清除当前的搜索定时器
         if (this.searchtimerid){
@@ -179,10 +186,10 @@ export default {
             let searchfun= (()=>{
                 this.queryschool(skey)
             });
-            this.searchtimerid = setTimeout(searchfun, 300)
+            this.searchtimerid = setTimeout(searchfun, 100)
             return
         }
-        if (this.lastsearchkey == skey){
+        if (this.lastsearchkey === skey){
             //! key相同，无需再搜索
             return;
         }
@@ -194,7 +201,7 @@ export default {
           name: skey
         })
         .then(res => {
-          console.log("queryschool", res);
+        //  console.log("queryschool", res);
           if (res.data.code == "0"
            //   && res.data.data.length
           ) {
@@ -213,7 +220,7 @@ export default {
     //选择学校
     selectSchool(v) {
       this.schoolInfo = v;
-      this.value = "";
+     // this.value = "";  //! cjy： 搜索关键字不清空
       this.popupSearch = false;
     },
     //查询是否有绑定
