@@ -12,7 +12,7 @@
               class="iconfont iconok- eicotrigger"
               :class="{'ed':v.isTrue,'act':v.isAct}"
             ></i>
-            <img class :src="v.avatar" alt />
+            <img class :src="v.avatar" alt :onerror="$defaultImg('account')"/>
             <p class="group" :class="{'istrue':v.groupName}">
               <span>{{v.name}}</span>
               <!-- <span>{{v.account}}</span> -->
@@ -268,6 +268,7 @@ export default {
         height: 60px;
         border-radius: 50%;
         margin: 0 15px;
+        object-fit: cover;
       }
       .group {
         width: 100%;

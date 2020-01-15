@@ -6,13 +6,13 @@
   >
     <img
       v-if="type=='common'"
-      class="itemavatar"
+      class="itemavatar object-fit-img"
       :src="`${item.info.img}`"
       :onerror="$defaultImg(item.info.img)"
     />
     <img
       v-if="type=='pingce'"
-      class="itemavatar"
+      class="itemavatar object-fit-img"
       :src="`${item.files}_snap.jpg`"
       :onerror="$defaultImg('file')"
     />
@@ -37,7 +37,7 @@
     <!-- 评测记录详情 -->
     <div class="maincontent pingcedetail" v-if="type=='pingcedetail'">
       <div class="mainctitle ellipse">
-        <img class="itemavatar" :src="item.avatar" :onerror="$defaultImg('account')" />
+        <img class="itemavatar object-fit-img" :src="item.avatar" :onerror="$defaultImg('account')" />
         {{item.name}}
         <span
           class="fr font-xs"

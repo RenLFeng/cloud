@@ -9,8 +9,7 @@
       v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="500"
-      infinite-scroll-immediate-check="false"
-      ref="pmain"
+      infinite-scroll-immediate-check	="false"
     >
       <List
         v-for="(v,index) in pingceHistoryList"
@@ -108,7 +107,8 @@ export default {
       this.pingceid = params.pingceid;
       this.showsingle = true;
     }
-    this.HistoryListRQuery();
+    this.loadMore();
+    // this.HistoryListRQuery();
   },
   methods: {
     onEdit(item) {

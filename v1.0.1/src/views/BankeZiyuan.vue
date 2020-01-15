@@ -32,7 +32,7 @@
         v-infinite-scroll="loadMore"
         infinite-scroll-disabled="loading"
         infinite-scroll-distance="100"
-        infinite-scroll-immediate-check="true"
+        infinite-scroll-immediate-check="false"
       >
         <mt-tab-container-item id="1">
           <div class="listcontainer">
@@ -82,10 +82,6 @@
             <i class="iconfont iconxinxi"></i>
             <span>信息</span>
           </li>
-          <li class="fl">
-            <i class="iconfont iconbianji"></i>
-            <span>编辑</span>
-          </li>
         </ul>
       </div>
     </mt-popup>
@@ -119,7 +115,7 @@
       </div>
     </mt-popup>
     <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
-      <Audio :AudioiInfo="viewfileItem.info" @Backs="goBack" />
+      <Audio :AudioiInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio" />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
@@ -148,7 +144,8 @@ import {
   getZYFileType,
   preview,
   defaultImg,
-  getZYFileTypeIcon
+  getZYFileTypeIcon,
+  filterItem
 } from "@/util";
 import nativecode from "../nativecode";
 export default {
@@ -186,10 +183,6 @@ export default {
         {
           name: "收藏",
           method: this.Collection
-        },
-        {
-          name: "编辑",
-          method: this.bankeEdit
         },
         {
           name: "信息",
@@ -325,10 +318,10 @@ export default {
       let title = this.editItemFile.name;
       CollectionFn(cobj, 1, imgIcon, this.editItemFile.id, this.bankeid, title);
     },
-    //编辑
-    bankeEdit() {},
     oneditclick(fileitem) {
-      // this.popupZiyuanEdit = true;
+      if (!this.isteacher) {
+        this.actions = filterItem(this.actions, "name", ["删除"]);
+      }
       this.actionShow = true;
       this.editItemFile = fileitem;
       this.setSeeResources(fileitem);

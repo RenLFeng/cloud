@@ -14,7 +14,7 @@
           infinite-scroll-immediate-check="false"
         >
           <li class v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
-            <img :src="`${v.files}_snap.jpg`" alt />
+            <img :src="`${v.files}_snap.jpg`" alt  class="object-fit-img"/>
             <p class="fontsmall">
               {{v.uploadtime}}
               <i

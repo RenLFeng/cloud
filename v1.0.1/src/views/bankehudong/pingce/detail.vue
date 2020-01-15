@@ -2,7 +2,7 @@
   <div class="pingce-dtail-warp">
     <div class="main">
       <div class="pic" v-if="pingceItemfile.ptype!='10'">
-        <img :src="`${pingceItemfile.files}_snap.jpg`" alt @click="previewimg" />
+        <img :src="`${pingceItemfile.files}_snap.jpg`" class="object-fit-img" alt @click="previewimg" />
         <p class="color9">
           题目
           <span class="fr">{{pingceItemfile.createtime}}</span>
@@ -40,7 +40,7 @@
       <div class="answer-detail-wrap">
         <div class="main">
           <p class="tit">
-            <img class="itemavatar" :src="memBerItem.avatar" :onerror="$defaultImg('account')" />
+            <img class="itemavatar object-fit-img" :src="memBerItem.avatar" :onerror="$defaultImg('account')" />
             {{memBerItem.name}}
             <span class="time">{{memBerItem.countdate}}</span>
           </p>

@@ -16,7 +16,7 @@
       </div>
       <Empty v-else :text="['暂无分组...']" />
     </div>
-    <div class="button-worp">
+    <div class="button-worp" v-if="isteacher">
       <mt-button class="button-auto-96" @click="addGroup('')">添加成员小组方案</mt-button>
     </div>
     <mt-popup
@@ -31,6 +31,7 @@
         @editBack="onEditBack"
         :allMemBers="allMemBers"
         @setsubgroupmnum="onSetsubgroupmnum"
+        :isteacher="isteacher"
       />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
@@ -63,25 +64,6 @@ export default {
   data() {
     return {
       actionShow: false,
-      actions: [
-        {
-          name: "复制",
-          method: this.copy
-        },
-        {
-          name: "编辑",
-          method: this.editGroup
-        },
-        {
-          name: "删除",
-          method: this.deleteGroup
-        },
-        {
-          name: "设置默认分组",
-          method: this.defaultFn
-        }
-      ],
-
       allMemBers: [],
       groupList: [],
       bankeid: "",
@@ -97,6 +79,33 @@ export default {
     isteacher() {
       let isteacher = this.$store.getters.caneditbanke;
       return isteacher;
+    },
+    actions() {
+      let actions = [];
+      if (this.isteacher) {
+        actions = [
+          {
+            name: "编辑",
+            method: this.editGroup
+          },
+          {
+            name: "删除",
+            method: this.deleteGroup
+          },
+          {
+            name: "设置默认分组",
+            method: this.defaultFn
+          }
+        ];
+      } else {
+        actions = [
+          {
+            name: "查看",
+            method: this.editGroup
+          }
+        ];
+      }
+      return actions;
     }
   },
   created() {
@@ -220,11 +229,11 @@ export default {
       }
       Indicator.open("加载中...");
       let obj = {
-        id: v?this.EditItem.id:'',
-        name: v.name ?v.name : "分组1",
+        id: v ? this.EditItem.id : "",
+        name: v.name ? v.name : "分组1",
         bankeid: this.bankeid,
-        subgroupmnum:v?v.subgroupmnum:0,
-        subgroupnum:v?v.subgroupnum:0,
+        subgroupmnum: v ? v.subgroupmnum : 0,
+        subgroupnum: v ? v.subgroupnum : 0
       };
       console.log("this.EditItemthis.EditItem", this.EditItem);
       this.$http

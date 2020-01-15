@@ -56,7 +56,7 @@
 
 <script>
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
-
+import { filterItem } from "@/util";
 import BankeMemberSimple from "./components/BankeMemberSimple";
 import MemberDetail from "./bankeMember/detail";
 import commontools from "../commontools";
@@ -99,6 +99,10 @@ export default {
     };
   },
   computed: {
+     isteacher() {
+      let isteacher = this.$store.getters.caneditbanke;
+      return isteacher;
+    },
     showcontrol() {
       if (this.$store.getters.caneditbanke) {
         return true;
@@ -138,6 +142,9 @@ export default {
       };
     },
     onEditclick(item) {
+      if (!this.isteacher) {
+        this.actions = filterItem(this.actions, "name", ["删除"]);
+      }
       this.DetailItem = item;
       this.actionShow = true;
     },

@@ -13,10 +13,10 @@
             @click="controlAudio()"
           ></i>
           <div class="fl progress-wrap">
-            <!-- <mt-progress :value="progressing" :bar-height="5"></mt-progress> -->
-            <div class="progress">
+            <mt-progress :value="progressing" :bar-height="5"></mt-progress>
+            <!-- <div class="progress">
               <p class="progressing" :style="{ width: progressing + 'px' }"></p>
-            </div>
+            </div> -->
           </div>
           <span class="time-font fr">{{playTime}}</span>
         </div>
@@ -47,7 +47,7 @@ export default {
       isPlay: true,
       timer: "",
       second: 0,
-      myAudio: null,
+      myAudio: null
     };
   },
   computed: {
@@ -110,16 +110,11 @@ export default {
       }
     },
     goBacks() {
-      clearInterval(this.timer);
-      this.progressing = 0;
-      this.second = 0;
       this.$emit("Backs", true);
     }
   },
   components: {},
-  destroyed(){
-
-  },
+  destroyed() {}
 };
 </script>
 

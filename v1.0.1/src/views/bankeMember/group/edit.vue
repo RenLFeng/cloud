@@ -1,13 +1,14 @@
 <template>
   <div class="group-edit-worp">
     <mt-header title="编辑分组方案">
-      <mt-button slot="left" @click="gobacks">{{$t('confirm.Cancel')}}</mt-button>
-      <mt-button slot="right" @click="savesubgroup">{{$t('confirm.Ok')}}</mt-button>
+      <mt-button v-if="isteacher" slot="left" @click="gobacks">{{$t('confirm.Cancel')}}</mt-button>
+      <mt-button v-if="isteacher" slot="right" @click="savesubgroup">{{$t('confirm.Ok')}}</mt-button>
+      <mt-button v-if="!isteacher" slot="left" @click="gobacks">返回</mt-button>
     </mt-header>
     <div class="main">
       <div>
         <P class="name-tit">方案名称</P>
-        <mt-field v-model="groupName"></mt-field>
+        <mt-field v-model="groupName" :disabled="!isteacher"></mt-field>
         <!-- <p class="name">{{EditItemObj.name}}</p> -->
       </div>
       <div class="Explain">
@@ -22,10 +23,11 @@
           @addMembersFn="onaddMembersFn"
           @delectMemberFn="ondelectMemberFn"
           :allMemBers="allMemBers"
+          :isteacher="isteacher"
         />
       </div>
     </div>
-    <div class="button-worp">
+    <div class="button-worp" v-if="isteacher">
       <mt-button
         class="button-auto-96"
         @click="addGroup"
@@ -65,6 +67,9 @@ export default {
       default() {
         return [];
       }
+    },
+    isteacher: {
+      default: true
     }
   },
   watch: {
@@ -216,6 +221,10 @@ export default {
 
     //取消编辑
     gobacks() {
+      if (!this.isteacher) {
+        this.$emit("editBack", { state: false, type: 0 });
+        return;
+      }
       if (this.groupName != this.EditItemObj.name) {
         this.changeState = true;
       }

@@ -1,7 +1,7 @@
 <template>
   <div class="mainpart zy-content" @click.stop="onclick">
     <div class="img-wrap " :class="fileitem.eventmsgs?'reddot-Tips':''">
-      <img class="img" :src="fileitem.imgsrc" :onerror="$defaultImg('')" />
+      <img class="img object-fit-img" :src="fileitem.imgsrc" :onerror="$defaultImg('')" />
     </div>
     <div class="maincontent">
       <div class="mainctitle">

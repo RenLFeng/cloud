@@ -1,11 +1,11 @@
 <template>
   <div>
-    <mt-header v-show="hasnavbar" :title="bankename" class>
+    <mt-header v-show="hasnavbar" :title="bankename" class="mint-header-f">
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div
-      class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap '"
+      class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap main-f '"
       :class="selected=='tongzhi'?'tongzhi':''"
     >
       <mt-tab-container class="page-tabbar-container" v-model="selected">
@@ -198,8 +198,8 @@ export default {
       }
       return bname;
     },
-    schollid(){
-      return this.curbanke.id
+    schollid() {
+      return this.curbanke.id;
     },
     itemzuoyenormal() {
       if (!this.$store.getters.caneditbanke) {
@@ -317,7 +317,7 @@ export default {
           }
         })
         .catch(err => {});
-    },
+    }
   },
   created() {
     console.log("bankehome:" + this.id);
@@ -414,5 +414,8 @@ export default {
   left: 50%;
   bottom: 9px;
   transform: translate(-50%, 0);
+}
+.main-f {
+  padding-bottom: 55px;
 }
 </style>

@@ -581,6 +581,10 @@ export default {
   bottom: 5px;
   transform: translate(-50%, 0);
 }
+.page-wrap {
+    overflow: auto;
+    padding-bottom: 137px;
+}
 </style>
 
 <style lang="less" scoped>
