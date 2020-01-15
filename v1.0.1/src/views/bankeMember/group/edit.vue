@@ -1,16 +1,9 @@
 <template>
   <div class="group-edit-worp">
-<<<<<<< HEAD
-    <mt-header title="编辑分组方案">
-      <mt-button v-if="isteacher" slot="left" @click="gobacks">{{$t('confirm.Cancel')}}</mt-button>
-      <mt-button v-if="isteacher" slot="right" @click="savesubgroup">{{$t('confirm.Ok')}}</mt-button>
-      <mt-button v-if="!isteacher" slot="left" @click="gobacks">返回</mt-button>
-=======
     <mt-header :title="title">
       <mt-button slot="left" @click="gobacks" v-if="canedit">{{$t('confirm.Cancel')}}</mt-button>
       <mt-button slot="left" @click="gobacks" v-else>返回</mt-button>
       <mt-button slot="right" @click="savesubgroup" v-if="canedit">{{$t('confirm.Ok')}}</mt-button>
->>>>>>> d09fb372fe7eedd2aadd8ac14c9a3851b723e29c
     </mt-header>
     <div class="main">
       <div>
