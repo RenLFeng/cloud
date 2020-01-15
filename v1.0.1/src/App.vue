@@ -371,11 +371,10 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-
+  height: 100vh;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   background-color: #f0f0f0;
   font-size: 14px;
   /* overflow: hidden; */

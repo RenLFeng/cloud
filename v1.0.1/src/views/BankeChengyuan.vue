@@ -29,7 +29,6 @@
             :icon="1"
             :memberuser="members[selindex]"
             :index="selindex"
-            :schollid="members[selindex].sno"
             @editclick="onEditclick"
           ></BankeMemberSimple>
         </div>
@@ -259,6 +258,7 @@ export default {
                 for (let item of res.data.data.bind) {
                   if (v.memberuserid == item.userid) {
                     v.sno = item.sno;
+                    v.snoTitle=item.schoolrole>5?'工号':'学号'
                   }
                 }
               }

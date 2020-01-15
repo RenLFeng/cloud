@@ -5,7 +5,7 @@
     </mt-header>
 
     <div
-      class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap main-f '"
+      class="main-f"
       :class="selected=='tongzhi'?'tongzhi':''"
     >
       <mt-tab-container class="page-tabbar-container" v-model="selected">
@@ -414,8 +414,5 @@ export default {
   left: 50%;
   bottom: 9px;
   transform: translate(-50%, 0);
-}
-.main-f {
-  padding-bottom: 55px;
 }
 </style>

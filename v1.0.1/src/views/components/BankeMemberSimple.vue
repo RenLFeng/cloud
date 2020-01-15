@@ -12,7 +12,7 @@
     </div>
     <div class="maincontent">
       <div class="mainctitle ellipse">{{memberuser.name}}</div>
-      <div class="maincsubtitle color9" v-if="!sign &&　memberuser.sno">学号: {{memberuser.sno}}</div>
+      <div class="maincsubtitle color9" v-if="!sign &&　memberuser.sno">{{memberuser.snoTitle}}: {{memberuser.sno}}</div>
       <div v-if="!sign" class="maincsubtitle colory">{{scoreText}}:&nbsp;{{scoreTotal}}分</div>
       <div
         v-if="sign"

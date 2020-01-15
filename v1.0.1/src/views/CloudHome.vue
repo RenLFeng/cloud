@@ -421,6 +421,7 @@ export default {
             let arrId = [];
             for (let v of res.data.data) {
               arrId.push(v.id);
+              // v.schoolid=1001
             }
             this.eventmsgsOnbankes(res.data.data, arrId);
           }

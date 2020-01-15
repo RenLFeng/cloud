@@ -43,7 +43,7 @@
 <script>
 import List from "@/common/list";
 import Edit from "./edit";
-import { parseURL,formateTime } from "@/util";
+import { parseURL, formateTime } from "@/util";
 import { Indicator, Toast, MessageBox, Popup, Actionsheet } from "mint-ui";
 import Empty from "@/common/empty";
 export default {
@@ -71,10 +71,10 @@ export default {
       groupList: [],
       bankeid: "",
       EditItem: {},
- //     index: 0,
+      //     index: 0,
       popuoEdit: false,
       EditSelect: false,
-        canedit:true,
+      canedit: true,
 
       subgroupData: []
     };
@@ -110,37 +110,35 @@ export default {
         ];
       }
       return actions;
-    }
-    ,actions(){
-        let objret = [];
-          let isteacher = this.$store.getters.caneditbanke;
-          if (isteacher){
-              objret = [
-
-                  {
-                      name: "编辑",
-                      method: this.editGroup
-                  },
-                  {
-                      name: "删除",
-                      method: this.deleteGroup
-                  },
-                  {
-                      name: "设置默认分组",
-                      method: this.defaultFn
-                  }
-              ]
+    },
+    actions() {
+      let objret = [];
+      let isteacher = this.$store.getters.caneditbanke;
+      if (isteacher) {
+        objret = [
+          {
+            name: "编辑",
+            method: this.editGroup
+          },
+          {
+            name: "删除",
+            method: this.deleteGroup
+          },
+          {
+            name: "设置默认分组",
+            method: this.defaultFn
           }
-          else{
-              objret = [
-                  {
-                      name:'查看',
-                      method:this.viewGroup
-                  }
-              ]
+        ];
+      } else {
+        objret = [
+          {
+            name: "查看",
+            method: this.viewGroup
           }
-           return objret
+        ];
       }
+      return objret;
+    }
   },
   created() {
     const UrlParams = parseURL(window.location.href);
@@ -189,22 +187,21 @@ export default {
         .catch(err => {});
     },
     listClick(item) {
-        console.log('group/index/listClick')
+      console.log("group/index/listClick");
       this.EditItem = item;
- //     this.index = index;
+      //     this.index = index;
       // this.EditSelect = true;
       this.actionShow = true;
     },
-      seeClick(item){
-    //    return
-        this.EditItem = item
-          if (this.isteacher){
-              this.editGroup()
-          }
-          else{
-              this.viewGroup()
-          }
-      },
+    seeClick(item) {
+      //    return
+      this.EditItem = item;
+      if (this.isteacher) {
+        this.editGroup();
+      } else {
+        this.viewGroup();
+      }
+    },
     //复制
     copy() {},
     //设置默认
@@ -262,17 +259,17 @@ export default {
 
     //编辑
     editGroup() {
-        this.canedit=true
+      this.canedit = true;
       this.actionShow = false;
       this.popuoEdit = true;
     },
-      viewGroup(){
-        this.canedit = false
-          this.actionShow = false;
-          this.popuoEdit = true;
-      },
-    addGroupNew(){
-        this.addGroup(null)
+    viewGroup() {
+      this.canedit = false;
+      this.actionShow = false;
+      this.popuoEdit = true;
+    },
+    addGroupNew() {
+      this.addGroup(null);
     },
     //新增
     addGroup(v) {
@@ -281,12 +278,12 @@ export default {
         return;
       }
       Indicator.open("加载中...");
-      let defaultname = '分组 ';
-      defaultname += formateTime(new Date(), 'cstr')
-        console.log(v)
+      let defaultname = "分组 ";
+      defaultname += formateTime(new Date(), "cstr");
+      console.log(v);
       let obj = {
-        id: v?this.EditItem.id:'',
-        name: v ?v.name : defaultname,
+        id: v ? this.EditItem.id : "",
+        name: v ? v.name : defaultname,
         bankeid: this.bankeid,
         subgroupmnum: v ? v.subgroupmnum : 0,
         subgroupnum: v ? v.subgroupnum : 0
@@ -310,7 +307,7 @@ export default {
         });
     },
     onSetsubgroupmnum(v) {
-        console.log('onSetsubgroupmnum')
+      console.log("onSetsubgroupmnum");
       this.addGroup(v);
     },
     onEditBack(v) {
@@ -330,6 +327,9 @@ export default {
 .group-main {
   .content {
     margin-top: 10px;
+    width: 100%;
+    height: 81vh;
+    overflow: scroll;
   }
   .edit-container {
     padding: 15px;
@@ -358,7 +358,7 @@ export default {
   .button-worp {
     position: fixed;
     left: 50%;
-    bottom: 15px;
+    bottom: 6px;
     width: 90%;
     transform: translate(-50%, 0);
     .mint-button {

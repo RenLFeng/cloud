@@ -115,7 +115,7 @@
       </div>
     </mt-popup>
     <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
-      <Audio :AudioiInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio" />
+      <Audio :AudioiInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio"/>
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
