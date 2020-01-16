@@ -20,10 +20,11 @@ import nativecode from "./nativecode";
 import preview from "./common/preview";
 import "./styles/common.less";
 import "./styles/style.css";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 export default {
   name: "Home",
   components: {
-    preview
+    preview,
   },
   computed: {
     showloginfail() {
@@ -79,7 +80,7 @@ export default {
     },
     localuser() {
       return this.$store.state.loginuser;
-    }
+    },
   },
 
   data() {

@@ -118,7 +118,7 @@ export default {
             items:item,
             index:index
         });
-      // console.log(item);
+      // // console.log(item);
       // this.tempLocalfiles = [];
       // this.tempImgs = [];
       // let file = item;

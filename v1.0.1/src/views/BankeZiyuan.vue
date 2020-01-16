@@ -100,7 +100,7 @@
       </div>
     </mt-popup>
     <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
-      <Audio :AudioiInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio"/>
+      <Audio :audioInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio"/>
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
@@ -418,14 +418,7 @@ export default {
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
       if (fileitem.ftype == "file") {
-        if (fileitem.finttype == "3") {
-          // nativecode.ncallFileLink(fileitem);
-          this.viewfileItem = fileitem;
-          this.$store.commit("SET_FOOTER_BAR_STATE", false);
-          this.popupAudio = true;
-        } else {
-          nativecode.fileviewSingle(this, fileitem.info);
-        }
+         nativecode.fileviewSingle(this, fileitem.info);
       } else if (fileitem.ftype == "link") {
         nativecode.fileviewUrl(this, fileitem);
       }

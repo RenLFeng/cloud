@@ -30,7 +30,6 @@
         :localfiles="resultitem.localfiles"
         class="falist"
       ></FileAttachList>
-
       <div class="zasubmittime">{{submittimedesc}}</div>
     </div>
     <div class="zabottom tc">
