@@ -111,7 +111,7 @@ import BankeHuDong from "./bankehudong";
 import BankeChengyuan from "./BankeChengyuan";
 import BankeZuoye from "./BankeZuoye";
 import listIcon from "../common/lists-icon";
-import pic from "../assets/dis.jpg";
+//import pic from "../assets/dis.jpg";
 import bankeZouyeXq from "./banKeDetail/index";
 
 import nativecode from "../nativecode";

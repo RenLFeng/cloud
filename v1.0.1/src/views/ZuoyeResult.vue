@@ -7,7 +7,7 @@
         v-if="pagemode=='submit'"
         @click="popupSubmit=true"
       >{{$t('bankeTask.Submit_job')}}</mt-button>
-      <mt-button slot="right" v-else-if="showstopbtn" @click="dostop">结束作业</mt-button>
+      <mt-button slot="right" v-else-if="showstopbtn" @click="showmzuoyemenu=true">操作</mt-button>
     </mt-header>
 
     <div class="noheadercontainer noheaderscroll">
@@ -221,6 +221,9 @@
         </div>
       </div>
     </mt-popup>
+
+
+    <mt-actionsheet :actions="mzuoyemenu" v-model="showmzuoyemenu" ></mt-actionsheet>
   </div>
 </template>
 
@@ -231,11 +234,13 @@ import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
+import nativecode from '@/nativecode'
+
 import maintools from "./maintools";
 import commontools from "../commontools";
 import TextEllipsis from "./components/TextEllipsis";
 import FileAttachList from "./components/FileAttachList";
-import dispic from "../assets/dis.jpg";
+//import dispic from "../assets/dis.jpg";
 import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
 import Answer from "./banKeZuoye/answer";
@@ -280,6 +285,9 @@ export default {
         submittime: "",
         score: 10
       },
+
+        showmzuoyemenu:false,
+
       allZuoyeitem: [],
       allInitData: [],
       zdetail: {
@@ -311,6 +319,27 @@ export default {
     Preview() {
       return this.$store.state.Preview.isPreview;
     },
+      mzuoyemenu(){
+        let objret = [];
+        if (nativecode.hassharecommon()){
+            objret.push({
+                name:'分享作业',
+                method:this.doshare,
+            })
+        }
+          objret.push({
+              name:'编辑作业',
+              method:this.doedit,
+          })
+        if (this.zuoyeitem.state == 100){
+
+            objret.push({
+                name:'结束作业',
+                method:this.dostop
+            })
+        }
+        return objret;
+      },
     answerdesc() {
       return this.zuoyeitem.answerdesc
         ? this.zuoyeitem.answerdesc
@@ -333,10 +362,11 @@ export default {
           if (!isteacher){
               return false;
           }
-          if (this.zuoyeitem.state == 100){
-              return true;
-          }
-          return false
+          return true
+          // if (this.zuoyeitem.state == 100){
+          //     return true;
+          // }
+          // return false
       },
     statedesc() {
       if (this.zuoyeitem.state == 100) {
@@ -466,6 +496,7 @@ export default {
     },
     onSeeAllSubmit(item) {
       // console.log( item);
+        //! 查看个人的所有提交
       if (item) {
         this.popupAllsubmit = true;
         var url =
@@ -480,14 +511,16 @@ export default {
             Indicator.close();
             // this.$refs.loadmore.onTopLoaded();
             if (res.data.code == 0) {
-              this.popupAllsubmitItem = res.data.data.results;
-              for (var i = 0; i < this.popupAllsubmitItem.length; i++) {
-                this.popupAllsubmitItem[
+              let zitem = res.data.data.results;
+              for (var i = 0; i < zitem.length; i++) {
+                  zitem[
                   i
                 ].localfiles = maintools.localfilesFromFilelist(
-                  this.popupAllsubmitItem[i].files
+                      zitem[i].files
                 );
               }
+                this.popupAllsubmitItem = zitem;
+
             } else {
               Toast(res.data.msg);
             }
@@ -583,14 +616,14 @@ export default {
           this.$refs.loadmore.onTopLoaded();
           if (res.data.code == 0) {
             //! ok
-            this.allZuoyeitem = res.data.data.results;
-            for (let v of this.allZuoyeitem) {
-              for (let file of v.files) {
-                if (file.metainfo && typeof file.metainfo == "string") {
-                  file.metainfo = JSON.parse(file.metainfo);
-                }
-              }
-            }
+            // this.allZuoyeitem = res.data.data.results;
+            // for (let v of this.allZuoyeitem) {
+            //   for (let file of v.files) {
+            //     if (file.metainfo && typeof file.metainfo == "string") {
+            //       file.metainfo = JSON.parse(file.metainfo);
+            //     }
+            //   }
+            // }
             this.onHttpData(res.data.data);
             //  console.log(this.results);
           } else {
@@ -622,7 +655,11 @@ export default {
       if (this.zuoyeitem.state == 100
           && !this.$store.getters.haseditbankerole) {
         //! 提交模式
-        this.pagemode = "submit";
+          if (data.mymember){
+              //! 在提交名单内才提交
+              this.pagemode = "submit";
+          }
+
       }
       if (data['zdetail']){
           this.zdetail.ztext = data["zdetail"].ztext;
@@ -646,6 +683,21 @@ export default {
       }
       this.results = dresults;
     },
+      doshare(){
+        nativecode.dosharecommon('zuoye', this.zuoyeid, this.zuoyeitem.name);
+      },
+      doedit(){
+        let bid = this.zuoyeitem.ownerid;
+          this.$store.commit("setBankeData", {
+              modulename: "zuoyelist",
+              bankeid: bid,
+              fn: fobj => {
+                  fobj.editingZuoye = this.zuoyeitem;
+              }
+          });
+          this.$store.commit("setRouterForward", true);
+          this.$router.push("/zuoyenew/" + bid);
+      },
       dostop(){
           MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(() => {
               Indicator.open(this.$t("Indicator.Processing"));
@@ -738,7 +790,12 @@ export default {
     Collection() {
       // console.log(this.zuoyeitem);
       let imgIcon = "zuoye";
-     CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id,this.zuoyeitem.ownerid);
+     CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id,this.zuoyeitem.ownerid)
+         .then(()=>{
+             //！
+             this.isShuoc = true
+         })
+
     },
     //是否收藏
     queryuserfav(){
@@ -760,11 +817,12 @@ export default {
     },
   },
   created() {
-    var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
-    if (dd && dd.resultdata) {
-      //console.log(dd.resultdata);
-      this.onHttpData(dd.resultdata);
-    } else {
+    // var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
+    // if (dd && dd.resultdata) {
+    //   //console.log(dd.resultdata);
+    //   this.onHttpData(dd.resultdata);
+    // } else
+        {
       this.loadAll();
     }
     this.queryuserfav();

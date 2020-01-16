@@ -4,7 +4,7 @@
       <mt-header title="加入班课">
         <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <mt-field placeholder="请输入班课名" v-model="bankeNumber"></mt-field>
+      <mt-field placeholder="请输入班课号" type="number" v-model="bankeNumber"></mt-field>
       <div class="button-worp">
         <mt-button class="button-auto-96" @click="join">下一步</mt-button>
       </div>
@@ -99,7 +99,7 @@ export default {
   methods: {
     join() {
       if (!this.bankeNumber) {
-        Toast("请输入班号");
+        Toast("请输入班课号");
         return;
       }
         this.$http

@@ -212,10 +212,10 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-            Toast("成功");
+         //   Toast("成功");
             this.querygroup(this.bankeid);
           } else {
-            Toast("失败");
+            Toast("失败:"+res.data.msg);
           }
         })
         .catch(err => {
@@ -293,11 +293,11 @@ export default {
         .post("/api/group/savegroup", obj)
         .then(res => {
           if (res.data.code == "0") {
-            Toast("成功");
+           // Toast("成功");
             console.log(res.data.data);
             this.querygroup(this.bankeid);
           } else {
-            Toast("失败");
+            Toast("失败:"+res.data.msg);
           }
           Indicator.close();
         })

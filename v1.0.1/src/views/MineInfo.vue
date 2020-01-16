@@ -6,21 +6,25 @@
             <mt-button icon="back" @click="$back" slot="left">{{$t('common.Back')}}</mt-button>
         </mt-header>
 
-        <mt-cell :title="$t('personal.Head_portrait')" is-link @click.native="onavatarset">
-            <img :src="user.avatar" class="avatar avatarimgpart" :onerror="$defaultImg('account')">
-        </mt-cell>
+        <div>
+            <mt-cell :title="$t('personal.Head_portrait')" is-link @click.native="onavatarset">
+                <img :src="user.avatar" class="avatar avatarimgpart" :onerror="$defaultImg('account')">
+            </mt-cell>
 
-        <mt-cell :title="$t('personal.Nickname')" is-link @click.native="onnameset">
-            <span>{{user.name}}</span>
-        </mt-cell>
+            <mt-cell :title="$t('personal.Nickname')" is-link @click.native="onnameset">
+                <span class="mineinfospan">{{user.name}}</span>
+            </mt-cell>
 
-        <mt-cell :title="$t('personal.Account')" >
-            <span>{{useraccount}}</span>
-        </mt-cell>
+            <mt-cell :title="$t('personal.Account')" >
+                <span  class="mineinfospan">{{useraccount}}</span>
+            </mt-cell>
 
-        <mt-cell :title="$t('personal.Role')">
-            <span>{{userrole}}</span>
-        </mt-cell>
+            <mt-cell :title="$t('personal.Role')">
+                <span class="mineinfospan">{{userrole}}</span>
+            </mt-cell>
+        </div>
+
+
 
 
         <mt-popup v-model="popupVisible3" position="right" class="mint-popup-3" :modal="false">
@@ -223,6 +227,10 @@
         width:100%;
         height:100%;
         background-color:#000;
+    }
+
+    .mineinfospan{
+        margin-right:10px;
     }
 
     .cropComp{

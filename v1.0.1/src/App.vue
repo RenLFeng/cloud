@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="bannertop" v-if="showloginfail" @click="uservalidate">连接失败，点击重连</div>
-    <!--<div class="bannertop" v-if="showtest">{{testtext}}</div>-->
+    <!-- <div class="bannertop" v-if="showtest">{{testtext}}</div> -->
     <transition :name="transitionName">
       <router-view class="Router"></router-view>
     </transition>
@@ -85,8 +85,8 @@ export default {
   data() {
     return {
       transitionName: "slide-forward",
-      testtext: navigator.userAgent,
-      showtest: false,
+      testtext: 'showua:' + navigator.userAgent,
+      showtest: true,
       map: {},
 
       //! cjy: websocket 相关
@@ -183,6 +183,7 @@ export default {
           .post(url)
           .then(res => {
             //  console.log(document.cookie);
+              console.log('user validate ret')
             if (res.data.code == 0) {
               this.$store.commit("setLoginUser", res.data.data);
               // cjy: 大屏端，如果已登录， 应当自动跳转主页
@@ -195,6 +196,7 @@ export default {
               }
               nativecode.jsLogin(1, res.data.data);
             } else {
+                console.log(res)
               //!  未登录， 强制跳转登录
               if (this.$route.path != "/login") {
                 this.$store.commit("setLoginUser", {});

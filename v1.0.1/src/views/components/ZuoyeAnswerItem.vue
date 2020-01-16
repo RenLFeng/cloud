@@ -95,7 +95,7 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += require("../../assets/avatar-default.png");
+      srcstr += require("../../assets/account_default.png");
       srcstr += '"';
       return srcstr;
     },

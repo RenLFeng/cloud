@@ -11,6 +11,7 @@
         <div class="textline tc">
             <input v-model="myname" :placeholder="$t('personal.Nickname_entry')" autocomplete="off" class="textinput fontnormal">
             <div class="tl" style="margin-top:5px;">{{$t('personal.Nickname_tips')}}</div>
+
         </div>
     </div>
 </template>
@@ -55,7 +56,7 @@
                 })
                     .then((res)=>{
                         Indicator.close();
-                        Toast(res.data.msg);
+
                         if (res.data.code == 0){
                             //! success
                             var us = this.$store.getters.curuser;
@@ -65,6 +66,9 @@
                                 this.$store.commit('setLoginUser', usclone);
                                   this.$back();
                             }
+                        }
+                        else{
+                            Toast(res.data.msg);
                         }
                     })
                     .catch(()=>{
@@ -93,6 +97,7 @@
         border-bottom:1px solid #d3d3d3;
 
         width:100%;
+        background:transparent;
 
 
     }

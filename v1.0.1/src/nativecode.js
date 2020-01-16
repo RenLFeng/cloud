@@ -10,27 +10,68 @@ var nativecode = {};
 
 nativecode.detectplatform = function () {
     var ua = navigator.userAgent;
-    console.log(ua);
+    //console.log(ua);
     //alert(ua);
+
+
+
+    let pa = '';
     if (ua.indexOf('ExsoftIosWeb') > -1) {
-        return 'exsoftios';
+        pa = 'exsoftios';
     }
     if (ua.indexOf('miniProgram') > -1 ||
         ua.indexOf('wechatdevtools') > -1
     ) {
-        return 'miniprogram';
+     //   pa = 'miniprogram';  //! cjy: 为了wx的通用性（windows端）， 不再通过ua判断
     }
     if (window.ExsoftAndroid) {
-        return 'exsoftandroid';
+        pa = 'exsoftandroid';
     }
     if (window.ExsoftWindows) {
 
         //! 检测是否是大屏端
         if (ua.indexOf('WebDaPing') > -1) {
-            return 'exsoftdaping';
+            pa = 'exsoftdaping';
         }
 
-        return 'exsoftwindows';
+        pa = 'exsoftwindows';
+    }
+
+    function wxready() {
+        console.log('jsbridge ready:' + window.__wxjs_environment);
+
+        if (window.__wxjs_environment === 'miniprogram') // true
+        {
+            nativecode.platform = 'miniprogram'
+            if (nativecode.cachecookie.length > 0){
+                nativecode.setcookie(nativecode.cachecookie)
+                nativecode.cachecookie = ''
+
+            }
+        }
+    }
+
+    console.log('in detectplatform:' + pa);
+    if (pa == 'miniprogram' || pa == ''){
+        //! windows电脑端， 无法通过ua来判断是否是小程序
+
+        if (!window.WeixinJSBridge || !window.WeixinJSBridge.invoke) {
+            document.addEventListener('WeixinJSBridgeReady', wxready, false)
+            //! 设置超时
+            let wxtimeout = ()=>{
+
+                if (nativecode.cachecookie.length > 0){
+                    console.log('wx detect timeout')
+                    nativecode.platform = '';  //! 重置
+                    nativecode.setcookie('')  //! 已经设过cache， 清空该cache
+                }
+            }
+            setTimeout(wxtimeout, 3000)
+        } else {
+          //  ready()
+            console.log('weixin js bridge ok');
+            pa = 'miniprogram'
+        }
     }
 
     //! 测试
@@ -39,7 +80,7 @@ nativecode.detectplatform = function () {
     return '';
 }
 
-nativecode.platform = nativecode.detectplatform()
+nativecode.platform = ''
 nativecode.os = ''; //! os 类型
 
 
@@ -91,10 +132,31 @@ nativecode.parseurlparam = function (paraName) {
     }
 }
 
+nativecode.setcookie = function(szcookie)
+{
+    console.log('set local cookie:'+szcookie)
+    let cookie = require('js-cookie');
+    cookie.set('EXSOFTSSID', szcookie, {
+        expires: 36,
+        path: '/'
+    });
+}
+
+nativecode.cachecookie = '';
+nativecode.inited = 0;
+
+
 //! 初始化； 调一次， 设置cookie等
 nativecode.initfirst = function () {
+    if (nativecode.inited){
+        return;
+    }
+    nativecode.inited = 1;
+    nativecode.platform = nativecode.detectplatform();
     console.log('nativecode.initfirst');
-    if (nativecode.platform == 'miniprogram') {
+    if (nativecode.platform == 'miniprogram'
+        || nativecode.platform == '' //! 有可能平台正在检测中
+    ) {
         try {
             let szcookie = nativecode.parseurlparam('cookie');
             //   console.log(szcookie);
@@ -103,18 +165,27 @@ nativecode.initfirst = function () {
                 szcookie = szcookie.substr(0, nindex);
             }
             if ((szcookie.length) > 0) {
-                let cookie = require('js-cookie');
-                cookie.set('EXSOFTSSID', szcookie, {
-                    expires: 36,
-                    path: '/'
-                });
-                // console.log(szcookie);
+                if (nativecode.platform == 'miniprogram')
+                {
+                    nativecode.setcookie(szcookie)
+                }
+                else{
+                    //! 因为miniprogram的检测通常会延迟，这里为了快速登陆，总是先设置
+                    //! 暂时视为wx小程序，避免跳转到 /login 页面
+                    nativecode.platform = 'miniprogram';
+                    nativecode.setcookie(szcookie)
+                    nativecode.cachecookie = szcookie;
+                }
             }
         } catch (e) {
             console.log(e);
         }
     }
+    return nativecode.inited;
 }
+
+nativecode.doneinit = nativecode.initfirst();
+
 
 //! 是否有登陆页
 nativecode.hasloginpage = function () {
@@ -168,6 +239,45 @@ nativecode.hassharebanke = function () {
     }
     return false;
 }
+
+nativecode.hassharecommon = function()
+{
+    if (nativecode.platform == 'miniprogram') {
+        return true;
+    }
+    return false;
+}
+
+nativecode.dosharecommon = function(type, id, title)
+{
+    if (nativecode.platform == 'miniprogram'){
+        let shareobj = null;
+        if (type == 'zuoye'){
+            shareobj = {
+                shareaction:'zuoye',
+                sharedata:{
+                    id:id
+                },
+                btnname:'分享作业',
+                image:nativecode.getUsedUrl('/zuoye_default.png'),
+                text:title
+            }
+        }
+        if (shareobj){
+            let tourl = '/pages/share/common';
+            tourl += '?args=';
+            tourl += encodeURIComponent(JSON.stringify(shareobj));
+
+            let wx = nativecode.getwx();
+
+            wx.miniProgram.navigateTo({
+                url: tourl
+            });
+        }
+    }
+    return ;
+}
+
 nativecode.dosharebanke = function (bankeitem) {
     if (nativecode.platform == 'miniprogram') {
         let shareobj = {

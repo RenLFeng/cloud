@@ -215,7 +215,7 @@ export default {
             })
             .then(res => {
               if (res.data.code == "0") {
-                Toast("成功");
+               // Toast("成功");
                 this.changeState = false;
                 // this.querysubgroup();
                 if (this.groupName != this.EditItemObj.name && this.groupName) {
@@ -301,7 +301,7 @@ export default {
         membersnum: 0,
         members: "[]"
       };
-      Toast("成功");
+    // Toast("成功");
       obj.members = JSON.parse(obj.members);
       obj.files = [];
       this.tempData.push(obj);

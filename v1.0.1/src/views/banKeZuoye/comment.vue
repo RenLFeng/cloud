@@ -130,7 +130,7 @@ const teacherInfo = [
     files: {
       contenttype: "image/jpeg",
       fileid: "111",
-      filename: "dis.jpg",
+      filename: "",
       filepath:
         "/downloads/zuoye/20190910/1001/9de7c1e76cdee928ddf808dbfa7715ff.jpg",
       filesize: 22940,

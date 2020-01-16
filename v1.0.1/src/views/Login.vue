@@ -67,6 +67,8 @@ import { Indicator, Toast, MessageBox, Button } from "mint-ui";
 // import { setServers } from 'dns';
 // import { setInterval } from 'timers';
 
+import nativecode from '@/nativecode'
+
 export default {
   name: "Login",
   data() {
@@ -106,6 +108,7 @@ export default {
             this.$store.commit("setLoginUser", res.data.data);
             this.$store.commit("setRouterForward", true);
             this.$router.push("/");
+              nativecode.jsLogin(1, res.data.data);
           } else {
             Toast(res.data.msg);
           }

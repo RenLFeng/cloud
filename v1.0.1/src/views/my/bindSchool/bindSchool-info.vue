@@ -48,7 +48,7 @@ export default {
           })
           .then(res => {
             if (res.data.code == "0") {
-              Toast("成功");
+             // Toast("成功");
               this.back(1);
             } else {
               Toast("失败");

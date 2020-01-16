@@ -16,6 +16,10 @@
     <mt-cell title="已结束班课" is-link @click.native="queryfinished"></mt-cell>
 
     <mt-cell title="清除所有消息提示" is-link @click.native="clearEvnet"></mt-cell>
+
+    <div class="devide"></div>
+    <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
+
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
@@ -24,8 +28,7 @@
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
+
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -291,6 +294,7 @@ export default {
         this.$store.commit("setRouterForward", true);
         this.$store.commit("banke/REMOV_BANKES", []);
         this.$router.push("/login");
+          nativecode.jsLogin(0, {});
       });
     },
     onset: function() {

@@ -51,7 +51,7 @@
   </div>
 </template>
 <script>
-import defaultPic from "../../assets/avatar-default.png";
+import defaultPic from "../../assets/account_default.png";
 import { Cell, Button, MessageBox, Field, Indicator } from "mint-ui";
 import mimgcrop from "@/common/m-image-crop";
 export default {

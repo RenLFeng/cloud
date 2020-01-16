@@ -425,28 +425,37 @@ export const CollectionFn = (itemfile, type, imgIcon, id, bankeid, title = null)
     itemfile: itemfile,
     bankeid: bankeid
   }
+
+
   // console.log(info)
   info = JSON.stringify(info);
-  axios
-    .post("/api/userfav/add", {
-      title: title ? title : itemfile.name,
-      info: info,
-      eventtype: type,
-      eventid: id
-    })
-    .then(res => {
-      if (res.data.code == "0") {
-        Toast("收藏成功");
-      } else {
-        Toast("收藏失败");
-      }
-      Indicator.close();
-    })
-    .catch(err => {
-      Toast("服务异常");
-      Indicator.close();
-    });
 
+  return new Promise((resolve, reject) =>{
+        axios
+            .post("/api/userfav/add", {
+                title: title ? title : itemfile.name,
+                info: info,
+                eventtype: type,
+                eventid: id
+            })
+            .then(res => {
+                Indicator.close();
+                if (res.data.code == 0) {
+                    Toast("收藏成功");
+                    return resolve(res);
+                } else {
+                    Toast("收藏失败");
+                    return reject(res);
+                }
+
+            })
+            .catch(err => {
+                Indicator.close();
+                Toast("服务异常");
+                return reject(res);
+
+            });
+    });
 }
 export const sortFn = (property, sort) => {
   return function (a, b) {

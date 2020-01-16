@@ -217,6 +217,10 @@ export default {
       );
     },
     doSave() {
+        if (this.zuoyeitem.state != 0){
+            this.doSaveUpload();
+            return;
+        }
          MessageBox({
             message: "是否现在开始作业？",
             showCancelButton: true,
@@ -340,7 +344,7 @@ export default {
         .post("/api/api/bankezuoyedetail", { zuoyeid: this.zuoyeitem.id })
         .then(res => {
           Indicator.close();
-           alert(0)
+          // alert(0)
           if (res.data.code == 0) {
            
             this.zuoyeitem = res.data.data["zuoye"];

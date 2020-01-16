@@ -124,8 +124,8 @@
 import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
-import dispic from "../../assets/dis.jpg";
-import dispic2 from "../../assets/dis.jpg";
+//import dispic from "../../assets/dis.jpg";
+//import dispic2 from "../../assets/dis.jpg";
 import mimgcrop from "../../common/m-image-crop";
 import { constants } from "crypto";
 import { formateTime } from "../../util";
@@ -465,7 +465,7 @@ export default {
             } else {
               this.submit();
             }
-            console.log("成功", res.data.data);
+           // console.log("成功", res.data.data);
             Indicator.close();
           } else {
             Indicator.close();

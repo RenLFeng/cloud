@@ -23,7 +23,7 @@
 
 <script>
 import lists from "../../common/lists-icon";
-import pic from "../../assets/dis.jpg";
+//import pic from "../../assets/dis.jpg";
 export default {
   name: "",
   props: {

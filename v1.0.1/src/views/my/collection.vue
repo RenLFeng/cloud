@@ -74,7 +74,7 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-            Toast("成功");
+          //  Toast("成功");
             let ch = res.data.data;
             for (let v of ch) {
               v.info = JSON.parse(v.info);
