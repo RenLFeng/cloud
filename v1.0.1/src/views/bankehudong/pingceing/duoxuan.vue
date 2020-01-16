@@ -6,7 +6,7 @@
       </li>
     </ul>
     <p class="submit-btn">
-      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">提交</mt-button>
+      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">{{isSubmitEnd?'已提交':'提交'}}</mt-button>
     </p>
   </div>
 </template>
@@ -98,16 +98,12 @@ export default {
         Toast("你已提交过");
         return;
       }
-      MessageBox.confirm("请确认你的答案")
-        .then(res => {
-          this.isSubmit = false;
-          this.$emit("submitFn", this.tempAnswer);
-          this.tempAnswer = [];
-          // for (let v of this.indexNumber) {
-          //   v.isTrue = false;
-          // }
-        })
-        .catch(() => {});
+      this.isSubmit = false;
+      this.$emit("submitFn", this.tempAnswer);
+      this.tempAnswer = [];
+      // for (let v of this.indexNumber) {
+      //   v.isTrue = false;
+      // }
     }
   }
 };

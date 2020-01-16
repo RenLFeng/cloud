@@ -29,7 +29,6 @@
             :icon="1"
             :memberuser="members[selindex]"
             :index="selindex"
-            :schollid="members[selindex].sno"
             @editclick="onEditclick"
           ></BankeMemberSimple>
         </div>
@@ -56,7 +55,7 @@
 
 <script>
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
-
+import { filterItem } from "@/util";
 import BankeMemberSimple from "./components/BankeMemberSimple";
 import MemberDetail from "./bankeMember/detail";
 import commontools from "../commontools";
@@ -90,6 +89,10 @@ export default {
     };
   },
   computed: {
+     isteacher() {
+      let isteacher = this.$store.getters.caneditbanke;
+      return isteacher;
+    },
     showcontrol() {
       if (this.$store.getters.caneditbanke) {
         return true;
@@ -255,6 +258,7 @@ export default {
                 for (let item of res.data.data.bind) {
                   if (v.memberuserid == item.userid) {
                     v.sno = item.sno;
+                    v.snoTitle=item.schoolrole>5?'工号':'学号'
                   }
                 }
               }

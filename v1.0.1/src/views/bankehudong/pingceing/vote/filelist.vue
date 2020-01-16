@@ -8,14 +8,14 @@
         :class="type=='isdetail'?'act':''"
       >
         <p class="pic" @click="select(v,index)">
-          <img :src="`${v.file}_snap.jpg`" :onerror="defaultimg" />
+          <img :src="`${v.file}_snap.jpg`" :onerror="defaultimg"  class="object-fit-img"/>
           <span class="mask" v-if="v.isAct && type==''">
             <i class="iconfont iconok- position-c"></i>
           </span>
         </p>
         <div class="user-info-wrap">
           <p class="user">
-            <img src="f" :onerror="$defaultImg('account')" />
+            <img src="f" :onerror="$defaultImg('account')"  class="object-fit-img"/>
             <span class="name">{{v.name}}</span>
             <span
               v-if="type==''"

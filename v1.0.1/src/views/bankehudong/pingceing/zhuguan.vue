@@ -19,7 +19,7 @@
       </li>
     </ul>
     <p class="submit-btn">
-      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">提交</mt-button>
+      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">{{isSubmitEnd?'已提交':'提交'}}</mt-button>
     </p>
     <input
       ref="uploadPic"
@@ -40,7 +40,8 @@
       <mt-header title>
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <!--
+      <div class="draw-wrap">
+        <!--
       <div class="draw-main" @mousemove="beginPath($event)" id="mydraw">
         <img :src="pingceData.files" alt />
         <canvas
@@ -56,47 +57,48 @@
           @touchmove="canvasMove($event)"
         ></canvas>
       </div>
-      -->
-      <div
-        class="mydraw-main"
-        id="mydraw"
-        ref="drawwrap"
-        @touchstart="cwraptstart($event)"
-        @touchend="cwraptend($event)"
-        @touchmove="cwraptmove($event)"
-      >
-        <canvas
-          ref="drawcanvas"
-          :style="drawcstyle"
-          id="mycanvas"
-          @touchstart="canvaststart($event)"
-          @touchend="canvastend($event)"
-          @touchmove="canvastmove($event)"
-        ></canvas>
-      </div>
-      <div class="tool-main">
-        <ul class="clearfix">
-          <li class="fl colors" v-for="(v,i) in colors" :key="i" @click="setColor(v)">
-            <span style="background:#fff">
-              <a :style="{background:v}" :class="config.lineColor==v?'act':''"></a>
-            </span>
-          </li>
-        </ul>
-        <div class="btn-main clearfix">
-          <p class="fl" @click="controlCanvas('')">
-            <i class="iconfont iconhuabi eicotrigger" style="color:#0089FF"></i>
-          </p>
-          <!--
+        -->
+        <div
+          class="mydraw-main"
+          id="mydraw"
+          ref="drawwrap"
+          @touchstart="cwraptstart($event)"
+          @touchend="cwraptend($event)"
+          @touchmove="cwraptmove($event)"
+        >
+          <canvas
+            ref="drawcanvas"
+            :style="drawcstyle"
+            id="mycanvas"
+            @touchstart="canvaststart($event)"
+            @touchend="canvastend($event)"
+            @touchmove="canvastmove($event)"
+          ></canvas>
+        </div>
+        <div class="tool-main">
+          <ul class="clearfix">
+            <li class="fl colors" v-for="(v,i) in colors" :key="i" @click="setColor(v)">
+              <span style="background:#fff">
+                <a :style="{background:v}" :class="config.lineColor==v?'act':''"></a>
+              </span>
+            </li>
+          </ul>
+          <div class="btn-main clearfix">
+            <p class="fl" @click="controlCanvas('')">
+              <i class="iconfont iconhuabi eicotrigger" style="color:#0089FF"></i>
+            </p>
+            <!--
           <p class="fl" @click="controlCanvas('clear')">
             <i class="iconfont iconxiangpi eicotrigger" style="color:#fff"></i>
           </p>
           <p class="fl" @click="controlCanvas('prev')">
             <i class="iconfont iconwithdraw eicotrigger" style="color:#fff"></i>
           </p>
-          -->
-          <p class="fl" @click="getImage">
-            <mt-button>确定</mt-button>
-          </p>
+            -->
+            <p class="fl" @click="getImage">
+              <mt-button>确定</mt-button>
+            </p>
+          </div>
         </div>
       </div>
     </mt-popup>
@@ -421,7 +423,8 @@ export default {
       let shrehold = 1;
       if (
         !checkshrehold ||
-        Math.abs(dx) >= shrehold || Math.abs(dy) >= shrehold
+        Math.abs(dx) >= shrehold ||
+        Math.abs(dy) >= shrehold
       ) {
         return {
           action: "move",
@@ -1001,9 +1004,14 @@ export default {
     }
   }
   .draw {
+    .draw-wrap {
+      width: 100%;
+      height: 93vh;
+      overflow: hidden;
+    }
     .mydraw-main {
       position: relative;
-      height: 400px;
+      height: 63vh;
       overflow: hidden;
     }
     .draw-main {
@@ -1025,9 +1033,10 @@ export default {
       }
     }
     .tool-main {
-      position: fixed;
+      // position: fixed;
       width: 100%;
-      bottom: 25px;
+      height: 30vh;
+      // bottom: 25px;
       .colors {
         width: 10%;
         margin: 0 2.1%;

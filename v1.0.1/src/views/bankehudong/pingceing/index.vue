@@ -19,7 +19,7 @@
       </mt-loadmore>
       <div class="pingce-ing" v-if="isPingce">
         <div class="subject" v-if="pingceData.ptype!='10'">
-          <img :src="pingceimg" alt :onerror="defaultimg" @click="viewimg" />
+          <img :src="pingceimg" alt :onerror="defaultimg" @click="viewimg" class="object-fit-img" />
         </div>
         <div class="footer">
           <p class="tit border-b" v-if="pingceData.ptype!='10'">请点击选项作答</p>
@@ -89,7 +89,7 @@ export default {
       isPingce: false,
       bankeid: 0,
       pingceData: {
-        // ptype: 2,
+        // ptype: 4,
         // files:
         //   "https://res.wx.qq.com/wxdoc/dist/assets/img/0.4cb08bb4.jpg",
         optdesc: {}

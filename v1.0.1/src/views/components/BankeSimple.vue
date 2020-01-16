@@ -86,6 +86,7 @@ export default {
         // left: 0;
         // top: 0;
         border-radius: 3px;
+        object-fit: cover;
       }
     }
 

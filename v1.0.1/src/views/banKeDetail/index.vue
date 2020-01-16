@@ -210,12 +210,17 @@ export default {
   created() {},
   methods: {
     showSchoo() {
+      // console.log("vv", this.bankeInfo);
+      if (!this.bankeInfo.schoolid) {
+        Toast("未绑定过学校");
+        return;
+      }
       Indicator.open("加载中...");
       this.$http
         .post("/api/school/queryschool", {
           page: 0,
           pagesize: 50,
-          id: 1000
+          id: this.bankeInfo.schoolid
         })
         .then(res => {
           if (res.data.code == "0" && res.data.data.length) {
@@ -282,41 +287,41 @@ export default {
         showCancelButton: true
       })
         .then(() => {
-            //! cjy: 二次确认
-            MessageBox.confirm('',{
-                title: this.$t("confirm.Tips"),
-                message:'结束后，只能查阅， 不可再开始该班课，是否继续？',
-                confirmButtonText: this.$t("confirm.Ok"),
-                cancelButtonText: this.$t("confirm.Cancel"),
-                showCancelButton: true
-            }).then(()=>{
-                this.finishbanke();
-            })
+          //! cjy: 二次确认
+          MessageBox.confirm("", {
+            title: this.$t("confirm.Tips"),
+            message: "结束后，只能查阅， 不可再开始该班课，是否继续？",
+            confirmButtonText: this.$t("confirm.Ok"),
+            cancelButtonText: this.$t("confirm.Cancel"),
+            showCancelButton: true
+          }).then(() => {
+            this.finishbanke();
+          });
         })
         .catch(err => {});
     },
-    finishbanke(){
-        let BankeData = this.$store.state.banke.curbankes;
-        this.$http
-            .post("/api/banke/updateinfo", {
-                id: this.bankeInfo.id,
-                states: 0,
-            })
-            .then(res => {
-                if (res.data.code == 0) {
-                    MessageBox.alert(this.$t("confirm.Success")).then(() => {
-                        for (let item of BankeData) {
-                            if (item.id == res.data.data.id) {
-                                item.states = 0;
-                            }
-                        }
-                        this.$store.commit("banke/appendBankes", BankeData);
-                    });
-                } else {
-                    MessageBox.alert(res.data.msg).then(() => {});
+    finishbanke() {
+      let BankeData = this.$store.state.banke.curbankes;
+      this.$http
+        .post("/api/banke/updateinfo", {
+          id: this.bankeInfo.id,
+          states: 0
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            MessageBox.alert(this.$t("confirm.Success")).then(() => {
+              for (let item of BankeData) {
+                if (item.id == res.data.data.id) {
+                  item.states = 0;
                 }
-            })
-            .catch(() => {});
+              }
+              this.$store.commit("banke/appendBankes", BankeData);
+            });
+          } else {
+            MessageBox.alert(res.data.msg).then(() => {});
+          }
+        })
+        .catch(() => {});
     },
     closeBk() {
       if (!this.caneditbanke) {

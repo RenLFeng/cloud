@@ -459,3 +459,15 @@ export const sortFn = (property, sort) => {
     }
   }
 }
+export const filterItem = (data, type, select) => {
+  if (!data) return;
+  for (let v of select) {
+    for (let i = 0; i < data.length; i++) {
+      let item = data[i];
+      if (v==item[type]) {
+        data.splice(i, 1);
+      }
+    }
+  }
+  return data;
+}

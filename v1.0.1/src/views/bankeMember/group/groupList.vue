@@ -11,7 +11,7 @@
       <div class="subgroup-list">
         <ul class="clearfix">
           <li class="fl tc" v-for="(v,i) in item.files" :key="i">
-            <img :src="v.img" :onerror="$defaultImg('account')"/>
+            <img :src="v.img" :onerror="$defaultImg('account')" />
             <p>{{v.name}}</p>
             <i class="iconfont iconshanchu1 eicotrigger" @click="dle(index,i)" v-if="canedit"></i>
           </li>
@@ -76,11 +76,11 @@ export default {
     },
     //删除小组
     dl(index) {
-        this.$emit('delectFn',index)
+      this.$emit("delectFn", index);
     },
     //删除成员
-    dle(index,i){
-         this.$emit('delectMemberFn',{gindex:index,i:i})
+    dle(index, i) {
+      this.$emit("delectMemberFn", { gindex: index, i: i });
     },
     //新增成员
     addMembers(item) {
@@ -120,6 +120,7 @@ export default {
           height: 65px;
           border-radius: 50%;
           border: 1px solid #ccc;
+          object-fit: cover;
         }
         i {
           position: absolute;

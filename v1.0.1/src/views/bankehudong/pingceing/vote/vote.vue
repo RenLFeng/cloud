@@ -8,7 +8,7 @@
     <div class="footer-wrap">
       <p class="tit border-b">请选择你支持的答案</p>
       <p class="submit-btn">
-        <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">提交</mt-button>
+        <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">{{isSubmitEnd?'已提交':'提交'}}</mt-button>
       </p>
     </div>
   </div>

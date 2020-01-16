@@ -421,6 +421,7 @@ export default {
             let arrId = [];
             for (let v of res.data.data) {
               arrId.push(v.id);
+              // v.schoolid=1001
             }
             this.eventmsgsOnbankes(res.data.data, arrId);
           }
@@ -580,6 +581,10 @@ export default {
   left: 50%;
   bottom: 5px;
   transform: translate(-50%, 0);
+}
+.page-wrap {
+    overflow: auto;
+    padding-bottom: 137px;
 }
 </style>
 

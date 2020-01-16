@@ -1,11 +1,11 @@
 <template>
   <div>
-    <mt-header v-show="hasnavbar" :title="bankename" class>
+    <mt-header v-show="hasnavbar" :title="bankename" class="mint-header-f">
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div
-      class="hasnavbar?'noheadercontainer page-wrap ':'page-wrap '"
+      class="main-f"
       :class="selected=='tongzhi'?'tongzhi':''"
     >
       <mt-tab-container class="page-tabbar-container" v-model="selected">
@@ -271,7 +271,6 @@ export default {
               this.curbanke = res.data.data[0];
               this.$store.commit("banke/appendBankes", this.curbanke);
               this.onBankeChange();
-           //   this.querybind();
             }
           }
         })
@@ -319,22 +318,6 @@ export default {
         })
         .catch(err => {});
     },
-    //查询是否有绑定
-      //! cjy: querybind 不应当乱用
-    // querybind() {
-    //   this.$http
-    //     .post("/api/school/querybind", {
-    //       schoolid: 1000
-    //     })
-    //     .then(res => {
-    //       if (res.data.code == "0") {
-    //         if (res.data.data.school.length) {
-    //           this.curbanke.schoolName = res.data.data.school[0].name;
-    //         }
-    //       }
-    //     })
-    //     .catch(err => {});
-    // }
   },
   created() {
     console.log("bankehome:" + this.id);

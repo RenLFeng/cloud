@@ -13,7 +13,7 @@
       <p v-if="ponderState" class="colory tc Responder-ed">{{ResponderText}}</p>
     </div>
     <p class="submit-btn" v-if="type!='6'">
-      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">提交</mt-button>
+      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">{{isSubmitEnd?'已提交':'提交'}}</mt-button>
     </p>
   </div>
 </template>

@@ -1,11 +1,11 @@
 <template>
   <div class="group-edit-worp">
-    <mt-header :title="title">
+    <mt-header :title="title" class="mint-header-f">
       <mt-button slot="left" @click="gobacks" v-if="canedit">{{$t('confirm.Cancel')}}</mt-button>
       <mt-button slot="left" @click="gobacks" v-else>返回</mt-button>
       <mt-button slot="right" @click="savesubgroup" v-if="canedit">{{$t('confirm.Ok')}}</mt-button>
     </mt-header>
-    <div class="main">
+    <div class="main main-f">
       <div>
         <P class="name-tit">方案名称</P>
         <mt-field v-model="groupName" :disabled="!canedit" class="name"></mt-field>
@@ -24,6 +24,7 @@
           @addMembersFn="onaddMembersFn"
           @delectMemberFn="ondelectMemberFn"
           :allMemBers="allMemBers"
+          :isteacher="isteacher"
         />
       </div>
     </div>
@@ -68,12 +69,15 @@ export default {
       default() {
         return [];
       }
-    }
-    ,canedit:{
-        default(){
-            return true
-        }
+    },
+    isteacher: {
+      default: true
+    },
+    canedit: {
+      default() {
+        return true;
       }
+    }
   },
   watch: {
     EditItem: function(newValue, oldValue) {
@@ -95,7 +99,7 @@ export default {
       addMembersItem: {},
       addMembersItem2: {},
       groupName: "",
-        groupnameindex:1,
+      groupnameindex: 1,
 
       deletegroupIds: []
     };
@@ -108,13 +112,12 @@ export default {
           ? this.allMemBers.length - this.count
           : 0;
       return nub;
-    }
-    ,title(){
-        if (this.canedit){
-
-            return '编辑分组方案'
-        }
-        return '分组方案'
+    },
+    title() {
+      if (this.canedit) {
+        return "编辑分组方案";
+      }
+      return "分组方案";
     }
   },
   methods: {
@@ -137,7 +140,7 @@ export default {
               v.files = [];
               v.members = JSON.parse(v.members);
               for (let i of v.members) {
-                  let bfound = false
+                let bfound = false;
                 for (let item of this.allMemBers) {
                   if (i == item.memberuserid) {
                     v.files.push({
@@ -152,13 +155,13 @@ export default {
                     break;
                   }
                 }
-                if (!bfound){
-                    //! 已不在班课中
-                    v.files.push({
-                        id:i,
-                        img:'',
-                        name:'未知成员'
-                    })
+                if (!bfound) {
+                  //! 已不在班课中
+                  v.files.push({
+                    id: i,
+                    img: "",
+                    name: "未知成员"
+                  });
                 }
               }
             }
@@ -243,11 +246,10 @@ export default {
 
     //取消编辑
     gobacks() {
-
-        if (!this.canedit){
-            this.$emit("editBack", { state: false, type: 0 });
-            return
-        }
+      if (!this.canedit) {
+        this.$emit("editBack", { state: false, type: 0 });
+        return;
+      }
 
       if (this.groupName != this.EditItemObj.name) {
         this.changeState = true;
@@ -291,8 +293,8 @@ export default {
     //添加新组
     addGroup() {
       this.changeState = true;
-      let gname = '分组';
-      gname += (this.tempData.length +1) + ''
+      let gname = "分组";
+      gname += this.tempData.length + 1 + "";
       let obj = {
         groupid: this.EditItemObj.id,
         name: gname,
@@ -448,9 +450,10 @@ export default {
 
 <style lang='less' scoped>
 .group-edit-worp {
-  height: 90%;
-  overflow: scroll;
+  height: 100%;
   .main {
+    height: 86%;
+    overflow: scroll;
     .name-tit {
       padding: 10px;
     }
@@ -464,6 +467,13 @@ export default {
     }
   }
   .button-worp {
+    position: fixed;
+    width: 100%;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 0);
+    background: #f0f0f0;
+    padding: 10px 0;
     .mint-button {
       background: #fff;
       border: 1px solid #0089ff;

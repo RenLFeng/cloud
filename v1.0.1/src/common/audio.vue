@@ -5,18 +5,18 @@
     </mt-header>
     <div class="main">
       <div class="audio-wrap position-c">
-        <audio :src="AudioiInfo.filepath" id="audio"></audio>
+        <audio :src="AudioiInfo.filepath" id="audio" ref=audio></audio>
         <div class="clearfix control-ui">
-          <i
-            class="iconfont fl"
-            :class="isPlay ?'iconbofang':'iconzanting'"
-            @click="controlAudio()"
-          ></i>
-          <div class="fl progress-wrap">
-            <!-- <mt-progress :value="progressing" :bar-height="5"></mt-progress> -->
-            <div class="progress">
+          <i class="iconfont fl" :class="isPlay ?'iconbofang':'iconzanting'" @click="controlAudio"></i>
+          <div class="fl progress-wrap" ref="prgs">
+            <mt-progress
+              :value="progressing"
+              :bar-height="5"
+              @click.native="progressFn($event)"
+            ></mt-progress>
+            <!-- <div class="progress"  ref="prgs" @click="progressFn($event)">
               <p class="progressing" :style="{ width: progressing + 'px' }"></p>
-            </div>
+            </div>-->
           </div>
           <span class="time-font fr">{{playTime}}</span>
         </div>
@@ -34,10 +34,10 @@ export default {
       default() {
         return {};
       }
-    }
+    },
   },
   watch: {
-    AudioiInfo: function(newValue, oldValue) {}
+    AudioiInfo: function(newValue, oldValue) {},
   },
   data() {
     return {
@@ -48,6 +48,7 @@ export default {
       timer: "",
       second: 0,
       myAudio: null,
+      currentTime:0
     };
   },
   computed: {
@@ -59,33 +60,29 @@ export default {
       }
     },
     playTime() {
-      let s =
-        this.second / 60 > 9
-          ? parseInt(this.second / 60)
-          : "0" + parseInt(this.second / 60);
-      let s2 =
-        this.second % 60 >= 10
-          ? parseInt(this.second % 60)
-          : "0" + parseInt(this.second % 60);
-      return `${s}:${s2}`;
+      return this.toMs(this.second);
     },
     musicSize() {
-      let s =
-        this.musicLen / 60 > 9
-          ? parseInt(this.musicLen / 60)
-          : "0" + parseInt(this.musicLen / 60);
-      let s2 =
-        this.musicLen % 60 >= 10
-          ? parseInt(this.musicLen % 60)
-          : "0" + parseInt(this.musicLen % 60);
-      return `${s}:${s2}`;
+      return this.toMs(this.musicLen);
     }
   },
-  created() {},
-  mounted() {},
+  created() {
+         
+  },
+  mounted() {
+    //  this.controlAudio();
+  },
   methods: {
-    controlAudio: function() {
-      this.myAudio = document.getElementById("audio");
+    progressFn(e) {
+      var e = e || e.window.event;
+        var x = e.offsetX;
+        var w = this.$refs.prgs.offsetWidth;
+        var p = x / w;
+        this.progressing =p * 100;
+        this.second = this.myAudio.duration * p;
+    },
+    controlAudio() {
+       this.myAudio = document.getElementById("audio");
       this.musicLen = this.myAudio.duration;
       let leng = this.myAudio.duration;
       console.log("时间", this.myAudio.duration);
@@ -94,7 +91,7 @@ export default {
         this.isPlay = false;
         this.timer = setInterval(() => {
           this.progressing = (this.progressing / 100 + 0.1 / leng) * 100;
-          // console.log("长度", this.progressing);
+          console.log("长度", this.progressing);
           this.second = this.second + 0.1;
           if (this.progressing >= 100) {
             clearInterval(this.timer);
@@ -109,17 +106,20 @@ export default {
         clearInterval(this.timer);
       }
     },
+    toMs(time) {
+      var m = Math.floor(time / 60);
+      m = m > 9 ? m : "0" + m;
+      var s = Math.floor(time % 60);
+      s = s > 9 ? s : "0" + s;
+      return m + ":" + s;
+    },
     goBacks() {
-      clearInterval(this.timer);
-      this.progressing = 0;
-      this.second = 0;
+       clearInterval(this.timer);
       this.$emit("Backs", true);
     }
   },
   components: {},
-  destroyed(){
-
-  },
+  destroyed() {}
 };
 </script>
 
