@@ -91,7 +91,7 @@ export default {
         this.isPlay = false;
         this.timer = setInterval(() => {
           this.progressing = (this.progressing / 100 + 0.1 / leng) * 100;
-          console.log("长度", this.progressing);
+         // console.log("长度", this.progressing);
           this.second = this.second + 0.1;
           if (this.progressing >= 100) {
             clearInterval(this.timer);

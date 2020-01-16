@@ -285,7 +285,13 @@ export default {
           olss.onerror = null;
           olss.onmessage = null;
           olss.onclose = null;
+
+          let cmdobj = {};
+          cmdobj.cmd = 'offline';  //! 推送一个离线的cmd
+            this.$store.commit("setWebCmd", cmdobj);
+
           olss.close();
+
         }
         this.websock = null;
       }
@@ -307,19 +313,7 @@ export default {
         }
       }
     },
-    wsonmessage(e) {
-      try {
-        let cmdobj = JSON.parse(e.data);
-        console.log("wsonmessage:" + e.data);
-        if (cmdobj.cmd == "loginresult") {
-          if (cmdobj.code == 0) {
-            this.wssetstate("logined");
-          } else {
-            this.wssetstate("reject");
-          }
-        } else if (cmdobj.cmd == "kickout") {
-          this.wssetstate("reject");
-        } else if (cmdobj.cmd == "pingcestart") {
+      cmdpingcestart(cmdobj){
           //! 随意使用一个时间参数，用户
           let uri = "/urlpingce/" + cmdobj.bankeid + "/" + new Date().getTime();
           // uri += '&time=' + new Date().getTime();
@@ -329,23 +323,45 @@ export default {
           let curpath = this.$route.path;
           console.log(curpath);
           let navigate = () => {
-            this.$store.commit("setRouterForward", true);
-            this.$router.push({
-              name: "PingCeing",
-              params: {
-                bankeid: cmdobj.bankeid,
-                dataobj: cmdobj.data
-              }
-            });
+              this.$store.commit("setRouterForward", true);
+              this.$router.push({
+                  name: "PingCeing",
+                  params: {
+                      bankeid: cmdobj.bankeid,
+                      dataobj: cmdobj.data
+                  }
+              });
           };
           if (curpath == "/PingCeing") {
-            this.$back();
-            setTimeout(() => {
-              navigate();
-            }, 100);
+              this.$back();
+              setTimeout(() => {
+                  navigate();
+              }, 300);
           } else {
-            navigate();
+              navigate();
           }
+      },
+    wsonmessage(e) {
+      try {
+        let cmdobj = JSON.parse(e.data);
+        console.log("wsonmessage:" + e.data);
+        let cmddealed = true;
+        if (cmdobj.cmd == "loginresult") {
+          if (cmdobj.code == 0) {
+            this.wssetstate("logined");
+          } else {
+            this.wssetstate("reject");
+          }
+        } else if (cmdobj.cmd == "kickout") {
+          this.wssetstate("reject");
+        } else if (cmdobj.cmd == "pingcestart") {
+            this.cmdpingcestart(cmdobj)
+        }
+        else{
+            cmddealed = false;
+        }
+        if (!cmddealed){
+            this.$store.commit("setWebCmd", cmdobj);
         }
       } catch (e) {}
     },

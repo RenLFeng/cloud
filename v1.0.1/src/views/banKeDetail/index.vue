@@ -211,6 +211,7 @@ export default {
   methods: {
     showSchoo() {
       // console.log("vv", this.bankeInfo);
+        console.log(this.bankeInfo)
       if (!this.bankeInfo.schoolid) {
         Toast("未绑定过学校");
         return;

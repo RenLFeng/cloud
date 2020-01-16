@@ -31,6 +31,8 @@ const state = {
 
     bankecachedata: {},
 
+    webcmd:{},  //! cjy： websock的cmd
+
     loginuser: {
         role: 0
     }, //! 当前登录用户
@@ -87,8 +89,11 @@ const getters = {
         return false;
     },
     haseditbankerole: (state, getters) => { //! 当前用户是否有编辑班课的权限
-        if (!getters.isteacher) {
-            return false;
+        // if (!getters.isteacher) {  //! cjy: 因为新绑定功能，教师可变为学员，这里不再check
+        //     return false;
+        // }
+        if (!state.loginuser.role){
+            return false  //! 账户已被禁用
         }
         if (!state.curbanke.id) {
             return false;
@@ -150,6 +155,10 @@ const mutations = {
     setCurBanke(state, banke) {
         state.curbanke = banke;
     },
+    setWebCmd(state, cmdobj){
+        state.webcmd = cmdobj
+    },
+
     setLoginUser(state, user) {
         state.loginuser = user;
         state.usercookiereaded = true;

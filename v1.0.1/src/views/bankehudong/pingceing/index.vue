@@ -149,8 +149,28 @@ export default {
       // 对路由变化作出响应...
       console.log("pingceing , route changed");
     }
+    ,webcmd(lnew, lold){
+        if (lnew.cmd == 'offline'){
+            //! 离线
+            if (this.isArgLoad){
+                this.Backs();
+            }
+        }
+        else if (lnew.cmd == 'pingcestop'){
+            console.log(lnew)
+            if (lnew.bankeid == this.bankeid){
+                //! 评测被结束； tudo ： 自动提交？
+                this.Backs();
+            }
+
+        }
+
+      }
   },
   computed: {
+      webcmd(){
+          return this.$store.state.webcmd;
+      },
     pagetitle() {
       return this.isPingce ? pingceType(this.pingceData.ptype) : "评测";
     },

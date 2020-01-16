@@ -7,6 +7,7 @@
         v-if="pagemode=='submit'"
         @click="popupSubmit=true"
       >{{$t('bankeTask.Submit_job')}}</mt-button>
+      <mt-button slot="right" v-else-if="showstopbtn" @click="dostop">结束作业</mt-button>
     </mt-header>
 
     <div class="noheadercontainer noheaderscroll">
@@ -334,6 +335,16 @@ export default {
       }
       return this.$t("bankeTask.Job_Results");
     },
+      showstopbtn(){
+          let isteacher = this.$store.getters.caneditbanke;
+          if (!isteacher){
+              return false;
+          }
+          if (this.zuoyeitem.state == 100){
+              return true;
+          }
+          return false
+      },
     statedesc() {
       if (this.zuoyeitem.state == 100) {
         return this.$t("bankeTask.Have_in_hand");
@@ -538,6 +549,9 @@ export default {
             btip = true;
           }
         }
+        if (this.results.length > 0){
+            btip = false
+        }
         if (btip) {
           MessageBox.confirm("退出作业提交？").then(() => {
             this.$back()
@@ -639,6 +653,29 @@ export default {
       }
       this.results = dresults;
     },
+      dostop(){
+          MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(() => {
+              Indicator.open(this.$t("Indicator.Processing"));
+              let newstate = 10;
+              this.$http
+                  .post("/api/api/bankezuoyesetstate", {
+                      zuoyeid: this.zuoyeid,
+                      state: newstate
+                  })
+                  .then(res => {
+                      Indicator.close();
+                      if (res.data.code == 0) {
+                         this.zuoyeitem.state = newstate
+
+                      } else {
+                          Toast(res.data.msg);
+                      }
+                  })
+                  .catch(() => {
+                      Indicator.close();
+                  });
+          });
+      },
     onbtnsubmit() {
         console.log('onbtnsubmit');
       MessageBox.confirm("现在提交作业？").then(() => {

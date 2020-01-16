@@ -374,7 +374,7 @@ export default {
         .catch(err => {});
     },
     deletezy() {
-      if (!this.caneditbanke) {
+      if (!this.$store.getters.caneditbanke) {
         Toast("你无权限");
         return;
       }
@@ -543,6 +543,9 @@ export default {
     },
     //红点查询
     eventmsgsOnactivity(serverData, eventids) {
+        if (serverData.length == 0){
+            return
+        }
       this.$http
         .post("/api/eventmsgs/onactivity", {
           bankeid: this.bankeid,

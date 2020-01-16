@@ -297,14 +297,18 @@ export default {
             this.$refs.loadmore.onBottomLoaded();
           }
           if (res.data.code == 0) {
+              let zlist = res.data.data;
+              for(let v of zlist){
+                  v.eventmsgs = false;  //! 预创建member
+              }
             if (ball) {
               //! clear cur all
              // this.zuoyelist = [];  //! cjy: 这里清空会导致vue界面闪烁（呈现为无item的界面）
                 //! 这里需要清空， 否则遗留上个班课或上个账户的作业
-                this.zuoyelist = res.data.data;
+              //  this.zuoyelist = zlist;
             }
             else{
-                commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+            //    commontools.arrayMergeAsIds(this.zuoyelist, zlist);
             }
 
 
@@ -313,14 +317,25 @@ export default {
             for (let v of res.data.data) {
               ids.push(v.id);
             }
-            this.eventmsgsOnactivity(res.data.data, ids);
+            this.eventmsgsOnactivity(res.data.data, ids, ball);
 
           }
         })
         .catch(() => {});
     },
+      appendzlist(serverData, ball){
+        if (ball){
+            this.zuoyelist = serverData
+        }
+        else{
+            commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+        }
+      },
     //红点查询
-    eventmsgsOnactivity(serverData, eventids) {
+    eventmsgsOnactivity(serverData, eventids, ball) {
+        if (serverData.length == 0){
+            return
+        }
       this.$http
         .post("/api/eventmsgs/onactivity", {
           bankeid: this.bankeid,
@@ -328,7 +343,7 @@ export default {
           eventids: [...eventids]
         })
         .then(res => {
-          if (res.data.code == "0" && res.data.data.length) {
+          if (res.data.code == "0" ) {
             for (let v of serverData) {
               for (let id of res.data.data) {
                 if (v.id == id) {
@@ -337,12 +352,14 @@ export default {
               }
             }
             console.log("红点查询", res.data.data);
+            //  commontools.arrayMergeAsIds(this.zuoyelist, serverData);
           } else {
           }
-          commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+          this.appendzlist(serverData, ball)
         })
         .catch(err => {
-          commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+        //  commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+            this.appendzlist(serverData, ball)
         });
     }
   },
