@@ -374,8 +374,8 @@ nativecode.jsLogin = function (login, user) {
 nativecode.getDownUrl = function (suburl) {
     let url = "http://192.168.0.2:81";
     //  url = "http://192.168.40.116";
-    // url = "http://192.168.40.104:9982";
-    url = "http://192.168.0.2:9982";
+    url = "http://192.168.40.104:9982";
+    // url = "http://192.168.0.2:9982";
     if (process.env.NODE_ENV !== "development") {
         url = document.location.origin;
     }
