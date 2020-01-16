@@ -229,7 +229,7 @@ export default {
             this.Average = parseInt(
               this.Average / (members.length ? members.length : 1)
             );
-            if (this.schollid) {
+            if (this.schollid && members.length) {
               this.querybind(members);
             } else {
               this.members = members;

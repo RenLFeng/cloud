@@ -36,7 +36,7 @@
       >
         <mt-tab-container-item id="1">
           <div class="listcontainer">
-            <div>
+            <div class="wrap">
               <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
                 <BankeFileSimple
                   :fileitem="bankeZhiYuanLinkItem[selindex]"
@@ -70,21 +70,6 @@
       style="display:none"
       multiple
     />
-    <mt-popup v-model="popupZiyuanEdit" position="bottom" class="edit-container mint-popup-50">
-      <div>
-        <p>{{editItemFile.name}}</p>
-        <ul class="clearfix tc">
-          <li class="fl" @click="deletezy()">
-            <i class="iconfont iconshanchu"></i>
-            <span>删除</span>
-          </li>
-          <li class="fl" @click="showInfo()">
-            <i class="iconfont iconxinxi"></i>
-            <span>信息</span>
-          </li>
-        </ul>
-      </div>
-    </mt-popup>
     <mt-popup
       v-model="popupEditInfo"
       position="right"
@@ -195,9 +180,9 @@ export default {
     selected() {
       this.$emit("UploadLinkSelectEd", this.selected);
     },
-    popupZiyuanEdit() {
-      this.$emit("popupZiyuanEdit", this.popupZiyuanEdit);
-    },
+    // popupZiyuanEdit() {
+    //   this.$emit("popupZiyuanEdit", this.popupZiyuanEdit);
+    // },
     popupEditInfo() {
       this.$emit("popupZiyuanEdit", this.popupEditInfo);
     }
@@ -389,26 +374,21 @@ export default {
                     "DELECT_BANKEZHIYUANLINKITEM",
                     this.editItemFile.id
                   );
-                  this.popupZiyuanEdit = false;
                 });
               } else {
                 MessageBox.alert(res.data.msg);
-                this.popupZiyuanEdit = false;
               }
 
               console.log(res);
             })
             .catch(() => {
-              this.popupZiyuanEdit = false;
             });
         })
         .catch(() => {
-          this.popupZiyuanEdit = false;
         });
     },
     showInfo() {
       this.popupEditInfo = true;
-      this.popupZiyuanEdit = false;
     },
     //学生查看or未查看
     see(v) {
@@ -439,6 +419,7 @@ export default {
       this.setSeeResources(fileitem);
       if (fileitem.ftype == "file") {
         if (fileitem.finttype == "3") {
+          // nativecode.ncallFileLink(fileitem);
           this.viewfileItem = fileitem;
           this.$store.commit("SET_FOOTER_BAR_STATE", false);
           this.popupAudio = true;
@@ -677,7 +658,6 @@ export default {
         this.popupUploadFile = false;
       }
       if (this.popupEditInfo) {
-        //  this.popupZiyuanEdit = false;
         this.popupEditInfo = false;
       }
       // this.popupUploadFile=true;
@@ -689,9 +669,9 @@ export default {
 
 <style scoped>
 .mint-tab-container {
-  height: 75vh;
+  /* height: 75vh;
   min-height: 75vh;
-  overflow-y: auto;
+  overflow-y: auto; */
 }
 .mint-tabbar > .mint-tab-item.is-selected {
   background: none;
@@ -723,6 +703,9 @@ export default {
 }
 .listcontainer {
   border-top: 1px solid #eaeaea;
+}
+.listcontainer .wrap {
+ margin-bottom:52px;
 }
 .url-wrap .items-container {
   margin-bottom: 17px;
