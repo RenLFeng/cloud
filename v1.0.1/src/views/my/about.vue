@@ -6,7 +6,7 @@
           <i class="iconfont iconyunpingtai position-c"></i>
         </p>
         <p class="fontnormal">中科卓软云班课</p>
-        <p class="color9 font16">V 1.0 Build 0000</p>
+        <p class="color9 font16">V 1.0 Build {{buildver}}</p>
       </div>
       <p class="footer color9 tc font16">
         <span>深圳市中科卓软科技有限公司 版权所有</span>
@@ -20,7 +20,9 @@
 export default {
   props: {},
   data() {
-    return {};
+    return {
+        buildver:'20011701'
+    };
   },
   computed: {},
   created() {},

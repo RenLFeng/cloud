@@ -311,6 +311,7 @@ export default {
       zashowbtnactive: true,
       markArr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       loadingState: false,
+        ismaster:false,
 
       isShuoc:false
     };
@@ -357,12 +358,18 @@ export default {
       }
       return this.$t("bankeTask.Job_Results");
     },
-      showstopbtn(){
+      caneditzuoye(){
+        if (this.ismaster){
+            return true;
+        }
           let isteacher = this.$store.getters.caneditbanke;
           if (!isteacher){
               return false;
           }
           return true
+      },
+      showstopbtn(){
+        return this.caneditzuoye;
           // if (this.zuoyeitem.state == 100){
           //     return true;
           // }
@@ -474,7 +481,7 @@ export default {
       console.log("作业 info", ritem);
     },
     onScoreClick(ritem) {
-      let isteacher = this.$store.getters.caneditbanke;
+      let isteacher = this.caneditzuoye;// this.$store.getters.caneditbanke;
       this.ScoreItemInfo = ritem.info;
       console.log("作业 info", ritem);
       if (!isteacher) {
@@ -644,6 +651,9 @@ export default {
             }
           }
         }
+      }
+      if (data.ismaster){
+          this.ismaster = true
       }
       this.zuoyeitem = data["zuoye"];
       this.allZuoyeitem = data.results;
