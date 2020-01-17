@@ -417,6 +417,9 @@ export default {
   bottom: 9px;
   transform: translate(-50%, 0);
 }
+.mint-tabbar{
+  background:#fff;
+}
 .mint-tabbar > .mint-tab-item{
   color:#999;
 }
@@ -426,4 +429,5 @@ export default {
 .mint-tabbar > .mint-tab-item.is-selected i {
   color:#26a2ff
 }
+
 </style>
