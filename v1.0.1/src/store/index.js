@@ -54,6 +54,15 @@ const state = {
     bankeSearchHistory: [], //班课搜索历史记录
     bindschool: false,
 
+    viewAudio: {
+        info: {
+            src: '',
+            filename: '',
+        },
+        isShow: false
+    },
+
+
 }
 
 const getters = {
@@ -117,8 +126,7 @@ const getters = {
             return false;
         }
         return true;
-    }
-
+    },
 }
 
 const mutations = {
@@ -225,6 +233,10 @@ const mutations = {
     },
     SET_BIND_SCHOLL(state, v) {
         state.bindschool = v;
+    },
+    SET_VIEW_AUDIO(v,t) {
+        state.viewAudio.info = v;
+        state.viewAudio.isShow = t;
     }
 }
 

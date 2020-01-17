@@ -378,5 +378,13 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #fff;
+
+}
+.mint-cell{
+  padding-right:10px;
+
+}
+.mint-cell-value{
+    margin-right: 15px;
 }
 </style>

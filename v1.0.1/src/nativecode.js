@@ -2,7 +2,10 @@ import Vue from 'vue'
 import "@vant/touch-emulator/index";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
+import store from './store'
+import router from './router'
 Vue.use(ImagePreview);
+// Vue.use(router);
 var nativecode = {};
 
 
@@ -585,7 +588,20 @@ import {
 } from "mint-ui";
 
 nativecode.ncallFileLink = function (fitem) {
-    //onsole.log('';
+    if (fitem.downurl.includes('mp3')) {
+        let audioInfo = {
+            filepath: fitem.downurl,
+            filename: fitem.filename
+        }
+        store.commit("setRouterForward", true);
+        router.push({
+            name: "Audio",
+            params: {
+                audioInfo: audioInfo
+            }
+        });
+        return;
+    }
     let oret = nativecode.ncall('jsFileLink', fitem);
     if (!oret) {
         //console.log('toast');

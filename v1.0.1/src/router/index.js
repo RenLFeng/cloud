@@ -41,11 +41,13 @@ import Collection from '../views/my/collection'
 import BindSchool from '../views/my/bindSchool'
 //学校绑定列表
 import BindSchoolList from '../views/my/bindSchool/bindend-list'
+//MP3
+import Audio from '../common/audio'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
 
-export function createRouter() {
+// export function createRouter() {
   let routers = new Router({
     // mode: 'history',
     routes: [
@@ -80,6 +82,7 @@ export function createRouter() {
         {path:'/bankejoin/:bankeid', name:'Join', component:Join, props:true},
         {path:'/BindSchool',name:'BindSchool', component:BindSchool},
         {path:'/BindSchoolList',name:'BindSchoolList', component:BindSchoolList},
+        {path:'/Audio',name:'Audio', component:Audio},
 
 
      
@@ -107,5 +110,6 @@ export function createRouter() {
           next()
       }
 });
-return routers
-}
+export default routers
+// return routers
+// }

@@ -1,24 +1,17 @@
 <template>
   <div class="my-audio-wrap">
-    <mt-header :title="filename">
+    <mt-header :title="audioInfo.filename">
       <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="main">
       <div class="audio-wrap position-c">
-        <audio :src="AudioiInfo.filepath" id="audio" ref=audio></audio>
+        <audio id="audio" :src="audioInfo.filepath" ref="audio"></audio>
         <div class="clearfix control-ui">
-          <i class="iconfont fl" :class="isPlay ?'iconbofang':'iconzanting'" @click="controlAudio"></i>
-          <div class="fl progress-wrap" ref="prgs">
-            <mt-progress
-              :value="progressing"
-              :bar-height="5"
-           
-            ></mt-progress>
-            <!-- <div class="progress"  ref="prgs" @click="progressFn($event)">
-              <p class="progressing" :style="{ width: progressing + 'px' }"></p>
-            </div>-->
+          <i class="iconfont fl" :class="isPlay ?'iconbofang':'iconzanting'" @click="play()"></i>
+          <div class="fl progress-wrap" ref="prgs" @click="progressFn($event)">
+            <mt-progress :value="progressBar" :bar-height="5"></mt-progress>
           </div>
-          <span class="time-font fr">{{playTime}}</span>
+          <span class="time-font fr">{{cTime}}</span>
         </div>
       </div>
     </div>
@@ -27,84 +20,94 @@
 
 <script>
 import { Progress } from "mint-ui";
-import { parse } from "path";
+import { parseURL } from "@/util";
+
 export default {
+  name: "Audio",
   props: {
-    AudioiInfo: {
+    AudioInfo: {
       default() {
         return {};
       }
-    },
+    }
   },
   watch: {
-    AudioiInfo: function(newValue, oldValue) {},
+   
   },
   data() {
     return {
-      progressing: 0,
-      musicLen: 0,
-      playFlag: false,
+      audioInfo: {
+        filename: "",
+        filepath: ""
+      },
       isPlay: true,
-      timer: "",
-      second: 0,
-      myAudio: null,
-      currentTime:0
+      cTime: null,
+      dTime: null,
+      progressBar: null,
+
+
+      myAudio:null,
+      timer:null
     };
   },
-  computed: {
-    filename() {
-      if (this.AudioiInfo.filename) {
-        return this.AudioiInfo.filename;
-      } else {
-        return "未知文件名";
-      }
-    },
-    playTime() {
-      return this.toMs(this.second);
-    },
-    musicSize() {
-      return this.toMs(this.musicLen);
-    }
-  },
-  created() {
-         
-  },
+  computed: {},
+  created() {},
   mounted() {
-    //  this.controlAudio();
+    let params = this.$route.params;
+    this.audioInfo = params.audioInfo;
+    // console.log("xxxxxxxxxxx", this.audioInfo);
+ this.addEventListeners();
   },
   methods: {
+    addEventListeners: function() {
+      const self = this;
+      self.$refs.audio.addEventListener("timeupdate", self._currentTime),
+        self.$refs.audio.addEventListener("canplay", self._durationTime);
+      self.$refs.audio.addEventListener("ended", self.endedFn);
+    },
+    removeEventListeners: function() {
+      const self = this;
+      self.$refs.audio.removeEventListener("timeupdate", self._currentTime);
+      self.$refs.audio.removeEventListener("canplay", self._durationTime);
+      self.$refs.audio.addEventListener("ended", self.endedFn);
+    },
+
+    _currentTime: function() {
+      const self = this;
+      self.cTime = this.toMs(self.$refs.audio.currentTime);
+      self.progressBar =
+        (self.$refs.audio.currentTime / self.$refs.audio.duration) * 100;
+        console.log(' self.cTime',self.cTime);
+    },
+    _durationTime: function() {
+      const self = this;
+      self.dTime = this.toMs(self.$refs.audio.duration);
+      if (this.isPlay) {
+        this.$refs.audio.play();
+        this.isPlay = false;
+      }
+    },
+    play() {
+      if (this.isPlay) {
+        this.$refs.audio.play();
+        this.isPlay = false;
+      } else {
+        this.$refs.audio.pause();
+        this.isPlay = true;
+      }
+    },
     progressFn(e) {
       var e = e || e.window.event;
-        var x = e.offsetX;
-        var w = this.$refs.prgs.offsetWidth;
-        var p = x / w;
-        this.progressing =p * 100;
-        this.second = this.myAudio.duration * p;
+      var x = e.offsetX;
+      var w = this.$refs.prgs.offsetWidth;
+      var p = x / w;
+      this.progressBar = p * 100;
+      this.$refs.audio.currentTime = this.$refs.audio.duration * p;
     },
-    controlAudio() {
-       this.myAudio = document.getElementById("audio");
-      this.musicLen = this.myAudio.duration;
-      let leng = this.myAudio.duration;
-      console.log("时间", this.myAudio.duration);
-      if (this.isPlay) {
-        this.myAudio.play();
-        this.isPlay = false;
-        this.timer = setInterval(() => {
-          this.progressing = (this.progressing / 100 + 0.1 / leng) * 100;
-         // console.log("长度", this.progressing);
-          this.second = this.second + 0.1;
-          if (this.progressing >= 100) {
-            clearInterval(this.timer);
-            this.progressing = 0;
-            this.second = 0;
-            this.controlAudio();
-          }
-        }, 100);
-      } else {
-        this.myAudio.pause();
-        this.isPlay = true;
-        clearInterval(this.timer);
-      }
+    endedFn() {
+      this.progressBar = 0;
+      this.$refs.audio.currentTime = 0;
+      this.isPlay = true;
     },
     toMs(time) {
       var m = Math.floor(time / 60);
@@ -114,11 +117,13 @@ export default {
       return m + ":" + s;
     },
     goBacks() {
-       clearInterval(this.timer);
-      this.$emit("Backs", true);
+      this.removeEventListeners();
+      this.$back();
     }
   },
-  components: {},
+  components: {
+
+  },
   destroyed() {}
 };
 </script>
