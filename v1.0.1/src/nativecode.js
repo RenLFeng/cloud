@@ -579,7 +579,7 @@ nativecode.fileviewSingle = function (vuethis, fitem) {
         return;
     }
     // nativecode.ncall('jsFileLink', fitem);
-    nativecode.ncallFileLink(fitem);
+    nativecode.ncallFileLink(vuethis, fitem);
     return;
 }
 
@@ -587,19 +587,20 @@ import {
     Toast,
 } from "mint-ui";
 
-nativecode.ncallFileLink = function (fitem) {
+nativecode.ncallFileLink = function (vuethis, fitem) {
     if (fitem.downurl.includes('mp3')) {
         let audioInfo = {
             filepath: fitem.downurl,
             filename: fitem.filename
         }
-        store.commit("setRouterForward", true);
-        router.push({
-            name: "Audio",
-            params: {
-                audioInfo: audioInfo
-            }
-        });
+        vuethis.$store.commit('setAudioFileInfo', audioInfo);
+        // store.commit("setRouterForward", true);
+        // router.push({
+        //     name: "Audio",
+        //     params: {
+        //         audioInfo: audioInfo
+        //     }
+        // });
         return;
     }
     let oret = nativecode.ncall('jsFileLink', fitem);
@@ -686,7 +687,7 @@ nativecode.fileviewZuoye = function (vuethis, objargs) {
     let citem = items[cindex];
     citem.downurl = nativecode.getUsedUrl(citem.filepath);
     //  nativecode.ncall('jsFileLink', citem);
-    nativecode.ncallFileLink(citem);
+    nativecode.ncallFileLink(vuethis, citem);
 }
 
 

@@ -33,6 +33,7 @@ const state = {
 
     webcmd:{},  //! cjy： websock的cmd
 
+    audiofileinfo:{},
     loginuser: {
         role: 0
     }, //! 当前登录用户
@@ -166,7 +167,9 @@ const mutations = {
     setWebCmd(state, cmdobj){
         state.webcmd = cmdobj
     },
-
+    setAudioFileInfo(state, info){
+        state.audiofileinfo = info;
+    },
     setLoginUser(state, user) {
         state.loginuser = user;
         state.usercookiereaded = true;

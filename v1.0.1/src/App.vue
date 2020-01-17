@@ -12,6 +12,9 @@
       :pindex="index"
       @toggleClick="onToggleClick"
     ></preview>
+      <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
+          <Audio :AudioInfo="audiofileinfo" @Backs="popupAudio=false" v-if="popupAudio"/>
+      </mt-popup>
   </div>
 </template>
 
@@ -21,10 +24,12 @@ import preview from "./common/preview";
 import "./styles/common.less";
 import "./styles/style.css";
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
+import Audio from '@/common/audio'
 export default {
   name: "Home",
   components: {
     preview,
+      Audio,
   },
   computed: {
     showloginfail() {
@@ -81,6 +86,9 @@ export default {
     localuser() {
       return this.$store.state.loginuser;
     },
+      audiofileinfo(){
+        return this.$store.state.audiofileinfo;
+      }
   },
 
   data() {
@@ -89,6 +97,8 @@ export default {
       testtext: 'showua:' + navigator.userAgent,
       showtest: true,
       map: {},
+        popupAudio:false,
+        myaudioinfo:{},
 
       //! cjy: websocket 相关
       websock: null,
@@ -122,6 +132,20 @@ export default {
   },
 
   watch: {
+      audiofileinfo(lnew, lold){
+        //  if (lnew.filepath != lold.filepath)
+        //  console.log(lnew);
+         // console.log(lold);
+          {
+              this.myaudioinfo = lnew;
+              if (!lnew.filepath){
+                  this.popupAudio = false
+              }
+              else{
+                  this.popupAudio = true
+              }
+          }
+      },
     localuser(lnew, old) {
       console.log("localuser watch!!");
       if (lnew.id != old.id) {

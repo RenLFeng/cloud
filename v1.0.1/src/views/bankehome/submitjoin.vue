@@ -50,7 +50,20 @@ export default {
                     this.$store.commit("setRouterForward", true);
                     this.$router.replace(tourl);
                 } else {
-                    MessageBox.alert("加入失败:"+res.data.msg);
+                    let tipmsgs = res.data.msg;
+                    if (tipmsgs == 'over num limit'){
+                        tipmsgs = '班课人数已达上限'
+                    }
+                    else if (tipmsgs == 'finished'){
+                        tipmsgs = '班课已结束'
+                    }
+                    else if (tipmsgs == 'is owner'){
+                        tipmsgs = '不能加入自己的班课'
+                    }
+                    else if (tipmsgs == 'already in'){
+                        tipmsgs = '已在班课中'
+                    }
+                    MessageBox.alert("加入失败:"+tipmsgs);
                 }
             })
             .catch(err => {

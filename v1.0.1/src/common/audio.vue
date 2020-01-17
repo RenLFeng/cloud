@@ -1,11 +1,11 @@
 <template>
   <div class="my-audio-wrap">
-    <mt-header :title="audioInfo.filename">
+    <mt-header :title="filename">
       <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="main">
       <div class="audio-wrap position-c">
-        <audio id="audio" :src="audioInfo.filepath" ref="audio"></audio>
+        <audio id="audio" :src="AudioInfo.filepath" ref="audio" ></audio>
         <div class="clearfix control-ui">
           <i class="iconfont fl" :class="isPlay ?'iconbofang':'iconzanting'" @click="play()"></i>
           <div class="fl progress-wrap" ref="prgs" @click="progressFn($event)">
@@ -36,27 +36,40 @@ export default {
   },
   data() {
     return {
-      audioInfo: {
-        filename: "",
-        filepath: ""
-      },
+      // audioInfo: {
+      //   filename: "",
+      //   filepath: ""
+      // },
       isPlay: true,
       cTime: null,
       dTime: null,
       progressBar: null,
+        playfirst:false,
 
 
       myAudio:null,
       timer:null
     };
   },
-  computed: {},
+  computed: {
+      filename(){
+          if (this.AudioInfo.filename){
+              return this.AudioInfo.filename;
+          }
+          return '音频'
+      },
+  },
   created() {},
   mounted() {
-    let params = this.$route.params;
-    this.audioInfo = params.audioInfo;
-    // console.log("xxxxxxxxxxx", this.audioInfo);
- this.addEventListeners();
+      console.log('audio mounted');
+      this.playfirst = true;
+      this.isPlay = true;
+     // console.log(this.AudioInfo);
+   // let params = this.$route.params;
+   // this.audioInfo = params.audioInfo;
+     //console.log("xxxxxxxxxxx", this.audioInfo);
+      this.addEventListeners();
+      this.doplayfirst();
   },
   methods: {
     addEventListeners: function() {
@@ -77,17 +90,22 @@ export default {
       self.cTime = this.toMs(self.$refs.audio.currentTime);
       self.progressBar =
         (self.$refs.audio.currentTime / self.$refs.audio.duration) * 100;
-        console.log(' self.cTime',self.cTime);
+       // console.log(' self.cTime',self.cTime);
     },
     _durationTime: function() {
       const self = this;
       self.dTime = this.toMs(self.$refs.audio.duration);
-      if (this.isPlay) {
-        this.$refs.audio.play();
-        this.isPlay = false;
-      }
     },
+      doplayfirst(){
+          if (this.isPlay && this.playfirst) {
+              this.$refs.audio.play();
+              this.isPlay = false;
+              this.playfirst = false;  //! 仅自动播放一次，避免循环播放
+          }
+      },
     play() {
+     //   console.log('audio play');
+       // console.log(this.AudioInfo);
       if (this.isPlay) {
         this.$refs.audio.play();
         this.isPlay = false;
@@ -118,13 +136,16 @@ export default {
     },
     goBacks() {
       this.removeEventListeners();
-      this.$back();
+    //  this.$back();
+        this.$emit('Backs',{});
     }
   },
   components: {
 
   },
-  destroyed() {}
+  destroyed() {
+
+  }
 };
 </script>
 
@@ -165,6 +186,9 @@ export default {
               width: 0;
             }
           }
+        }
+        .time-font{
+          font-size: 16px;
         }
       }
     }
