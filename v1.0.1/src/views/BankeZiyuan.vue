@@ -4,16 +4,16 @@
       <mt-tabbar v-model="selected" class="uploadtabbar">
         <mt-tab-item id="1" @click.native="onUploadLocal">
           <div>
-            <i class="iconfont iconfont-big iconicon---copy"></i>
-            <div>{{$t('bankeZiYuan.Upload_files')}}</div>
+            <i class="iconfont iconfont-big iconcongbendishangchuan" style="color:#FFCB8E"></i>
+            <div class="fonttiny">{{$t('bankeZiYuan.Upload_files')}}</div>
             <!--本地上传-->
           </div>
         </mt-tab-item>
 
         <mt-tab-item id="2" @click.native="onUploadLink">
           <div>
-            <i class="iconfont iconfont-big icon80"></i>
-            <div>{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
+            <i class="iconfont iconfont-big iconwangyelianjie"></i>
+            <div class="fonttiny">{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
             <!--网页链接-->
           </div>
         </mt-tab-item>
@@ -698,7 +698,7 @@ export default {
   border-top: 1px solid #eaeaea;
 }
 .listcontainer .wrap {
- margin-bottom:52px;
+ margin-bottom:70px;
 }
 .url-wrap .items-container {
   margin-bottom: 17px;

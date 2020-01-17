@@ -45,7 +45,7 @@
       <mt-tab-item id="ziyuan">
         <div class="bankehome">
           <i
-            class="iconfont iconwenjianjiai reddot-Tips-wrap"
+            class="iconfont iconziyuan reddot-Tips-wrap"
             :class="eventmsgs.zyTips?'reddot-Tips':''"
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
@@ -53,7 +53,7 @@
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
         <div class="bankehome">
-          <i class="iconfont iconuser reddot-Tips-wrap" :class="eventmsgs.cyTips?'reddot-Tips':''"></i>
+          <i class="iconfont iconchengyuan1 reddot-Tips-wrap" :class="eventmsgs.cyTips?'reddot-Tips':''"></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Member')}}</span>
         </div>
       </mt-tab-item>
@@ -61,7 +61,7 @@
         <div class="bankehome">
           <i
             v-if="itemzuoyenormal"
-            class="iconfont iconhuodong reddot-Tips-wrap"
+            class="iconfont iconzuoye-copy reddot-Tips-wrap"
             :class="eventmsgs.zouyeTips?'reddot-Tips':''"
           ></i>
           <span
@@ -80,7 +80,7 @@
       <mt-tab-item id="hudong">
         <div class="bankehome">
           <i
-            class="iconfont iconwenjianjiai reddot-Tips-wrap"
+            class="iconfont iconhudong reddot-Tips-wrap"
             :class="eventmsgs.hdTips.count?'reddot-Tips':''"
           ></i>
           <span
@@ -91,7 +91,7 @@
       <mt-tab-item id="tongzhi">
         <div class="bankehome">
           <i
-            class="iconfont iconxiangqing reddot-Tips-wrap"
+            class="iconfont iconbankexiangqing reddot-Tips-wrap"
             :class="eventmsgs.xqTips?'reddot-Tips':''"
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Details')}}</span>
@@ -400,13 +400,15 @@ export default {
 }
 .bankehome {
   position: relative;
-  height: 72px;
+  height: 75px;
 }
 .bankehome i {
   position: absolute;
   top: 12px;
   left: 50%;
   transform: translate(-50%, 0);
+  color:#999;
+  font-size:30px;
 }
 .bankehome span {
   position: absolute;
@@ -414,5 +416,14 @@ export default {
   left: 50%;
   bottom: 9px;
   transform: translate(-50%, 0);
+}
+.mint-tabbar > .mint-tab-item{
+  color:#999;
+}
+.mint-tabbar > .mint-tab-item.is-selected{
+    background-color: #fff;
+}
+.mint-tabbar > .mint-tab-item.is-selected i {
+  color:#26a2ff
 }
 </style>

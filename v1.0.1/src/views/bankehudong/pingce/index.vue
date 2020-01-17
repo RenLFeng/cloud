@@ -61,7 +61,8 @@ import {
 export default {
   name: "PingCe",
   watch: {
-    popupDeatil: function(val) {}
+    popupDeatil: function (val) {
+    }
   },
   components: {
     List,

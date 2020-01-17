@@ -5,11 +5,15 @@
     </mt-header>
     <div class="main">
       <div class="audio-wrap position-c">
-        <audio id="audio" :src="AudioInfo.filepath" ref="audio" ></audio>
+        <audio id="audio" :src="AudioInfo.filepath" ref="audio"></audio>
         <div class="clearfix control-ui">
           <i class="iconfont fl" :class="isPlay ?'iconbofang':'iconzanting'" @click="play()"></i>
           <div class="fl progress-wrap" ref="prgs" @click="progressFn($event)">
-            <mt-progress :value="progressBar" :bar-height="5"></mt-progress>
+            <!-- <mt-progress :value="progressBar" :bar-height="5"></mt-progress> -->
+            <p class="progress">
+              <span class="progressing" v-bind:style="{ width: progressBar + '%' }"></span>
+               <!-- <span class="progressing" :style="{width:`${progressBar}%`}"></span> -->
+            </p>
           </div>
           <span class="time-font fr">{{cTime}}</span>
         </div>
@@ -21,7 +25,6 @@
 <script>
 import { Progress } from "mint-ui";
 import { parseURL } from "@/util";
-
 export default {
   name: "Audio",
   props: {
@@ -31,45 +34,38 @@ export default {
       }
     }
   },
-  watch: {
-   
-  },
+  watch: {},
   data() {
     return {
       // audioInfo: {
       //   filename: "",
       //   filepath: ""
       // },
+   ll:50,
       isPlay: true,
       cTime: null,
       dTime: null,
-      progressBar: null,
-        playfirst:false,
+      progressBar: 0,
+      playfirst: false,
 
-
-      myAudio:null,
-      timer:null
+      myAudio: null,
     };
   },
   computed: {
-      filename(){
-          if (this.AudioInfo.filename){
-              return this.AudioInfo.filename;
-          }
-          return '音频'
-      },
+    filename() {
+      if (this.AudioInfo.filename) {
+        return this.AudioInfo.filename;
+      }
+      return "音频";
+    }
   },
   created() {},
   mounted() {
-      console.log('audio mounted');
-      this.playfirst = true;
-      this.isPlay = true;
-     // console.log(this.AudioInfo);
-   // let params = this.$route.params;
-   // this.audioInfo = params.audioInfo;
-     //console.log("xxxxxxxxxxx", this.audioInfo);
-      this.addEventListeners();
-      this.doplayfirst();
+    console.log("audio mounted");
+    this.playfirst = true;
+    this.isPlay = true;
+           this.addEventListeners();
+        this.doplayfirst();
   },
   methods: {
     addEventListeners: function() {
@@ -87,25 +83,26 @@ export default {
 
     _currentTime: function() {
       const self = this;
-      self.cTime = this.toMs(self.$refs.audio.currentTime);
+                 self.cTime = this.toMs(self.$refs.audio.currentTime);
       self.progressBar =
         (self.$refs.audio.currentTime / self.$refs.audio.duration) * 100;
-       // console.log(' self.cTime',self.cTime);
+      // console.log(' self.cTime',self.cTime);
+
     },
     _durationTime: function() {
       const self = this;
       self.dTime = this.toMs(self.$refs.audio.duration);
     },
-      doplayfirst(){
-          if (this.isPlay && this.playfirst) {
-              this.$refs.audio.play();
-              this.isPlay = false;
-              this.playfirst = false;  //! 仅自动播放一次，避免循环播放
-          }
-      },
+    doplayfirst() {
+      if (this.isPlay && this.playfirst) {
+        this.$refs.audio.play();
+        this.isPlay = false;
+        this.playfirst = false; //! 仅自动播放一次，避免循环播放
+      }
+    },
     play() {
-     //   console.log('audio play');
-       // console.log(this.AudioInfo);
+      //   console.log('audio play');
+      // console.log(this.AudioInfo);
       if (this.isPlay) {
         this.$refs.audio.play();
         this.isPlay = false;
@@ -115,12 +112,15 @@ export default {
       }
     },
     progressFn(e) {
+      const self = this;
       var e = e || e.window.event;
       var x = e.offsetX;
-      var w = this.$refs.prgs.offsetWidth;
+      var w = self.$refs.prgs.offsetWidth;
       var p = x / w;
-      this.progressBar = p * 100;
-      this.$refs.audio.currentTime = this.$refs.audio.duration * p;
+      self.progressBar = p * 100;
+      self.$refs.audio.currentTime = self.$refs.audio.duration * p;
+      
+      console.log('this.$refs.audio.currentTime',self.$refs.audio.currentTime);
     },
     endedFn() {
       this.progressBar = 0;
@@ -136,16 +136,12 @@ export default {
     },
     goBacks() {
       this.removeEventListeners();
-    //  this.$back();
-        this.$emit('Backs',{});
+      //  this.$back();
+      this.$emit("Backs", {});
     }
   },
-  components: {
-
-  },
-  destroyed() {
-
-  }
+  components: {},
+  destroyed() {}
 };
 </script>
 
@@ -176,18 +172,23 @@ export default {
           -webkit-transform: translate(0, -50%);
           transform: translate(-50%, -50%);
           .progress {
+            position: absolute;
             width: 100%;
-            height: 5px;
+            height:5px;
+            left: 0;
+            top: 0;
             background: #ccc;
             border-radius: 20px;
             .progressing {
-              height: 100%;
+              position: absolute;
+              // width:50%;
+              left: 0;
+              height: 5px;
               background: #0089ff;
-              width: 0;
             }
           }
         }
-        .time-font{
+        .time-font {
           font-size: 16px;
         }
       }

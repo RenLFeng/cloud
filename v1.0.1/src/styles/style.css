@@ -312,6 +312,7 @@ textarea {
 
 .mint-tabbar.is-fixed {
     z-index: 100 !important;
+    padding: 8px 0;
 }
 
 .mint-header,
@@ -600,3 +601,6 @@ textarea {
 .search-popup .div_sech .van-search__action{
     color: #0089ff;
 }
+.iconwangyelianjie{
+    color:#8ECBFF;
+  }

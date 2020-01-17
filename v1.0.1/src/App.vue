@@ -519,7 +519,7 @@ export default {
 .iconfont-big {
   display: block;
   padding-bottom: 7px;
-  font-size: 60px !important;
+  font-size: 48px !important;
 }
 .no-more {
   text-align: center;

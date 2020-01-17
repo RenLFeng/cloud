@@ -23,14 +23,13 @@
           </div>
           <p class="v"></p>
           <div class="bankecontainer">
-            <div v-for="(item,selindex) in curbankes" :key="selindex">
               <BankeSimple
+              v-for="(item,selindex) in curbankes" :key="selindex"
                 :classitem="curbankes[selindex]"
                 @click.native="bankeclick(item)"
                 @showMenu="onShowMenu"
                 :homeEventmsgs="homeEventmsgs"
               ></BankeSimple>
-            </div>
             <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
               <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
               <p v-if="isteacher">暂无班课，点击创建或加入班课</p>
@@ -51,16 +50,16 @@
       <mt-tab-item id="banke">
         <div class="bankehome">
           <i
-            class="iconfont iconfont-big iconbianzu reddot-Tips-wrap"
+            class="iconfont iconfont-big iconshouye-banke reddot-Tips-wrap"
             :class="homeEventmsgs?'reddot-Tips':''"
           ></i>
-          <span class="fontnormal">{{$t('common.Class')}}</span>
+          <span class="fonttiny">云课堂</span>
         </div>
       </mt-tab-item>
       <mt-tab-item id="mine">
         <div class="bankehome">
-          <i class="iconfont iconfont-big iconuser"></i>
-          <span class="fontnormal">{{$t('common.My')}}</span>
+          <i class="iconfont iconfont-big iconshouye-wode"></i>
+          <span class="fonttiny">{{$t('common.My')}}</span>
         </div>
       </mt-tab-item>
     </mt-tabbar>
@@ -316,7 +315,7 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
-            Toast("成功");
+            // Toast("成功");
             this.initbanke();
           } else {
             Toast("失败");
@@ -527,13 +526,12 @@ export default {
   transform: translateY(-50%) rotate(45deg);
 }
 .cloud-b .mint-tab-item {
-  color: #232323;
+  color: #999;
   background-color: #fff;
 }
 .cloud-b .mint-tab-item.is-selected {
   color: #26a2ff;
-
-  background-color: #f0f0f0;
+  background-color: #fff;
 }
 .seach-wrap {
   position: relative;
@@ -568,7 +566,7 @@ export default {
 }
 .bankehome {
   position: relative;
-  height: 72px;
+  height: 50px;
 }
 .bankehome i {
   position: absolute;
@@ -579,7 +577,7 @@ export default {
 .bankehome span {
   position: absolute;
   left: 50%;
-  bottom: 5px;
+  bottom: -5px;
   transform: translate(-50%, 0);
 }
 .page-wrap {

@@ -64,38 +64,28 @@ export default {
 </script>
 <style lang="less" scoped>
 .class-banke-list {
-  padding: 5px 0;
+  // padding: 5px 0;
   .item {
     position: relative;
-    // background: #fff;
-    // height: 72px;
     border-top: 1px solid #f0f0f0;
-    padding-left: 80px;
+    padding:13px 13px 13px 80px;
     .reddot-Tips-wrap {
       position: absolute;
       width: 55px;
-      // height: 80%;
       left: 10px;
       top: 50%;
       transform: translate(0, -50%);
       background-color: white;
       .itemavatar {
-        // position: absolute;
         width: 100%;
-        // height: 100%;
-        // left: 0;
-        // top: 0;
         border-radius: 3px;
         object-fit: cover;
       }
     }
 
     .itempart {
-      width: 100%;
+              width: 85%;
       .wrap {
-        height: 80%;
-        width: 80%;
-        margin-top: 4px;
         > div {
           .class-nmuber {
             margin-left: 10px;
