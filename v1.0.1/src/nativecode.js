@@ -52,6 +52,9 @@ nativecode.detectplatform = function () {
 
             }
         }
+        else{
+            alert(window.__wxjs_environment);
+        }
     }
 
     console.log('in detectplatform:' + pa);
@@ -67,6 +70,7 @@ nativecode.detectplatform = function () {
                     console.log('wx detect timeout')
                     nativecode.platform = '';  //! 重置
                     nativecode.setcookie('')  //! 已经设过cache， 清空该cache
+                    alert('wx detect timeout');
                 }
             }
             setTimeout(wxtimeout, 3000)
@@ -256,11 +260,9 @@ nativecode.dosharecommon = function(type, id, title)
     if (nativecode.platform == 'miniprogram'){
         let shareobj = null;
         if (type == 'zuoye'){
+            let surl = '/#/zuoyeresult/' + id;
             shareobj = {
-                shareaction:'zuoye',
-                sharedata:{
-                    id:id
-                },
+                shareurl:surl,
                 btnname:'分享作业',
                 image:nativecode.getUsedUrl('/zuoye_default.png'),
                 text:title

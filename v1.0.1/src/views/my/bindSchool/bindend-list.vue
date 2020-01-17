@@ -16,7 +16,7 @@
           <div class="text-info-wrap">
             <p class="fontsmall">{{item.name}}</p>
             <p>
-              您的工号：
+              您的{{snodesc(item)}}：
               <span>{{item.sno}}</span>
             </p>
           </div>
@@ -54,7 +54,9 @@ export default {
       showSchoolInfo: {}
     };
   },
-  computed: {},
+  computed: {
+
+  },
   created() {
     this.querybind();
   },
@@ -63,6 +65,12 @@ export default {
     popupBindSchoolInfo: function(newValue, oldValue) {}
   },
   methods: {
+      snodesc(item){
+          if (item.schoolrole == 10){
+              return '工号'
+          }
+          return '学号'
+      },
     querybind() {
       Indicator.open("加载中...");
       this.$http

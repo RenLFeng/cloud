@@ -9,7 +9,7 @@
         <p class="fontsmall">{{schoolInfo.name}}</p>
       </div>
       <p class="tit">我在该学校的信息</p>
-      <mt-cell title="工号" :value="schoolInfo.sno" class="sno"></mt-cell>
+      <mt-cell :title="labeltitle" :value="schoolInfo.sno" class="sno"></mt-cell>
       <p class="canse tc fontsmall" @click="canseBind">取消绑定该学校</p>
     </div>
   </div>
@@ -27,7 +27,8 @@ export default {
   },
   data() {
     return {
-      schoolInfo: {}
+      schoolInfo: {},
+        labeltitle:'学号',
     };
   },
   computed: {},
@@ -36,6 +37,12 @@ export default {
   watch: {
     info: function(newValue, oldValue) {
       this.schoolInfo = newValue;
+      if (newValue.schoolrole == 10){
+          this.labeltitle = '工号'
+      }
+      else{
+          this.labeltitle = '学号'
+      }
     }
   },
   methods: {
