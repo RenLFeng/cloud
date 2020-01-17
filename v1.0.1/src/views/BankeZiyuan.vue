@@ -674,6 +674,7 @@ export default {
 }
 
 .uploadtabbar {
+  background:#fff;
   position: static;
 }
 

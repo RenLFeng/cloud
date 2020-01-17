@@ -41,6 +41,7 @@
       fixed
       :class="{hide:tabbarhide}"
       v-if="Preview && !zyEditState && footerbar"
+      style="background:#fff"
     >
       <mt-tab-item id="ziyuan">
         <div class="bankehome">
@@ -416,9 +417,6 @@ export default {
   left: 50%;
   bottom: 9px;
   transform: translate(-50%, 0);
-}
-.mint-tabbar{
-  background:#fff;
 }
 .mint-tabbar > .mint-tab-item{
   color:#999;
