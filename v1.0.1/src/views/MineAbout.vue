@@ -75,7 +75,7 @@
             <mt-field label="账户：" placeholder="请输入账户名" v-model="inputaccount"></mt-field>
           </div>
           <div class="input-item-wrap">
-            <mt-field label="密码" placeholder="设置密码" v-model="inputpassword"></mt-field>
+            <mt-field label="密码" placeholder="设置密码" type="password" v-model="inputpassword"></mt-field>
           </div>
           <div class="button-worp">
             <mt-button class="button-auto-96 b" @click="uibindsubmit">提交</mt-button>
