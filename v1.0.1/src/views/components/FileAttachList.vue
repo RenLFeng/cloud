@@ -45,7 +45,7 @@ import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import nativecode from "../../nativecode";
-import {getZYFileTypeIcon} from '@/util'
+import {getZYFileTypeIcon, fixCaptureImage} from '@/util'
 Vue.use(ImagePreview);
 export default {
   name: "FileAttachList",
@@ -277,42 +277,57 @@ export default {
         }
       }
     },
+
     douploadfile(findex) {
       var fitem = this.localfiles[findex];
       if (fitem && fitem.file) {
-        var formdata = new FormData();
-        formdata.append("file", fitem.file);
 
-        var CancelToken = this.$http.CancelToken;
-        var source = CancelToken.source();
+          this.curUploadingFile = fitem;
+          this.$set(fitem, "uploadState", "doing");
+          fitem.uploadProgress = 0;
 
-        fitem.uploadCancel = source;
 
-        this.curUploadingFile = fitem;
+          let funupload = (file)=>{
+              var formdata = new FormData();
+              formdata.append("file", file);
 
-        fitem.uploadProgress = 0;
-        this.$set(fitem, "uploadState", "doing");
+              var CancelToken = this.$http.CancelToken;
+              var source = CancelToken.source();
 
-        var url = this.urlinfo.urlupload;
-        this.$http({
-          url: url,
-          method: "post",
-          onUploadProgress: pevent => {
-            this.updateProgress(pevent, fitem);
-          },
-          cancelToken: source.token,
-          data: formdata
-        })
-          .then(res => {
-            if (res.data.code == 0) {
-              this.finishUpload(fitem, res.data.data);
-            } else {
-              this.finishUpload(fitem, false);
-            }
+              fitem.uploadCancel = source;
+
+              var url = this.urlinfo.urlupload;
+              this.$http({
+                  url: url,
+                  method: "post",
+                  onUploadProgress: pevent => {
+                      this.updateProgress(pevent, fitem);
+                  },
+                  cancelToken: source.token,
+                  data: formdata
+              })
+                  .then(res => {
+                      if (res.data.code == 0) {
+                          this.finishUpload(fitem, res.data.data);
+                      } else {
+                          this.finishUpload(fitem, false);
+                      }
+                  })
+                  .catch(() => {
+                      this.finishUpload(fitem, false);
+                  });
+          };
+
+
+          //! cjy: 处理照片相关： 旋转， 压缩（10M+）
+          fixCaptureImage(fitem.file, true).then(res=>{
+              funupload(res);
           })
-          .catch(() => {
-            this.finishUpload(fitem, false);
-          });
+              .catch(res=>{
+                  funupload(res);
+              })
+
+
       }
     },
     finishUpload(fitem, bok) {

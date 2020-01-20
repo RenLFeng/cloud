@@ -227,31 +227,41 @@ export default {
       if (this.curzuoye) {
         console.log(this.curzuoye);
 
-          MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(()=>{
-              Indicator.open(this.$t("Indicator.Processing"));
-              this.$http
-                  .post("/api/api/bankezuoyesetstate", {
-                      zuoyeid: this.curzuoye.id,
-                      state: nstateto
-                  })
-                  .then(res => {
-                      Indicator.close();
-                      if (res.data.code == 0) {
-                          for (let item of this.zuoyelist) {
-                              if (item.id == this.curzuoye.id) {
-                                  item.state = nstateto;
-                                  return;
-                              }
-                          }
-                          // commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
-                      } else {
-                          Toast(res.data.msg);
-                      }
-                  })
-                  .catch(() => {
-                      Indicator.close();
-                  });
-          })
+        let doopt = ()=>{
+            Indicator.open(this.$t("Indicator.Processing"));
+            this.$http
+                .post("/api/api/bankezuoyesetstate", {
+                    zuoyeid: this.curzuoye.id,
+                    state: nstateto
+                })
+                .then(res => {
+                    Indicator.close();
+                    if (res.data.code == 0) {
+                        for (let item of this.zuoyelist) {
+                            if (item.id == this.curzuoye.id) {
+                                item.state = nstateto;
+                                return;
+                            }
+                        }
+                        // commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+                    } else {
+                        Toast(res.data.msg);
+                    }
+                })
+                .catch(() => {
+                    Indicator.close();
+                });
+        }
+
+        if (nstateto == 10){
+            MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(()=>{
+                doopt();
+            })
+        }
+        else{
+            doopt();
+        }
+
 
         //!
         //this.curzuoye.state = nstateto;

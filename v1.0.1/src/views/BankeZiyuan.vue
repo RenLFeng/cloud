@@ -108,6 +108,7 @@
 
 <script>
 import Vue from "vue";
+import {fixCaptureImage} from "../util";
 import {
   Indicator,
   Toast,
@@ -570,7 +571,9 @@ export default {
       if (event.target.files.length > 0) {
         var file = event.target.files;
         //! cjy: 大小限制？
-        console.log("00000000", file);
+       // console.log("00000000", file);
+          console.log('upload files:');
+          console.log(file);
         for (let i = 0; i < file.length; i++) {
           let _filesize = file[i].size;
           if (_filesize / (1024 * 1024) > 300) {
@@ -582,8 +585,30 @@ export default {
             });
             continue;
           }
+          this.douploadonefile(file[i]);
+        }
+      }
+    },
+      douploadonefile(onefile){
+        console.log('douploadonefile:');
+        console.log(onefile);
+        //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
+        fixCaptureImage(onefile, true).then(res=>{
+            this.douploadonefiledirect(res);
+        })
+            .catch((res)=>{
+                this.douploadonefiledirect(res);
+            })
+      },
+      douploadonefiledirect(onefile){
+        console.log('douploadfile direct:');
+        console.log(onefile);
+        if (!onefile){
+            console.log('err file');
+            return ;
+        }
           var formdata = new FormData();
-          formdata.append("file", file[i]);
+          formdata.append("file", onefile);
 
           var url = "/api/bankefile/fileupload?";
           url += "bankeid=" + this.bankeid;
@@ -591,43 +616,41 @@ export default {
           Indicator.open(this.$t("Indicator.Uploading"));
 
           this.$http({
-            url: url,
-            method: "post",
-            data: formdata,
-            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+              url: url,
+              method: "post",
+              data: formdata,
+              headers: { "Content-Type": "application/x-www-form-urlencoded" }
           })
-            .then(res => {
-              Indicator.close();
-              if (res.data.code == 0) {
-                console.log("54", res.data.data);
-                this.parseOneItem(res.data.data);
-                let item = res.data.data;
-                if (item.ftype == "link") {
-                  item.imgsrc = require("../assets/file_icon/IT.svg");
-                } else if (item.ftype == "file") {
-                  if (item.finttype == "1") {
-                    if (item.info) {
-                      item.imgsrc =
-                        item.info.filepath + item.info.metainfo.snapsuffix;
-                    }
-                  } else {
-                    item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+              .then(res => {
+                  Indicator.close();
+                  if (res.data.code == 0) {
+                      console.log("54", res.data.data);
+                      this.parseOneItem(res.data.data);
+                      let item = res.data.data;
+                      if (item.ftype == "link") {
+                          item.imgsrc = require("../assets/file_icon/IT.svg");
+                      } else if (item.ftype == "file") {
+                          if (item.finttype == "1") {
+                              if (item.info) {
+                                  item.imgsrc =
+                                      item.info.filepath + item.info.metainfo.snapsuffix;
+                              }
+                          } else {
+                              item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+                          }
+                      }
+                      commontools.arrayMergeAsIds(this.files, res.data.data);
+                      //  res.data.data.info = JSON.parse(res.data.data.info);
+                      let arr = [];
+                      arr[0] = res.data.data;
+                      this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
                   }
-                }
-                commontools.arrayMergeAsIds(this.files, res.data.data);
-                //  res.data.data.info = JSON.parse(res.data.data.info);
-                let arr = [];
-                arr[0] = res.data.data;
-                this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
-              }
-            })
-            .catch(err => {
-              Indicator.close();
-              console.log(err);
-            });
-        }
-      }
-    },
+              })
+              .catch(err => {
+                  Indicator.close();
+                  console.log(err);
+              });
+      },
     onAddLinkState(state) {
       if (state) {
         this.popupUploadLink = false;

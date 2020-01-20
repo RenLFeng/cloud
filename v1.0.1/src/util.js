@@ -119,15 +119,19 @@ export const getChartDate = (ndays, date) => {
 }
 
 // cjy: 纠正移动设备上的拍照旋转文件
-export const fixCaptureImage = (file) => {
+export const fixCaptureImage = (file, tofile=false) => {
   return new Promise((resolve, reject) => {
     // 获取图片
     console.log('fixCaptureImage');
     const img = new Image();
     let curl = window.URL.createObjectURL(file)
     let oparam = curl;
+    let rejectres = null;
+    if (tofile){
+      rejectres = file;
+    }
     img.src = curl;
-    img.onerror = () => reject(null);
+    img.onerror = () => reject(rejectres);
     let EXIF = require('exif-js');
     img.onload = () => {
       // 获取图片元数据（EXIF 变量是引入的 exif-js 库暴露的全局变量）
@@ -139,7 +143,7 @@ export const fixCaptureImage = (file) => {
         console.log('fixLocalImage, orientation:' + orientation);
 
         if (img.width == 0 || img.height == 0) {
-          return reject(null);
+          return reject(rejectres);
         }
 
         //   orientation = 8;
@@ -192,8 +196,29 @@ export const fixCaptureImage = (file) => {
               break;
           }
           // 返回新图片
-          let imgurl = canvas.toDataURL('image/jpeg', 0.8);
-          return resolve(imgurl);
+            if (tofile){
+                canvas.toBlob(file => {
+                  let cbf = file;
+                  if (rejectres.name){
+                   // file.name = rejectres.name;
+                      let oldname = rejectres.name;
+                      let ii = oldname.lastIndexOf('.');
+                      if (ii > 0){
+                        oldname = oldname.substr(0, ii);
+                      }
+                      oldname += '.jpg';  //! 更改文件名后缀
+                      cbf = new File([file], oldname
+                      ,{type:'image/jpeg'});
+                      //cbf.type = 'image/jpeg';
+                  }
+                  resolve(cbf)
+                }, 'image/jpeg', 0.8)
+            }
+            else{
+                let imgurl = canvas.toDataURL('image/jpeg', 0.8);
+                return resolve(imgurl);
+            }
+
           //canvas.toBlob(file => resolve(file), 'image/jpeg', 0.8)
         }
         // else {

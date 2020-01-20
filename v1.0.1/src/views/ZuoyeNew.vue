@@ -41,7 +41,8 @@
       date-format="{value} 日"
       hourFormat="{value} 时"
       minuteFormat="{value} 分"
-      v-model="submittime"
+      v-model="pickervalue"
+      @confirm="pickerconfirm"
     ></mt-datetime-picker>
 
     <mt-popup v-model="popupVisibleDetail" position="right" class="mint-popup-3" :modal="false">
@@ -93,7 +94,8 @@ export default {
         localfiles: []
       },
       curdatetime: new Date(),
-      isEditMode: false //! 是否编辑模式
+      isEditMode: false, //! 是否编辑模式
+        pickervalue:'',
     };
   },
   props: {
@@ -199,6 +201,9 @@ export default {
     onZAnaswer() {
       this.popupAnswer = true;
     },
+      pickerconfirm(){
+          this.zuoyeitem.submittime = commontools.timeJsDateToTimedate(this.pickervalue);
+      },
     AnswerSubmit() {},
     defaultzuoyename() {
       //! cjy: no default zname, confused?

@@ -51,6 +51,7 @@ export default {
                     this.$router.replace(tourl);
                 } else {
                     let tipmsgs = res.data.msg;
+                    let prefix = '加入失败:';
                     if (tipmsgs == 'over num limit'){
                         tipmsgs = '班课人数已达上限'
                     }
@@ -62,8 +63,9 @@ export default {
                     }
                     else if (tipmsgs == 'already in'){
                         tipmsgs = '已在班课中'
+                        prefix = ''
                     }
-                    MessageBox.alert("加入失败:"+tipmsgs);
+                    MessageBox.alert(prefix+tipmsgs);
                 }
             })
             .catch(err => {

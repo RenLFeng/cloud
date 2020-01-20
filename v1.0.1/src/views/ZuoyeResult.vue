@@ -312,6 +312,7 @@ export default {
       markArr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       loadingState: false,
         ismaster:false,
+        mymember:true,  //! 是否在提交成员名单中
 
       isShuoc:false
     };
@@ -405,6 +406,12 @@ export default {
       return true;
     },
     emptydesc() {
+        if (this.zuoyeitem.state == 100){
+            //! 评测进行中
+            if (!this.ismaster && !this.mymember){
+                return '作业尚未结束，不能查看学员的提交'
+            }
+        }
       if (this.showfilter == "score") {
         return this.$t("bankeTask.No_score_yet");
       }
@@ -662,6 +669,7 @@ export default {
           this.noPingFengStudentInfo.push(item);
         }
       }
+      this.mymember = data.mymember;
       if (this.zuoyeitem.state == 100
           && !this.$store.getters.haseditbankerole) {
         //! 提交模式
@@ -809,10 +817,11 @@ export default {
     },
     //是否收藏
     queryuserfav(){
+
      this.$http
         .post("/api/userfav/query", {
            eventtype:3, 
-           eventids:[this.zuoyeitem.id]
+           eventids:[this.zuoyeid]
            })
         .then(res => {
           if (res.data.code == "0") {
