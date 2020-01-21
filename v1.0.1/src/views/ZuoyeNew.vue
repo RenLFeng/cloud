@@ -317,6 +317,7 @@ export default {
       }
 
       this.curdatetime = new Date();
+      this.pickervalue = commontools.timeTimedateToJsDate(this.zuoyeitem.submittime);
       this.$refs.timepicker.open();
     },
     assignZDetail(to, from) {
