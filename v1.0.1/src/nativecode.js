@@ -53,7 +53,8 @@ nativecode.detectplatform = function () {
             }
         }
         else{
-            alert(window.__wxjs_environment);
+            // wx的网页会走这里
+           // alert(window.__wxjs_environment);
         }
     }
 
