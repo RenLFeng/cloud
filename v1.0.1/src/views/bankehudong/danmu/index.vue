@@ -11,18 +11,20 @@
              infinite-scroll-immediate-check	="false"
             class="list-scoll-wrap" @click="isOpen=false">
             <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill">
-              <div class="wrap" v-if="danmuDataList.length">
-                <div class="item" v-for="(v,i) in danmuDataList" :key="i">
-                 <p class="info-text fontsmall" :style="`color:${v.info.color}`">{{v.info.text}}</p>
-                 <div class="info-name position-r">
-                   <p class="font16">{{v.info.name}}</p>
-                   <p class="font-xxs">{{v.day}}&nbsp;{{v.time}}</p>
+              <div class="wrap">
+                <div class="aaa" v-if="danmuDataList.length">
+                  <div class="item" v-for="(v,i) in danmuDataList" :key="i">
+                  <p class="info-text fontsmall" :style="`color:${v.info.color}`">{{v.info.text}}</p>
+                  <div class="info-name position-r">
+                    <p class="font16">{{v.info.name}}</p>
+                    <p class="font-xxs time">{{v.day}}&nbsp;{{v.time}}</p>
+                    </div>
                   </div>
+                  <p class="tc color9" v-if="loading && page && !loadend">加载中...</p>
+                  <p class="tc color9" v-if="loadend">我是有底线的...</p>
                 </div>
-                <p class="tc color9" v-if="loading && page && !loadend">加载中...</p>
-                 <p class="tc color9" v-if="loadend">我是有底线的...</p>
+                 <Empty v-else :text="['无数据']" />
               </div>
-              <Empty v-else :text="['无数据']" />
               </mt-loadmore>
             </div>
       <!-- <div class="mask"></div> -->
@@ -304,14 +306,17 @@ export default {
       max-height: 83vh;
       overflow: scroll;
       transition: all 0.3s;
-      background: #fff;
+      // background: #fff;
       .wrap {
+            height: auto;
+            min-height: 83vh;
         .item {
           position: relative;
           height: 87px;
           max-height: 87px;
           padding: 0 10px;
           border-top: 1px solid #f0f0f0;
+           background: #fff;
           .info-text {
             position: absolute;
             left: 10px;
@@ -322,6 +327,9 @@ export default {
             width: 30%;
             text-align: right;
             color:#5D5D5D;
+            .time{
+              margin-top:7px;
+            }
           }
         }
       }

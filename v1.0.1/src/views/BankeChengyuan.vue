@@ -1,6 +1,6 @@
 <template>
   <div class="memberdesc-main">
-    <div class="memberdesc clearfix">
+    <div class="memberdesc clearfix Average-wrap">
       <div class="membertitledesc">
         {{$t('bankeZiYuan.Member')+$t('common.Total')}}
         <span
@@ -285,7 +285,7 @@ export default {
 
 <style scoped>
 .memberdesc-main {
-  background: #fff;
+  /* background: #fff; */
   margin-top: 10px;
 }
 .memberdesc-main .head {
@@ -303,6 +303,9 @@ export default {
 
 .membernumdesc {
   float: right;
+}
+.Average-wrap{
+  background: #fff;
 }
 .Average i {
   font-size: 22px;
@@ -335,8 +338,10 @@ export default {
 }
 .listcontainer.Member{
     padding-bottom: 100px;
-} {
-}
+        height: 72vh;
+    min-height: 72vh;
+    overflow: scroll;
+} 
 .content-main {
 }
 .popup-scroll-MemberDetail{

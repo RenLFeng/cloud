@@ -203,8 +203,8 @@ export default {
     width: 95%;
     margin: 10px auto;
     height:80vh;
-        padding-bottom: 30px;
     min-height:80vh;
+    padding-bottom: 30px;
     overflow: scroll;
     li {
       position: relative;
