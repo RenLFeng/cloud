@@ -31,9 +31,9 @@ const state = {
 
     bankecachedata: {},
 
-    webcmd:{},  //! cjy： websock的cmd
+    webcmd: {}, //! cjy： websock的cmd
 
-    audiofileinfo:{},
+    audiofileinfo: {},
     loginuser: {
         role: 0
     }, //! 当前登录用户
@@ -54,6 +54,7 @@ const state = {
 
     bankeSearchHistory: [], //班课搜索历史记录
     bindschool: false,
+    detail_go_school: false,
 
     viewAudio: {
         info: {
@@ -102,8 +103,8 @@ const getters = {
         // if (!getters.isteacher) {  //! cjy: 因为新绑定功能，教师可变为学员，这里不再check
         //     return false;
         // }
-        if (!state.loginuser.role){
-            return false  //! 账户已被禁用
+        if (!state.loginuser.role) {
+            return false //! 账户已被禁用
         }
         if (!state.curbanke.id) {
             return false;
@@ -164,10 +165,10 @@ const mutations = {
     setCurBanke(state, banke) {
         state.curbanke = banke;
     },
-    setWebCmd(state, cmdobj){
+    setWebCmd(state, cmdobj) {
         state.webcmd = cmdobj
     },
-    setAudioFileInfo(state, info){
+    setAudioFileInfo(state, info) {
         state.audiofileinfo = info;
     },
     setLoginUser(state, user) {
@@ -237,7 +238,10 @@ const mutations = {
     SET_BIND_SCHOLL(state, v) {
         state.bindschool = v;
     },
-    SET_VIEW_AUDIO(v,t) {
+    SET_GO_SCHOOL(state, v) {
+        state.detail_go_school = v;
+    },
+    SET_VIEW_AUDIO(v, t) {
         state.viewAudio.info = v;
         state.viewAudio.isShow = t;
     }

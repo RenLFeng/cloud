@@ -25,7 +25,7 @@
       </div>
       <Empty v-else :text="['暂无内容']" />
     </div>
-    <div class="button-worp position-b">
+    <div class="button-worp position-b" v-if="!detail_go_school">
       <mt-button class="button-auto-96" @click="onbindNewSchool">绑定新学校</mt-button>
     </div>
     <mt-popup
@@ -35,7 +35,7 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <BindSchoolInfo :info="showSchoolInfo" @back="onBack" />
+      <BindSchoolInfo :info="showSchoolInfo" @back="onBack" :caneditbanke="detail_go_school"/>
     </mt-popup>
   </div>
 </template>
@@ -44,6 +44,7 @@
 import BindSchoolInfo from "./bindSchool-info";
 import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
 import Empty from "@/common/empty";
+import {parseURL } from "@/util";
 export default {
   name: "BindSchoolList",
   props: {},
@@ -51,11 +52,17 @@ export default {
     return {
       popupBindSchoolInfo: false,
       BindSchoolListData: [],
-      showSchoolInfo: {}
+      showSchoolInfo: {},
     };
   },
   computed: {
-
+       caneditbanke() {
+      let caneditbanke = this.$store.getters.caneditbanke;
+      return caneditbanke;
+    },
+    detail_go_school() {
+          return this.$store.state.detail_go_school;
+        }
   },
   created() {
     this.querybind();
@@ -103,7 +110,7 @@ export default {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "BindSchool",
-        params: { ShowType: true }
+        params: { ShowType: true}
       });
     },
     showSchollInfo(v) {
@@ -118,6 +125,7 @@ export default {
     },
     goback() {
       this.$store.commit("SET_BIND_SCHOLL", true);
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
       this.$router.go(-1);
         //! cjy: 这里直接返回到 home； 否则一定场景比较怪异：   bindschool->back->
     }

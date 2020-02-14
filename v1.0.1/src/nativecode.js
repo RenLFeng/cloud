@@ -11,7 +11,7 @@ var nativecode = {};
 
 //! https://www.npmjs.com/package/weixin-js-sdk
 
-nativecode.detectplatform = function () {
+nativecode.detectplatform = function() {
     var ua = navigator.userAgent;
     //console.log(ua);
     //alert(ua);
@@ -25,7 +25,7 @@ nativecode.detectplatform = function () {
     if (ua.indexOf('miniProgram') > -1 ||
         ua.indexOf('wechatdevtools') > -1
     ) {
-     //   pa = 'miniprogram';  //! cjy: 为了wx的通用性（windows端）， 不再通过ua判断
+        //   pa = 'miniprogram';  //! cjy: 为了wx的通用性（windows端）， 不再通过ua判断
     }
     if (window.ExsoftAndroid) {
         pa = 'exsoftandroid';
@@ -46,37 +46,36 @@ nativecode.detectplatform = function () {
         if (window.__wxjs_environment === 'miniprogram') // true
         {
             nativecode.platform = 'miniprogram'
-            if (nativecode.cachecookie.length > 0){
+            if (nativecode.cachecookie.length > 0) {
                 nativecode.setcookie(nativecode.cachecookie)
                 nativecode.cachecookie = ''
 
             }
-        }
-        else{
+        } else {
             // wx的网页会走这里
-           // alert(window.__wxjs_environment);
+            // alert(window.__wxjs_environment);
         }
     }
 
     console.log('in detectplatform:' + pa);
-    if (pa == 'miniprogram' || pa == ''){
+    if (pa == 'miniprogram' || pa == '') {
         //! windows电脑端， 无法通过ua来判断是否是小程序
 
         if (!window.WeixinJSBridge || !window.WeixinJSBridge.invoke) {
             document.addEventListener('WeixinJSBridgeReady', wxready, false)
-            //! 设置超时
-            let wxtimeout = ()=>{
+                //! 设置超时
+            let wxtimeout = () => {
 
-                if (nativecode.cachecookie.length > 0){
+                if (nativecode.cachecookie.length > 0) {
                     console.log('wx detect timeout')
-                    nativecode.platform = '';  //! 重置
-                    nativecode.setcookie('')  //! 已经设过cache， 清空该cache
+                    nativecode.platform = ''; //! 重置
+                    nativecode.setcookie('') //! 已经设过cache， 清空该cache
                     alert('wx detect timeout');
                 }
             }
             setTimeout(wxtimeout, 3000)
         } else {
-          //  ready()
+            //  ready()
             console.log('weixin js bridge ok');
             pa = 'miniprogram'
         }
@@ -94,7 +93,7 @@ nativecode.os = ''; //! os 类型
 
 
 
-nativecode.hassign = function () {
+nativecode.hassign = function() {
     //! cjy: 简单起见，目前仅微信开启签到功能
     if (nativecode.platform == 'miniprogram') {
         return true;
@@ -102,7 +101,7 @@ nativecode.hassign = function () {
     return false;
 }
 
-nativecode.parseurlparam = function (paraName) {
+nativecode.parseurlparam = function(paraName) {
     var url = document.location.toString();
 
     var arrObj = url.split("?");
@@ -140,9 +139,8 @@ nativecode.parseurlparam = function (paraName) {
     }
 }
 
-nativecode.setcookie = function(szcookie)
-{
-    console.log('set local cookie:'+szcookie)
+nativecode.setcookie = function(szcookie) {
+    console.log('set local cookie:' + szcookie)
     let cookie = require('js-cookie');
     cookie.set('EXSOFTSSID', szcookie, {
         expires: 36,
@@ -155,15 +153,15 @@ nativecode.inited = 0;
 
 
 //! 初始化； 调一次， 设置cookie等
-nativecode.initfirst = function () {
-    if (nativecode.inited){
+nativecode.initfirst = function() {
+    if (nativecode.inited) {
         return;
     }
     nativecode.inited = 1;
     nativecode.platform = nativecode.detectplatform();
     console.log('nativecode.initfirst');
-    if (nativecode.platform == 'miniprogram'
-        || nativecode.platform == '' //! 有可能平台正在检测中
+    if (nativecode.platform == 'miniprogram' ||
+        nativecode.platform == '' //! 有可能平台正在检测中
     ) {
         try {
             let szcookie = nativecode.parseurlparam('cookie');
@@ -173,11 +171,9 @@ nativecode.initfirst = function () {
                 szcookie = szcookie.substr(0, nindex);
             }
             if ((szcookie.length) > 0) {
-                if (nativecode.platform == 'miniprogram')
-                {
+                if (nativecode.platform == 'miniprogram') {
                     nativecode.setcookie(szcookie)
-                }
-                else{
+                } else {
                     //! 因为miniprogram的检测通常会延迟，这里为了快速登陆，总是先设置
                     //! 暂时视为wx小程序，避免跳转到 /login 页面
                     nativecode.platform = 'miniprogram';
@@ -196,7 +192,7 @@ nativecode.doneinit = nativecode.initfirst();
 
 
 //! 是否有登陆页
-nativecode.hasloginpage = function () {
+nativecode.hasloginpage = function() {
     //return false;
     if (nativecode.platform == 'miniprogram') {
         return false;
@@ -205,7 +201,7 @@ nativecode.hasloginpage = function () {
 }
 
 //！ 是否能够绑定用户
-nativecode.canbindaccount = function () {
+nativecode.canbindaccount = function() {
     //return true;
     if (nativecode.platform == 'miniprogram') {
         return true;
@@ -214,7 +210,7 @@ nativecode.canbindaccount = function () {
 }
 
 //! 是否有导航栏
-nativecode.hasnavbar = function () {
+nativecode.hasnavbar = function() {
     return true;
     if (nativecode.platform == 'miniprogram') {
         return false;
@@ -223,7 +219,7 @@ nativecode.hasnavbar = function () {
 }
 
 //! 是否有主页返回键
-nativecode.hasmainback = function () {
+nativecode.hasmainback = function() {
     if (nativecode.platform.length > 0) {
         if (nativecode.platform == 'miniprogram') {
             return false;
@@ -236,40 +232,38 @@ nativecode.hasmainback = function () {
 
 //import wx from 'weixin-js-sdk';
 
-nativecode.getwx = function () {
+nativecode.getwx = function() {
     let wx = require('weixin-js-sdk');
     return wx;
 }
 
-nativecode.hassharebanke = function () {
+nativecode.hassharebanke = function() {
     if (nativecode.platform == 'miniprogram') {
         return true;
     }
     return false;
 }
 
-nativecode.hassharecommon = function()
-{
+nativecode.hassharecommon = function() {
     if (nativecode.platform == 'miniprogram') {
         return true;
     }
     return false;
 }
 
-nativecode.dosharecommon = function(type, id, title)
-{
-    if (nativecode.platform == 'miniprogram'){
+nativecode.dosharecommon = function(type, id, title) {
+    if (nativecode.platform == 'miniprogram') {
         let shareobj = null;
-        if (type == 'zuoye'){
+        if (type == 'zuoye') {
             let surl = '/#/zuoyeresult/' + id;
             shareobj = {
-                shareurl:surl,
-                btnname:'分享作业',
-                image:nativecode.getUsedUrl('/zuoye_default.png'),
-                text:title
+                shareurl: surl,
+                btnname: '分享作业',
+                image: nativecode.getUsedUrl('/zuoye_default.png'),
+                text: title
             }
         }
-        if (shareobj){
+        if (shareobj) {
             let tourl = '/pages/share/common';
             tourl += '?args=';
             tourl += encodeURIComponent(JSON.stringify(shareobj));
@@ -281,10 +275,10 @@ nativecode.dosharecommon = function(type, id, title)
             });
         }
     }
-    return ;
+    return;
 }
 
-nativecode.dosharebanke = function (bankeitem) {
+nativecode.dosharebanke = function(bankeitem) {
     if (nativecode.platform == 'miniprogram') {
         let shareobj = {
             id: bankeitem.id,
@@ -303,7 +297,7 @@ nativecode.dosharebanke = function (bankeitem) {
     }
 }
 
-nativecode.navigateTo = function (path) {
+nativecode.navigateTo = function(path) {
 
     //! 方便调试， 有navbar不navigate
     if (nativecode.hasnavbar()) {
@@ -329,7 +323,7 @@ nativecode.navigateTo = function (path) {
     return false;
 }
 
-nativecode.navigateToSign = function (bankeid, isteacher, curbanke) {
+nativecode.navigateToSign = function(bankeid, isteacher, curbanke) {
     let wx = nativecode.getwx();
     let argobj = {
         bankeid: bankeid,
@@ -346,7 +340,7 @@ nativecode.navigateToSign = function (bankeid, isteacher, curbanke) {
     });
 }
 
-nativecode.wxcall = function (funname, argobj) {
+nativecode.wxcall = function(funname, argobj) {
     console.log("wxcall");
     let wx = require('weixin-js-sdk');
     console.log(wx);
@@ -385,7 +379,7 @@ nativecode.wxcall = function (funname, argobj) {
 }
 
 
-nativecode.issupportfun = function (funname) {
+nativecode.issupportfun = function(funname) {
     if (nativecode.platform == 'miniprogram') {
         //  if (funname == 'jsFileLink'){
         //     return false;
@@ -399,7 +393,7 @@ nativecode.issupportfun = function (funname) {
 
 
 
-nativecode.ncall = function (funname, argobj) {
+nativecode.ncall = function(funname, argobj) {
     //console.log("nativecode, ncall:"+funname);
 
     if (process.env.NODE_ENV == "development"
@@ -470,7 +464,7 @@ nativecode.ncall = function (funname, argobj) {
     return null;
 }
 
-nativecode.jsLogin = function (login, user) {
+nativecode.jsLogin = function(login, user) {
     let loginobj = {
         login: login,
         user: user
@@ -483,8 +477,7 @@ nativecode.jsLogin = function (login, user) {
     nativecode.ncall("jsLogin", loginobj);
 }
 
-
-nativecode.getDownUrl = function (suburl) {
+nativecode.getDownUrl = function(suburl) {
     let url = "http://192.168.0.2:81";
     //  url = "http://192.168.40.116";
     url = "http://192.168.40.104:9982";
@@ -494,7 +487,7 @@ nativecode.getDownUrl = function (suburl) {
     }
     return url + suburl;
 }
-nativecode.getDownUrl2 = function (suburl) {
+nativecode.getDownUrl2 = function(suburl) {
     let url = "http://192.168.0.2:9982";
     //  url = "http://192.168.40.116";
     if (process.env.NODE_ENV !== "development") {
@@ -506,7 +499,7 @@ nativecode.getDownUrl2 = function (suburl) {
         return `${url}${suburl}`
     }
 }
-nativecode.getUsedUrl = function (suburl) {
+nativecode.getUsedUrl = function(suburl) {
     if (suburl.length > 0) {
         if (suburl[0] != '/') {
             return suburl;
@@ -514,7 +507,7 @@ nativecode.getUsedUrl = function (suburl) {
     }
     return nativecode.getDownUrl(suburl);
 }
-nativecode.previewImage = function (vuethis, objargs) {
+nativecode.previewImage = function(vuethis, objargs) {
     if (typeof objargs == 'string') {
         let useurl = objargs;
         //if (useurl.indexOf(''))
@@ -554,7 +547,7 @@ nativecode.previewImage = function (vuethis, objargs) {
     }
 }
 
-nativecode.isimageobj = function (fitem) {
+nativecode.isimageobj = function(fitem) {
     if (typeof fitem.filetype != 'undefined') {
         if (fitem.filetype == 1) {
             return true;
@@ -571,7 +564,7 @@ nativecode.isimageobj = function (fitem) {
 }
 
 
-nativecode.fileviewSingle = function (vuethis, fitem) {
+nativecode.fileviewSingle = function(vuethis, fitem) {
     if (!fitem.filepath && fitem.url) {
         fitem.filepath = fitem.url;
     }
@@ -590,7 +583,7 @@ import {
     Toast,
 } from "mint-ui";
 
-nativecode.ncallFileLink = function (vuethis, fitem) {
+nativecode.ncallFileLink = function(vuethis, fitem) {
     if (fitem.downurl.includes('mp3')) {
         let audioInfo = {
             filepath: fitem.downurl,
@@ -621,7 +614,7 @@ nativecode.ncallFileLink = function (vuethis, fitem) {
     }
 }
 
-nativecode.fileview = function (vuethis, fitem) {
+nativecode.fileview = function(vuethis, fitem) {
     if (typeof fitem.ftype == 'string') {
         if (fitem.ftype == 'file') {
             return nativecode.fileviewSingle(vuethis, fitem);
@@ -632,7 +625,7 @@ nativecode.fileview = function (vuethis, fitem) {
     return nativecode.fileviewSingle(vuethis, fitem);
 }
 
-nativecode.fileviewUrl = function (vuethis, fitem) {
+nativecode.fileviewUrl = function(vuethis, fitem) {
     let oret = nativecode.ncall('jsUrlLink', fitem);
     if (!oret) {
         // console.log(fitem);
@@ -650,7 +643,7 @@ nativecode.fileviewUrl = function (vuethis, fitem) {
   objargs: items:
   index: current
  */
-nativecode.fileviewZuoye = function (vuethis, objargs) {
+nativecode.fileviewZuoye = function(vuethis, objargs) {
     let items = [];
     let cindex = objargs.index;
     let isimage = false;

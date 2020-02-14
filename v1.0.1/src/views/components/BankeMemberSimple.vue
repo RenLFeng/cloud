@@ -13,7 +13,7 @@
     <div class="maincontent">
       <div class="mainctitle ellipse">{{memberuser.name}}</div>
       <div class="maincsubtitle color9" v-if="!sign &&　memberuser.sno">{{memberuser.snoTitle}}: {{memberuser.sno}}</div>
-      <div v-if="!sign" class="maincsubtitle colory">{{scoreText}}:&nbsp;{{scoreTotal}}分</div>
+      <div v-if="!sign && !memberDetail" class="maincsubtitle colory">{{scoreText}}:&nbsp;{{scoreTotal}}分</div>
       <div
         v-if="sign"
         class="maincsubtitle colory"
@@ -140,6 +140,8 @@ export default {
 }
 .memberDetail.mainpart {
   height: auto;
+  margin-top: 0;
+   border-bottom:none;
 }
 .memberDetail.mainpart .maincontent > div {
   margin: 5px 0;

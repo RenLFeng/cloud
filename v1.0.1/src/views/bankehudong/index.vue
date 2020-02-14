@@ -45,6 +45,13 @@
           style="color:#38AD5A"
         ></i>
       </li>
+        <li class="fontlarge bs" @click="Danmu">
+        <span>弹幕互动</span>
+        <i
+          class="iconfont icondanmu eicotrigger bigfont fr"
+          style="color:#F04545"
+        ></i>
+      </li>
     </ul>
   </div>
 </template>
@@ -58,6 +65,9 @@ export default {
   name: "",
   props: {
     bankeid: {
+      default: 0
+    },
+     bnakeuserid: {
       default: 0
     },
     eventmsgs: {
@@ -145,6 +155,14 @@ export default {
         params: { bankeid: this.bankeid }
       });
     },
+     //弹幕
+    Danmu() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "Danmu",
+        params: { bankeid: this.bankeid,userid:this.bnakeuserid }
+      });
+    },
     //板书
     Banshu() {
       this.$store.commit("setRouterForward", true);
@@ -184,6 +202,10 @@ export default {
   .list-main {
     width: 95%;
     margin: 10px auto;
+    height:80vh;
+        padding-bottom: 30px;
+    min-height:80vh;
+    overflow: scroll;
     li {
       position: relative;
       height: 80px;

@@ -1,7 +1,11 @@
 <template>
   <div class="member-detail-main">
-    <BankeMemberSimple :memberuser="memberuser" scoreText="在本班课中得分" :memberDetail="true"></BankeMemberSimple>
+    <div>
+       <BankeMemberSimple :memberuser="memberuser" :memberDetail="true"></BankeMemberSimple>
+        <mt-cell title="个人学情" is-link @click.native="MyXueQingFn(true)"></mt-cell>
+    </div>
     <ul class="Statistics clearfix tc">
+      <li class="colory" style="width:100%;text-align:left;border-bottom: 1px solid #ccc;border-right:none">在本班课中得分:{{memberuser.score}}分</li>
       <li class="fl">
         <span class="colory fontsmall">{{memberuser.score1}}</span>
         <span>资源得分</span>
@@ -26,11 +30,24 @@
         <canvas id="mountNode"></canvas>
       </div>-->
     </div>
+       <mt-popup
+      v-model="popupXueQing"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+    <div v-if="popupXueQing">
+        <XueQing :memberuserid="memberuser.memberuserid" :memberuser="memberuser" @goback="onBack"/>
+    </div>
+    </mt-popup>
   </div>
 </template>
 <script>
 import F2 from "@antv/f2/lib/index-all";
+import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
 import BankeMemberSimple from "../components/BankeMemberSimple";
+import XueQing from "../my/MyXueQing/xueqing";
 import F2LineChart from "../../common/antv/f2/line";
 export default {
   name: "",
@@ -56,19 +73,34 @@ export default {
   },
   components: {
     BankeMemberSimple,
-    F2LineChart
+    F2LineChart,
+    XueQing
   },
   data() {
     return {
       Data: [],
       itemData: {},
-      index: 2
+      index: 2,
+      popupXueQing:false
     };
   },
-  created() {},
+  created() {
+  },
   mounted() {},
   methods: {
-
+ MyXueQing() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+       name: "MyXueQing",
+        params: {}
+      });
+    },
+    MyXueQingFn(type){
+      this.popupXueQing=type;
+    },
+    onBack(v){
+    this.MyXueQingFn(v)
+    }
   }
 };
 </script>
@@ -81,6 +113,7 @@ export default {
   }
   .Statistics {
     border-top: 1px solid #f0f0f0;
+        margin-top: 10px;
     li {
       width: 25%;
       padding: 10px;
@@ -95,6 +128,7 @@ export default {
     margin: 10px 0 20px 0;
   }
   .table-main {
+        height: 61vh;
     background: #fff;
   }
 }

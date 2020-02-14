@@ -19,7 +19,8 @@
 
     <div class="devide"></div>
     <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
-
+ <div class="devide"></div>
+    <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
@@ -305,6 +306,13 @@ export default {
       this.$router.push({
        // name: "BindSchool",
           name:'BindSchoolList',  //! cjy: 这里直接跳转到schoollist即可
+        params: {}
+      });
+    },
+    MyXueQing() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push({
+       name: "MyXueQing",
         params: {}
       });
     },

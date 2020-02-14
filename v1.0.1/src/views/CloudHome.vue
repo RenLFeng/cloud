@@ -53,7 +53,7 @@
             class="iconfont iconfont-big iconshouye-banke reddot-Tips-wrap"
             :class="homeEventmsgs?'reddot-Tips':''"
           ></i>
-          <span class="fonttiny">云课堂</span>
+          <span class="fonttiny">云班课</span>
         </div>
       </mt-tab-item>
       <mt-tab-item id="mine">

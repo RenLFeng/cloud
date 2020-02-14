@@ -426,7 +426,7 @@ export default {
 
         div.po {
           position: absolute;
-          width: 100%;
+          width: 75%;
           height: 100%;
           left: 100px;
           top: 50%;

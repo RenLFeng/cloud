@@ -275,7 +275,7 @@ export default {
 <style lang="less" scoped>
 .f2-main {
   .tit {
-    padding: 10px;
+    padding: 6px;
   }
   .canvas-wrap {
     position: relative;
@@ -288,18 +288,27 @@ export default {
 .van-tabs__wrap {
   width: 90%;
   margin: 0 auto;
-  padding: 15px 0;
+  /* padding: 5px 0; */
 }
 .van-tabs__nav {
   border: 1px solid rgb(0, 145, 250);
   border-radius: 20px;
 }
 .van-tab {
-  display: inline-block;
   width: 33.3%;
+  float: left;
   text-align: center;
   padding: 10px 0;
   border-radius: 20px;
+}
+.van-tabs__nav:after {
+    content: ".";
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: block;
+    clear: both;
+    overflow: hidden
 }
 .van-tab.van-tab--active .van-ellipsis {
   color: #fff;

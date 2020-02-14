@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="listcontainer">
+    <div class="listcontainer Member">
       <div
         v-infinite-scroll="loadMoreMember"
         infinite-scroll-disabled="loadingState"
@@ -45,7 +45,7 @@
       <mt-header title="成员详情" class>
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
-      <div class="content-main popup-scroll">
+      <div class="content-main popup-scroll-MemberDetail">
         <MemberDetail :memberuser="DetailItem" :chartData="chartData" />
       </div>
     </mt-popup>
@@ -212,6 +212,9 @@ export default {
           if (res.data.code == 0) {
             let members = res.data.data["members"];
             for (let v of members) {
+              if(!v.name){
+                v.name='未知名';
+              }
               this.membersid.push(v.memberuserid);
             }
             let curbanke = this.$store.state.curbanke;
@@ -330,8 +333,16 @@ export default {
 
 .uploadpart {
 }
-.listcontainer {
+.listcontainer.Member{
+    padding-bottom: 100px;
+} {
 }
 .content-main {
+}
+.popup-scroll-MemberDetail{
+    height: 100vh;
+    min-height:100vh;
+    overflow: auto ;
+    padding-bottom:50px;
 }
 </style>

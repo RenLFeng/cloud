@@ -29,6 +29,8 @@ import Sign from '../views/bankehudong/sign/teacherSignInfo'
 import PingCe from '../views/bankehudong/pingce/index'
 //评测
 import PingCeing from '../views/bankehudong/pingceing/index'
+//弹幕
+import Danmu from '../views/bankehudong/danmu/index'
 //分组管理
 import Group from '../views/bankeMember/group/index'
 //板书
@@ -43,72 +45,74 @@ import BindSchool from '../views/my/bindSchool'
 import BindSchoolList from '../views/my/bindSchool/bindend-list'
 //MP3
 import Audio from '../common/audio'
+//个人学情
+import MyXueQing from '../views/my/MyXueQing/xueqing'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
 
 // export function createRouter() {
-  let routers = new Router({
+let routers = new Router({
     // mode: 'history',
     routes: [
-        { path: '/bar',component: Page2,},
-        {path:'/', name:'cloudmain',component:cloudmain},
-        {path:'*', name:'cloudmain',component:cloudmain},
-        {path:'/navother', component:NavOther},
-        {path:'/navedit', component:NavEdit},
-        {path:'/examitemhome', component:examitemhome},
-        {path:'/examitemaddsel', component:examitemaddsel},
-        {path:'/exampaperhome', component:exampaperhome},
-        {path:'/exampaperadd', component:exampaperadd},
-        {path:'/examitempreview', component:examitempreview},
-        {path:'/login', component:login},
-        {path:'/mineinfo', component:mineinfo},
-        {path:'/minenameset', component:minenameset},
-        {path:'/bankenew', component:bankenew},
-        {path:"/bankehome/:id", component:bankehome, props:true},
-        {path:'/zuoyedetailedit', component:zuoyedetailedit},
-        {path:'/zuoyenew/:bankeid', component:zuoyenew, props:true},
-        {path:'/zuoyeresult/:zuoyeid', component:zuoyeresult, props:true},
-        {path:'/AverageScore',name:'AverageScore', component:F2chart},
-        {path:'/BigLogin',name:'BigLogin', component:BigLogin},
-        {path:'/Sign',name:'Sign', component:Sign},
-        {path:'/PingCe',name:'PingCe', component:PingCe},
-        {path:'/PingCeing',name:'PingCeing', component:PingCeing},
-        {path:'/urlpingce/:urlbankeid/:urlhack', component:PingCeing, props:true},
-        {path:'/Group',name:'Group', component:Group},
-        {path:'/Banshu',name:'Banshu', component:Banshu},
-        {path:'/Collection',name:'Collection', component:Collection},
-        {path:'/Join',name:'Join', component:Join},
-        {path:'/bankejoin/:bankeid', name:'Join', component:Join, props:true},
-        {path:'/BindSchool',name:'BindSchool', component:BindSchool},
-        {path:'/BindSchoolList',name:'BindSchoolList', component:BindSchoolList},
-        {path:'/Audio',name:'Audio', component:Audio},
+        { path: '/bar', component: Page2, },
+        { path: '/', name: 'cloudmain', component: cloudmain },
+        { path: '*', name: 'cloudmain', component: cloudmain },
+        { path: '/navother', component: NavOther },
+        { path: '/navedit', component: NavEdit },
+        { path: '/examitemhome', component: examitemhome },
+        { path: '/examitemaddsel', component: examitemaddsel },
+        { path: '/exampaperhome', component: exampaperhome },
+        { path: '/exampaperadd', component: exampaperadd },
+        { path: '/examitempreview', component: examitempreview },
+        { path: '/login', component: login },
+        { path: '/mineinfo', component: mineinfo },
+        { path: '/minenameset', component: minenameset },
+        { path: '/bankenew', component: bankenew },
+        { path: "/bankehome/:id", component: bankehome, props: true },
+        { path: '/zuoyedetailedit', component: zuoyedetailedit },
+        { path: '/zuoyenew/:bankeid', component: zuoyenew, props: true },
+        { path: '/zuoyeresult/:zuoyeid', component: zuoyeresult, props: true },
+        { path: '/AverageScore', name: 'AverageScore', component: F2chart },
+        { path: '/BigLogin', name: 'BigLogin', component: BigLogin },
+        { path: '/Sign', name: 'Sign', component: Sign },
+        { path: '/PingCe', name: 'PingCe', component: PingCe },
+        { path: '/PingCeing', name: 'PingCeing', component: PingCeing },
+        { path: '/urlpingce/:urlbankeid/:urlhack', component: PingCeing, props: true },
+        { path: '/Group', name: 'Group', component: Group },
+        { path: '/Banshu', name: 'Banshu', component: Banshu },
+        { path: '/Collection', name: 'Collection', component: Collection },
+        { path: '/Join', name: 'Join', component: Join },
+        { path: '/bankejoin/:bankeid', name: 'Join', component: Join, props: true },
+        { path: '/BindSchool', name: 'BindSchool', component: BindSchool },
+        { path: '/BindSchoolList', name: 'BindSchoolList', component: BindSchoolList },
+        { path: '/Audio', name: 'Audio', component: Audio },
+        { path: '/MyXueQing', name: 'MyXueQing', component: MyXueQing },
+        { path: '/Danmu', name: 'Danmu', component: Danmu },
 
 
-     
+
     ]
-  });
-  routers.beforeEach((to, from, next) => {
-      if (!nativecode.hasloginpage()){
-          if (to.path == '/login'){
-              next({
-                  path:'/'
-              })
-          }
-          else{
-              next();
-          }
-      }
-      else if (  //! todo. 检测不需要登陆即可查看的网页？
-          !store.getters.islogin
-          && to.path != '/login'
-      ) {
-          next({
-              path: '/login',
-          })
-      } else {
-          next()
-      }
+});
+routers.beforeEach((to, from, next) => {
+    if (!nativecode.hasloginpage()) {
+        if (to.path == '/login') {
+            next({
+                path: '/'
+            })
+        } else {
+            next();
+        }
+    } else if ( //! todo. 检测不需要登陆即可查看的网页？
+        !store.getters.islogin &&
+        to.path != '/login'
+    ) {
+        next({
+            path: '/login',
+        })
+    } else {
+        next()
+    }
 });
 export default routers
 // return routers

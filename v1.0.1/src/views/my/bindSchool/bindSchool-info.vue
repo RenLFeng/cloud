@@ -10,7 +10,7 @@
       </div>
       <p class="tit">我在该学校的信息</p>
       <mt-cell :title="labeltitle" :value="schoolInfo.sno" class="sno"></mt-cell>
-      <p class="canse tc fontsmall" @click="canseBind">取消绑定该学校</p>
+      <p class="canse tc fontsmall" @click="canseBind" v-if="!caneditbanke">取消绑定该学校</p>
     </div>
   </div>
 </template>
@@ -23,7 +23,10 @@ export default {
       default() {
         return {};
       }
-    }
+    },
+     caneditbanke: {
+      default:false
+    },
   },
   data() {
     return {

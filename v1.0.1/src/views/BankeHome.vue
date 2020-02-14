@@ -29,7 +29,7 @@
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
-          <BankeHuDong :bankeid="id" :eventmsgs="eventmsgs" :selected="new Date().getTime()" />
+          <BankeHuDong :bankeid="id" :bnakeuserid="curbanke.userid" :eventmsgs="eventmsgs" :selected="new Date().getTime()" />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
           <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />
@@ -49,16 +49,21 @@
             class="iconfont iconziyuan reddot-Tips-wrap"
             :class="eventmsgs.zyTips?'reddot-Tips':''"
           ></i>
-          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Resources')}}</span>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课前</span>
         </div>
       </mt-tab-item>
-      <mt-tab-item id="chengyuan">
+            <mt-tab-item id="hudong">
         <div class="bankehome">
-          <i class="iconfont iconchengyuan1 reddot-Tips-wrap" :class="eventmsgs.cyTips?'reddot-Tips':''"></i>
-          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Member')}}</span>
+          <i
+            class="iconfont iconhudong reddot-Tips-wrap"
+            :class="eventmsgs.hdTips.count?'reddot-Tips':''"
+          ></i>
+          <span
+            :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
+          >课中</span>
         </div>
       </mt-tab-item>
-      <mt-tab-item id="zuoye">
+            <mt-tab-item id="zuoye">
         <div class="bankehome">
           <i
             v-if="itemzuoyenormal"
@@ -68,7 +73,7 @@
           <span
             v-if="itemzuoyenormal"
             :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
-          >{{$t('bankeZiYuan.Task')}}</span>
+          >课后</span>
           <img
             v-if="!itemzuoyenormal"
             slot="icon"
@@ -78,15 +83,10 @@
           />
         </div>
       </mt-tab-item>
-      <mt-tab-item id="hudong">
+      <mt-tab-item id="chengyuan">
         <div class="bankehome">
-          <i
-            class="iconfont iconhudong reddot-Tips-wrap"
-            :class="eventmsgs.hdTips.count?'reddot-Tips':''"
-          ></i>
-          <span
-            :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
-          >{{$t('bankeZiYuan.Interaction')}}</span>
+          <i class="iconfont iconchengyuan1 reddot-Tips-wrap" :class="eventmsgs.cyTips?'reddot-Tips':''"></i>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">学情</span>
         </div>
       </mt-tab-item>
       <mt-tab-item id="tongzhi">
@@ -95,7 +95,7 @@
             class="iconfont iconbankexiangqing reddot-Tips-wrap"
             :class="eventmsgs.xqTips?'reddot-Tips':''"
           ></i>
-          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">{{$t('bankeZiYuan.Details')}}</span>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">我的</span>
         </div>
       </mt-tab-item>
     </mt-tabbar>
@@ -321,6 +321,7 @@ export default {
     },
   },
   created() {
+    this.$store.commit("SET_GO_SCHOOL", false);
     console.log("bankehome:" + this.id);
     //console.log(this.$store.getters);
 
@@ -354,6 +355,7 @@ export default {
     this.checkNeedShow();
     console.log("班可", this.curbanke);
     this.eventmsgsOnbanke();
+
   },
   destroyed() {
     this.$store.commit("setBHomeSelected", this.selected);

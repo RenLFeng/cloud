@@ -10,21 +10,21 @@ const productionGzipExtensions = ['js', 'css'];
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  publicPath: '',
+    publicPath: '',
 
-  css: {
-    loaderOptions: {
-      postcss: {
-        plugins: [
-            autoprefixer(),
-          pxtorem({
-            rootValue: 37.5,
-            propList: ['*']
-          })
-        ]
-      }
-    }
-  },
+    css: {
+        loaderOptions: {
+            postcss: {
+                plugins: [
+                    autoprefixer(),
+                    pxtorem({
+                        rootValue: 37.5,
+                        propList: ['*']
+                    })
+                ]
+            }
+        }
+    },
     configureWebpack: config => {
         if (isProduction) {
 
@@ -43,10 +43,10 @@ module.exports = {
         }
 
     },
-  lintOnSave: false,
-  devServer: {
-//  proxy: 'http://192.168.0.2:9982'
-       proxy: 'http://192.168.40.104:9982'
-    // proxy:'https://www2.exsoft.com.cn'
-  }
+    lintOnSave: false,
+    devServer: {
+        //  proxy: 'http://192.168.0.2:9982'
+        //  proxy: 'http://192.168.40.104:9982'
+        proxy: 'https://www2.exsoft.com.cn'
+    }
 }

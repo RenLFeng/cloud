@@ -1,5 +1,5 @@
 <template>
-  <div class="f2-main-content">
+  <div class="f2-main-content" style="    padding-top: 43px;">
     <mt-header title="得分统计" style="margin-bottom: 10px;" class="mint-header-f">
       <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
     </mt-header>
@@ -592,7 +592,7 @@ export default {
 .van-tabs__wrap {
   width: 90%;
   margin: 0 auto;
-  padding: 15px 0;
+  /* padding: 10px 0; */
 }
 .van-tabs__nav {
   border: 1px solid rgb(0, 145, 250);
