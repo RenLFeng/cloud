@@ -252,6 +252,7 @@ export default {
           this.localfiles.push(vo);
         }
         this.tryNextUpload();
+        this.$emit('fileChange',true)
       }
     },
     cancelAllUpload() {
@@ -379,7 +380,9 @@ export default {
           this.cancelAllUpload();
         }
         this.localfiles.splice(findex, 1);
+         this.$emit('fileChange',true)
       });
+
     },
     onbtnupload() {
       this.$refs.uploadfilebtn.value = "";

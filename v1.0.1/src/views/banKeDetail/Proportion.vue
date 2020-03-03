@@ -4,29 +4,29 @@
     <div class="content">
       <div class="item-box">
         <p class="tit">资源得分占比：</p>
-        <p class="input">
-          <input type="number" v-model="scorerule1" :disabled="!caneditbanke" />
+        <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
+          <input type="number" v-model="bankeInfo.scorerule1" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">签到得分占比：</p>
-        <p class="input">
-          <input type="number" v-model="scorerule2" :disabled="!caneditbanke" />
+        <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
+          <input type="number" v-model="bankeInfo.scorerule2" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">作业得分占比：</p>
-        <p class="input">
-          <input type="number" v-model="scorerule3" :disabled="!caneditbanke" />
+        <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
+          <input type="number" v-model="bankeInfo.scorerule3" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">评测得分占比：</p>
-        <p class="input">
-          <input type="number" v-model="scorerule4" :disabled="!caneditbanke" />
+        <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
+          <input type="number" v-model="bankeInfo.scorerule4" :disabled="!caneditbanke" />
           <span>%</span>
         </p>
       </div>
@@ -55,11 +55,6 @@ export default {
   watch: {},
   data() {
     return {
-      scorerule1: this.bankeInfo.scorerule1,
-      scorerule2: this.bankeInfo.scorerule2,
-      scorerule3: this.bankeInfo.scorerule3,
-      scorerule4: this.bankeInfo.scorerule4,
-      scorerule5: this.bankeInfo.scorerule5
     };
   },
 
@@ -68,10 +63,10 @@ export default {
       this.$http
         .post("api/banke/updateinfo", {
           id: this.bankeInfo.id,
-          scorerule1: this.scorerule1,
-          scorerule2: this.scorerule2,
-          scorerule3: this.scorerule3,
-          scorerule4: this.scorerule4
+          scorerule1: this.bankeInfo.scorerule1,
+          scorerule2: this.bankeInfo.scorerule2,
+          scorerule3: this.bankeInfo.scorerule3,
+          scorerule4: this.bankeInfo.scorerule4
         })
         .then(res => {
           if (res.data.code == "0") {
@@ -115,6 +110,13 @@ export default {
           right: 0;
           top: 50%;
           transform: translate(0, -50%);
+        }
+        &.ncaneditbanke{
+          input{
+            border:none;
+            border-bottom:1px solid #e5e5e5;
+            border-radius:0;
+          }
         }
       }
     }

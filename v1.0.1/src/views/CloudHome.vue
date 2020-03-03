@@ -1,35 +1,65 @@
 <template>
-  <div class="fontsmall">
-    <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
+  <div class="fontsmall cloudHome" :style="`top:${selected=='banke'?'70':'30'}px`">
+    <!-- <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
       <mt-button
         v-if="hasmainback"
         icon="back"
         slot="left"
         @click="onbackmain"
       >{{$t('common.Back')}}</mt-button>
+    </mt-header> -->
+     <!-- <i class="iconfont iconjia position-r fontmaintitle" @click="addBankeIcon"></i> -->
 
-      <!-- <mt-button slot="right" class="btnadd" v-if="showadd" @click="onadd">+</mt-button> -->
-    </mt-header>
-    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
+    <div class="mint-header-f mycreate-header" v-if="selected=='banke' && !order">
+      <div class="lable tc position-c color1">
+        <p :class="isCreate?'act navbar colord':''" @click="selectClass(1)">
+          <span class="tit-name fontnormal">我创建的</span>
+        </p>
+        <p :class="!isCreate?'act navbar colord':''" @click="selectClass(0)">
+          <span class="tit-name fontnormal">我加入的</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- My Tabel Header-->
+    <mt-header
+      v-if="selected=='mine' &&　!CliudBar"
+      title="我的"
+      class="mint-header-f mine-header fontnormal color1"
+    ></mt-header>
+
+    <!--Order  Header-->
+    <!-- <mt-header title="班课调序" v-if="order &&　CliudBar" class="order-header">
+      <mt-button slot="left" @click="orderCancel" class="fontnormal">取消</mt-button>
+      <mt-button slot="right" @click="orderOnsave" class="fontnormal">确定</mt-button>
+    </mt-header> -->
+
+    <!-- main -->
+    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'"
+    
+    >
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
-          <div class="seach-wrap">
-            <div class="div_sech">
-              <form action="/">
-                <van-search placeholder="搜索" :autofocus="false" @focus="onFocus" />
-              </form>
+          <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
+            <div class="div_sech" @click="onFocus">
+              <div class="box">
+                <span class="color9">搜索</span>
+                <i class="iconfont iconsoushuo fr fontlarge" style="color:#AAAAAA"></i>
+              </div>
             </div>
-            <i class="iconfont iconjiahao colord position-r fontmaintitle" @click="addBankeIcon"></i>
+              <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
+            <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
           </div>
           <p class="v"></p>
           <div class="bankecontainer">
-              <BankeSimple
-              v-for="(item,selindex) in curbankes" :key="selindex"
-                :classitem="curbankes[selindex]"
-                @click.native="bankeclick(item)"
-                @showMenu="onShowMenu"
-                :homeEventmsgs="homeEventmsgs"
-              ></BankeSimple>
+            <BankeSimple
+              v-for="(item,selindex) in curbankes"
+              :key="selindex"
+              :classitem="curbankes[selindex]"
+              @click.native="bankeclick(item)"
+              @showMenu="onShowMenu"
+              :homeEventmsgs="homeEventmsgs"
+            ></BankeSimple>
             <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
               <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
               <p v-if="isteacher">暂无班课，点击创建或加入班课</p>
@@ -80,7 +110,6 @@
             <form action="/">
               <van-search
                 placeholder="搜索"
-                :autofocus="false"
                 :show-action="true"
                 v-model="value"
                 @search="onSearch"
@@ -127,6 +156,10 @@ export default {
   name: "CloudHome",
   data() {
     return {
+      filterCurbankes: [],
+      isCreate: 1,
+      order: false,
+
       isBind: false,
       selected: "banke",
       classitem: {
@@ -155,6 +188,7 @@ export default {
           method: this.jion
         }
       ],
+
       SearchHistoryLen: false,
       SearchHistoryArr: [],
       popupSearchHiosty: false,
@@ -162,10 +196,9 @@ export default {
       searchData: [],
 
       homeEventmsgs: false,
-        bankeitem:{
-          ordernum:0
-        },
-
+      bankeitem: {
+        ordernum: 0
+      }
     };
   },
   computed: {
@@ -178,24 +211,24 @@ export default {
       }
       return false;
     },
-      actions(){
-        let ret = [];
-        if (nativecode.hassharebanke()){
-            ret.push({
-                name:'分享班课',
-                method:this.bankeShare
-            })
-        }
-        let oname = '置顶班课';
-        if (this.bankeitem && this.bankeitem.ordernum){
-            oname = '取消置顶';
-        }
+    actions() {
+      let ret = [];
+      if (nativecode.hassharebanke()) {
         ret.push({
-            name:oname,
-            method:this.Roof
-        })
-         return ret;
-      },
+          name: "分享班课",
+          method: this.bankeShare
+        });
+      }
+      let oname = "置顶班课";
+      if (this.bankeitem && this.bankeitem.ordernum) {
+        oname = "取消置顶";
+      }
+      ret.push({
+        name: oname,
+        method: this.Roof
+      });
+      return ret;
+    },
     isteacher() {
       return this.$store.getters.isteacher;
     },
@@ -216,7 +249,10 @@ export default {
         return true;
       }
       return false;
-    }
+    },
+    curuser() {
+      return this.$store.getters.curuser;
+    },
   },
   watch: {
     selected() {
@@ -224,6 +260,9 @@ export default {
       if (this.selected == "banke") {
         this.initbanke();
       } else if (this.selected == "mine") {
+        if (!this.isCreate) {
+          this.isCreate = 1;
+        }
         this.initmine();
       }
     },
@@ -243,6 +282,23 @@ export default {
     this.eventmsgsOnmain();
   },
   methods: {
+    selectClass(type) {
+      if (this.isCreate == type) return;
+      this.isCreate = type;
+      this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 0);
+    },
+    orderFn() {
+      this.order = true;
+      this.$store.commit("SET_CLOUD_BAR", true);
+    },
+    // 取消调序
+    orderCancel() {
+      this.order = false;
+      this.$store.commit("SET_CLOUD_BAR", false);
+    },
+    // 保存调序
+    orderOnsave() {},
+
     onChangeSelected(v) {
       this.selected = v;
     },
@@ -283,11 +339,11 @@ export default {
         }
       }
     },
-      bankeShare(){
-        if (this.bankeitem.id){
-          nativecode.dosharebanke(this.bankeitem);
-        }
-      },
+    bankeShare() {
+      if (this.bankeitem.id) {
+        nativecode.dosharebanke(this.bankeitem);
+      }
+    },
     // 创建班课
     onadd() {
       var isteacher = this.$store.getters.isteacher;
@@ -451,10 +507,14 @@ export default {
             }
           } else {
           }
-          this.$store.commit("banke/setBankes", datas);
+          this.filterCurbankes = datas;
+          this.filterCurbankeFn(datas, this.isCreate, 1);
+          // this.$store.commit("banke/setBankes", datas);
         })
         .catch(err => {
-          this.$store.commit("banke/setBankes", datas);
+          this.filterCurbankes = datas;
+          this.filterCurbankeFn(datas, this.isCreate, 1);
+          // this.$store.commit("banke/setBankes", datas);
         });
     },
     //红点班课主页
@@ -468,6 +528,25 @@ export default {
           }
         })
         .catch(err => {});
+    },
+    filterCurbankeFn(bankes, type, first) {
+      let temp = [];
+      if (type) {
+        temp = bankes.filter(item => item.userid == this.curuser.id);
+      } else {
+        temp = bankes.filter(item => item.userid != this.curuser.id);
+      }
+      //首次加载
+      if (temp.length == 0 && first) {
+        this.isCreate = 0;
+        temp = bankes.filter(item => item.userid != this.curuser.id);
+      }
+      if (!temp.length && !first) {
+        this.bankestatedesc = "当前无班课";
+        console.log("bankeempty", this.bankeempty);
+        console.log("bankestatedesc", this.bankestatedesc);
+      }
+      this.$store.commit("banke/setBankes", temp);
     },
     onClearevnt(v) {
       if (v) {
@@ -484,6 +563,8 @@ export default {
     examhome,
     BankeSimple,
     [Search.name]: Search,
+    //  [Tab.name]: Tab,
+    //   [Tabs.name]: Tabs,
     Empty
   }
 };
@@ -557,6 +638,15 @@ export default {
 .div_sech {
   width: 85% !important;
 }
+.div_sech .box {
+  height: 43px;
+  background: rgba(249, 249, 249, 1);
+  border: 1px solid rgba(240, 240, 240, 1);
+  opacity: 1;
+  border-radius: 8px;
+  line-height: 43px;
+  padding: 0 10px;
+}
 .van-search__content {
   background: rgba(249, 249, 249, 1) !important;
   border-radius: 8px !important;
@@ -581,8 +671,11 @@ export default {
   transform: translate(-50%, 0);
 }
 .page-wrap {
-    overflow: auto;
-    padding-bottom: 137px;
+  overflow: auto;
+  padding-bottom: 157px;
+}
+.cloudHome{
+  /* top: 70px; */
 }
 </style>
 
@@ -613,6 +706,31 @@ export default {
   .clear {
     padding: 20px 0;
     color: #0089ff;
+  }
+}
+.mycreate-header {
+  width: 100%;
+  height: 75px;
+  background: #fff;
+  padding: 15px 0;
+  .lable {
+    width: 80%;
+    line-height: 45px;
+    > p {
+      position: relative;
+      display: inline-block;
+      width: 50%;
+      &.navbar::after {
+        width: 30%;
+        border-radius: 2px;
+      }
+      &.act {
+      }
+    }
+  }
+  > i {
+    font-size: 30px;
+    color: #aaaaaa;
   }
 }
 </style>

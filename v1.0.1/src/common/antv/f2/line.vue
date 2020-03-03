@@ -207,7 +207,7 @@ export default {
         chart.source(this.data, {
           count: {
             // type: 'cat',
-            tickCount: 4
+            tickCount: 3
             // min: 1,
             //  ticks:ticks?ticks:null,
           },

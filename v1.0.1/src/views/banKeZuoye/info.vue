@@ -9,18 +9,37 @@
       </div>
     </div>
     <p class="submit-info text-center border-bottom border-top fontsmall">
-      <span class="border-right" @click="subMit(0)" :class="isTrue?'':'my-color'">{{$t('bankeTask.Not_yet')}}（{{noSubMit.length}}{{$t('common.Person')}}）</span>
-      <span @click="subMit(1)" :class="isTrue?'my-color':''">{{$t('bankeTask.Submitted')}}（{{isSubMit.length}}{{$t('common.Person')}}）</span>
+      <span
+        class="border-right"
+        @click="subMit(0)"
+        :class="isTrue?'':'my-color'"
+      >{{$t('bankeTask.Not_yet')}}（{{noSubMit.length}}{{$t('common.Person')}}）</span>
+      <span
+        @click="subMit(1)"
+        :class="isTrue?'my-color':''"
+      >{{$t('bankeTask.Submitted')}}（{{isSubMit.length}}{{$t('common.Person')}}）</span>
     </p>
 
-    <ul v-if="isTrue">
+    <ul v-if="isTrue" class="list-wrap">
       <li v-for="(item,index) in isSubMit" :key="index">
-        <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime"></mt-cell>
+        <!-- <mt-cell :title="item.username" :label="item.ztext" :value="item.submittime"></mt-cell> -->
+        <div class="item">
+          <p class="tit">
+            <span class="fontnormal name ellipse">{{item.username}}</span>
+            <span class="font14 color9 tr position-r">{{item.submittime}}</span>
+          </p>
+          <p class="ztext font16">{{item.ztext}}</p>
+        </div>
       </li>
     </ul>
-    <ul v-if="!isTrue">
+    <ul v-if="!isTrue" class="list-wrap">
       <li v-for="(item,index) in noSubMit" :key="index">
-        <mt-cell :title="item.username" :label="item.ztext" :value="$t('bankeTask.Job_not_submitted')"></mt-cell>
+        <div class="item">
+          <p class="tit">
+            <span class="fontnormal name ellipse">{{item.username}}</span>
+            <span class="font14 color9 tr position-r">未提交作业</span>
+          </p>
+        </div>
       </li>
     </ul>
   </div>
@@ -44,6 +63,7 @@ export default {
   watch: {
     allZuoyeitem: function(newValue, oldValue) {
       this.allInfo = newValue;
+      // console.log("vcvcvcv", this.allInfo);
       for (let item of this.allInfo) {
         if (item.submitid) {
           this.isSubMit.push(item);
@@ -51,8 +71,8 @@ export default {
           this.noSubMit.push(item);
         }
       }
-      console.log("isSubMit", this.isSubMit);
-      console.log("noSubMit", this.noSubMit);
+      // console.log("isSubMit", this.isSubMit);
+      // console.log("noSubMit", this.noSubMit);
     }
   },
   data() {
@@ -61,7 +81,7 @@ export default {
       loading: true,
       isTrue: false,
       isSubMit: [],
-      noSubMit: [],
+      noSubMit: []
     };
   },
   created() {},
@@ -129,6 +149,32 @@ export default {
           #d9d9d9 50%,
           transparent 50%
         );
+      }
+    }
+  }
+  .list-wrap {
+    > li {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .item {
+      .tit {
+        position: relative;
+        margin-bottom: 6px;
+        .name {
+          display: inline-block;
+          width: 70%;
+        }
+        .tr {
+          display: inline-block;
+          width: 30%;
+        }
+        .time {
+        }
+      }
+      .ztext {
+        color: #666;
       }
     }
   }

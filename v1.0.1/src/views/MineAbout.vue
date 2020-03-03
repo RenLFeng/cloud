@@ -1,14 +1,17 @@
 <template>
   <div class="baout-main">
     <div class="avatarpart" @click="onmine">
-      <img :src="user.avatar" :onerror="$defaultImg('account')" class="avatarimgpart avatar" />
-      <div class="avatartextpart">
-        <div class="fontlarge namepart ellipse">{{user.name}}</div>
-        <div class="fontsmall accountpart">
-          {{$t('personal.Account')}}:{{useraccount}}
-          <i class="my-cell-allow-right"></i>
-        </div>
+      <img
+        :src="user.avatar"
+        :onerror="$defaultImg('account')"
+        class="avatarimgpart avatar position-l"
+      />
+      <div class="avatartextpart position-l">
+        <div class="fontsmall namepart ellipse">{{user.name}}</div>
+        <div class="fontsmall accountpart colora">{{$t('personal.Account')}}:{{useraccount}}</div>
+        <!-- <i class="iconfont iconcellyoucejiantou position-r"></i> -->
       </div>
+      <i class="iconfont iconcellyoucejiantou position-r"></i>
     </div>
 
     <div class="devide"></div>
@@ -19,7 +22,7 @@
 
     <div class="devide"></div>
     <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
- <div class="devide"></div>
+    <div class="devide"></div>
     <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
@@ -69,7 +72,7 @@
             @click="uibindaction('newaccount')"
           >生成登陆账户</mt-button>
         </div>
-         -->
+        -->
         <div v-show="showbindpanel">
           <div class="tit">{{bindtitle}}</div>
           <div v-show="bindaction != 'changepassword'" class="input-item-wrap">
@@ -91,9 +94,9 @@
       </mt-header>
       <BankeEnd :curbankes="curbankes"></BankeEnd>
     </mt-popup>
-    <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false">
+    <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false" style="">
       <mt-header title="关于" class>
-        <mt-button slot="left" icon="back" @click="Backs">{{$t('common.Back')}}</mt-button>
+        <mt-button slot="left" icon="back" @click="Backs">我的</mt-button>
       </mt-header>
       <About />
     </mt-popup>
@@ -295,7 +298,7 @@ export default {
         this.$store.commit("setRouterForward", true);
         this.$store.commit("banke/REMOV_BANKES", []);
         this.$router.push("/login");
-          nativecode.jsLogin(0, {});
+        nativecode.jsLogin(0, {});
       });
     },
     onset: function() {
@@ -304,15 +307,15 @@ export default {
     bindSchool() {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
-       // name: "BindSchool",
-          name:'BindSchoolList',  //! cjy: 这里直接跳转到schoollist即可
+        // name: "BindSchool",
+        name: "BindSchoolList", //! cjy: 这里直接跳转到schoollist即可
         params: {}
       });
     },
     MyXueQing() {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
-       name: "MyXueQing",
+        name: "MyXueQing",
         params: {}
       });
     },
@@ -411,33 +414,54 @@ export default {
   transform: translateY(50%) rotate(45deg);
 }
 
-.avatarimgpart {
-  width: 60px;
-  height: 60px;
-  float: left;
+.baout-main .avatarimgpart {
+  width: 76px;
+  height: 76px;
 }
 
 .accountpart {
-  color: #c8c8cd;
   margin-top: 5px;
 }
-.namepart {
+.baout-main .namepart {
   margin-top: 10px;
 }
 
-.avatartextpart {
-  margin-left: 70px;
+.baout-main .avatartextpart {
+  width: calc(100% - 150px);
+  margin-left: 100px;
+  color: #1c1c1c;
+}
+.baout-main .iconfont {
+  color: #a8a8a8;
+  right: 16px;
+  font-weight: 600;
 }
 
-.avatarpart {
-  height: 80px;
+.baout-main .avatarpart {
+  position: relative;
+  height: 119px;
   padding: 10px;
   background: #fff;
+}
+.baout-main .avatarpart > img {
 }
 </style>
 <style>
 .mint-cell-wrapper {
   background-image: none !important;
+}
+.mint-cell-wrapper > i {
+}
+.mint-cell-wrapper > i::after {
+  height: 10px !important;
+  width: 10px !important;
+  border-color: #a8a8a8 !important;
+}
+.mint-cell {
+  border-bottom: 1px solid #f0f0f0;
+}
+.mint-cell-title{
+  color: #1c1c1c;
 }
 </style>
 

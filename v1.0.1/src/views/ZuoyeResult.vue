@@ -2,15 +2,23 @@
   <div class="zouye-results-wrap">
     <mt-header :title="titledesc" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
-      <mt-button
+      <!-- <mt-button
         slot="right"
         v-if="pagemode=='submit'"
         @click="popupSubmit=true"
-      >{{$t('bankeTask.Submit_job')}}</mt-button>
+      >{{$t('bankeTask.Submit_job')}}</mt-button> -->
+       <mt-button
+        slot="right"
+        v-if="pagemode=='submit'"
+        @click="onbtnsubmit"
+        :disabled="submitdisabled || prohibit"
+      >提交
+      </mt-button>
+
       <mt-button slot="right" v-else-if="showstopbtn" @click="showmzuoyemenu=true">操作</mt-button>
     </mt-header>
 
-    <div class="noheadercontainer noheaderscroll">
+    <div class="noheaderscroll main">
       <mt-loadmore
         :top-method="loadTop"
         @top-status-change="handleTopChange"
@@ -46,7 +54,7 @@
             class="showZdetail-tit"
             :class="showZdetail?'act':''"
           ></mt-cell>
-          <div v-show="showZdetail" class="showZdetail-main" :class="showZdetail?'act':''">
+          <div v-if="showZdetail" class="showZdetail-main" :class="showZdetail?'act':''">
             <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly" :showZdetail="true"></zuoyedetailedit>
           </div>
         </div>
@@ -66,13 +74,13 @@
           :title="$t('bankeTask.Answer')"
           is-link
           v-if="pagemode=='result'"
-          @click.native="popupAnswer=true"
+          @click.native="AnswerFn"
         >{{answerdesc}}</mt-cell>
 
-        <div class="devide zashowbtnpart">
-          <div v-if="pagemode=='submit'">
+        <div class="zashowbtnpart" :class="pagemode=='submit'?'submit':'result'">
+          <!-- <div v-if="pagemode=='submit'">
             <div class="zashowbtn zashowbtnactive">{{$t('bankeTask.My_submission')}}</div>
-          </div>
+          </div> -->
           <div v-if="pagemode=='result'">
             <div
               @click="selectPF(1)"
@@ -85,7 +93,34 @@
           </div>
         </div>
 
-        <div v-for="(ritem,selindex) in results" v-bind:key="selindex">
+
+        <div v-if="pagemode=='submit'" style="padding:10px;" class="showemptydesc-submit">
+          <div v-if="canEditzy" class="isZySbmitEdit">
+            <p class="text-tips position-c">
+                {{isZySbmitEdit}}
+            </p>
+            </div>
+          <P v-if="results.length" class="tr colord fontsmall " style="padding:10px;position:relative;" ><span class="position-r"  @click="onSeeAllSubmit(results[0])">编辑记录{{results.length}}</span></P>
+            <zuoyedetailedit @textChange="ontextChange" :zdetail="zdetailsubmit" :canEditzy="canEditzy"></zuoyedetailedit>
+        </div>
+        <div v-else>
+          <div v-for="(ritem,selindex) in results" v-bind:key="selindex">
+            <div v-if="showitem(ritem)">
+                  <ZuoyeAnswerItem
+                    :resultitem="ritem"
+                    @commentClicked="onCommentClick"
+                    @scoreClicked="onScoreClick"
+                    @seeAllSubmit="onSeeAllSubmit"
+                  ></ZuoyeAnswerItem>
+                  <div class="devide"></div>
+            </div>
+          </div>
+          <div v-if="showemptydesc" class="tc">
+           {{emptydesc}}
+          </div>
+        </div>
+        <!-- <div v-for="(ritem,selindex) in results" v-bind:key="selindex">
+          {{pagemode}}==hkhk
           <div v-if="showitem(ritem)">
             <ZuoyeAnswerItem
               :resultitem="ritem"
@@ -96,52 +131,36 @@
             <div class="devide"></div>
           </div>
         </div>
-        <div v-if="showemptydesc" class="tc" style="margin-top:50px;">
-          <div v-if="pagemode=='submit'">
-            <div style="margin-bottom:10px;">{{$t('bankeTask.Not_yet')}}</div>
-            <div>
-              {{$t('common.Click')}}
-              <span
-                class="link"
-                @click="popupSubmit=true"
-              >{{$t('bankeTask.Submit_job')}}</span>
-              {{$t('bankeTask.To_submit')}}
-            </div>
+        <div v-if="showemptydesc" class="tc">
+          <div v-if="pagemode=='submit'" class="showemptydesc-submit">
+              <zuoyedetailedit :zdetail="zdetailsubmit"></zuoyedetailedit>
           </div>
           <div v-else>{{emptydesc}}</div>
-        </div>
+        </div> -->
       </mt-loadmore>
     </div>
 
-    <mt-popup v-model="popupSubmit" position="right" class="mint-popup-3" :modal="false">
+<!-- 提交作业 -->
+    <!-- <mt-popup v-model="popupSubmit" position="right" class="mint-popup-3" :modal="false">
       <mt-header :title="$t('bankeTask.Submit_job')">
         <mt-button
           slot="right"
           @click="onbtnsubmit"
           :disabled="submitdisabled"
         >{{$t('common.Submit')}}</mt-button>
-
         <mt-button slot="left" @click="popupSubmit = false">{{$t('common.Close')}}</mt-button>
       </mt-header>
-
       <zuoyedetailedit :zdetail="zdetailsubmit"></zuoyedetailedit>
-    </mt-popup>
+    </!--> 
 
-    <!-- <mt-popup v-model="popupZDetail" position="right" class="mint-popup-3" :modal="false">
-      <mt-header title>
-        <mt-button slot="left" icon="back" @click="popupZDetail = false">{{$t('common.Back')}}</mt-button>
-      </mt-header>
-
-      <zuoyedetailedit :zdetail="zdetail" :readonly="zreadonly"></zuoyedetailedit>
-    </mt-popup>-->
-    <!-- 评论 -->
+<!-- 评论 -->
     <mt-popup v-model="popupZuoyePL" position="right" class="mint-popup-3" :modal="false">
       <mt-header :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Comment_area')">
         <mt-button slot="left" icon="back" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <Discuss :itemInfo="studentInfo" :popupZuoyePL="popupZuoyePL"></Discuss>
     </mt-popup>
-    <!-- 评分 -->
+<!-- 评分 -->
     <mt-popup v-model="popupZuoyePF" position="bottom" class="pf-container-popup">
       <div class="pf-container">
         <p class="tit border-bottom-e5 text-center">
@@ -164,7 +183,7 @@
         </ul>
       </div>
     </mt-popup>
-    <!-- 作业信息 -->
+ <!-- 作业信息 -->
     <mt-popup
       v-model="popuPzouyeInfo"
       position="right"
@@ -203,17 +222,20 @@
     <mt-popup
       v-model="popupAllsubmit"
       position="right"
-      class="mint-popup-3"
+      class="mint-popup-3 Allsubmit-history"
       :modal="false"
       :style="Preview?{overflow: 'scroll'}:''"
     >
-      <mt-header :title="$t('bankeTask.All_submitted')">
+      <mt-header :title="`${AllsubmitName} 提交历史`" class="">
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <div v-for="(ritem,selindex) in popupAllsubmitItem" v-bind:key="selindex">
         <div v-if="showitem(ritem)">
+          <p class="version fontsmall">版本{{popupAllsubmitItem.length-selindex}}</p>
           <ZuoyeAnswerItem
             :resultitem="ritem"
+            :seeMySbmit="seeMySbmit"
+            :pagemode="pagemode"
             @commentClicked="onCommentClick"
             @scoreClicked="onScoreClick"
           ></ZuoyeAnswerItem>
@@ -269,7 +291,8 @@ export default {
       popuPzouyeAllMark: false,
       popupAnswer: false,
       popupAllsubmit: false,
-      popupAllsubmitItem: {},
+      popupAllsubmitItem:[],
+      AllsubmitName:'',
       mark: "",
       studentName: "",
       zreadonly: true,
@@ -314,10 +337,22 @@ export default {
         ismaster:false,
         mymember:true,  //! 是否在提交成员名单中
 
-      isShuoc:false
+      isShuoc:false,
+      prohibit:true,
+      canEditzy:false,
+      seeMySbmit:false,
     };
   },
+    watch: {
+       zanswerTextChange() {
+        //  this.canEditzy=true;
+            // console.log('监听zdetailsubmit变化',this.zdetailsubmit);
+        }
+  },
   computed: {
+     zanswerTextChange() {
+            // return this.zdetailsubmit.ztext;
+        },
     Preview() {
       return this.$store.state.Preview.isPreview;
     },
@@ -355,7 +390,7 @@ export default {
     },
     titledesc() {
       if (this.pagemode == "submit") {
-        return this.$t("bankeTask.Job_details");
+        return '作答';
       }
       return this.$t("bankeTask.Job_Results");
     },
@@ -460,7 +495,17 @@ export default {
       var tfmt =
         "%i " + this.$t("common.Person") + this.$t("bankeTask.Not_submitted");
       return commontools.sprintf(tfmt, ni);
-    }
+    },
+    isZySbmitEdit(){
+      if(this.canEditzy){
+        return '作业已被评分，不能编辑，如需修改，请联系教师。'
+      }else{
+        return ''
+      }
+    },
+         user() {
+      return this.$store.getters.curuser;
+    },
   },
   methods: {
     loadTop() {
@@ -470,6 +515,7 @@ export default {
     goBacks() {
       if (this.popupAllsubmit && !this.popupZuoyePL)
         this.popupAllsubmit = false;
+         this.seeMySbmit=false;
       if (this.popupZuoyePL) {
         this.popupZuoyePL = false;
         this.loadAll();
@@ -508,11 +554,20 @@ export default {
         // }
       }
     },
+    AnswerFn(){
+      if(this.zuoyeitem.answerdesc){
+          this.popupAnswer=true;
+      }
+    },
+    ontextChange(){
+      this.prohibit=false;
+    },
     onSeeAllSubmit(item) {
       // console.log( item);
         //! 查看个人的所有提交
       if (item) {
         this.popupAllsubmit = true;
+        this.seeMySbmit=true;
         var url =
           "/api/api/zuoyeresultquery?zuoyeid=" +
           this.zuoyeid +
@@ -534,6 +589,7 @@ export default {
                 );
               }
                 this.popupAllsubmitItem = zitem;
+                this.AllsubmitName=this.user.id==zitem[0].userid?'我的':zitem[0].username;
 
             } else {
               Toast(res.data.msg);
@@ -700,6 +756,13 @@ export default {
         );
       }
       this.results = dresults;
+      if(dresults.length){
+      this.zdetailsubmit.ztext=this.results[0].ztext;
+      this.zdetailsubmit.localfiles=this.results[0].localfiles;
+        if(dresults[0].score>-1){
+          this.canEditzy=true
+        }
+      }
     },
       doshare(){
         nativecode.dosharecommon('zuoye', this.zuoyeid, this.zuoyeitem.name);
@@ -765,11 +828,14 @@ export default {
             oneitem.localfiles = maintools.localfilesFromFilelist(
               oneitem.files
             );
-            this.results.splice(0, 0, oneitem);
+            // this.results.splice(0, 0, oneitem);
+
             //! 清空本地的提交信息
-            this.popupSubmit = false;
-            this.zdetailsubmit.ztext = "";
-            this.zdetailsubmit.localfiles.length = 0;
+            // this.popupSubmit = false;
+            // this.zdetailsubmit.ztext = "";
+            // this.zdetailsubmit.localfiles.length = 0;
+            //   this.zdetailsubmit.localfiles=[];
+             this.prohibit=true;
           } else {
             //! Toast 不可见
             MessageBox(res.data.msg);
@@ -859,6 +925,45 @@ export default {
 <style lang="less">
 .zouye-results-wrap {
   background: #fff;
+  top: 55px;
+  .main{
+    .showemptydesc-submit{
+      .zdetail {
+          height: 20vh;
+}
+.attachdesc{
+  text-align: left;
+}
+.blockborder{
+      position: relative;
+          border: 1px dashed #ccc;
+      .textadd{
+        position: absolute;
+      }
+}
+.imgblock{
+  width:60px;
+  height:60px;
+}
+    }
+  }
+  .mint-cell-value.is-link {
+    margin-right: 30px;
+}
+.version{
+      height: 53px;
+    padding: 0 10px;
+    line-height:53px;
+}
+.Allsubmit-history{
+  .zacontainer{
+    padding:0 10px;
+    .zatextmain{
+      margin-top:0;
+
+    }
+  }
+}
 }
 .pf-container-popup {
   width: 100%;
@@ -914,12 +1019,20 @@ export default {
   text-align: center;
 
   padding: 5px;
-  margin-top: 6px;
   margin-right: 10px;
 }
-.zashowbtnpart {
-  height: 44px;
-  padding: 0px 10px;
+.zashowbtnpart{
+  height:auto;
+  min-height:10px;
+  min-height: 10px;
+  padding: 10px;
+  background:#f0f0f0;
+}
+.zashowbtnpart.submit{
+  /* height:10px; */
+}
+.zashowbtnpart.result{
+  /* height:44px; */
 }
 .zashowbtnactive {
   border: 1px solid #0089ff;
@@ -975,5 +1088,20 @@ export default {
 .showZdetail-tit.act,
 .showZdetail-main.act {
   border-bottom: 1px solid #f0f0f0;
+}
+.isZySbmitEdit{
+  position:relative;
+  height:71px;
+
+background:rgba(255,137,0,1);
+}
+.isZySbmitEdit .text-tips{
+  width:100%;
+  height:50px;
+    padding:0 10px;
+font-size:18px;
+font-weight:400;
+line-height:25px;
+color:rgba(255,255,255,1);
 }
 </style>

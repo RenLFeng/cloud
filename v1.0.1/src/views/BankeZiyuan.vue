@@ -89,11 +89,11 @@
         </div>
         <ul class="list-content">
           <li v-for="(item,index) in UserList" :key="index" class="clearfix">
-            <span class="fl">{{item.name}}</span>
-            <span class="fr">
-              <span class="time fonttiny">{{item.countdate}}</span>
+            <span class="name ellipse position-l">{{item.name}}</span>
+            <span class="score-wrap position-r tr">
               <span v-if="item.score" class="score fr">得分&nbsp;{{item.score}}</span>
-              <span v-else class="score fr">未得分</span>
+              <span v-else class="score fr">未查看</span>
+              <span class="time fonttiny colora">{{item.countdate}}</span>
             </span>
           </li>
         </ul>
@@ -201,7 +201,7 @@ export default {
               method: this.Collection
           })
           objret.push({
-              name: "信息",
+              name: "查看情况",
               method: this.showInfo
           })
           if (isteacher){
@@ -313,6 +313,8 @@ export default {
       this.actionShow = true;
       this.editItemFile = fileitem;
       this.setSeeResources(fileitem);
+    },
+    queryviews(fileitem){
       this.$http
         .post("api/bankefile/queryviews", {
           id: fileitem.id,
@@ -324,40 +326,69 @@ export default {
             this.noViewUserList = [];
             this.UserList = [];
             this.seeState = 0;
-            this.editItemFile.users = res.data.data.users;
-            this.editItemFile.memberids = res.data.data.memberids;
-            this.editItemFile.views = res.data.data.views;
-            this.editItemFile.noviewnum =
-              this.editItemFile.memberids.length -
-              this.editItemFile.views.length;
+
+            fileitem.memberids = res.data.data.memberids;
+            fileitem.users = res.data.data.users;
+            fileitem.views = res.data.data.views;
+
+            fileitem.noviewnum =
+              fileitem.memberids.length -
+              fileitem.views.length;
           }
-          if (this.editItemFile.views.length) {
-            for (let v of this.editItemFile.views) {
-              for (let item of this.editItemFile.users) {
+          if (fileitem.views.length) {
+            for (let v of fileitem.views) {
+              for (let item of fileitem.users) {
                 if (v.userid == item.id) {
                   v.name = item.name;
                   item.isView = true;
                 }
               }
             }
-            for (let v of this.editItemFile.users) {
+            for (let v of fileitem.users) {
               if (!v.isView) {
                 this.noViewUserList.push(v);
               }
             }
           } else {
-            this.noViewUserList = this.editItemFile.users;
+            this.noViewUserList = fileitem.users;
           }
           if (this.noViewUserList.length) {
             this.UserList = this.noViewUserList;
           } else {
             this.seeState = 1;
-            this.UserList = this.editItemFile.views;
+            this.UserList = fileitem.views;
           }
-          console.log("editItemFile", this.editItemFile);
-          console.log("noViewUserList", this.noViewUserList);
         })
         .catch(err => {});
+    },
+    showInfo() {
+      this.popupEditInfo = true;
+       this.queryviews(this.editItemFile);
+    },
+    //学生查看or未查看
+    see(v) {
+      this.seeState = v;
+      if (v == "0") {
+        this.UserList = this.noViewUserList;
+      } else {
+        this.UserList = this.editItemFile.views;
+      }
+    },
+    //设置已阅读资源
+    setSeeResources(fileitem) {
+      this.$http
+        .post("api/bankefile/setview", {
+          bankefileid: fileitem.id,
+          classid: fileitem.bankeid
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            fileitem.viewnum++;
+            fileitem.eventmsgs = false;
+          }
+        })
+        .catch(res => {
+        });
     },
     deletezy() {
       if (!this.$store.getters.caneditbanke) {
@@ -387,33 +418,6 @@ export default {
         })
         .catch(() => {
         });
-    },
-    showInfo() {
-      this.popupEditInfo = true;
-    },
-    //学生查看or未查看
-    see(v) {
-      this.seeState = v;
-      if (v == "0") {
-        this.UserList = this.noViewUserList;
-      } else {
-        this.UserList = this.editItemFile.views;
-      }
-    },
-    //设置已阅读资源
-    setSeeResources(fileitem) {
-      this.$http
-        .post("api/bankefile/setview", {
-          bankefileid: fileitem.id,
-          classid: fileitem.bankeid
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-            fileitem.viewnum++;
-            fileitem.eventmsgs = false;
-          }
-        })
-        .catch(res => {});
     },
     //下载资源
     onviewfile(fileitem) {
@@ -780,15 +784,25 @@ export default {
       }
       .list-content {
         li {
-          padding: 15px;
+           position: relative;
+            height: 55px;
+            padding: 0 10px;
           border-top: 1px solid #f0f0f0;
-          .time {
+          .name{
+            width:73%;
           }
-        }
-        .score {
+          .score-wrap{
+            width:27%;
+            span{
+              display:block;
+            }
+            .time {
+          }
+           .score {
           color: #ff8900;
-          width: 75px;
           margin-left: 20px;
+        }
+          }
         }
       }
     }

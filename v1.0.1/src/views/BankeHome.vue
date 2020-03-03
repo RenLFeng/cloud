@@ -131,7 +131,13 @@ export default {
         //! cjy： 预设字段， 方便触发vue的监听
         name: "",
         avatar: "",
-        id: 0
+        id: 0,
+        info:"",
+        scorerule1:"",
+scorerule2:"",
+scorerule3:"",
+scorerule4:"",
+scorerule5:"",
       },
       bankeid: 0,
       showziyuan: false,

@@ -152,14 +152,24 @@ export default {
   props: {
     bankeInfo: {
       default() {
-        return {};
+        return {
+           name: "",
+        avatar: "",
+        id: 0,
+        info:"",
+                scorerule1:"",
+scorerule2:"",
+scorerule3:"",
+scorerule4:"",
+scorerule5:"",
+        };
       }
     }
   },
   watch: {
     bankeInfo(newValue, oldValue) {
       this.bankeInfoData = newValue;
-      console.log("gf", newValue);
+      console.log("ggggf", newValue);
     }
   },
   components: {

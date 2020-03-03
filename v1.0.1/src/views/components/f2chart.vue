@@ -292,7 +292,7 @@ export default {
         });
         chart.source(this.score1Data, {
           count: {
-            tickCount: 4
+            tickCount: 3
           },
           value: {
             formatter: function formatter(ivalue) {
@@ -345,7 +345,7 @@ export default {
         });
         chart2.source(this.score2Data, {
           count: {
-            tickCount: 4
+            tickCount: 3
           },
           value: {
             formatter: function formatter(ivalue) {
@@ -398,7 +398,7 @@ export default {
         });
         chart3.source(this.score3Data, {
           count: {
-            tickCount: 4
+            tickCount: 3
           },
           value: {
             formatter: function formatter(ivalue) {
@@ -451,7 +451,7 @@ export default {
               });
               chart4.source(this.score4Data, {
                   count: {
-                      tickCount: 4
+                      tickCount: 3
                   },
                   value: {
                       formatter: function formatter(ivalue) {

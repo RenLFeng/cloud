@@ -70,7 +70,7 @@ export default {
       LinkInfo:{},
       danmuDataList: [],
       inputVal: "",
-      colorEnd:'#000',
+      colorEnd:'#000000',
       colors: [
         {
           color: "#FF6600",
@@ -78,7 +78,7 @@ export default {
           isAct:false
         },
         {
-          color: "#F00",
+          color: "#FF0000",
           name: "红色",
            isAct:false
         },
@@ -236,6 +236,11 @@ export default {
       this.isOpen = !this.isOpen;
     },
     selectColorFn(i){
+      if(this.colors[i].isAct){
+        this.colors[i].isAct=false;
+        this.colorEnd='#000000'
+        return;
+      }
       for(let v of this.colors){
         v.isAct=false;
       }

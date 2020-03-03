@@ -40,7 +40,7 @@ export default {
   },
   watch: {
     allZuoyeitem: function(newValue, oldValue) {
-      // console.log(oldValue);
+      console.log('ddddd',newValue);
       this.allInfo = newValue;
       this.state = this.itemInfo.state;
     }
