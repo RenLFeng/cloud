@@ -4,10 +4,7 @@
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
-    <div
-      class="main-f"
-      :class="selected=='tongzhi'?'tongzhi':''"
-    >
+    <div class="main-f" :class="selected=='tongzhi'?'tongzhi':''">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="ziyuan">
           <BankeZiyuan
@@ -29,7 +26,12 @@
           <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
-          <BankeHuDong :bankeid="id" :bnakeuserid="curbanke.userid" :eventmsgs="eventmsgs" :selected="new Date().getTime()" />
+          <BankeHuDong
+            :bankeid="id"
+            :bnakeuserid="curbanke.userid"
+            :eventmsgs="eventmsgs"
+            :selected="new Date().getTime()"
+          />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
           <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />
@@ -46,34 +48,29 @@
       <mt-tab-item id="ziyuan">
         <div class="bankehome">
           <i
-            class="iconfont iconziyuan reddot-Tips-wrap"
+            class="iconfont iconkeqian-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.zyTips?'reddot-Tips':''"
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课前</span>
         </div>
       </mt-tab-item>
-            <mt-tab-item id="hudong">
+      <mt-tab-item id="hudong">
         <div class="bankehome">
           <i
-            class="iconfont iconhudong reddot-Tips-wrap"
+            class="iconfont iconkezhong-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.hdTips.count?'reddot-Tips':''"
           ></i>
-          <span
-            :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
-          >课中</span>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课中</span>
         </div>
       </mt-tab-item>
-            <mt-tab-item id="zuoye">
+      <mt-tab-item id="zuoye">
         <div class="bankehome">
           <i
             v-if="itemzuoyenormal"
-            class="iconfont iconzuoye-copy reddot-Tips-wrap"
+            class="iconfont iconkehou-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.zouyeTips?'reddot-Tips':''"
           ></i>
-          <span
-            v-if="itemzuoyenormal"
-            :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}"
-          >课后</span>
+          <span v-if="itemzuoyenormal" :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课后</span>
           <img
             v-if="!itemzuoyenormal"
             slot="icon"
@@ -85,14 +82,17 @@
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
         <div class="bankehome">
-          <i class="iconfont iconchengyuan1 reddot-Tips-wrap" :class="eventmsgs.cyTips?'reddot-Tips':''"></i>
+          <i
+            class="iconfont iconxueqing-xuanzhong reddot-Tips-wrap"
+            :class="eventmsgs.cyTips?'reddot-Tips':''"
+          ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">学情</span>
         </div>
       </mt-tab-item>
       <mt-tab-item id="tongzhi">
         <div class="bankehome">
           <i
-            class="iconfont iconbankexiangqing reddot-Tips-wrap"
+            class="iconfont iconbanke-wode-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.xqTips?'reddot-Tips':''"
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">我的</span>
@@ -132,12 +132,12 @@ export default {
         name: "",
         avatar: "",
         id: 0,
-        info:"",
-        scorerule1:"",
-scorerule2:"",
-scorerule3:"",
-scorerule4:"",
-scorerule5:"",
+        info: "",
+        scorerule1: "",
+        scorerule2: "",
+        scorerule3: "",
+        scorerule4: "",
+        scorerule5: ""
       },
       bankeid: 0,
       showziyuan: false,
@@ -205,8 +205,8 @@ scorerule5:"",
       }
       return bname;
     },
-    schollid(){
-      return this.curbanke.schoolid
+    schollid() {
+      return this.curbanke.schoolid;
     },
     itemzuoyenormal() {
       if (!this.$store.getters.caneditbanke) {
@@ -324,7 +324,7 @@ scorerule5:"",
           }
         })
         .catch(err => {});
-    },
+    }
   },
   created() {
     this.$store.commit("SET_GO_SCHOOL", false);
@@ -361,7 +361,6 @@ scorerule5:"",
     this.checkNeedShow();
     console.log("班可", this.curbanke);
     this.eventmsgsOnbanke();
-
   },
   destroyed() {
     this.$store.commit("setBHomeSelected", this.selected);
@@ -416,8 +415,8 @@ scorerule5:"",
   top: 12px;
   left: 50%;
   transform: translate(-50%, 0);
-  color:#999;
-  font-size:30px;
+  color: #999;
+  font-size: 30px;
 }
 .bankehome span {
   position: absolute;
@@ -426,14 +425,13 @@ scorerule5:"",
   bottom: 9px;
   transform: translate(-50%, 0);
 }
-.mint-tabbar > .mint-tab-item{
-  color:#999;
+.mint-tabbar > .mint-tab-item {
+  color: #999;
 }
-.mint-tabbar > .mint-tab-item.is-selected{
-    background-color: #fff;
+.mint-tabbar > .mint-tab-item.is-selected {
+  background-color: #fff;
 }
 .mint-tabbar > .mint-tab-item.is-selected i {
-  color:#26a2ff
+  color: #26a2ff;
 }
-
 </style>

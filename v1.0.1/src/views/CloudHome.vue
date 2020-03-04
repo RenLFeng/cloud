@@ -80,7 +80,7 @@
       <mt-tab-item id="banke">
         <div class="bankehome">
           <i
-            class="iconfont iconfont-big iconshouye-banke reddot-Tips-wrap"
+            class="iconfont iconfont-big iconyunbanke-xuanzhong reddot-Tips-wrap"
             :class="homeEventmsgs?'reddot-Tips':''"
           ></i>
           <span class="fonttiny">云班课</span>
@@ -88,7 +88,7 @@
       </mt-tab-item>
       <mt-tab-item id="mine">
         <div class="bankehome">
-          <i class="iconfont iconfont-big iconshouye-wode"></i>
+          <i class="iconfont iconfont-big iconwode-xuanzhong"></i>
           <span class="fonttiny">{{$t('common.My')}}</span>
         </div>
       </mt-tab-item>

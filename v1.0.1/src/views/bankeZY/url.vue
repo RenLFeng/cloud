@@ -1,8 +1,9 @@
 <template>
   <div class="url-container fontsmall">
-    <div class="border-e5-bottom">
+    <div class="">
       <mt-field :label="$t('common.Title')+':'" :placeholder="$t('common.Please_entry')+$t('common.Title')" v-model="urlTitle"></mt-field>
       <mt-field :label="$t('common.Url')+':'" :placeholder="$t('common.Please_entry')+$t('common.Url')" type="url" v-model="url"></mt-field>
+     <mt-cell title="目录" is-link value="第一章"></mt-cell>
     </div>
     <div class="button-worp">
       <mt-button class="button-auto-96" type="primary" @click="submit">{{$t('common.Submit')}}</mt-button>
@@ -13,12 +14,16 @@
 <script>
 import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
 import {mapState,mapMutations} from 'vuex';
+import Folder from './folder';
 export default {
   name: "",
   props: {
     bankeid: {
       default: 0
     }
+  },
+  components: {
+Folder
   },
   data() {
     return {
@@ -70,5 +75,8 @@ export default {
   .popup-right {
     height: 60%;
   }
+    .mint-cell-value.is-link {
+    margin-right: 30px;
+}
 }
 </style>

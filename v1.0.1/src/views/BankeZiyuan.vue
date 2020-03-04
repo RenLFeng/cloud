@@ -17,12 +17,6 @@
             <!--网页链接-->
           </div>
         </mt-tab-item>
-        <!-- <mt-tab-item id="3" @click.native="onUploadServer">
-            <div>
-              <i class="iconfont iconfont-big iconzhuanyeziyuanku"></i>
-              <div>{{$t('bankeZiYuan.Resources_storehouse')}}</div>
-            </div>
-        </mt-tab-item>-->
       </mt-tabbar>
     </div>
     <div class="items-container">
@@ -53,7 +47,7 @@
           </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
-        <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false">
+        <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false" style="background:#f0f0f0">
           <mt-header :title="$t('common.Add')+' '+$t('bankeZiYuan.WebLink')">
             <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
           </mt-header>
@@ -121,6 +115,7 @@ import {
 
 import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
+// import Folder from './folder';
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
@@ -258,7 +253,7 @@ export default {
   components: {
     BankeFileSimple,
     URL,
-    Audio
+    Audio,
   },
   methods: {
     //收藏
