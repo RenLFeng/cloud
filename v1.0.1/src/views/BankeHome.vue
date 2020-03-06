@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mt-header v-show="hasnavbar" :title="bankename" class="mint-header-f">
+    <mt-header v-show="hasnavbar && selected!='ziyuan'" :title="bankename" class="mint-header-f">
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
@@ -9,9 +9,12 @@
         <mt-tab-container-item id="ziyuan">
           <BankeZiyuan
             :bankeid="id"
+            :hasbackbtn="hasbackbtn"
+            :bankename="bankename"
             v-if="showziyuan"
             @UploadLinkSelectEd="onUploadLinkSelectEd"
             @popupZiyuanEdit="onPopupZiyuanEdit"
+          
           ></BankeZiyuan>
         </mt-tab-container-item>
         <mt-tab-container-item id="chengyuan">

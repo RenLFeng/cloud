@@ -1,20 +1,42 @@
 <template>
   <div class="url-container fontsmall">
-    <div class="">
-      <mt-field :label="$t('common.Title')+':'" :placeholder="$t('common.Please_entry')+$t('common.Title')" v-model="urlTitle"></mt-field>
-      <mt-field :label="$t('common.Url')+':'" :placeholder="$t('common.Please_entry')+$t('common.Url')" type="url" v-model="url"></mt-field>
-     <mt-cell title="目录" is-link value="第一章"></mt-cell>
+    <mt-header :title="$t('common.Add')+' '+$t('bankeZiYuan.WebLink')">
+      <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      <mt-button slot="right" @click="submit">确定</mt-button>
+    </mt-header>
+    <div class>
+      <mt-field
+        :label="$t('common.Title')+':'"
+        :placeholder="$t('common.Please_entry')+$t('common.Title')"
+        v-model="urlTitle"
+      ></mt-field>
+      <mt-field
+        label="网址:"
+        :placeholder="$t('common.Please_entry')+$t('common.Url')"
+        type="url"
+        v-model="url"
+      ></mt-field>
+      <mt-cell title="目录" is-link :value="muluId" @click.native="queryMulu"></mt-cell>
     </div>
-    <div class="button-worp">
+    <!-- <div class="button-worp">
       <mt-button class="button-auto-96" type="primary" @click="submit">{{$t('common.Submit')}}</mt-button>
-    </div>
+    </div>-->
+    <mt-popup
+      v-model="popupmulu"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <Mulu :bankeid="bankeid" :muluId="muluId" @Cancel="onCancel" />
+    </mt-popup>
   </div>
 </template>
 
 <script>
 import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
-import {mapState,mapMutations} from 'vuex';
-import Folder from './folder';
+import { mapState, mapMutations } from "vuex";
+import Mulu from "./mulu";
 export default {
   name: "",
   props: {
@@ -23,16 +45,18 @@ export default {
     }
   },
   components: {
-Folder
+    Mulu
   },
   data() {
     return {
       url: "",
-      urlTitle: ""
+      urlTitle: "",
+      popupmulu: false,
+      muluId: "第一章"
     };
   },
   computed: {
-      // ...mapState(["bankeZhiYuanLinkItem"])
+    // ...mapState(["bankeZhiYuanLinkItem"])
   },
   methods: {
     submit() {
@@ -48,12 +72,12 @@ Folder
         .then(res => {
           if (res.data.code == 0) {
             MessageBox.alert("添加成功").then(() => {
-              let arr=[];
-              arr[0]=res.data.data
-              res.data.data.imgsrc= require("../../assets/file_icon/IT.svg");
-               this.$store.commit('SET_BANKEZHIYUANLINKITEM', arr);
+              let arr = [];
+              arr[0] = res.data.data;
+              res.data.data.imgsrc = require("../../assets/file_icon/IT.svg");
+              this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
               this.$emit("addLinkState", true);
-                this.$store.commit("SET_FOOTER_BAR_STATE", true);
+              this.$store.commit("SET_FOOTER_BAR_STATE", true);
             });
           } else {
             MessageBox.alert(res.data.msg);
@@ -62,6 +86,16 @@ Folder
         })
         .catch(() => {});
     },
+    goBack() {
+      this.$emit("addLinkState", true);
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
+    },
+    queryMulu() {
+      this.popupmulu = true;
+    },
+    onCancel() {
+      this.popupmulu = false;
+    }
     // ...mapMutations(['SET_BANKEZHIYUANLINKITEM']),
   }
 };
@@ -72,11 +106,8 @@ Folder
   .button-worp {
     margin-top: 10px;
   }
-  .popup-right {
-    height: 60%;
-  }
-    .mint-cell-value.is-link {
+  .mint-cell-value.is-link {
     margin-right: 30px;
-}
+  }
 }
 </style>

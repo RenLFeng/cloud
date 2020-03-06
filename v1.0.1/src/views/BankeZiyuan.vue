@@ -1,12 +1,21 @@
 <template>
-  <div class="url-wrap fontsmall">
-    <div v-if="showupload" class="uploadpart">
+  <div class="url-wrap fontsmall zhiyan-wrap" :class="Previd?'prev':''">
+    <mt-header :title="bankename" class="mint-header-f">
+      <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="backHome">{{$t('common.Back')}}</mt-button>
+      <mt-button slot="right" class="iconfont iconjia icons" @click="Previd=!Previd"></mt-button>
+      <mt-button slot="right" class="iconfont iconjia icons" @click="onSort"></mt-button>
+      <mt-button slot="right" class="iconfont iconjia icons" @click="onaddFile"></mt-button>
+    </mt-header>
+    <p class="Prev-btn" v-if="Previd" @click="onprev">
+      <i class="iconfont iconwithdraw-fill colord position-l"></i>
+      <span style="color:#a5a5a5">返回上一层...</span>
+    </p>
+    <!-- <div v-if="showupload" class="uploadpart">
       <mt-tabbar v-model="selected" class="uploadtabbar">
         <mt-tab-item id="1" @click.native="onUploadLocal">
           <div>
             <i class="iconfont iconfont-big iconcongbendishangchuan" style="color:#FFCB8E"></i>
             <div class="fonttiny">{{$t('bankeZiYuan.Upload_files')}}</div>
-            <!--本地上传-->
           </div>
         </mt-tab-item>
 
@@ -14,13 +23,13 @@
           <div>
             <i class="iconfont iconfont-big iconwangyelianjie"></i>
             <div class="fonttiny">{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
-            <!--网页链接-->
           </div>
         </mt-tab-item>
       </mt-tabbar>
-    </div>
+    </div>-->
+
     <div class="items-container">
-      <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
+      <!-- <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p> -->
       <mt-tab-container
         v-model="selected"
         v-infinite-scroll="loadMore"
@@ -32,7 +41,22 @@
           <div class="listcontainer">
             <div class="wrap">
               <div v-for="(fitem,selindex) in bankeZhiYuanLinkItem" v-bind:key="selindex">
+                <div v-if="fitem.ftype=='folder'" class="folder-wrap-item" @click="onFolder(fitem)">
+                  <img
+                    class="img object-fit-img position-l;"
+                    :src="fitem.imgsrc"
+                    :onerror="$defaultImg('')"
+                  />
+                  <div class="info-wrap position-r">
+                    <p class="name ellipse position-t">{{fitem.name}}</p>
+                    <p class="time font-xxs colora5 position-b">
+                      {{fitem.createtime}}&nbsp;更新
+                      <span class="fr">文件夹</span>
+                    </p>
+                  </div>
+                </div>
                 <BankeFileSimple
+                  v-else
                   :fileitem="bankeZhiYuanLinkItem[selindex]"
                   :index="selindex"
                   :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
@@ -47,10 +71,13 @@
           </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
-        <mt-popup v-model="popupUploadLink" position="right" class="popup-right" :modal="false" style="background:#f0f0f0">
-          <mt-header :title="$t('common.Add')+' '+$t('bankeZiYuan.WebLink')">
-            <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
-          </mt-header>
+        <mt-popup
+          v-model="popupUploadLink"
+          position="right"
+          class="popup-right"
+          :modal="false"
+          style="background:#f0f0f0"
+        >
           <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
         </mt-popup>
       </mt-tab-container>
@@ -94,7 +121,16 @@
       </div>
     </mt-popup>
     <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
-      <Audio :audioInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio"/>
+      <Audio :audioInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio" />
+    </mt-popup>
+    <mt-popup
+      v-model="popupSuperLink"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <AddSuperLink v-if="popupSuperLink" :bankeid="bankeid" @watchBack="onWatchBack" />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
@@ -102,7 +138,7 @@
 
 <script>
 import Vue from "vue";
-import {fixCaptureImage} from "../util";
+import { fixCaptureImage } from "../util";
 import {
   Indicator,
   Toast,
@@ -115,7 +151,7 @@ import {
 
 import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
-// import Folder from './folder';
+import AddSuperLink from "./bankeZY/addSuperLink";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
@@ -134,6 +170,18 @@ export default {
   props: {
     bankeid: {
       default: 0
+    },
+    hasbackbtn: {
+      default: true
+    },
+    bankename: {
+      default: ""
+    }
+  },
+  watch: {
+    bankename: function(newv, oldv) {
+      //  alert(0)
+      //   this.headerName=newv;
     }
   },
   data() {
@@ -145,7 +193,6 @@ export default {
       topStatus: "",
       loadingState: false,
       popupUploadLink: false,
-      popupUploadZhiYuan: false,
       popupUploadFile: true,
       popupZiyuanEdit: false,
       popupEditInfo: false,
@@ -169,7 +216,14 @@ export default {
       loading: false,
 
       popupAudio: false,
-      viewfileItem: {}
+      viewfileItem: {},
+
+      headerName: "",
+      rootid: 0,
+      Previd: 0,
+      headerAddBtn: false,
+      headerSortBtn: false,
+      popupSuperLink: false
     };
   },
   watch: {
@@ -181,6 +235,12 @@ export default {
     // },
     popupEditInfo() {
       this.$emit("popupZiyuanEdit", this.popupEditInfo);
+    },
+    actionShow(v, o) {
+      if (!v) {
+        this.headerAddBtn = false;
+        this.headerSortBtn = false;
+      }
     }
   },
   computed: {
@@ -188,25 +248,69 @@ export default {
       let isteacher = this.$store.getters.caneditbanke;
       return isteacher;
     },
-      actions(){
-        let objret = [];
-          let isteacher = this.$store.getters.caneditbanke;
+    actions() {
+      //       headerAddBtn
+      // headerSortBtn
+      let objret = [];
+      let isteacher = this.$store.getters.caneditbanke;
+      if (!this.headerAddBtn && !this.headerSortBtn) {
+        objret.push({
+          name: "收藏",
+          method: this.Collection
+        });
+        objret.push({
+          name: "查看情况",
+          method: this.showInfo
+        });
+        objret.push({
+          name: "转发",
+          method: this.deletezy
+        });
+        if (isteacher) {
           objret.push({
-              name: "收藏",
-              method: this.Collection
-          })
+            name: "删除",
+            method: this.deletezy
+          });
           objret.push({
-              name: "查看情况",
-              method: this.showInfo
-          })
-          if (isteacher){
-              objret.push({
-                  name: "删除",
-                  method: this.deletezy
-              })
-          }
-          return objret
-      },
+            name: "编辑",
+            method: ""
+          });
+          objret.push({
+            name: "移动",
+            method: ""
+          });
+        }
+      } else {
+        if (this.headerSortBtn) {
+          objret.push({
+            name: "按文件名称排序",
+            method: ""
+          });
+          objret.push({
+            name: "按时间倒序排序",
+            method: ""
+          });
+        } else if (this.headerAddBtn) {
+          objret.push({
+            name: "上传本地文件",
+            method: this.onUploadLocal
+          });
+          objret.push({
+            name: "添加网页链接",
+            method: this.addLink
+          });
+          objret.push({
+            name: "添加精选网站",
+            method: this.superLink
+          });
+          objret.push({
+            name: "新建文件夹",
+            method: this.newFolder
+          });
+        }
+      }
+      return objret;
+    },
     fileInfo() {
       for (let v of this.bankeZhiYuanLinkItem) {
         let localfiles = [];
@@ -254,8 +358,18 @@ export default {
     BankeFileSimple,
     URL,
     Audio,
+    AddSuperLink
   },
   methods: {
+    //点击文件夹
+    onFolder(fitem) {
+      this.Previd = testData2[0].id;
+      this.headerName = testData2[0].name;
+    },
+    //返回上一级
+    onprev() {
+      this.Previd = 0;
+    },
     //收藏
     Collection() {
       let imgIcon = "";
@@ -309,7 +423,7 @@ export default {
       this.editItemFile = fileitem;
       this.setSeeResources(fileitem);
     },
-    queryviews(fileitem){
+    queryviews(fileitem) {
       this.$http
         .post("api/bankefile/queryviews", {
           id: fileitem.id,
@@ -327,8 +441,7 @@ export default {
             fileitem.views = res.data.data.views;
 
             fileitem.noviewnum =
-              fileitem.memberids.length -
-              fileitem.views.length;
+              fileitem.memberids.length - fileitem.views.length;
           }
           if (fileitem.views.length) {
             for (let v of fileitem.views) {
@@ -358,7 +471,7 @@ export default {
     },
     showInfo() {
       this.popupEditInfo = true;
-       this.queryviews(this.editItemFile);
+      this.queryviews(this.editItemFile);
     },
     //学生查看or未查看
     see(v) {
@@ -382,8 +495,7 @@ export default {
             fileitem.eventmsgs = false;
           }
         })
-        .catch(res => {
-        });
+        .catch(res => {});
     },
     deletezy() {
       if (!this.$store.getters.caneditbanke) {
@@ -408,17 +520,15 @@ export default {
 
               console.log(res);
             })
-            .catch(() => {
-            });
+            .catch(() => {});
         })
-        .catch(() => {
-        });
+        .catch(() => {});
     },
     //下载资源
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
       if (fileitem.ftype == "file") {
-         nativecode.fileviewSingle(this, fileitem.info);
+        nativecode.fileviewSingle(this, fileitem.info);
       } else if (fileitem.ftype == "link") {
         nativecode.fileviewUrl(this, fileitem);
       }
@@ -474,8 +584,16 @@ export default {
             } else {
               this.loading = true;
             }
-            console.log("success", res);
+            console.log("资源", res);
             let ids = [];
+            //  res.data.data.files=[...testData,...res.data.data.files];
+            // if(test){
+            //      res.data.data.files=[...testData,...res.data.data.files];
+            // }else if(test==3){
+            //    res.data.data.files=testData3;
+            // }else{
+            //    res.data.data.files=testData2;
+            // }
             for (let item of res.data.data.files) {
               ids.push(item.id);
               this.parseOneItem(item);
@@ -492,6 +610,8 @@ export default {
                 } else {
                   item.imgsrc = getZYFileTypeIcon(item.info.filepath); //commontools.fileType(item.info);
                 }
+              } else if (item.ftype == "folder") {
+                item.imgsrc = require("../assets/file_icon/folder.svg");
               }
             }
             this.page++;
@@ -517,9 +637,9 @@ export default {
     },
     //红点查询
     eventmsgsOnactivity(serverData, eventids) {
-        if (serverData.length == 0){
-            return
-        }
+      if (serverData.length == 0) {
+        return;
+      }
       this.$http
         .post("/api/eventmsgs/onactivity", {
           bankeid: this.bankeid,
@@ -546,22 +666,46 @@ export default {
           this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
         });
     },
+    //上传本地文件
     onUploadLocal() {
       this.popupUploadFile = true;
-      //  Toast('暂未实现');
       this.$refs.uploadfilebtn.value = "";
       this.$refs.uploadfilebtn.click();
+    },
+    onSort() {
+      this.headerSortBtn = true;
+      this.actionShow = true;
+    },
+    onaddFile() {
+      this.headerAddBtn = true;
+      this.actionShow = true;
+    },
+    //添加网站
+    addLink() {
+      this.onUploadLink();
     },
     onUploadLink() {
       this.popupUploadLink = true;
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
-      // this.$emit('UploadLinkSelectEd',this.selected)
-      // Toast("暂未实现");
     },
-    onUploadServer() {
-      this.popupUploadZhiYuan = true;
-      // Toast("暂未实现");
+    onAddLinkState(state) {
+      if (state) {
+        this.popupUploadLink = false;
+        this.selected = "1";
+      }
     },
+    //添加精选网站
+    superLink() {
+      this.popupSuperLink = true;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+    },
+    //新建文件夹
+    newFolder(){},
+    onWatchBack() {
+      this.popupSuperLink = false;
+      this.$store.commit("SET_FOOTER_BAR_STATE", true);
+    },
+    //上传文件
     uploadChange(event) {
       if (event.target.files.length >= 6) {
         MessageBox.alert("最多同时上传5个文件");
@@ -570,9 +714,9 @@ export default {
       if (event.target.files.length > 0) {
         var file = event.target.files;
         //! cjy: 大小限制？
-       // console.log("00000000", file);
-          console.log('upload files:');
-          console.log(file);
+        // console.log("00000000", file);
+        console.log("upload files:");
+        console.log(file);
         for (let i = 0; i < file.length; i++) {
           let _filesize = file[i].size;
           if (_filesize / (1024 * 1024) > 300) {
@@ -588,86 +732,73 @@ export default {
         }
       }
     },
-      douploadonefile(onefile){
-        console.log('douploadonefile:');
-        console.log(onefile);
-        //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
-        fixCaptureImage(onefile, true).then(res=>{
-            this.douploadonefiledirect(res);
+    douploadonefile(onefile) {
+      console.log("douploadonefile:");
+      console.log(onefile);
+      //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
+      fixCaptureImage(onefile, true)
+        .then(res => {
+          this.douploadonefiledirect(res);
         })
-            .catch((res)=>{
-                this.douploadonefiledirect(res);
-            })
-      },
-      douploadonefiledirect(onefile){
-        console.log('douploadfile direct:');
-        console.log(onefile);
-        if (!onefile){
-            console.log('err file');
-            return ;
-        }
-          var formdata = new FormData();
-          formdata.append("file", onefile);
-
-          var url = "/api/bankefile/fileupload?";
-          url += "bankeid=" + this.bankeid;
-
-          Indicator.open(this.$t("Indicator.Uploading"));
-
-          this.$http({
-              url: url,
-              method: "post",
-              data: formdata,
-              headers: { "Content-Type": "application/x-www-form-urlencoded" }
-          })
-              .then(res => {
-                  Indicator.close();
-                  if (res.data.code == 0) {
-                      console.log("54", res.data.data);
-                      this.parseOneItem(res.data.data);
-                      let item = res.data.data;
-                      if (item.ftype == "link") {
-                          item.imgsrc = require("../assets/file_icon/IT.svg");
-                      } else if (item.ftype == "file") {
-                          if (item.finttype == "1") {
-                              if (item.info) {
-                                  item.imgsrc =
-                                      item.info.filepath + item.info.metainfo.snapsuffix;
-                              }
-                          } else {
-                              item.imgsrc = getZYFileTypeIcon(item.info.filepath);
-                          }
-                      }
-                      commontools.arrayMergeAsIds(this.files, res.data.data);
-                      //  res.data.data.info = JSON.parse(res.data.data.info);
-                      let arr = [];
-                      arr[0] = res.data.data;
-                      this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
-                  }
-              })
-              .catch(err => {
-                  Indicator.close();
-                  console.log(err);
-              });
-      },
-    onAddLinkState(state) {
-      if (state) {
-        this.popupUploadLink = false;
-        this.selected = "1";
+        .catch(res => {
+          this.douploadonefiledirect(res);
+        });
+    },
+    douploadonefiledirect(onefile) {
+      console.log("douploadfile direct:");
+      console.log(onefile);
+      if (!onefile) {
+        console.log("err file");
+        return;
       }
+      var formdata = new FormData();
+      formdata.append("file", onefile);
+
+      var url = "/api/bankefile/fileupload?";
+      url += "bankeid=" + this.bankeid;
+
+      Indicator.open(this.$t("Indicator.Uploading"));
+
+      this.$http({
+        url: url,
+        method: "post",
+        data: formdata,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      })
+        .then(res => {
+          Indicator.close();
+          if (res.data.code == 0) {
+            console.log("54", res.data.data);
+            this.parseOneItem(res.data.data);
+            let item = res.data.data;
+            if (item.ftype == "link") {
+              item.imgsrc = require("../assets/file_icon/IT.svg");
+            } else if (item.ftype == "file") {
+              if (item.finttype == "1") {
+                if (item.info) {
+                  item.imgsrc =
+                    item.info.filepath + item.info.metainfo.snapsuffix;
+                }
+              } else {
+                item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+              }
+            }
+            commontools.arrayMergeAsIds(this.files, res.data.data);
+            //  res.data.data.info = JSON.parse(res.data.data.info);
+            let arr = [];
+            arr[0] = res.data.data;
+            this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
+          }
+        })
+        .catch(err => {
+          Indicator.close();
+          console.log(err);
+        });
     },
     goBack() {
-      if (this.popupUploadLink) {
-        this.popupUploadLink = false;
-        this.selected = "1";
-        this.$store.commit("SET_FOOTER_BAR_STATE", true);
-      }
       if (this.popupAudio) {
         this.popupAudio = false;
         this.$store.commit("SET_FOOTER_BAR_STATE", true);
-      }
-      if (this.popupUploadZhiYuan) {
-        this.popupUploadZhiYuan = false;
       }
       if (this.popupUploadFile) {
         this.popupUploadFile = false;
@@ -676,7 +807,11 @@ export default {
         this.popupEditInfo = false;
       }
       // this.popupUploadFile=true;
+    },
+    backHome() {
+      this.$router.replace("/");
     }
+
     // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
   }
 };
@@ -696,7 +831,7 @@ export default {
 }
 
 .uploadtabbar {
-  background:#fff;
+  background: #fff;
   position: static;
 }
 
@@ -721,7 +856,7 @@ export default {
   border-top: 1px solid #eaeaea;
 }
 .listcontainer .wrap {
- margin-bottom:70px;
+  margin-bottom: 70px;
 }
 .url-wrap .items-container {
   margin-bottom: 17px;
@@ -779,25 +914,72 @@ export default {
       }
       .list-content {
         li {
-           position: relative;
-            height: 55px;
-            padding: 0 10px;
+          position: relative;
+          height: 55px;
+          padding: 0 10px;
           border-top: 1px solid #f0f0f0;
-          .name{
-            width:73%;
+          .name {
+            width: 73%;
           }
-          .score-wrap{
-            width:27%;
-            span{
-              display:block;
+          .score-wrap {
+            width: 27%;
+            span {
+              display: block;
             }
             .time {
+            }
+            .score {
+              color: #ff8900;
+              margin-left: 20px;
+            }
           }
-           .score {
-          color: #ff8900;
-          margin-left: 20px;
         }
-          }
+      }
+    }
+  }
+}
+.zhiyan-wrap {
+  &.prev {
+    margin-top: 61px;
+  }
+  .icons {
+    color: #aaa !important;
+    margin: 0 6px;
+    font-size: 20px;
+  }
+  .Prev-btn {
+    position: fixed;
+    height: 63px;
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(234, 234, 234, 1);
+    line-height: 63px;
+    padding-left: 50px;
+    z-index: 100;
+    top: 49px;
+    width: 100%;
+    .iconfont {
+      font-size: 30px;
+    }
+  }
+  .items-container {
+    .folder-wrap-item {
+      position: relative;
+      height: 82px;
+      padding: 10px;
+      background: #fff;
+      border-bottom: 0.02667rem solid #eaeaea;
+      > img {
+        height: 100%;
+      }
+      .info-wrap {
+        width: calc(100% - 90px);
+        height: 100%;
+        > p {
+          width: 100%;
+        }
+        .name {
+        }
+        .time {
         }
       }
     }

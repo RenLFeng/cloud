@@ -143,9 +143,9 @@ export default {
   margin-left: 70px;
 }
 
-.mainctitle {
+.zy-content .mainctitle {
   position: relative;
-  font-size: 16px;
+  font-size: 18px;
   color: #313131;
 
   height: 24px;

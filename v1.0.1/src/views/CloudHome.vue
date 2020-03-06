@@ -309,6 +309,16 @@ export default {
       this.bankeitem = bankeitem;
       this.bankeDedail();
     },
+        //进入班课
+    bankeDedail() {
+      if (this.bankeitem.id) {
+        let tourl = "/bankehome/" + this.bankeitem.id;
+        if (!nativecode.navigateTo(tourl)) {
+          this.$store.commit("setRouterForward", true);
+          this.$router.push(tourl);
+        }
+      }
+    },
     onShowMenu(v) {
       console.log(v);
       this.bankeitem = v;
@@ -327,16 +337,6 @@ export default {
         this.actionShow2 = true;
       } else {
         this.actionShowStu = true;
-      }
-    },
-    //进入班课
-    bankeDedail() {
-      if (this.bankeitem.id) {
-        let tourl = "/bankehome/" + this.bankeitem.id;
-        if (!nativecode.navigateTo(tourl)) {
-          this.$store.commit("setRouterForward", true);
-          this.$router.push(tourl);
-        }
       }
     },
     bankeShare() {
