@@ -132,11 +132,31 @@
     >
       <AddSuperLink v-if="popupSuperLink" :bankeid="bankeid" @watchBack="onWatchBack" />
     </mt-popup>
+    <mt-popup
+      v-model="popupUploadFile"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header title="上传资源">
+        <mt-button slot="left" @click="goBack()">取消</mt-button>
+        <mt-button slot="right" @click="keepUpload">确定</mt-button>
+      </mt-header>
+      <UpLoadFile
+        v-if="popupUploadFile"
+        :bankeid="bankeid"
+        :tempUploadFile="tempUploadFile"
+        @uploadfile="onUploadLocal"
+      />
+    </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>
 </template>
 
 <script>
+const _URL = window.URL || window.webkitURL;
+// _URL.createObjectURL(file),
 import Vue from "vue";
 import { fixCaptureImage } from "../util";
 import {
@@ -151,6 +171,7 @@ import {
 
 import BankeFileSimple from "./components/BankeFileSimple";
 import URL from "./bankeZY/url";
+import UpLoadFile from "./bankeZY/upLoadFile";
 import AddSuperLink from "./bankeZY/addSuperLink";
 import commontools from "../commontools";
 import { constants } from "crypto";
@@ -193,7 +214,7 @@ export default {
       topStatus: "",
       loadingState: false,
       popupUploadLink: false,
-      popupUploadFile: true,
+
       popupZiyuanEdit: false,
       popupEditInfo: false,
 
@@ -223,7 +244,10 @@ export default {
       Previd: 0,
       headerAddBtn: false,
       headerSortBtn: false,
-      popupSuperLink: false
+      popupSuperLink: false,
+      popupUploadFile: false,
+      tempUploadFile: {},
+      tempUploadImg: []
     };
   },
   watch: {
@@ -358,7 +382,8 @@ export default {
     BankeFileSimple,
     URL,
     Audio,
-    AddSuperLink
+    AddSuperLink,
+    UpLoadFile
   },
   methods: {
     //点击文件夹
@@ -666,12 +691,6 @@ export default {
           this.$store.commit("SET_BANKEZHIYUANLINKITEM", this.files);
         });
     },
-    //上传本地文件
-    onUploadLocal() {
-      this.popupUploadFile = true;
-      this.$refs.uploadfilebtn.value = "";
-      this.$refs.uploadfilebtn.click();
-    },
     onSort() {
       this.headerSortBtn = true;
       this.actionShow = true;
@@ -700,10 +719,15 @@ export default {
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
     //新建文件夹
-    newFolder(){},
+    newFolder() {},
     onWatchBack() {
       this.popupSuperLink = false;
       this.$store.commit("SET_FOOTER_BAR_STATE", true);
+    },
+    //上传本地文件btn
+    onUploadLocal() {
+      this.$refs.uploadfilebtn.value = "";
+      this.$refs.uploadfilebtn.click();
     },
     //上传文件
     uploadChange(event) {
@@ -738,11 +762,25 @@ export default {
       //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
       fixCaptureImage(onefile, true)
         .then(res => {
-          this.douploadonefiledirect(res);
+          // this.douploadonefiledirect(res);
+          this.tempUploadFile = {
+            file: res,
+            tempImg: _URL.createObjectURL(res)
+          };
+          console.log("是的撒", this.tempUploadFile);
+          this.popupUploadFile = true;
         })
         .catch(res => {
-          this.douploadonefiledirect(res);
+          // this.douploadonefiledirect(res);
+          this.tempUploadFile = {
+            file: res,
+            tempImg: _URL.createObjectURL(res)
+          };
+          this.popupUploadFile = true;
         });
+    },
+    keepUpload() {
+      this.douploadonefiledirect(this.tempUploadFile.file);
     },
     douploadonefiledirect(onefile) {
       console.log("douploadfile direct:");
@@ -788,6 +826,9 @@ export default {
             let arr = [];
             arr[0] = res.data.data;
             this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
+
+            this.tempUploadFile = {};
+            this.popupUploadFile = false;
           }
         })
         .catch(err => {
@@ -800,13 +841,16 @@ export default {
         this.popupAudio = false;
         this.$store.commit("SET_FOOTER_BAR_STATE", true);
       }
+      if (this.popupSuperLink) {
+        this.popupSuperLink = false;
+        this.$store.commit("SET_FOOTER_BAR_STATE", true);
+      }
       if (this.popupUploadFile) {
         this.popupUploadFile = false;
       }
       if (this.popupEditInfo) {
         this.popupEditInfo = false;
       }
-      // this.popupUploadFile=true;
     },
     backHome() {
       this.$router.replace("/");
