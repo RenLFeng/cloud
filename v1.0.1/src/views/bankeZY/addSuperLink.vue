@@ -72,6 +72,13 @@ const data2 = [
     link: "www.baidu.com"
   }
 ];
+import {
+  Indicator,
+  Toast,
+  MessageBox,
+  Cell,
+  Popup,
+} from "mint-ui";
 import Empty from "@/common/empty";
 import Mulu from "./mulu";
 export default {
@@ -118,7 +125,11 @@ export default {
     seleFolder() {
       this.popupmulu = true;
     },
-    submit() {},
+    submit() {
+      for(let v of this.lists){
+  
+      }
+    },
     onCancel() {
       this.popupmulu = false;
     },

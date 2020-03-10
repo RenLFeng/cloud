@@ -1,20 +1,35 @@
 <template>
   <div class="mainpart zy-content" @click.stop="onclick">
-    <div class="img-wrap " :class="fileitem.eventmsgs?'reddot-Tips':''">
+    <div class="img-wrap" :class="fileitem.eventmsgs?'reddot-Tips':''">
       <img class="img object-fit-img" :src="fileitem.imgsrc" :onerror="$defaultImg('')" />
     </div>
     <div class="maincontent">
-      <div class="mainctitle">
-        <div class="ellipse">{{fileitem.name}}</div>
-        <i v-if="seeState" class="iconfont iconjiantou1 eicotrigger" @click="icoclick"></i>
+      <div class="mainctitle info-left position-r">
+        <p class="name ellipse">{{fileitem.name}}</p>
+        <p class="ellipse font-xxs colora5">{{filesizedesc}}</p>
+        <p class="font-xxs colora5">{{filetimedesc}}</p>
       </div>
-      <div class="maincsubtitle text-ellipsis">
-        {{filesizedesc}}
-        <span class="fr" v-if="seeState">{{fileitem.viewnum}}人查看</span>
+      <div
+        v-if="!selection"
+        class="maincsubtitle text-ellipsis info-right position-r"
+        @click.stop="icoclick"
+      >
+        <p>
+          <i v-if="seeState" class="iconfont iconjiantou1 eicotrigger colord"></i>
+        </p>
+        <P>
+          <span class="fr" v-if="seeState">{{fileitem.viewnum}}人查看</span>
+        </P>
+        <p>
+          <span class="fr">分值:{{fileitem.score}}分</span>
+        </p>
       </div>
-      <div class="maincsubtitle text-ellipsis">
-        {{filetimedesc}}
-        <span class="fr">分值:{{fileitem.score}}分</span>
+      <div
+        v-if="selection"
+        class="select-icon position-r tc"
+        @click.stop="selectionClick(fileitem)"
+      >
+        <i class="iconfont iconok- position-c" :class="fileitem.isAct?'act':''"></i>
       </div>
     </div>
   </div>
@@ -27,7 +42,7 @@ import FileAttachList from "./FileAttachList";
 export default {
   name: "BankeFileSimple",
   components: {
-    FileAttachList,
+    FileAttachList
   },
   created() {},
   computed: {
@@ -74,17 +89,22 @@ export default {
     };
   },
   methods: {
-    icoclick() {
-      this.pendclick = true;
-      this.$emit("editclick", this.fileitem);
-    },
     onclick() {
+      if (this.selection) return;
       // console.log('bankefilesimple');
       if (this.pendclick) {
         this.pendclick = false;
         return;
       }
       this.$emit("normalclick", this.fileitem);
+    },
+    icoclick() {
+      this.pendclick = true;
+      this.$emit("editclick", this.fileitem);
+    },
+
+    selectionClick(fileitem) {
+      this.$emit('selectionClick',fileitem);
     }
   },
   props: {
@@ -95,7 +115,7 @@ export default {
           filename: "++",
           filepath: "",
           filesize: 0,
-          uploadtime: ""
+          uploadtime: "",
         };
       },
       required: false
@@ -115,6 +135,9 @@ export default {
     },
     seeState: {
       default: 1
+    },
+    selection: {
+      default: false
     }
   }
 };
@@ -144,11 +167,9 @@ export default {
 }
 
 .zy-content .mainctitle {
-  position: relative;
+  /* position: relative; */
   font-size: 18px;
   color: #313131;
-
-  height: 24px;
   margin-bottom: 6px;
 }
 .mainctitle > div {
@@ -163,11 +184,9 @@ export default {
 }
 
 .maincsubtitle {
-  margin-top: 3px;
-  height: 16px;
-
   font-size: 12px;
   color: #a5a5a5;
+  text-align: right;
 }
 
 .mainright {
@@ -199,6 +218,26 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-    border-radius: 10px;
+  border-radius: 10px;
+}
+.info-left {
+  width: calc(100% - 90px);
+  padding-right: 60px;
+}
+.select-icon {
+  width: 35px;
+  height: 100%;
+}
+.select-icon .iconfont {
+  color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 26px;
+}
+.select-icon .iconfont.act {
+  color: #ff8900;
+  border: none;
 }
 </style>

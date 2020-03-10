@@ -1,7 +1,7 @@
 <template>
   <div class="mulu-wrap">
     <mt-header title="第一章">
-      <mt-button slot="left"  @click="canlce()">取消</mt-button>
+      <mt-button slot="left" @click="canlce()">取消</mt-button>
     </mt-header>
     <p class="Prev-btn">
       <i class="iconfont iconwithdraw-fill colord position-l"></i>
@@ -44,6 +44,13 @@
 
 <script>
 // prettier setting.json  Prevent
+import {
+  Indicator,
+  Toast,
+  MessageBox,
+  Cell,
+  Popup,
+} from "mint-ui";
 import Empty from "@/common/empty";
 export default {
   props: {
@@ -68,8 +75,9 @@ export default {
           name: "第一节",
           imgsrc: "",
           createtime: "2018"
-        },
-      ]
+        }
+      ],
+      newFile:''
     };
   },
   computed: {},
@@ -78,12 +86,13 @@ export default {
   watch: {},
   methods: {
     opneFolder(item) {},
-    newFolder(){
-      alert('新建文件')
+    newFolder() {
+      MessageBox.prompt("请输入文件名").then(({ value, action }) => {
+        this.newFile=value;
+        alert(this.newFile)
+      });
     },
-    submit(){
-
-    },
+    submit() {},
     canlce() {
       this.$emit("Cancel", true);
     }

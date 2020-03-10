@@ -220,6 +220,10 @@ export default {
 <style lang='less' scoped>
 .members-list-wrap {
   .main {
+    .lists-main{
+      overflow-y: scroll;
+      min-height: calc(100vh - 162px);
+    }
     .arr {
       li {
         &.act {
@@ -271,7 +275,7 @@ export default {
         object-fit: cover;
       }
       .group {
-        width: 100%;
+        width: 65%;
         position: absolute;
         left: 130px;
         top: 50%;

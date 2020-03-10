@@ -75,7 +75,7 @@ export default {
               let arr = [];
               arr[0] = res.data.data;
               res.data.data.imgsrc = require("../../assets/file_icon/IT.svg");
-              this.$store.commit("SET_BANKEZHIYUANLINKITEM", arr);
+              this.$store.commit("SET_BANKEZHIYUANLINKITEM", {item:arr,type:1});
               this.$emit("addLinkState", true);
               this.$store.commit("SET_FOOTER_BAR_STATE", true);
             });

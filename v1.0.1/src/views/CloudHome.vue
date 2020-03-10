@@ -322,11 +322,6 @@ export default {
     onShowMenu(v) {
       console.log(v);
       this.bankeitem = v;
-      // if (this.bankeitem.ordernum) {
-      //   this.actions[1].name = "取消置顶";
-      // } else {
-      //   this.actions[1].name = "置顶班课";
-      // }
       this.actionShow = true;
     },
     //创建or加入
