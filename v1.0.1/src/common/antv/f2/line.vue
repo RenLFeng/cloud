@@ -251,12 +251,12 @@ export default {
           }
         });
         //陰影chart.area()
+                  //曲线  .shape("smooth")
         // chart.area().position('count*value').color('type').shape('')
         chart
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart.render();
       } else {
         chart.changeData(this.data);

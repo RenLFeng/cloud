@@ -23,7 +23,7 @@
     <div v-else style="height:100%;">
       <textarea
         v-model="zdetail.ztext"
-        :placeholder="$t('bankeTask.Enter_details')"
+        placeholder="请输入作业详情（选填）"
         class="zdetail"
         :disabled="canEditzy"
         @input="textChange($event.target.value)"

@@ -3,13 +3,28 @@
     <mt-header title="评测记录" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
+    <div class="van-navbr-wrap">
+      <ul>
+        <li
+          v-for="(v,i) in tabBar"
+          :key="i"
+          :class="v.isActive?'active':''"
+          @click="selectClick($event,v,i)"
+          ref="aaa"
+        >
+          <span class="lable font18">{{v.label}}</span>
+          <span class="num fontxs">{{v.num}}</span>
+        </li>
+        <span class="move-bar"  :style="`left:${moveBar}px`"></span>
+      </ul>
+    </div>
     <div
       class="main"
       v-if="pingceHistoryList.length"
       v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="500"
-      infinite-scroll-immediate-check	="false"
+      infinite-scroll-immediate-check="false"
     >
       <List
         v-for="(v,index) in pingceHistoryList"
@@ -19,12 +34,13 @@
         @click.native="details(v)"
         @edit="onEdit"
       />
-      <p v-if="isScorll && !scorllEd" class="tc color9">
+      <!-- <p v-if="isScorll && !scorllEd" class="tc color9">
         <van-loading size="24px">加载中...</van-loading>
-      </p>
+      </p>-->
       <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p>
     </div>
     <Empty v-else />
+
     <mt-popup
       v-model="popupDeatil"
       position="right"
@@ -42,8 +58,6 @@
 </template>
 
 <script>
-import Loading from "vant/lib/loading";
-import "vant/lib/loading/style";
 import Empty from "@/common/empty";
 import List from "@/common/list";
 import Deatil from "./detail";
@@ -61,19 +75,18 @@ import {
 export default {
   name: "PingCe",
   watch: {
-    popupDeatil: function (val) {
-    }
+    popupDeatil: function(val) {}
   },
   components: {
     List,
     Deatil,
-    Empty,
-    [Loading.name]: Loading
+    Empty
   },
 
   data() {
     return {
       pingceHistoryList: [],
+      tempHistory: [],
       bankeid: 0,
 
       popupDeatil: false,
@@ -97,7 +110,72 @@ export default {
       editItemObj: {},
 
       showsingle: false,
-      pingceid: 0
+      pingceid: 0,
+
+      tabActive: 0,
+moveBar:0,
+      tabBar: [
+        {
+          id: 0,
+          label: "ALL",
+          num: 0,
+          isActive: true
+        },
+        {
+          id: 2,
+          label: "选择",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 1,
+          label: "判断",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 4,
+          label: "主观",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 5,
+          label: "写作",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 6,
+          label: "抢答",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 10,
+          label: "投票",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 5,
+          label: "写作",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 6,
+          label: "抢答",
+          num: 0,
+          isActive: false
+        },
+        {
+          id: 10,
+          label: "投票",
+          num: 0,
+          isActive: false
+        }
+      ]
     };
   },
   mounted() {
@@ -112,6 +190,39 @@ export default {
     // this.HistoryListRQuery();
   },
   methods: {
+    selectClick(e, v, i) {
+      // console.log(this.$refs.aaa);
+      let aa = this.$refs.aaa[i];
+      console.log(aa.offsetLeft);
+      this.moveBar=aa.offsetLeft;
+      // var arr = [1, 2, 3, 4, 1, 3, 4, 5, 5, 88, 7, 3, 1];
+      // var temp = {};
+      // arr.forEach(function(v, k) {
+      //   if (temp[v]) {
+      //     temp[v]++;
+      //   } else {
+      //     temp[v] = 1;
+      //   }
+      // });
+      // console.log(temp);
+      // return;
+      let ev = e || window.event;
+      // this.$nextTick(()=>{
+      //   alert(ev.offsetX)
+      // })
+      if (!v.id) {
+        this.pingceHistoryList = this.tempHistory;
+        return;
+      }
+      let temp = this.tempHistory.filter(item => {
+        return v.id == item.ptype;
+      });
+      this.pingceHistoryList = temp;
+      this.$nextTick(() => {
+        
+      });
+      console.log(temp);
+    },
     onEdit(item) {
       console.log(item);
       this.editItemObj = item;
@@ -158,6 +269,7 @@ export default {
               ...this.pingceHistoryList,
               ...res.data.data
             ];
+            this.tempHistory = [...this.tempHistory, ...res.data.data];
             console.log("pingce/query", res);
             if (this.showsingle) {
               if (res.data.data.length == 0) {
@@ -191,9 +303,9 @@ export default {
       this.popupDeatil = true;
     },
     Backs() {
-     this.$back();
-        //alert('pcindex:'+window.history.length);
-     //   window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
+      this.$back();
+      //alert('pcindex:'+window.history.length);
+      //   window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
     },
     goBacks() {
       if (this.popupDeatil) {
@@ -212,8 +324,59 @@ export default {
 
 <style lang='less' scoped>
 .pingce-wrap {
-  .main {
-    margin-top: 50px;
+  .van-navbr-wrap {
+    position: relative;
+    width: 100vw;
+    height: 54px;
+    overflow: hidden;
+    margin-top: 49px;
+    background: #fff;
+    > ul {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: flex;
+      li {
+        display: flex;
+        width: 52px;
+        height: 54px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        span {
+          color: #5d5d5d;
+        }
+        .lable {
+        }
+        .num {
+        }
+        &.active {
+          span {
+            color: #0089ff;
+          }
+        }
+      }
+      .move-bar {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 52px;
+        height: 3px;
+        background: #0089ff;
+      }
+    }
   }
+  .main {
+    margin-top: 10px;
+  }
+}
+</style>
+<style>
+.pingce-wrap .van-tabs__nav {
+  border: none;
+  border-radius: 0;
+}
+.pingce-wrap .van-tabs__wrap {
+  width: 100%;
 }
 </style>

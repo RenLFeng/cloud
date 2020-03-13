@@ -329,8 +329,7 @@ export default {
         chart
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart.render();
       } else {
         chart.changeData(this.score1Data);
@@ -382,8 +381,7 @@ export default {
         chart2
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart2.render();
       } else {
         chart2.changeData(this.score2Data);
@@ -435,8 +433,7 @@ export default {
         chart3
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart3.render();
       } else {
         chart3.changeData(this.score3Data);
@@ -488,8 +485,7 @@ export default {
               chart4
                   .line()
                   .position("count*value")
-                  .color("type")
-                  .shape("smooth");
+                  .color("type");
               chart4.render();
           } else {
               chart4.changeData(this.score4Data);

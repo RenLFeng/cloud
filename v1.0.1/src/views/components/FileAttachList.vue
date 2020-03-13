@@ -1,6 +1,6 @@
 <template>
   <div class="flist-container" id="content">
-    <ul class="flist-ul">
+    <ul class="flist-ul clearfix">
       <li
         v-for="(fitem, findex) in localfiles"
         :key="findex"

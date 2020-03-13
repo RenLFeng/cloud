@@ -1,25 +1,18 @@
 <template>
-  <div>
+  <div class="new-zuoye-wrap">
     <mt-header :title="pageTitle">
       <mt-button slot="left" @click="$back">取消</mt-button>
 
       <mt-button slot="right" :disabled="savedisable" @click="doSave">{{savebtntext}}</mt-button>
     </mt-header>
 
-    <div>
-      <mt-field label="标题" placeholder="请输入作业标题" v-model="zuoyeitem.name"></mt-field>
-
+    <div class="main">
+      <div class="zuoye-info-wrap">
+        <mt-field label placeholder="请输入作业标题" v-model="zuoyeitem.name"></mt-field>
+        <zuoyedetailedit :zdetail="zdetail"></zuoyedetailedit>
+      </div>
+      <!-- <mt-cell title="作业详情" is-link @click.native="onZDetail">{{zdetaildesc}}</mt-cell> -->
       <div class="devide"></div>
-
-      <mt-cell title="作业详情" is-link @click.native="onZDetail">{{zdetaildesc}}</mt-cell>
-
-      <div class="devide"></div>
-
-      <!-- <mt-cell title="小组划分方式" is-link>未实现</mt-cell>
-      <mt-cell title="评分方式" is-link>未实现</mt-cell> -->
-
-      <div class="devide"></div>
-
       <mt-cell title="设置最晚提交时间">
         <mt-switch v-model="hassubmittime"></mt-switch>
       </mt-cell>
@@ -27,10 +20,9 @@
       <mt-cell v-if="hassubmittime" title="允许超时提交作业">
         <mt-switch v-model="allowpasstime"></mt-switch>
       </mt-cell>
-
-      <div class="devide"></div>
-
+      <p class="tips font-xxs" v-if="hassubmittime">开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>
       <mt-cell title="答案设置" is-link @click.native="onZAnaswer">{{zanswerdesc}}</mt-cell>
+      <p class="tips font-xxs">学生可在互评中或作业结束后查看参考答案，你可以随时对参考答案进行编辑。</p>
     </div>
 
     <mt-datetime-picker
@@ -57,7 +49,7 @@
         <!-- <mt-button icon="back" slot="left" @click="goBack">返回</mt-button> -->
         <mt-button slot="right" @click="popupAnswer = false">确定</mt-button>
       </mt-header>
-      <Answer :zanswer="zanswer" :states="false"/>
+      <Answer :zanswer="zanswer" :states="false" />
     </mt-popup>
   </div>
 </template>
@@ -95,7 +87,7 @@ export default {
       },
       curdatetime: new Date(),
       isEditMode: false, //! 是否编辑模式
-        pickervalue:'',
+      pickervalue: ""
     };
   },
   props: {
@@ -160,6 +152,7 @@ export default {
       set(val) {
         if (val) {
           this.zuoyeitem.hassubmittime = 1;
+          this.$refs.timepicker.open();
         } else {
           this.zuoyeitem.hassubmittime = 0;
           this.zuoyeitem.submittime = "";
@@ -201,9 +194,11 @@ export default {
     onZAnaswer() {
       this.popupAnswer = true;
     },
-      pickerconfirm(){
-          this.zuoyeitem.submittime = commontools.timeJsDateToTimedate(this.pickervalue);
-      },
+    pickerconfirm() {
+      this.zuoyeitem.submittime = commontools.timeJsDateToTimedate(
+        this.pickervalue
+      );
+    },
     AnswerSubmit() {},
     defaultzuoyename() {
       //! cjy: no default zname, confused?
@@ -222,25 +217,25 @@ export default {
       );
     },
     doSave() {
-        if (this.zuoyeitem.state != 0){
-            this.doSaveUpload();
-            return;
-        }
-         MessageBox({
-            message: "是否现在开始作业？",
-            showCancelButton: true,
-            confirmButtonText: "立即开始",
-            cancelButtonText: "暂不开始"
-          })
-            .then(res2 => {
-              if (res2 == "confirm") {
-                this.zuoyeitem.state = 100;
-              }
-              this.doSaveUpload();
-            })
-            .catch(() => {
-              this.doSaveUpload();
-            });
+      if (this.zuoyeitem.state != 0) {
+        this.doSaveUpload();
+        return;
+      }
+      MessageBox({
+        message: "是否现在开始作业？",
+        showCancelButton: true,
+        confirmButtonText: "立即开始",
+        cancelButtonText: "暂不开始"
+      })
+        .then(res2 => {
+          if (res2 == "confirm") {
+            this.zuoyeitem.state = 100;
+          }
+          this.doSaveUpload();
+        })
+        .catch(() => {
+          this.doSaveUpload();
+        });
       // var ttip = "已完成创建？";
       // if (this.isEditMode) {
       //   ttip = "已完成编辑？";
@@ -273,7 +268,11 @@ export default {
       //! serverData
       var url = "/api/api/bankezuoyeadd?bankeid=" + this.bankeid;
 
-      Indicator.open(this.isEditMode ? this.$t('Indicator.Saving') : this.$t('Indicator.Set_up'));
+      Indicator.open(
+        this.isEditMode
+          ? this.$t("Indicator.Saving")
+          : this.$t("Indicator.Set_up")
+      );
 
       var zitem = {};
       zitem = this.zuoyeitem;
@@ -317,7 +316,9 @@ export default {
       }
 
       this.curdatetime = new Date();
-      this.pickervalue = commontools.timeTimedateToJsDate(this.zuoyeitem.submittime);
+      this.pickervalue = commontools.timeTimedateToJsDate(
+        this.zuoyeitem.submittime
+      );
       this.$refs.timepicker.open();
     },
     assignZDetail(to, from) {
@@ -345,14 +346,13 @@ export default {
       this.isEditMode = true;
 
       //! 拉取zdetail 和zanswer 信息
-      Indicator.open(this.$t('Indicator.Loading'));
+      Indicator.open(this.$t("Indicator.Loading"));
       this.$http
         .post("/api/api/bankezuoyedetail", { zuoyeid: this.zuoyeitem.id })
         .then(res => {
           Indicator.close();
           // alert(0)
           if (res.data.code == 0) {
-           
             this.zuoyeitem = res.data.data["zuoye"];
             var jz = res.data.data["zdetail"];
             this.assignZDetail(this.zdetail, jz);
@@ -384,13 +384,56 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #fff;
-
 }
-.mint-cell{
-  padding-right:10px;
-
+.mint-cell {
+  padding-right: 10px;
 }
-.mint-cell-value{
-    margin-right: 15px;
+.mint-cell-value {
+  margin-right: 15px;
+}
+.mint-cell-value {
+  color: #33a0ff;
+}
+</style>
+<style lang="less">
+.new-zuoye-wrap {
+  .main {
+    margin-top: 10px;
+    .zuoye-info-wrap {
+      background: #fff;
+      .mint-field {
+        padding: 10px;
+      }
+      .container {
+        padding: 10px;
+      }
+      .attachdesc {
+        border-bottom: none;
+        padding: 5px;
+      }
+      textarea {
+        height: 112px;
+        max-height: 112px;
+        padding: 0;
+      }
+      .imgblock {
+        width: 60px;
+        height: 60px;
+        border: 1px dashed #aaaaaa;
+      }
+      .bottommargin {
+        height: 0;
+      }
+    }
+      .mint-switch-input:checked + .mint-switch-core {
+    border-color: #4cd964;
+    background-color: #4cd964;
+  }
+  .tips{
+    color: #939393;
+    padding: 10px;
+  }
+  }
+
 }
 </style>

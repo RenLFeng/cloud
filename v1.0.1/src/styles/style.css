@@ -640,3 +640,6 @@ textarea {
     z-index: 99;
     transform: translate(-50%, 0);
 }
+.mint-datetime{
+    height: 50vh;
+}

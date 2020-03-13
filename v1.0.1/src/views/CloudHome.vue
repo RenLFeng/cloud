@@ -7,8 +7,8 @@
         slot="left"
         @click="onbackmain"
       >{{$t('common.Back')}}</mt-button>
-    </mt-header> -->
-     <!-- <i class="iconfont iconjia position-r fontmaintitle" @click="addBankeIcon"></i> -->
+    </mt-header>-->
+    <!-- <i class="iconfont iconjia position-r fontmaintitle" @click="addBankeIcon"></i> -->
 
     <div class="mint-header-f mycreate-header" v-if="selected=='banke' && !order">
       <div class="lable tc position-c color1">
@@ -32,12 +32,10 @@
     <!-- <mt-header title="班课调序" v-if="order &&　CliudBar" class="order-header">
       <mt-button slot="left" @click="orderCancel" class="fontnormal">取消</mt-button>
       <mt-button slot="right" @click="orderOnsave" class="fontnormal">确定</mt-button>
-    </mt-header> -->
+    </mt-header>-->
 
     <!-- main -->
-    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'"
-    
-    >
+    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
           <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
@@ -47,7 +45,7 @@
                 <i class="iconfont iconsoushuo fr fontlarge" style="color:#AAAAAA"></i>
               </div>
             </div>
-              <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
+            <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
             <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
           </div>
           <p class="v"></p>
@@ -252,7 +250,7 @@ export default {
     },
     curuser() {
       return this.$store.getters.curuser;
-    },
+    }
   },
   watch: {
     selected() {
@@ -309,7 +307,7 @@ export default {
       this.bankeitem = bankeitem;
       this.bankeDedail();
     },
-        //进入班课
+    //进入班课
     bankeDedail() {
       if (this.bankeitem.id) {
         let tourl = "/bankehome/" + this.bankeitem.id;
@@ -669,7 +667,7 @@ export default {
   overflow: auto;
   padding-bottom: 157px;
 }
-.cloudHome{
+.cloudHome {
   /* top: 70px; */
 }
 </style>

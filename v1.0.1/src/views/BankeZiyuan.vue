@@ -191,9 +191,9 @@ import {
 } from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
-import URL from "./bankeZY/url";
-import UpLoadFile from "./bankeZY/upLoadFile";
-import AddSuperLink from "./bankeZY/addSuperLink";
+import URL from "./bankeZiyuan/url";
+import UpLoadFile from "./bankeZiyuan/upLoadFile";
+import AddSuperLink from "./bankeZiyuan/addSuperLink";
 import commontools from "../commontools";
 import { constants } from "crypto";
 import { mapState, mapMutations } from "vuex";
