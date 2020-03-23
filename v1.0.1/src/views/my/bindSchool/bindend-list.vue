@@ -16,7 +16,7 @@
           <div class="text-info-wrap">
             <p class="fontsmall">{{item.name}}</p>
             <p>
-              您的{{snodesc(item)}}：
+              {{snodesc(item)}}：
               <span>{{item.sno}}</span>
             </p>
           </div>
