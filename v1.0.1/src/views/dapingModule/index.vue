@@ -12,13 +12,14 @@
         </div>
       </div>
     </div>
-    <div class="qrcode-info-wrap">
+    <div class="qrcode-info-wrap" v-if="isOpenSign">
       <div class="code-wrap">
-        <canvas id="canvas"></canvas>
-        <p class="join clearfix">
+        <img class="qrcode-img" :src="base64" alt />
+        <!-- <canvas id="canvas"></canvas> -->
+        <!-- <p class="join clearfix">
           <mt-switch v-model="isJoin"></mt-switch>
           <span>允许旁听学生扫码加入</span>
-        </p>
+        </p>-->
         <p class="tips">请使用微信扫码签到</p>
       </div>
     </div>
@@ -35,6 +36,7 @@
 
 <script>
 import { Indicator, Toast, MessageBox, Switch } from "mint-ui";
+import { parseURL } from "@/util";
 import HeaderNav from "./headerNav";
 import MemberList from "./memberList";
 import Qrcode from "qrcode";
@@ -45,9 +47,9 @@ export default {
       msg: "年开始的奶粉",
       navInfo: {
         letTitle: "学生名单",
-        bankeName: "计算机班课",
-        signTotal: 20,
-        total: 100
+        bankeName: "",
+        signTotal: 0,
+        total: 0
       },
       tempList: [],
       signMemberList: [],
@@ -60,70 +62,96 @@ export default {
       toB: true,
       toT: false,
       isShow: false,
-      signItem: {
-        bankeid: 1040,
-        endtime: "0000-00-00 00:00:00",
-        id: 1057,
-        info: "",
-        joinnum: 0,
-        score: 10,
-        starttime: "2020-03-11 10:17:43",
-        state: 0,
-        totalnum: 4
-      }
+
+      isOpenSign: false,
+      bankeid: "",
+      signdata: {},
+      base64: "",
+      timer: null
     };
   },
   computed: {},
   created() {
-    this.onSignquerymemberFn(this.signItem);
+    //http://192.168.0.237:8080/daping.html?bankeid=1040
+    const UrlParams = parseURL(window.location.href);
+    let id = UrlParams.bankeid;
+    if (id.includes("#")) {
+      id = id.split("#/")[0];
+    }
+    this.bankeid = id;
+    // console.log("UrlParams", UrlParams);
+    this.signquery();
   },
   mounted() {
-    this.useqrcode();
     this.deviseH = window.innerHeight || document.documentElement.clientHeight;
     this.deviseH = this.deviseH - 370;
   },
   watch: {},
   methods: {
-    queryxx(){
-        this.$http
-        .post("/api/banke/postdapingmsg")
+    //查询是否开启签到
+    signquery() {
+      Indicator.open("加载中");
+      this.$http
+        .post("/api/sign/signqueryself", { bankeid: this.bankeid })
         .then(res => {
-          if(res.data.code){
-            
+          if (res.data.code == 0) {
+            console.log("resresres", res);
+            if (res.data.data && res.data.data.signdata) {
+              this.isOpenSign = true;
+              this.signdata = res.data.data.signdata;
+               this.navInfo.bankeName=this.signdata.bankename;
+              this.Signquerymember(this.signdata.id);
+              // let timer = setInterval(() => {
+              //   this.Signquerymember(this.signdata.id);
+              // }, 1000);
+              // this.timer = timer;
+              this.getSignCode();
+            } else {
+            }
+          } else {
+            Toast("未开启签到");
           }
-
+          Indicator.close();
         })
         .catch(() => {
-
+          Indicator.close();
         });
     },
-    //学生打卡记录
-    onSignquerymemberFn(item) {
-      //   Indicator.open(this.$t("Indicator.Loading"));
+    //学生签到状态
+    Signquerymember(id) {
       this.$http
         .post("/api/sign/signquerymember", {
-          id: item.id
+          id: id
         })
         .then(res => {
           if (res.data.code == 0) {
             if (res.data.data && res.data.data.signmembers.length) {
+              this.init();
+              let isSign = [];
+              let noSign = [];
               let Data = res.data.data;
               for (let item of Data.signmembers) {
                 for (let v of Data.users) {
                   if (item.userid == v.id) {
                     item.name = v.name;
                     item.avatar = v.avatar;
-                    item.isShowPopver=false
+                    item.isShowPopver = false;
                   }
                 }
+                this.navInfo.total++;
+                if (item.state) {
+                  this.navInfo.signTotal++;
+                  isSign.push(item);
+                } else {
+                  noSign.push(item);
+                }
               }
-              this.tempList = Data.signmembers;
-              for (let j = 0; j < 3; j++) {
-                Data.signmembers = [...Data.signmembers, ...Data.signmembers];
-                this.signMemberList.push(Data.signmembers);
-              }
-              // this.signMemberList = Data.signmembers;
-              // this.countSign(this.list);
+              // for (let j = 0; j < 3; j++) {
+              //   Data.signmembers = [...Data.signmembers, ...Data.signmembers];
+              //   // this.signMemberList.push(Data.signmembers);
+              // }
+              this.tempList = [...isSign, ...noSign];
+              this.signMemberList = [...isSign, ...noSign];
               console.log("学生打卡记录", this.signMemberList);
               this.$nextTick(() => {
                 this.DOCH = this.$refs.doch.offsetHeight;
@@ -134,17 +162,26 @@ export default {
             }
           } else {
           }
-          //   Indicator.close();
         })
-        .catch(() => {
-          //   Indicator.close();
-        });
+        .catch(() => {});
+    },
+    getSignCode() {
+      this.$http
+        .post("/api/weixin/qrcodesign", { bankeid: this.bankeid })
+        .then(res => {
+          if (res.data.code == 0) {
+            if (res.data.data) {
+              this.base64 = "data:image/png;base64," + res.data.data;
+            }
+          }
+        })
+        .catch(() => {});
     },
     useqrcode() {
       let canvas = document.getElementById("canvas");
       Qrcode.toDataURL(
         canvas,
-        "http://www.baidu.com",
+        "https://www2.exsoft.com.cn/dapingscan/getsign/666/1000",
         {
           width: 479,
           height: 479,
@@ -160,7 +197,6 @@ export default {
     scrollAnimation(currentY, targetY) {
       // 获取当前位置方法
       // const currentY = document.documentElement.scrollTop || document.body.scrollTop
-
       // 计算需要移动的距离
       let needScrollTop = targetY - currentY;
       let _currentY = currentY;
@@ -207,7 +243,15 @@ export default {
       } else {
         this.scrollAnimation(currentY, currentY - this.deviseH);
       }
+    },
+    init() {
+      this.navInfo.total = 0;
+
+      this.navInfo.signTotal = 0;
     }
+  },
+  destroyed() {
+    clearInterval(this.timer);
   },
   components: {
     HeaderNav,
@@ -228,6 +272,8 @@ export default {
       margin-top: 127px;
       .MemberList {
         width: 75%;
+        min-width: 75%;
+        max-width: 75%;
         padding-right: 20px;
         border-right: 1px dashed rgba(112, 112, 112, 1);
         .outer {
@@ -243,13 +289,18 @@ export default {
   }
   .qrcode-info-wrap {
     position: fixed;
-    right: 20px;
+    right: 100px;
     top: 50%;
     display: flex;
     justify-content: flex-end;
     transform: translate(0, -50%);
     z-index: 12;
     .code-wrap {
+      .qrcode-img{
+        width: 15vw;
+      }
+      #canvas {
+      }
       p {
         font-size: 24px;
       }

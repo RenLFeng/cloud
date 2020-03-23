@@ -18,7 +18,7 @@
           <FileList :listData="voteInfos" type="isdetail" />
         </div>
       </div>
-      <div class="list-main" v-if="memberData.length">
+      <div class="big-wrap">
         <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10'">
           <ul>
             <li
@@ -26,30 +26,32 @@
               :key="i"
               :class="v.isActive?'active':''"
               @click="selectClick($event,v,i)"
+              ref="tbLi"
             >
               <span class="lable font18">{{v.label}}</span>
               <span class="num fontxs">{{v.num}}</span>
             </li>
-            <span class="move-bar" :style="`left:${tabActive*54}px`"></span>
+            <span class="move-bar" :style="`left:${moveBar}px`"></span>
           </ul>
         </div>
-        <div class="content">
-          <!-- <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
+        <div class="list-main" v-if="memberData.length" :class="pingceItemfile.ptype!=10?'top':''">
+          <div class="content">
+            <!-- <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
             <span class="fl">{{memberData.length}} 人提交</span>
-          </p> -->
-          <List
-            v-for="(v,index) in memberData"
-            :key="index"
-            :item="v"
-            type="pingcedetail"
-            :ptype="pingceItemfile.ptype"
-            @click.native="onMemberClick(v)"
-            @previewimg="onPreviewimg"
-          />
+            </p>-->
+            <List
+              v-for="(v,index) in memberData"
+              :key="index"
+              :item="v"
+              type="pingcedetail"
+              :ptype="pingceItemfile.ptype"
+              @click.native="onMemberClick(v)"
+              @previewimg="onPreviewimg"
+            />
+          </div>
         </div>
+        <div v-else class="list-main">无提交</div>
       </div>
-      <!--<Empty v-else :text="['无提交']" /> -->
-      <div v-else class="list-main">无提交</div>
     </div>
     <mt-popup v-model="popupDeatil" position="right" class="mint-popup" :modal="false" style>
       <mt-header :title="`${memBerItem.name}的答案`">
@@ -115,12 +117,12 @@ const xuanzhe = [
     label: "F",
     num: 0,
     isActive: false
-  },
-  {
-    label: "NA",
-    num: 0,
-    isActive: false
   }
+  // {
+  //   label: "NA",
+  //   num: 0,
+  //   isActive: false
+  // }
 ];
 const panduan = [
   {
@@ -137,12 +139,12 @@ const panduan = [
     label: "错",
     num: 0,
     isActive: false
-  },
-  {
-    label: "NA",
-    num: 0,
-    isActive: false
   }
+  // {
+  //   label: "NA",
+  //   num: 0,
+  //   isActive: false
+  // }
 ];
 const zhuguan = [
   {
@@ -154,12 +156,12 @@ const zhuguan = [
     label: "已作答",
     num: 0,
     isActive: false
-  },
-  {
-    label: "NA",
-    num: 0,
-    isActive: false
   }
+  // {
+  //   label: "NA",
+  //   num: 0,
+  //   isActive: false
+  // }
 ];
 const qiangda = [
   {
@@ -171,12 +173,12 @@ const qiangda = [
     label: "已参与",
     num: 0,
     isActive: false
-  },
-  {
-    label: "NA",
-    num: 0,
-    isActive: false
   }
+  // {
+  //   label: "NA",
+  //   num: 0,
+  //   isActive: false
+  // }
 ];
 export default {
   name: "",
@@ -203,6 +205,7 @@ export default {
     return {
       pingceItemfile: {},
       memberData: [],
+      tempMemberData: [],
       popupDeatil: false,
       memBerItem: {
         answerdesc: {
@@ -211,7 +214,8 @@ export default {
       },
       voteInfos: [],
 
-      tabActive: 0,
+      moveBar: 0,
+      filterType: "",
       xuanzhe,
       panduan,
       zhuguan,
@@ -243,32 +247,55 @@ export default {
   mounted() {},
   methods: {
     selectClick(e, v, i) {
-      console.log(this.tabBar);
-      return;
-      // var arr = [1, 2, 3, 4, 1, 3, 4, 5, 5, 88, 7, 3, 1];
-      // var temp = {};
-      // arr.forEach(function(v, k) {
-      //   if (temp[v]) {
-      //     temp[v]++;
-      //   } else {
-      //     temp[v] = 1;
-      //   }
-      // });
-      // console.log(temp);
-      // return;
-      let ev = e || window.event;
-      // this.$nextTick(()=>{
-      //   alert(ev.offsetX)
-      // })
-      if (!v.id) {
-        this.pingceHistoryList = this.tempHistory;
+      let curel = this.$refs.tbLi[i];
+      console.log(curel.offsetLeft);
+      this.moveBar = curel.offsetLeft;
+      this.filterType = v.label;
+
+      for (let v of this.tabBar) {
+        v.isActive = false;
+      }
+      this.tabBar[i].isActive = true;
+      this.filterData(this.filterType);
+    },
+    filterData(type) {
+      if (type == "ALL") {
+        this.memberData = this.tempMemberData;
         return;
       }
-      let temp = this.tempHistory.filter(item => {
-        return v.id == item.ptype;
+      this.memberData = this.tempMemberData.filter(item => {
+        if (this.pingceItemfile.ptype == 4) {
+          return item.answerdesc.file;
+        } else if (this.pingceItemfile.ptype == 5) {
+          return item.answerdesc.textarea;
+        } else {
+          let opts = JSON.stringify(item.answerdesc.opts);
+          return opts.includes(type);
+        }
       });
-      this.pingceHistoryList = temp;
-      console.log(temp);
+      this.$nextTick(() => {});
+    },
+    Statistics(arr) {
+      if (Array.isArray(arr)) {
+        this.initStatistics();
+        this.tabBar[0].num = arr.length;
+        for (let j = 1; j < this.tabBar.length; j++) {
+          let v = this.tabBar[j];
+          for (let i = 0; i < arr.length; ++i) {
+            let opts = JSON.stringify(arr[i].answerdesc.opts);
+            if (this.pingceItemfile.ptype == 4) {
+              v.num++;
+            } else if (this.pingceItemfile.ptype == 5) {
+              v.num++;
+            } else {
+              if (opts.includes(v.label)) {
+                v.num++;
+              }
+            }
+          }
+        }
+      }
+      console.log("ccc", this.tabBar);
     },
     previewimg() {
       nativecode.previewImage(this, this.pingceItemfile.files);
@@ -280,62 +307,72 @@ export default {
           bankeid: this.pingceItemfile.classid
         })
         .then(res => {
-          if (res.data.code == "0" && res.data.data.submit.length) {
-            this.memberData = res.data.data.submit;
-            for (let item of this.memberData) {
-              item.answerdesc = JSON.parse(item.answerdesc);
-              for (let v of res.data.data.users) {
-                if (item.userid == v.id) {
-                  item.avatar = v.avatar;
-                  item.name = v.name;
-                }
-              }
-            }
-            console.log("详细", this.memberData);
-            if (this.pingceItemfile.ptype == "1") {
+          if (res.data.code == "0") {
+            if (res.data.data.submit.length) {
+              this.memberData = res.data.data.submit;
               for (let item of this.memberData) {
-                for (let key in item.answerdesc.opts) {
-                  let v = item.answerdesc.opts[key];
-                  switch (v) {
-                    case "A":
-                      item.answerdesc.opts[key] = "正确";
-                      break;
-                    case "B":
-                      item.answerdesc.opts[key] = "错误";
-                      break;
+                item.answerdesc = JSON.parse(item.answerdesc);
+                for (let v of res.data.data.users) {
+                  if (item.userid == v.id) {
+                    item.avatar = v.avatar;
+                    item.name = v.name;
                   }
                 }
               }
-            }
-            if (this.pingceItemfile.ptype == "6") {
-              for (let item of this.memberData) {
-                item.isResponder = "抢答成功";
-              }
-            }
-            if (this.pingceItemfile.ptype == "10") {
-              this.voteInfos = this.pingceItemfile.info.opts;
-              for (let v of this.voteInfos) {
-                v.count = 0;
-              }
-              for (let item of this.memberData) {
-                for (let v of item.answerdesc.opts) {
-                  for (let key in this.voteInfos) {
-                    if (v == key) {
-                      this.voteInfos[key].count++;
-                      item.toName = this.voteInfos[key].name;
+              console.log("详细", this.memberData);
+              if (this.pingceItemfile.ptype == "1") {
+                for (let item of this.memberData) {
+                  for (let key in item.answerdesc.opts) {
+                    let v = item.answerdesc.opts[key];
+                    switch (v) {
+                      case "A":
+                        item.answerdesc.opts[key] = "正确";
+                        break;
+                      case "B":
+                        item.answerdesc.opts[key] = "错误";
+                        break;
                     }
                   }
                 }
               }
-              this.voteInfos.sort(sortFn("count", 1));
-              console.log("qqqqqq", this.voteInfos);
+              if (this.pingceItemfile.ptype == "6") {
+                for (let item of this.memberData) {
+                  item.isResponder = "抢答成功";
+                }
+              }
+              if (this.pingceItemfile.ptype == "10") {
+                this.voteInfos = this.pingceItemfile.info.opts;
+                for (let v of this.voteInfos) {
+                  v.count = 0;
+                }
+                for (let item of this.memberData) {
+                  for (let v of item.answerdesc.opts) {
+                    for (let key in this.voteInfos) {
+                      if (v == key) {
+                        this.voteInfos[key].count++;
+                        item.toName = this.voteInfos[key].name;
+                      }
+                    }
+                  }
+                }
+                this.voteInfos.sort(sortFn("count", 1));
+                console.log("qqqqqq", this.voteInfos);
+              }
+              this.tempMemberData = this.memberData;
+              this.filterData(this.filterType);
+              this.Statistics(this.tempMemberData);
+            } else {
+              this.memberData = [];
+              this.tempMemberData = [];
+              this.voteInfos = [];
+              this.initStatistics();
             }
           } else {
             Toast("连接错误");
           }
         })
         .catch(err => {
-          Toast("异常");
+          // Toast("异常");
         });
     },
     onMemberClick(v) {
@@ -356,6 +393,11 @@ export default {
     goBacks() {
       if (this.popupDeatil) {
         this.popupDeatil = false;
+      }
+    },
+    initStatistics() {
+      for (let v of this.tabBar) {
+        v.num = 0;
       }
     }
   }
@@ -379,22 +421,35 @@ export default {
         margin-top: 20px;
       }
     }
-    .list-main {
-      background: #f0f0f0;
-      padding-top: 20px;
-      .content {
-        background: #fff;
-        padding: 10px;
-        .tit {
-          border-bottom: 1px solid #f0f0f0;
-          padding: 10px 0;
+    .big-wrap {
+      position: relative;
+      .list-main {
+        height: 60vh;
+        min-height: 60vh;
+        background: #f0f0f0;
+
+        overflow: scroll;
+        .content {
+          background: #fff;
+          padding: 10px;
+          .tit {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 10px 0;
+          }
+        }
+        &.top {
+          padding-top: 60px;
         }
       }
     }
+
     .van-navbr-wrap {
-      position: relative;
+      position: absolute;
       width: 100vw;
       height: 54px;
+      z-index: 99;
+      top: 0;
+      left: 0;
       overflow: hidden;
       background: #fff;
       border-bottom: 1px solid #f0f0f0;

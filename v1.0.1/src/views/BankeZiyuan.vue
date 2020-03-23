@@ -356,7 +356,7 @@ export default {
           method: this.showInfo
         });
         if (nativecode.hassharebanke()) {
-          ret.push({
+          objret.push({
             name: "转发",
             method: this.zhiyuanShare
           });

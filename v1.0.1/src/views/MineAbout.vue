@@ -32,7 +32,8 @@
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
-
+    <div class="devide"></div>
+    <mt-cell title="扫一扫" is-link @click.native="scanCode"></mt-cell>
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -94,7 +95,7 @@
       </mt-header>
       <BankeEnd :curbankes="curbankes"></BankeEnd>
     </mt-popup>
-    <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false" style="">
+    <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false" style>
       <mt-header title="关于" class>
         <mt-button slot="left" icon="back" @click="Backs">我的</mt-button>
       </mt-header>
@@ -165,6 +166,12 @@ export default {
       srcstr += require("../assets/account_default.png");
       srcstr += '"';
       return srcstr;
+    },
+    weiximiniprogram() {
+      if (nativecode.platform == "miniprogram") {
+        return true;
+      }
+      return false;
     }
   },
   methods: {
@@ -324,6 +331,13 @@ export default {
       this.popupAbout = true;
       // Toast("暂未实现");
     },
+    scanCode() {
+      if (this.weiximiniprogram) {
+        nativecode.navigateToScan();
+      } else {
+        Toast('请在小程序使用此功能')
+      }
+    },
     //清除提示
     clearEvnet() {
       MessageBox.confirm("", {
@@ -460,7 +474,7 @@ export default {
 .mint-cell {
   border-bottom: 1px solid #f0f0f0;
 }
-.mint-cell-title{
+.mint-cell-title {
   color: #1c1c1c;
 }
 </style>

@@ -33,7 +33,7 @@ module.exports = {
             filename: 'index.html',
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         },
-        group: 'src/group.js'
+        daping: 'src/daping.js'
     },
     configureWebpack: config => {
         if (isProduction) {
@@ -53,10 +53,11 @@ module.exports = {
         }
 
     },
+    
     lintOnSave: false,
     devServer: {
-         proxy: 'http://192.168.0.2:9982'
+        //  proxy: 'http://192.168.0.2:9982'
         //  proxy: 'http://192.168.40.104:9982'
-        // proxy: 'https://www2.exsoft.com.cn'
+        proxy: 'https://www2.exsoft.com.cn'
     }
 }
