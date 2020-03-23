@@ -120,8 +120,8 @@ export default {
           let curbanke = this.$store.state.curbanke;
         nativecode.navigateToSign(this.bankeid,this.isTeacher, curbanke);
       }else{
-        this.teacherFn();
-          // Toast('请在小程序中查看签到');
+        // this.teacherFn();
+          Toast('请在小程序中查看签到');
       }
     },
     teacherFn() {
