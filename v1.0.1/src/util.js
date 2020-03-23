@@ -10,9 +10,9 @@ export const formateTime = (v, type) => {
   }
   var y = date.getFullYear() + '';
   var m = date.getMonth() + 1;
-  m = m < 10 ? ('0' + m) : m+'';
+  m = m < 10 ? ('0' + m) : m + '';
   var d = date.getDate();
-  d = d < 10 ? ('0' + d) : d+'';
+  d = d < 10 ? ('0' + d) : d + '';
 
   var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
   var minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
@@ -26,11 +26,9 @@ export const formateTime = (v, type) => {
     return y + '/' + m + '/' + d;
   } else if (type == '-') {
     return `${y}-${m}-${d} ${hour}:${minute}:${second}`
-  }
-  else if (type == 'cstr'){
-    return ''+y+m+d + ' '+hour+minute+second
-  }
-  else {
+  } else if (type == 'cstr') {
+    return '' + y + m + d + ' ' + hour + minute + second
+  } else {
     return y + '年' + m + '月' + d + '日';
   }
 }
@@ -119,7 +117,7 @@ export const getChartDate = (ndays, date) => {
 }
 
 // cjy: 纠正移动设备上的拍照旋转文件
-export const fixCaptureImage = (file, tofile=false) => {
+export const fixCaptureImage = (file, tofile = false) => {
   return new Promise((resolve, reject) => {
     // 获取图片
     console.log('fixCaptureImage');
@@ -127,7 +125,7 @@ export const fixCaptureImage = (file, tofile=false) => {
     let curl = window.URL.createObjectURL(file)
     let oparam = curl;
     let rejectres = null;
-    if (tofile){
+    if (tofile) {
       rejectres = file;
     }
     img.src = curl;
@@ -196,28 +194,28 @@ export const fixCaptureImage = (file, tofile=false) => {
               break;
           }
           // 返回新图片
-            if (tofile){
-                canvas.toBlob(file => {
-                  let cbf = file;
-                  if (rejectres.name){
-                   // file.name = rejectres.name;
-                      let oldname = rejectres.name;
-                      let ii = oldname.lastIndexOf('.');
-                      if (ii > 0){
-                        oldname = oldname.substr(0, ii);
-                      }
-                      oldname += '.jpg';  //! 更改文件名后缀
-                      cbf = new File([file], oldname
-                      ,{type:'image/jpeg'});
-                      //cbf.type = 'image/jpeg';
-                  }
-                  resolve(cbf)
-                }, 'image/jpeg', 0.8)
-            }
-            else{
-                let imgurl = canvas.toDataURL('image/jpeg', 0.8);
-                return resolve(imgurl);
-            }
+          if (tofile) {
+            canvas.toBlob(file => {
+              let cbf = file;
+              if (rejectres.name) {
+                // file.name = rejectres.name;
+                let oldname = rejectres.name;
+                let ii = oldname.lastIndexOf('.');
+                if (ii > 0) {
+                  oldname = oldname.substr(0, ii);
+                }
+                oldname += '.jpg'; //! 更改文件名后缀
+                cbf = new File([file], oldname, {
+                  type: 'image/jpeg'
+                });
+                //cbf.type = 'image/jpeg';
+              }
+              resolve(cbf)
+            }, 'image/jpeg', 0.8)
+          } else {
+            let imgurl = canvas.toDataURL('image/jpeg', 0.8);
+            return resolve(imgurl);
+          }
 
           //canvas.toBlob(file => resolve(file), 'image/jpeg', 0.8)
         }
@@ -372,6 +370,12 @@ export const getFileTypeImg = (typein) => {
     case 'school':
       srcstr += require("./assets/school.png");
       return srcstr;
+    case 'folder':
+      srcstr += require("./assets/file_icon/folder.svg");
+      return srcstr;
+    case 'img':
+      srcstr += require("./assets/file_icon/default_img.png");
+      return srcstr;
     default:
       srcstr += require("./assets/file_default.png");
       break;
@@ -455,32 +459,32 @@ export const CollectionFn = (itemfile, type, imgIcon, id, bankeid, title = null)
   // console.log(info)
   info = JSON.stringify(info);
 
-  return new Promise((resolve, reject) =>{
-        axios
-            .post("/api/userfav/add", {
-                title: title ? title : itemfile.name,
-                info: info,
-                eventtype: type,
-                eventid: id
-            })
-            .then(res => {
-                Indicator.close();
-                if (res.data.code == 0) {
-                    Toast("收藏成功");
-                    return resolve(res);
-                } else {
-                    Toast("收藏失败");
-                    return reject(res);
-                }
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/api/userfav/add", {
+        title: title ? title : itemfile.name,
+        info: info,
+        eventtype: type,
+        eventid: id
+      })
+      .then(res => {
+        Indicator.close();
+        if (res.data.code == 0) {
+          Toast("收藏成功");
+          return resolve(res);
+        } else {
+          Toast("收藏失败");
+          return reject(res);
+        }
 
-            })
-            .catch(err => {
-                Indicator.close();
-                Toast("服务异常");
-                return reject(res);
+      })
+      .catch(err => {
+        Indicator.close();
+        Toast("服务异常");
+        return reject(res);
 
-            });
-    });
+      });
+  });
 }
 export const sortFn = (property, sort) => {
   return function (a, b) {

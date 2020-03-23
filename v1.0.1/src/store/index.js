@@ -200,9 +200,16 @@ const mutations = {
     setBHomeSelected(state, strsel) {
         state.bhomeselected = strsel;
     },
-    SET_BANKEZHIYUANLINKITEM(state, item) {
-        if (item) {
-            state.bankeZhiYuanLinkItem = item.concat(state.bankeZhiYuanLinkItem);
+    SET_BANKEZHIYUANLINKITEM(state, obj) {
+        let item = obj.item;
+        if (item.length) {
+            if (obj.type==1) {
+                state.bankeZhiYuanLinkItem = [...item, ...state.bankeZhiYuanLinkItem];
+            } else if(obj.type==2) {
+                state.bankeZhiYuanLinkItem = [...state.bankeZhiYuanLinkItem, ...item];
+            }else if(obj.type==3){
+                state.bankeZhiYuanLinkItem=item;
+            }
         } else {
             state.bankeZhiYuanLinkItem = []
         }

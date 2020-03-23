@@ -2,7 +2,12 @@
   <div class="pingce-dtail-warp">
     <div class="main">
       <div class="pic" v-if="pingceItemfile.ptype!='10'">
-        <img :src="`${pingceItemfile.files}_snap.jpg`" class="object-fit-img" alt @click="previewimg" />
+        <img
+          :src="`${pingceItemfile.files}_snap.jpg`"
+          class="object-fit-img"
+          alt
+          @click="previewimg"
+        />
         <p class="color9">
           题目
           <span class="fr">{{pingceItemfile.createtime}}</span>
@@ -14,11 +19,24 @@
         </div>
       </div>
       <div class="list-main" v-if="memberData.length">
+        <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10'">
+          <ul>
+            <li
+              v-for="(v,i) in tabBar"
+              :key="i"
+              :class="v.isActive?'active':''"
+              @click="selectClick($event,v,i)"
+            >
+              <span class="lable font18">{{v.label}}</span>
+              <span class="num fontxs">{{v.num}}</span>
+            </li>
+            <span class="move-bar" :style="`left:${tabActive*54}px`"></span>
+          </ul>
+        </div>
         <div class="content">
-          <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
+          <!-- <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
             <span class="fl">{{memberData.length}} 人提交</span>
-            <!-- <span class="fr">正确率 00%</span> -->
-          </p>
+          </p> -->
           <List
             v-for="(v,index) in memberData"
             :key="index"
@@ -40,7 +58,11 @@
       <div class="answer-detail-wrap">
         <div class="main">
           <p class="tit">
-            <img class="itemavatar object-fit-img" :src="memBerItem.avatar" :onerror="$defaultImg('account')" />
+            <img
+              class="itemavatar object-fit-img"
+              :src="memBerItem.avatar"
+              :onerror="$defaultImg('account')"
+            />
             {{memBerItem.name}}
             <span class="time">{{memBerItem.countdate}}</span>
           </p>
@@ -57,6 +79,105 @@ import Empty from "@/common/empty";
 import nativecode from "@/nativecode";
 import FileList from "../pingceing/vote/filelist";
 import { sortFn } from "@/util";
+const xuanzhe = [
+  {
+    label: "ALL",
+    num: 0,
+    isActive: true
+  },
+  {
+    label: "A",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "B",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "C",
+    num: 0,
+    isActive: false
+  },
+
+  {
+    label: "D",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "E",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "F",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
+  }
+];
+const panduan = [
+  {
+    label: "ALL",
+    num: 0,
+    isActive: true
+  },
+  {
+    label: "对",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "错",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
+  }
+];
+const zhuguan = [
+  {
+    label: "ALL",
+    num: 0,
+    isActive: true
+  },
+  {
+    label: "已作答",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
+  }
+];
+const qiangda = [
+  {
+    label: "ALL",
+    num: 0,
+    isActive: true
+  },
+  {
+    label: "已参与",
+    num: 0,
+    isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
+  }
+];
 export default {
   name: "",
   props: {
@@ -88,11 +209,67 @@ export default {
           textarea: {}
         }
       },
-      voteInfos: []
+      voteInfos: [],
+
+      tabActive: 0,
+      xuanzhe,
+      panduan,
+      zhuguan,
+      qiangda
     };
+  },
+  computed: {
+    tabBar() {
+      switch (this.pingceItemfile.ptype) {
+        case 1:
+          return this.panduan;
+        case 2:
+          return this.xuanzhe;
+        case 3:
+          return this.xuanzhe;
+        case 4:
+          return this.zhuguan;
+        case 5:
+          return this.zhuguan;
+        case 6:
+          return this.qiangda;
+        case 10:
+          return [];
+        default:
+          [];
+      }
+    }
   },
   mounted() {},
   methods: {
+    selectClick(e, v, i) {
+      console.log(this.tabBar);
+      return;
+      // var arr = [1, 2, 3, 4, 1, 3, 4, 5, 5, 88, 7, 3, 1];
+      // var temp = {};
+      // arr.forEach(function(v, k) {
+      //   if (temp[v]) {
+      //     temp[v]++;
+      //   } else {
+      //     temp[v] = 1;
+      //   }
+      // });
+      // console.log(temp);
+      // return;
+      let ev = e || window.event;
+      // this.$nextTick(()=>{
+      //   alert(ev.offsetX)
+      // })
+      if (!v.id) {
+        this.pingceHistoryList = this.tempHistory;
+        return;
+      }
+      let temp = this.tempHistory.filter(item => {
+        return v.id == item.ptype;
+      });
+      this.pingceHistoryList = temp;
+      console.log(temp);
+    },
     previewimg() {
       nativecode.previewImage(this, this.pingceItemfile.files);
     },
@@ -211,6 +388,48 @@ export default {
         .tit {
           border-bottom: 1px solid #f0f0f0;
           padding: 10px 0;
+        }
+      }
+    }
+    .van-navbr-wrap {
+      position: relative;
+      width: 100vw;
+      height: 54px;
+      overflow: hidden;
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      > ul {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        li {
+          display: flex;
+          width: 60px;
+          height: 54px;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          span {
+            color: #5d5d5d;
+          }
+          .lable {
+          }
+          .num {
+          }
+          &.active {
+            span {
+              color: #0089ff;
+            }
+          }
+        }
+        .move-bar {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 52px;
+          height: 3px;
+          background: #0089ff;
         }
       }
     }

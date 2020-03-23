@@ -1,6 +1,12 @@
 <template>
   <div class="Notice-content-main">
-    <mt-field  :placeholder="caneditbanke?'请输入公告内容':'暂无公告'" type="textarea" rows="8" v-model="textareaData" :disabled="!caneditbanke"></mt-field>
+    <mt-field
+      :placeholder="caneditbanke?'请输入公告内容':'暂无公告'"
+      type="textarea"
+      rows="8"
+      v-model="bankeInfo.info"
+      :disabled="!caneditbanke"
+    ></mt-field>
     <mt-button v-if="caneditbanke" type="primary" @click.native="submit">发布</mt-button>
   </div>
 </template>
@@ -15,31 +21,31 @@ export default {
         return {};
       }
     },
-    caneditbanke:{
-      default:true
+    caneditbanke: {
+      default: true
     }
   },
+  watch: {},
+  computed: {},
   data() {
-    return {
-      textareaData: this.bankeInfo.info
-    };
+    return {};
   },
-
   methods: {
     submit() {
-      if (!this.textareaData) {
+      if (!this.bankeInfo.info) {
         Toast("请输入公告");
         return;
       }
       this.$http
         .post("api/banke/updateinfo", {
           id: this.bankeInfo.id,
-          info: this.textareaData
+          info: this.bankeInfo.info
         })
         .then(res => {
           if (res.data.code == "0") {
             Toast("发布成功");
-                this.$emit('submitSuccess',false)
+
+            // this.$emit('submitSuccess',false)
           }
         })
         .catch(err => {});

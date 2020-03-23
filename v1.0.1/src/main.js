@@ -1,20 +1,15 @@
 import Vue from 'vue'
 import store from './store'
 import Home from './App.vue'
-// import {
-//     createRouter
-// } from './router'
 import router from './router'
 import './plugins/element.js'
 import axios from 'axios'
-import './assets/iconfont/iconfont.css'
 import 'amfe-flexible';
+import './assets/iconfont/iconfont.css'
 import Viewer from 'v-viewer'
 import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'
-//import vueAplayer from 'vue-aplayer'
-//Vue.use(vueAplayer)
 import {
     defaultImg,
 } from "@/util";

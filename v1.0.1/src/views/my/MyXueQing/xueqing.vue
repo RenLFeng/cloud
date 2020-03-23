@@ -11,7 +11,7 @@
             :onerror="$defaultImg('account')"
             class="position-l avatarimgpart avatar"
           />
-          <div class="fontsmall namepart ellipse">{{memberuserid?memberuser.name:user.name}}</div>
+          <div class="fontsmall namepart ellipse position-l">{{memberuserid?memberuser.name:user.name}}</div>
         </div>
         <!-- <div class="devide"></div> -->
         <mt-cell title="所属学校" is-link @click.native="bindSchool"></mt-cell>
@@ -20,13 +20,23 @@
           <p :class="!isJoin?'act':''" @click="selectClass(0)">
             <span class="tit-name fontsmall">加入的班课</span>
                    <span class="tit-nub font16">{{myJoin.length?myJoin.length:0}}</span>
-   
+
           </p>
           <p :class="isJoin?'act':''" @click="selectClass(1)">
             <span class="tit-name fontsmall">创建的班课</span>
               <span class="tit-nub font16">{{myCreate.length?myCreate.length:0}}</span>
           </p>
         </div>
+      <div class="lable tc">
+        <p :class="!isJoin?'act navbar':''" @click="selectClass(0)">
+          <span class="tit-name fontsmall">我加入的班课</span>
+          <span class="tit-nub font16">{{myJoin.length?myJoin.length:0}}</span>
+        </p>
+        <p :class="isJoin?'act navbar':''" @click="selectClass(1)">
+          <span class="tit-name fontsmall">我创建的班课</span>
+          <span class="tit-nub font16">{{myCreate.length?myCreate.length:0}}</span>
+        </p>
+      </div>
       <div class="info-list-wrap">
         <div v-if="classData.length">
             <div class="item"     v-for="(v,i) in classData"

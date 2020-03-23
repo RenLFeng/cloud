@@ -19,7 +19,7 @@
               {{lists.username}}
               &nbsp;&nbsp;
               <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
-              <span class="hui-fu" @click="studentHF(lists,tindex)">回复</span>
+              <span v-if="user.id!=lists.userid" class="hui-fu" @click="studentHF(lists,tindex)">回复</span>
             </li>
             <li v-if="lists.content" class="text">{{lists.content}}</li>
             <li v-if="lists.files" class="clearfix">
@@ -45,9 +45,9 @@
                   {{item.fromusername}}
                   &nbsp;&nbsp;
                   <!-- <mt-badge size="small" color="#ff7403">老师</mt-badge> -->
-                  <span class="hui-fu" @click="studentHF(item,tindex)">回复</span>
+                  <span v-if="user.id!=item.fromuserid" class="hui-fu" @click="studentHF(item,tindex)">回复</span>
                 </li>
-                <li class="text">回复 {{item.fromusername}}：{{item.content}}</li>
+                <li class="text">回复{{item.tousername}}：{{item.content}}</li>
 
                 <li class="clearfix">
                   <!-- <viewer> -->
@@ -188,7 +188,10 @@ export default {
   computed: {
     isTeacher() {
       return this.$store.getters.isteacher;
-    }
+    },
+      user() {
+      return this.$store.getters.curuser;
+    },
   },
   created() {},
   mounted() {},
@@ -268,6 +271,7 @@ export default {
               this.topid = serveData[serveData.length - 1].id;
               // this.teacherInfo = this.teacherInfo.concat(serveData);
               this.teacherInfo = [...this.teacherInfo, ...serveData];
+               console.log('lastreplydata', this.teacherInfo);
             }
           } else {
           }
@@ -286,6 +290,8 @@ export default {
     //提交评论
     submit() {
       if (!this.discussMsg && !this.imgFileJson) return;
+      console.log('dsd',this.itemInfo);
+      // return;
       Indicator.open(this.$t("Indicator.Committing"));
       this.$http
         .post("/api/comment/addcomment", {
@@ -343,11 +349,23 @@ export default {
       if (!this.textareaMsg && !this.imgFileJson) return;
       let subData = {};
       let item = this.indexItem;
+      console.log('cvcv',item);
       subData.tcommentid = item.tcommentid || item.id;
-      subData.touserid = item.touserid || item.userid;
-      subData.tousername = item.tousername || item.username;
+      // subData.touserid = item.touserid || item.userid;
+      // subData.tousername = item.tousername || item.username;
+
+
+      subData.touserid = item.userid || item.fromuserid;
+      subData.tousername = item.username || item.fromusername;
+
+      subData.fromuserid = this.user.id;
+      subData.fromusername = this.user.name;
+
+
       subData.content = this.textareaMsg;
       subData.files = this.imgFileJson;
+      console.log(subData);
+      // return;
       Indicator.open(this.$t("Indicator.Committing"));
       this.$http
         .post("/api/comment/addreply", subData)
@@ -524,8 +542,9 @@ export default {
   }
   .discuss-list-content {
     width: 100%;
-    max-height: 75vh;
+    max-height: 70vh;
     overflow-y: scroll;
+        padding-bottom: 25px;
     .discuss-number {
       padding: 20px 10px;
       background: #f0f0f0;
@@ -676,5 +695,9 @@ export default {
   .imgclass {
     height: 100% !important;
   }
+}
+.mint-cell-label{
+      font-size: 14px!important;
+    line-height: 20px;
 }
 </style>

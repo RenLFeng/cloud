@@ -128,7 +128,7 @@ export default {
     margin: 10px 0 20px 0;
   }
   .table-main {
-        height: 61vh;
+        // height: 59vh;
     background: #fff;
   }
 }

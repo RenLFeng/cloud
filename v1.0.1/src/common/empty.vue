@@ -36,6 +36,7 @@ export default {
   max-width: 640px;
   left: 50%;
   top: 50%;
+  font-size: 14px;
   transform: translate(-50%, -50%);
     color: #999;
     i {

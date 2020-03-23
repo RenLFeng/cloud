@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="zacontainer">
-      <div class="zaavatar">
+      <div class="zaavatar" v-if="!seeMySbmit && pagemode=='result'">
         <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="$defaultImg('account')" />
         <div class="zabtnmore zatopmargin" v-if="showsubmitnum">
           <div @click="onseeAllSubmit(resultitem)" class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
         </div>
-        <div class="zaavatartext zatopmargin">{{resultitem.username}}</div>
+        <div class="zaavatartext zatopmargin">{{itemName}}</div>
       </div>
 
       <TextEllipsis
@@ -15,7 +15,7 @@
         :isLimitHeight="isLimitHeight"
         class="zatextmain"
       >
-        <!--<span slot="before" class="h-tag h-tag-red">new</span> -->
+        <!-- <span slot="before" class="h-tag h-tag-red">new</span> -->
         <template slot="more">
           <span>...</span>
           <span class="zatextviewmore" @click="isLimitHeight=false">查看更多</span>
@@ -83,6 +83,16 @@ export default {
     }
   },
   computed: {
+         user() {
+      return this.$store.getters.curuser;
+    },
+    itemName(){
+      if(this.user.id==this.resultitem.userid){
+        return '我的作业'
+      }else{
+        return this.resultitem.username +'作业';
+      }
+    },
     commentnumdesc() {
       return this.resultitem.commentnum + "";
     },
@@ -126,6 +136,16 @@ export default {
           ztext: "",
           userid: 0
         };
+      }
+    },
+    seeMySbmit:{
+      default(){
+        return false
+      }
+    },
+      pagemode:{
+      default(){
+        return 'result'
       }
     }
   },

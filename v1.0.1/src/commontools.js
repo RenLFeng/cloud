@@ -335,9 +335,10 @@ commontools.longTime = function (time) {
     // 现在时间 减去 传入时间 得到差距时间
     var diffValue = now - tmpTime;
     // 小于 0 直接返回
-    if (diffValue < 0) {
-        return;
-    }
+    // if (diffValue < 0) {
+    //     return;
+    // }
+
     // console.log(diffValue);
 
     // 计算 差距时间除以 指定时间段的毫秒数 
@@ -349,28 +350,28 @@ commontools.longTime = function (time) {
     var minC = diffValue / minute;
     switch (true) {
         case yearC >= 1:
-            // console.log("switch 年");
+            // console.log("switch 年",yearC);
             // 如果大于一年就显示具体日期
             result = commontools.fmtDates(tmpTime);
             break;
         case monthC >= 1:
-            // console.log("switch 月");
+            // console.log("switch 月",monthC);
             result = "" + parseInt(monthC) + "月前";
             break;
         case weekC >= 1:
-            // console.log("switch 周");
+            // console.log("switch 周",weekC);
             result = "" + parseInt(weekC) + "周前";
             break;
         case dayC >= 1:
-            // console.log("switch 日");
+            // console.log("switch 日",dayC);
             result = "" + parseInt(dayC) + "天前";
             break;
         case hourC >= 1:
-            // console.log("switch 时");
+            // console.log("switch 时",hourC);
             result = "" + parseInt(hourC) + "小时前";
             break;
         case minC >= 1:
-            // console.log("switch 分");
+            // console.log("switch 分",minC);
             result = "" + parseInt(minC) + "分前";
             break;
         default:

@@ -292,7 +292,7 @@ export default {
         });
         chart.source(this.score1Data, {
           count: {
-            tickCount: 4
+            tickCount: 3
           },
           value: {
             formatter: function formatter(ivalue) {
@@ -329,8 +329,7 @@ export default {
         chart
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart.render();
       } else {
         chart.changeData(this.score1Data);
@@ -345,7 +344,7 @@ export default {
         });
         chart2.source(this.score2Data, {
           count: {
-            tickCount: 4
+            tickCount: 3
           },
           value: {
             formatter: function formatter(ivalue) {
@@ -382,8 +381,7 @@ export default {
         chart2
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart2.render();
       } else {
         chart2.changeData(this.score2Data);
@@ -398,7 +396,7 @@ export default {
         });
         chart3.source(this.score3Data, {
           count: {
-            tickCount: 4
+            tickCount: 3
           },
           value: {
             formatter: function formatter(ivalue) {
@@ -435,8 +433,7 @@ export default {
         chart3
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart3.render();
       } else {
         chart3.changeData(this.score3Data);
@@ -451,7 +448,7 @@ export default {
               });
               chart4.source(this.score4Data, {
                   count: {
-                      tickCount: 4
+                      tickCount: 3
                   },
                   value: {
                       formatter: function formatter(ivalue) {
@@ -488,8 +485,7 @@ export default {
               chart4
                   .line()
                   .position("count*value")
-                  .color("type")
-                  .shape("smooth");
+                  .color("type");
               chart4.render();
           } else {
               chart4.changeData(this.score4Data);

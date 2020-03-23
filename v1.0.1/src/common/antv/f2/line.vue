@@ -207,7 +207,7 @@ export default {
         chart.source(this.data, {
           count: {
             // type: 'cat',
-            tickCount: 4
+            tickCount: 3
             // min: 1,
             //  ticks:ticks?ticks:null,
           },
@@ -251,12 +251,12 @@ export default {
           }
         });
         //陰影chart.area()
+                  //曲线  .shape("smooth")
         // chart.area().position('count*value').color('type').shape('')
         chart
           .line()
           .position("count*value")
-          .color("type")
-          .shape("smooth");
+          .color("type");
         chart.render();
       } else {
         chart.changeData(this.data);
