@@ -1,7 +1,9 @@
 <template>
   <div class="wechat-wrap">
     <div class="mian">
-      <div class="position-c"></div>
+      <div class="position-c">
+        <h1>{{code}}</h1>
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +40,7 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
-            this.$router.push("/");
+            // this.$router.push("/");
           } else {
             Toast("登陆失败");
             this.$router.push("/login");
