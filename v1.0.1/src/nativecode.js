@@ -194,10 +194,28 @@ nativecode.doneinit = nativecode.initfirst();
 //! 是否有登陆页
 nativecode.hasloginpage = function () {
     //return false;
+   // return false;
+
+
     if (nativecode.platform == 'miniprogram') {
         return false;
     }
     return true;
+}
+//! 跳转到登陆页面； 各平台表现不同： 小程序为使用小程序页面
+nativecode.navigateToLogin = function(vueobj){
+    if (nativecode.platform == 'miniprogram'){
+        //! 小程序
+        let wx = nativecode.getwx();
+        wx.miniProgram.navigateTo({
+            url: '/pages/index/login'
+        });
+        return;
+    }
+    vueobj.$store.commit("setLoginUser", {});
+    vueobj.$store.commit("setRouterForward", true);
+    vueobj.$router.push("/login");
+    return;
 }
 
 //！ 是否能够绑定用户

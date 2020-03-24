@@ -337,8 +337,35 @@ export default {
         nativecode.dosharebanke(this.bankeitem);
       }
     },
+      islogined(){
+          //  return false;
+          let u = this.$store.getters.curuser;
+          //console.log(u);
+          if (u && u.id){
+              return true;
+          }
+          return false;
+      },
+      checklogin(){
+          if (this.islogined()){
+              return true;
+          }
+          MessageBox.confirm("", {
+              title: '登陆提示',
+              message: '您未登陆，是否现在登陆？',
+              confirmButtonText: '登陆',
+              cancelButtonText: '取消',
+              showCancelButton: true
+          }).then(() => {
+              nativecode.navigateToLogin(this);
+          });
+          return false;
+      },
     // 创建班课
     onadd() {
+        if (!this.checklogin()){
+            return;
+        }
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
         //! 跳转新增课堂
@@ -351,6 +378,9 @@ export default {
     },
     //加入班课
     jion() {
+        if (!this.checklogin()){
+            return;
+        }
       // this.popupJoin = true;
       this.$store.commit("setRouterForward", true);
       this.$router.push("/Join");

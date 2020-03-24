@@ -15,6 +15,7 @@
                 <span class="mineinfospan">{{user.name}}</span>
             </mt-cell>
 
+
             <mt-cell :title="$t('personal.Account')" >
                 <span  class="mineinfospan">{{useraccount}}</span>
             </mt-cell>
@@ -97,6 +98,7 @@
             user(){
                 return this.$store.getters.curuser;
             },
+
             userrole(){
                 var u = this.$store.getters.curuser;
                 return maintools.userroledesc(u.role);
@@ -104,7 +106,7 @@
             useraccount(){
                 let u = this.$store.getters.curuser;
                //console.log(u);
-                if (u.accountid == 1){
+                if (u.accountid == 1 || u.accountid==2){
                     return '微信账户';
                 }
                 // else if (u.accountid == 0){

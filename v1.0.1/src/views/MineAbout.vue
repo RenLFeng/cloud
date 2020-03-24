@@ -1,17 +1,24 @@
 <template>
   <div class="baout-main">
     <div class="avatarpart" @click="onmine">
-      <img
-        :src="user.avatar"
-        :onerror="$defaultImg('account')"
-        class="avatarimgpart avatar position-l"
-      />
-      <div class="avatartextpart position-l">
-        <div class="fontsmall namepart ellipse">{{user.name}}</div>
-        <div class="fontsmall accountpart colora">{{$t('personal.Account')}}:{{useraccount}}</div>
-        <!-- <i class="iconfont iconcellyoucejiantou position-r"></i> -->
+      <div v-if="islogined">
+        <img
+                :src="user.avatar"
+                :onerror="$defaultImg('account')"
+                class="avatarimgpart avatar position-l"
+        />
+        <div class="avatartextpart position-l">
+          <div class="fontsmall namepart ellipse">{{user.name}}</div>
+          <!--  cjy： 账户信息暂时隐藏？
+          <div class="fontsmall accountpart colora">{{$t('personal.Account')}}:{{useraccount}}</div>
+          -->
+          <!-- <i class="iconfont iconcellyoucejiantou position-r"></i> -->
+        </div>
+        <i class="iconfont iconcellyoucejiantou position-r"></i>
       </div>
-      <i class="iconfont iconcellyoucejiantou position-r"></i>
+      <div v-else>
+        未登陆，点击登陆
+      </div>
     </div>
 
     <div class="devide"></div>
@@ -27,7 +34,9 @@
     <div class="devide"></div>
     <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
+    <!--  cjy: 绑定账户功能暂时隐藏
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
+    -->
     <!-- <div class="devide"></div>
     <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
     <div class="devide"></div>
@@ -154,9 +163,18 @@ export default {
     user() {
       return this.$store.getters.curuser;
     },
+      islogined(){
+      //  return false;
+        let u = this.$store.getters.curuser;
+        //console.log(u);
+        if (u && u.id){
+            return true;
+        }
+        return false;
+      },
     useraccount() {
       let u = this.$store.getters.curuser;
-      if (u.accountid == 1) {
+      if (u.accountid == 1 || u.accountid==2) {
         return "微信账户";
       }
       return u.account;
@@ -391,6 +409,10 @@ export default {
         });
     },
     onmine: function() {
+        if (!this.islogined){
+            nativecode.navigateToLogin(this);
+            return ;
+        }
       this.$store.commit("setRouterForward", true);
       this.$router.push("/mineinfo");
     },

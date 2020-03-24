@@ -1,6 +1,14 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
+      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
+        <span>大屏登录</span>
+        <i
+                class="iconfont icondapingmu eicotrigger bigfont fr"
+                :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''"
+                style="color:#0055FF"
+        ></i>
+      </li>
       <li class="fontlarge" @click="onwxsign()">
         <span>签到</span>
         <i
@@ -29,14 +37,7 @@
         <span>评测记录</span>
         <i class="iconfont icontongji eicotrigger bigfont fr" style="color:#38ADA9"></i>
       </li>
-      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
-        <span>大屏登录</span>
-        <i
-          class="iconfont icondapingmu eicotrigger bigfont fr"
-          :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''"
-          style="color:#0055FF"
-        ></i>
-      </li>
+
       <li class="fontlarge bs" @click="Banshu">
         <span>课堂板书</span>
         <i
