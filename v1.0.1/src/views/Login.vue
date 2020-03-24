@@ -4,13 +4,9 @@
       <!-- 云平台Cloud -->
     </div>
     <div class="fontlarge loginpart">
-      <p class="login-tit">
-        <span :class="state==1?'act':''" @click="selectFn(1)">密码登录</span>
-        <!-- <span :class="state==0?'act':''" @click="selectFn(0)">快速注册</span> -->
-      </p>
       <div class="login-box" v-if="state">
         <div class="loginline">
-          <img src="../assets/phone_icon.svg" alt />
+          <img src="../assets/phone_icon.svg" alt  class="position-l"/>
           <input
             v-model="account"
             placeholder="输入账户名"
@@ -20,7 +16,7 @@
           />
         </div>
         <div class="loginline">
-          <img src="../assets/pwd_icon.svg" alt />
+          <img src="../assets/pwd_icon.svg" alt class="position-l"/>
           <input
             v-model="password"
             placeholder="输入密码"
@@ -56,9 +52,35 @@
           >{{codeTime>0?codeTime+"秒后重新获取":'获取验证码'}}</mt-button>
         </div>
       </div>
-
-      <button class="loginbtn fontnormal" @click="dologin">{{state?'登录':'下一步'}}</button>
+      <!-- <p class="login-tit">
+        <span :class="state==1?'act':''" @click="selectFn(1)">密码登录</span>
+        <span :class="state==0?'act':''" @click="weixinLogin">微信登陆</span>
+      </p>-->
+      <button
+        class="loginbtn fontnormal"
+        :class="isSbmit?'colord':'colora'"
+        @click="dologin"
+      >{{state?'登录':'下一步'}}</button>
+      <button class="loginbtn weixinLogin fontnormal" @click="weixinLogin">微信登陆</button>
     </div>
+    <mt-popup
+      v-model="popupWeiXxinLogin"
+      position="right"
+      class="mint-popup-3"
+      :modal="false"
+      style
+    >
+      <mt-header title class>
+        <mt-button slot="left" @click="Backs">取消</mt-button>
+      </mt-header>
+      <!-- <div id="weixinLogin"></div> -->
+      <wxlogin
+        v-if="popupWeiXxinLogin"
+        :appid="wxlogin.appid"
+        :scope="wxlogin.scope"
+        :redirect_uri="encodeURIComponent(wxlogin.redirect_uri)"
+      ></wxlogin>
+    </mt-popup>
   </div>
 </template>
 
@@ -67,22 +89,61 @@ import { Indicator, Toast, MessageBox, Button } from "mint-ui";
 // import { setServers } from 'dns';
 // import { setInterval } from 'timers';
 
-import nativecode from '@/nativecode'
-
+import nativecode from "@/nativecode";
+import wxlogin from "vue-wxlogin";
 export default {
   name: "Login",
   data() {
     return {
+      // isSbmit:false,
       password: "",
       account: "",
       phone: "",
       phoneCode: "",
       state: 1,
       codeTime: 0,
-      Times: null
+      Times: null,
+      popupWeiXxinLogin: false,
+      wxlogin: {
+        appid: "wx40632058fe27bbb6",
+        scope: "snsapi_login",
+        redirect_uri: "https://www2.exsoft.com.cn"
+      }
     };
   },
+  computed:{
+    isSbmit(){
+      if(this.account && this.password){
+        return true;
+      }else{
+        return false;
+      }
+    },
+  },
+  mounted() {},
   methods: {
+    weixinLogin() {
+      this.popupWeiXxinLogin = true;
+      // this.setWxerwma();
+    },
+    setWxerwma() {
+      const s = document.createElement("script");
+      s.type = "text/javascript";
+      s.src = "https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js";
+      s.id = "wechat";
+      const wxElement = document.body.appendChild(s);
+      wxElement.onload = function() {
+        let obj = new WxLogin({
+          id: "weixinLogin", // 需要显示的容器id
+          appid: "wx40632058fe27bbb6", // 公众号appid wx*******
+          scope: "snsapi_login", // 网页默认即可
+          redirect_uri: encodeURIComponent("https://www2.exsoft.com.cn"), // 授权成功后回调的url
+          state: Math.ceil(Math.random() * 1000), // 可设置为简单的随机数加session用来校验
+          style: "black", // 提供"black"、"white"可选。二维码的样式
+          href: "" // 外部css文件url，需要https
+        });
+      };
+    },
     selectFn(state) {
       this.state = state;
     },
@@ -93,6 +154,10 @@ export default {
       }
     },
     login() {
+      if(!this.isSbmit) {
+        Toast('请填写详细信息');
+        return;
+      }
       Indicator.open(this.$t("Indicator.Logon"));
       var url = "/api/api/login";
       var othis = this;
@@ -108,7 +173,7 @@ export default {
             this.$store.commit("setLoginUser", res.data.data);
             this.$store.commit("setRouterForward", true);
             this.$router.push("/");
-              nativecode.jsLogin(1, res.data.data);
+            nativecode.jsLogin(1, res.data.data);
           } else {
             Toast(res.data.msg);
           }
@@ -131,21 +196,24 @@ export default {
           clearInterval(this.Times);
         }
       }, 1000);
+    },
+    Backs() {
+      this.popupWeiXxinLogin = false;
+      // let child = document.getElementById("wechat");
+      // child.parentNode.removeChild(child);
     }
+  },
+  components: {
+    wxlogin
   }
 };
 </script>
 <style  scoped>
 .loginbg {
-  background: linear-gradient(
-    to bottom right,
-    #74bfff,
-    #0089ff
-  ); /* 标准的语法 */
 }
 .maintitle {
   color: white;
-  top: 15%;
+  top: 15vh;
   left: 0;
   position: absolute;
 }
@@ -179,24 +247,23 @@ textarea::-webkit-input-placeholder {
   width: 62%;
 }
 .loginline {
-  line-height: 50px;
+  /* line-height: 50px; */
   position: relative;
 }
 .loginline img {
-  position: absolute;
-  left: -10px;
-  top: 0;
-  transform: translate(50%, 85%);
+  left: 0;
 }
 .loginbtn {
-  background-color: #0089ff;
-  border: none;
-  border-radius: 29px;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   padding: 15px 0;
-  margin: 0;
-  color: white;
   width: 100%;
-  margin: 30px auto;
+  margin: 10px auto;
+}
+.loginbtn.weixinLogin{
+  background: #2EA34C;
+  color: #fff;
 }
 .get-code {
   background: none;
@@ -213,9 +280,11 @@ textarea::-webkit-input-placeholder {
 </style>
 <style lang="less">
 .loginbg {
+    background: url(../assets/login_b.png) no-repeat 50% 0;
+    background-size: contain;
   .maintitle {
     width: 100%;
-    height: 100vh;
+    height: 85vh;
     background: url(../assets/login_logo.png) no-repeat 50% 0;
     background-size: 5rem;
   }

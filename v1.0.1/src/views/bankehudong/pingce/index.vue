@@ -192,8 +192,8 @@ export default {
   methods: {
     selectClick(e, v, i) {
       let curel = this.$refs.tbLi[i];
-      // console.log(curel.offsetLeft);
       this.moveBar = curel.offsetLeft;
+      console.log(this.moveBar);
       this.filterType = v.id;
 
       // return;
