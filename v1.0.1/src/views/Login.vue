@@ -107,7 +107,7 @@ export default {
       wxlogin: {
         appid: "wx40632058fe27bbb6",
         scope: "snsapi_login",
-        redirect_uri: "https://www2.exsoft.com.cn/wechatLogin/callback.do"
+        redirect_uri: "https://www2.exsoft.com.cn/#/WechatLogin/callback.do"
       }
     };
   },

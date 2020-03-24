@@ -16,7 +16,7 @@ export default {
   props: {},
   data() {
     return {
-      code: null
+      code: 32326
     };
   },
   computed: {},
@@ -25,7 +25,7 @@ export default {
     if (UrlParams.code) {
       this.code = UrlParams.code;
     }
-    this.wechatLogin();
+   // this.wechatLogin();
   },
   mounted() {},
   watch: {},
