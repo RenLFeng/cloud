@@ -47,6 +47,8 @@ import BindSchoolList from '../views/my/bindSchool/bindend-list'
 import Audio from '../common/audio'
 //个人学情
 import MyXueQing from '../views/my/MyXueQing/xueqing'
+//微信 登陆 完成页面
+import WechatLogin from '../views/wechatLogin'
 import nativecode from '../nativecode'
 
 Vue.use(Router)
@@ -89,6 +91,7 @@ let routers = new Router({
         { path: '/Audio', name: 'Audio', component: Audio },
         { path: '/MyXueQing', name: 'MyXueQing', component: MyXueQing },
         { path: '/Danmu', name: 'Danmu', component: Danmu },
+        { path: '/WechatLogin', name: 'WechatLogin', component: WechatLogin },
 
 
 

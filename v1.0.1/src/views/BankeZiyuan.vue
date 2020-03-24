@@ -38,7 +38,7 @@
       </mt-tabbar>
     </div>
     <div class="items-container">
-      <!-- <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p> -->
+      <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
       <mt-tab-container
         v-model="selected"
         v-infinite-scroll="loadMore"
@@ -354,14 +354,14 @@ export default {
             name: "删除",
             method: this.deletezy
           });
-          objret.push({
-            name: "编辑",
-            method: ""
-          });
-          objret.push({
-            name: "移动",
-            method: ""
-          });
+          // objret.push({
+          //   name: "编辑",
+          //   method: ""
+          // });
+          // objret.push({
+          //   name: "移动",
+          //   method: ""
+          // });
         }
       }
       if (!this.headerSortBtn && !this.headerAddBtn) {
@@ -373,12 +373,12 @@ export default {
           name: "查看情况",
           method: this.showInfo
         });
-        if (nativecode.hassharebanke()) {
-          objret.push({
-            name: "转发",
-            method: this.zhiyuanShare
-          });
-        }
+        // if (nativecode.hassharebanke()) {
+        //   objret.push({
+        //     name: "转发",
+        //     method: this.zhiyuanShare
+        //   });
+        // }
       }
       return objret;
     },

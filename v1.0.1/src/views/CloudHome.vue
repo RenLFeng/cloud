@@ -19,6 +19,7 @@
           <span class="tit-name fontnormal">我加入的</span>
         </p>
       </div>
+      <i class="iconfont iconjia position-r fontmaintitle colord" @click="addBankeIcon"></i>
     </div>
 
     <!-- My Tabel Header-->
@@ -46,7 +47,7 @@
               </div>
             </div>
             <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
-          </div> -->
+          </div>-->
           <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
           <p class="v"></p>
           <div class="bankecontainer">
