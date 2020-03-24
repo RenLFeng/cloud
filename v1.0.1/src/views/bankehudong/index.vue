@@ -121,7 +121,7 @@ export default {
         nativecode.navigateToSign(this.bankeid,this.isTeacher, curbanke);
       }else{
         // this.teacherFn();
-          // Toast('请在小程序中查看签到');
+          Toast('请在小程序中查看签到');
       }
     },
     teacherFn() {

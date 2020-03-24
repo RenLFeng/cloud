@@ -339,6 +339,13 @@ nativecode.navigateToSign = function (bankeid, isteacher, curbanke) {
         url: tourl
     });
 }
+nativecode.navigateToScan = function () {
+    let wx = nativecode.getwx();
+    let tourl = '/pages/scan/scan';
+    wx.miniProgram.navigateTo({
+        url: tourl
+    });
+}
 
 nativecode.wxcall = function (funname, argobj) {
     console.log("wxcall");

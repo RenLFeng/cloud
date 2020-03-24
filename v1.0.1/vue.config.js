@@ -17,10 +17,11 @@ module.exports = {
             postcss: {
                 plugins: [
                     autoprefixer(),
-                    pxtorem({
-                        rootValue: 37.5,
-                        propList: ['*']
-                    })
+                    require('postcss-pxtorem')({
+                        rootValue : 37.5,
+                        selectorBlackList  : ['.biggp-'], 
+                        propList   : ['*'],
+                    }),
                 ]
             }
         }
@@ -32,7 +33,7 @@ module.exports = {
             filename: 'index.html',
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         },
-        group: 'src/group.js'
+        daping: 'src/daping.js'
     },
     configureWebpack: config => {
         if (isProduction) {
@@ -52,11 +53,11 @@ module.exports = {
         }
 
     },
+    
     lintOnSave: false,
     devServer: {
         //  proxy: 'http://192.168.0.2:9982'
-          proxy: 'http://192.168.40.104:9982'
-       // proxy:'http://localhost:9982'
-       // proxy: 'https://www2.exsoft.com.cn'
+        //  proxy: 'http://192.168.40.104:9982'
+        proxy: 'https://www2.exsoft.com.cn'
     }
 }

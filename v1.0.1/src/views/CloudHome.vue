@@ -1,5 +1,5 @@
 <template>
-  <div class="fontsmall cloudHome" :style="`top:${selected=='banke'?'70':'30'}px`">
+  <div class="fontsmall cloudHome" :style="`top:${selected=='banke'?'70':'0'}px`">
     <!-- <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
       <mt-button
         v-if="hasmainback"
@@ -22,11 +22,11 @@
     </div>
 
     <!-- My Tabel Header-->
-    <mt-header
+    <!-- <mt-header
       v-if="selected=='mine' &&　!CliudBar"
       title="我的"
       class="mint-header-f mine-header fontnormal color1"
-    ></mt-header>
+    ></mt-header>-->
 
     <!--Order  Header-->
     <!-- <mt-header title="班课调序" v-if="order &&　CliudBar" class="order-header">
@@ -38,7 +38,7 @@
     <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
-          <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
+          <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
             <div class="div_sech" @click="onFocus">
               <div class="box">
                 <span class="color9">搜索</span>
@@ -46,8 +46,8 @@
               </div>
             </div>
             <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
-            <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
-          </div>
+          </div> -->
+          <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
           <p class="v"></p>
           <div class="bankecontainer">
             <BankeSimple

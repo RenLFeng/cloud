@@ -10,12 +10,12 @@
           :key="i"
           :class="v.isActive?'active':''"
           @click="selectClick($event,v,i)"
-          ref="aaa"
+          ref="tbLi"
         >
           <span class="lable font18">{{v.label}}</span>
           <span class="num fontxs">{{v.num}}</span>
         </li>
-        <span class="move-bar"  :style="`left:${moveBar}px`"></span>
+        <span class="move-bar" :style="`left:${moveBar}px`"></span>
       </ul>
     </div>
     <div
@@ -112,8 +112,8 @@ export default {
       showsingle: false,
       pingceid: 0,
 
-      tabActive: 0,
-moveBar:0,
+      moveBar: 0,
+      filterType: 0,
       tabBar: [
         {
           id: 0,
@@ -156,25 +156,25 @@ moveBar:0,
           label: "投票",
           num: 0,
           isActive: false
-        },
-        {
-          id: 5,
-          label: "写作",
-          num: 0,
-          isActive: false
-        },
-        {
-          id: 6,
-          label: "抢答",
-          num: 0,
-          isActive: false
-        },
-        {
-          id: 10,
-          label: "投票",
-          num: 0,
-          isActive: false
         }
+        // {
+        //   id: 5,
+        //   label: "写作",
+        //   num: 0,
+        //   isActive: false
+        // },
+        // {
+        //   id: 6,
+        //   label: "抢答",
+        //   num: 0,
+        //   isActive: false
+        // },
+        // {
+        //   id: 10,
+        //   label: "投票",
+        //   num: 0,
+        //   isActive: false
+        // }
       ]
     };
   },
@@ -191,37 +191,36 @@ moveBar:0,
   },
   methods: {
     selectClick(e, v, i) {
-      // console.log(this.$refs.aaa);
-      let aa = this.$refs.aaa[i];
-      console.log(aa.offsetLeft);
-      this.moveBar=aa.offsetLeft;
-      // var arr = [1, 2, 3, 4, 1, 3, 4, 5, 5, 88, 7, 3, 1];
-      // var temp = {};
-      // arr.forEach(function(v, k) {
-      //   if (temp[v]) {
-      //     temp[v]++;
-      //   } else {
-      //     temp[v] = 1;
-      //   }
-      // });
-      // console.log(temp);
+      let curel = this.$refs.tbLi[i];
+      // console.log(curel.offsetLeft);
+      this.moveBar = curel.offsetLeft;
+      this.filterType = v.id;
+
       // return;
-      let ev = e || window.event;
+      // let ev = e || window.event;
+      // console.log(ev);
       // this.$nextTick(()=>{
       //   alert(ev.offsetX)
       // })
-      if (!v.id) {
+      for (let v of this.tabBar) {
+        v.isActive = false;
+      }
+      this.tabBar[i].isActive = true;
+      this.filterData(this.filterType);
+    },
+    filterData(type) {
+      if (!type) {
         this.pingceHistoryList = this.tempHistory;
         return;
       }
-      let temp = this.tempHistory.filter(item => {
-        return v.id == item.ptype;
+      this.pingceHistoryList = this.tempHistory.filter(item => {
+        if (type == 2) {
+          return type == item.ptype || item.ptype == 3;
+        } else {
+          return type == item.ptype;
+        }
       });
-      this.pingceHistoryList = temp;
-      this.$nextTick(() => {
-        
-      });
-      console.log(temp);
+      this.$nextTick(() => {});
     },
     onEdit(item) {
       console.log(item);
@@ -270,6 +269,8 @@ moveBar:0,
               ...res.data.data
             ];
             this.tempHistory = [...this.tempHistory, ...res.data.data];
+            this.filterData(this.filterType);
+            this.Statistics(this.tempHistory);
             console.log("pingce/query", res);
             if (this.showsingle) {
               if (res.data.data.length == 0) {
@@ -317,6 +318,27 @@ moveBar:0,
     },
     handler(e) {
       e.preventDefault();
+    },
+    Statistics(arr) {
+      if (Array.isArray(arr)) {
+        this.initStatistics();
+        this.tabBar[0].num = arr.length;
+        for (let i = 0; i < arr.length; ++i) {
+          let ptype = arr[i].ptype;
+          for (let j = 1; j < this.tabBar.length; j++) {
+            let v = this.tabBar[j];
+            if (v.id == ptype || (v.id == 2 && ptype == 3)) {
+              v.num++;
+            }
+          }
+        }
+      }
+      console.log("ccc", this.tabBar);
+    },
+    initStatistics() {
+      for (let v of this.tabBar) {
+        v.num = 0;
+      }
     }
   }
 };
@@ -325,7 +347,8 @@ moveBar:0,
 <style lang='less' scoped>
 .pingce-wrap {
   .van-navbr-wrap {
-    position: relative;
+    position: fixed;
+    z-index: 99;
     width: 100vw;
     height: 54px;
     overflow: hidden;
@@ -367,7 +390,7 @@ moveBar:0,
     }
   }
   .main {
-    margin-top: 10px;
+    margin-top: 110px;
   }
 }
 </style>

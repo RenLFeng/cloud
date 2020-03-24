@@ -2,7 +2,18 @@
   <div class="biggp-memberlist-wrap">
     <div class="main">
       <div class="lists-wrap">
-        <ul v-for="(item,index) in members" :key="index" :class="group?'group':''">
+        <ul>
+          <li
+            class="item"
+            v-for="(v,sindex) in members"
+            :key="sindex"
+            @click="selectGroup($event,item,index,v,sindex)"
+          >
+            <img :class="!v.state?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
+            <span class="name">{{v.name}}</span>
+          </li>
+        </ul>
+        <!-- <ul v-for="(item,index) in members" :key="index" :class="group?'group':''">
           <li class="item group-item" v-if="group" :class="index==1?'act':''">
             <span class="group-name">{{index+1}}组</span>
             <span class="date">9/19</span>
@@ -16,12 +27,12 @@
             <img :class="sindex>12?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
             <span class="name">{{sindex}}{{v.name}}</span>
           </li>
-        </ul>
+        </ul>-->
       </div>
     </div>
     <div class="popver-wrap" ref="popver" v-if="isShowPopver" @click="isShowPopver=false">
       <p class="tit">请选择分组</p>
-      <ul class="group-list" >
+      <ul class="group-list">
         <li
           class="num-item"
           :class="i==actindex?'act':''"
@@ -58,12 +69,11 @@ export default {
   mounted() {},
   watch: {},
   methods: {
-    selectGroup(e, item, index,sitem,sindex) {
+    selectGroup(e, item, index, sitem, sindex) {
       if (!this.group) return;
       this.actindex = index;
       this.isShowPopver = true;
       let ev = e || e.window.event;
-
 
       let clientX = ev.clientX;
       let clientY = ev.clientY;

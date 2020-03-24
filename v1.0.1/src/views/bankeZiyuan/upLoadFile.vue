@@ -5,7 +5,7 @@
         <img class="img object-fit-img position-l;" :src="defaultImg" :onerror="$defaultImg('')" @click="uploadfile" />
       </div>
       <mt-field label="标题" placeholder="请输入标题" v-model="tempUploadFile.file.name"></mt-field>
-      <mt-cell title="目录" is-link value @click.native="queryMulu"></mt-cell>
+      <!-- <mt-cell title="目录" is-link value @click.native="queryMulu"></mt-cell> -->
     </div>
     <mt-popup
       v-model="popupmulu"

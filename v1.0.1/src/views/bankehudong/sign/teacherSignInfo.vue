@@ -274,10 +274,10 @@ export default {
       if (this.signState == "0" || !this.isTeacher) return;
       let signType=['wifi','gps'];
       let info = {
-        wifi: {
-          SSID: "EXSOFT",
-          BSSID: "ec:41:18:48:99:20"
-        },
+        // wifi: {
+        //   SSID: "EXSOFT",
+        //   BSSID: "ec:41:18:48:99:20"
+        // },
         gps: {
           latitude: 22.56006,
           longitude: 113.8964

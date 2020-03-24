@@ -1,15 +1,15 @@
 <template>
   <div id="group" class="biggp-root">
-    <Group />
+    <DapingHome />
   </div>
 </template>
 
 <script>
-import Group from "./views/bigGroup";
+import DapingHome from "./views/dapingModule";
 export default {
   name: "app",
   components: {
-    Group
+    DapingHome
   }
 };
 </script>

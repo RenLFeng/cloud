@@ -7,18 +7,36 @@
         slot="left"
         @click="backHome"
       >{{$t('common.Back')}}</mt-button>
-      <mt-button v-if="hasbackbtn && selection" slot="left" @click="selectAll">全选</mt-button>
+      <!-- <mt-button v-if="hasbackbtn && selection" slot="left" @click="selectAll">全选</mt-button>
       <mt-button v-if="hasbackbtn && selection" slot="right" @click="cancelSelect">取消</mt-button>
       <div slot="right" v-if="showupload && !selection">
         <mt-button slot="right" class="iconfont iconjia icons" @click="selects"></mt-button>
         <mt-button slot="right" class="iconfont iconjia icons" @click="onSort"></mt-button>
         <mt-button slot="right" class="iconfont iconjia icons" @click="onaddFile"></mt-button>
-      </div>
+      </div> -->
     </mt-header>
-    <p class="Prev-btn" v-if="Previd" @click="onprev">
+    <!-- <p class="Prev-btn" v-if="Previd" @click="onprev">
       <i class="iconfont iconwithdraw-fill colord position-l"></i>
       <span style="color:#a5a5a5">返回上一层...</span>
-    </p>
+    </p> -->
+
+    <div v-if="showupload" class="uploadpart">
+      <mt-tabbar v-model="selected" class="uploadtabbar">
+        <mt-tab-item id="1" @click.native="onUploadLocal">
+          <div>
+            <i class="iconfont iconfont-big iconcongbendishangchuan" style="color:#FFCB8E"></i>
+            <div class="fonttiny">{{$t('bankeZiYuan.Upload_files')}}</div>
+          </div>
+        </mt-tab-item>
+
+        <mt-tab-item id="2" @click.native="onUploadLink">
+          <div>
+            <i class="iconfont iconfont-big iconwangyelianjie"></i>
+            <div class="fonttiny">{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
+          </div>
+        </mt-tab-item>
+      </mt-tabbar>
+    </div>
     <div class="items-container">
       <!-- <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p> -->
       <mt-tab-container
@@ -356,7 +374,7 @@ export default {
           method: this.showInfo
         });
         if (nativecode.hassharebanke()) {
-          ret.push({
+          objret.push({
             name: "转发",
             method: this.zhiyuanShare
           });
@@ -846,21 +864,21 @@ export default {
       //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
       fixCaptureImage(onefile, true)
         .then(res => {
-          // this.douploadonefiledirect(res);
-          this.tempUploadFile = {
-            file: res,
-            tempImg: _URL.createObjectURL(res)
-          };
-          console.log("是的撒", this.tempUploadFile);
-          this.popupUploadFile = true;
+          this.douploadonefiledirect(res);
+          // this.tempUploadFile = {
+          //   file: res,
+          //   tempImg: _URL.createObjectURL(res)
+          // };
+          // console.log("是的撒", this.tempUploadFile);
+          // this.popupUploadFile = true;
         })
         .catch(res => {
-          // this.douploadonefiledirect(res);
-          this.tempUploadFile = {
-            file: res,
-            tempImg: _URL.createObjectURL(res)
-          };
-          this.popupUploadFile = true;
+          this.douploadonefiledirect(res);
+          // this.tempUploadFile = {
+          //   file: res,
+          //   tempImg: _URL.createObjectURL(res)
+          // };
+          // this.popupUploadFile = true;
         });
     },
     submitUpload() {
