@@ -25,7 +25,7 @@
     <div class="devide"></div>
     <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
     <div class="devide"></div>
-    <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
+    <mt-cell v-if="hasloginpage"  :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
     <!-- <div class="devide"></div>
