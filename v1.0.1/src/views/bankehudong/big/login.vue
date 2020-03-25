@@ -65,7 +65,7 @@ export default {
       tempCode: [],
       count: 0,
       code: "",
-      isAuto: false
+      isAuto: true
     };
   },
   mounted() {},

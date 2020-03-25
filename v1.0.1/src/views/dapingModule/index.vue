@@ -166,8 +166,16 @@ export default {
         .catch(() => {});
     },
     getSignCode() {
+        //! cjy: 由客户端生成scene场景， 方便后续维护
+        let scene = 'sign;id=' + this.signdata.id
       this.$http
-        .post("/api/weixin/qrcodesign", { bankeid: this.bankeid })
+        .post(
+            //"/api/weixin/qrcodesign",
+            '/api/weixin/appqrcode',
+            {
+                //bankeid: this.bankeid
+                'scene': scene
+            })
         .then(res => {
           if (res.data.code == 0) {
             if (res.data.data) {

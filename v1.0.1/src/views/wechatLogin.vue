@@ -2,7 +2,7 @@
   <div class="wechat-wrap">
     <div class="mian">
       <div class="position-c">
-        <h1>{{code}}</h1>
+        <h1>{{desc}}</h1>
       </div>
     </div>
   </div>
@@ -11,12 +11,16 @@
 <script>
 import { parseURL } from "@/util";
 import { Indicator, Toast, MessageBox, Button } from "mint-ui";
+
+import nativecode from "@/nativecode";
+
 export default {
   name: "WechatLogin",
   props: {},
   data() {
     return {
-      code: 32326
+        desc:'登录中...',
+      code: ''
     };
   },
   computed: {},
@@ -25,7 +29,7 @@ export default {
     if (UrlParams.code) {
       this.code = UrlParams.code;
     }
-   // this.wechatLogin();
+    this.wechatLogin();
   },
   mounted() {},
   watch: {},
@@ -33,19 +37,22 @@ export default {
     wechatLogin() {
       Indicator.open("登录中...");
       this.$http
-        .post("/api/banshu/query", {
-          bankeid: 1040,
-          page: 0,
-          pagesize: 10
+        .post("/api/weixin/webupdateuser", {
+          code:this.code
         })
         .then(res => {
+            Indicator.close();
           if (res.data.code == 0) {
-            // this.$router.push("/");
+             //this.$router.push("/");
+              this.$store.commit("setLoginUser", res.data.data);
+              this.$store.commit("setRouterForward", true);
+              this.$router.push("/");
+              nativecode.jsLogin(1, res.data.data);
           } else {
             Toast("登陆失败");
             this.$router.push("/login");
           }
-          Indicator.close();
+
         })
         .catch(res => {
           Toast("登陆失败");

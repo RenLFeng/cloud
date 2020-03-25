@@ -98,6 +98,16 @@ let routers = new Router({
     ]
 });
 routers.beforeEach((to, from, next) => {
+    // next();
+    // return;
+    function isneedloginpath(topath){
+        if (topath.indexOf('/login')
+        || topath.indexOf('/WechatLogin')
+        ){
+            return false;
+        }
+        return true;
+    }
     if (!nativecode.hasloginpage()) {
         if (to.path == '/login') {
             next({
@@ -108,7 +118,8 @@ routers.beforeEach((to, from, next) => {
         }
     } else if ( //! todo. 检测不需要登陆即可查看的网页？
         !store.getters.islogin &&
-        to.path != '/login'
+     //   to.path != '/login'
+        isneedloginpath(to.path)
     ) {
         next({
             path: '/login',
