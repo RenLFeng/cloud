@@ -193,7 +193,6 @@ nativecode.doneinit = nativecode.initfirst();
 
 //! 是否有登陆页
 nativecode.hasloginpage = function () {
-    return false;
     if (nativecode.platform == 'miniprogram') {
         return false;
     }

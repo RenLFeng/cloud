@@ -19,7 +19,7 @@
           <span class="tit-name fontnormal">我加入的</span>
         </p>
       </div>
-      <i class="iconfont iconjia position-r fontmaintitle colord" @click="addBankeIcon"></i>
+      <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
     </div>
 
     <!-- My Tabel Header-->
@@ -36,7 +36,7 @@
     </mt-header>-->
 
     <!-- main -->
-    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
+    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'" :style="`margin-top:${selected=='banke'?'20':'0'}px`">
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
           <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
@@ -704,11 +704,11 @@ export default {
 }
 .mycreate-header {
   width: 100%;
-  height: 75px;
+  height: 95px;
   background: #fff;
   padding: 15px 0;
   .lable {
-    width: 80%;
+    width: 60%;
     line-height: 45px;
     > p {
       position: relative;
@@ -724,7 +724,6 @@ export default {
   }
   > i {
     font-size: 30px;
-    color: #aaaaaa;
   }
 }
 </style>

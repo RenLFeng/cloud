@@ -98,7 +98,7 @@ let routers = new Router({
     ]
 });
 routers.beforeEach((to, from, next) => {
-    if (nativecode.hasloginpage()) {
+    if (!nativecode.hasloginpage()) {
         if (to.path == '/login') {
             next({
                 path: '/'
