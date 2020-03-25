@@ -91,13 +91,15 @@ let routers = new Router({
         { path: '/Audio', name: 'Audio', component: Audio },
         { path: '/MyXueQing', name: 'MyXueQing', component: MyXueQing },
         { path: '/Danmu', name: 'Danmu', component: Danmu },
-        { path: '/WechatLogin', name: 'WechatLogin', component: WechatLogin },
+        { path: '/WechatLogin/:str', name: 'WechatLogin', component: WechatLogin },
 
 
 
     ]
 });
 routers.beforeEach((to, from, next) => {
+    next();
+    return;
     if (!nativecode.hasloginpage()) {
         if (to.path == '/login') {
             next({
