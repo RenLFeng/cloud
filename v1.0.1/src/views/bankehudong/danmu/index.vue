@@ -22,8 +22,8 @@
                   <p class="font-xxs time">{{v.day}}&nbsp;{{v.time}}</p>
                 </div>
               </div>
-              <p class="tc color9" v-if="loading && page && !loadend">加载中...</p>
-              <p class="tc color9" v-if="loadend">我是有底线的...</p>
+              <p class="tc color9" v-if="loading && page && !listLoadend">加载中...</p>
+              <p class="tc color9" v-if="listLoadend">我是有底线的...</p>
             </div>
             <Empty v-else :text="['无数据']" />
           </div>
@@ -123,7 +123,7 @@ export default {
       pagesize: 10,
       autofill: true,
       loading: false,
-      loadend: false
+      listLoadend: false
     };
   },
   computed: {
@@ -188,7 +188,7 @@ export default {
                 this.page++;
               } else {
                 if (this.page) {
-                  this.loadend = true;
+                  this.listLoadend = true;
                 }
               }
             }

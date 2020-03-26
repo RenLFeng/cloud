@@ -3,9 +3,9 @@
     <div class="avatarpart" @click="onmine">
       <div v-if="islogined">
         <img
-                :src="user.avatar"
-                :onerror="$defaultImg('account')"
-                class="avatarimgpart avatar position-l"
+          :src="user.avatar"
+          :onerror="$defaultImg('account')"
+          class="avatarimgpart avatar position-l"
         />
         <div class="avatartextpart position-l">
           <div class="fontsmall namepart ellipse">{{user.name}}</div>
@@ -16,8 +16,9 @@
         </div>
         <i class="iconfont iconcellyoucejiantou position-r"></i>
       </div>
-      <div v-else>
-        未登陆，点击登陆
+      <div v-else class="no-Login">
+        <img src :onerror="$defaultImg('account')" class="avatarimgpart avatar position-l" />
+        <div class="fontsmall namepart ellipse position-c" @click.stop="goLogin">未登陆，点击登陆</div>
       </div>
     </div>
 
@@ -32,7 +33,7 @@
     <div class="devide"></div>
     <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
     <div class="devide"></div>
-    <mt-cell v-if="hasloginpage"  :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
+    <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
     <!--  cjy: 绑定账户功能暂时隐藏
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
@@ -163,18 +164,18 @@ export default {
     user() {
       return this.$store.getters.curuser;
     },
-      islogined(){
+    islogined() {
       //  return false;
-        let u = this.$store.getters.curuser;
-        //console.log(u);
-        if (u && u.id){
-            return true;
-        }
-        return false;
-      },
+      let u = this.$store.getters.curuser;
+      //console.log(u);
+      if (u && u.id) {
+        return true;
+      }
+      return false;
+    },
     useraccount() {
       let u = this.$store.getters.curuser;
-      if (u.accountid == 1 || u.accountid==2) {
+      if (u.accountid == 1 || u.accountid == 2) {
         return "微信账户";
       }
       return u.account;
@@ -353,7 +354,7 @@ export default {
       if (this.weiximiniprogram) {
         nativecode.navigateToScan();
       } else {
-        Toast('请在小程序使用此功能')
+        Toast("请在小程序使用此功能");
       }
     },
     //清除提示
@@ -409,12 +410,16 @@ export default {
         });
     },
     onmine: function() {
-        if (!this.islogined){
-            nativecode.navigateToLogin(this);
-            return ;
-        }
+      if (!this.islogined) {
+        nativecode.navigateToLogin(this);
+        return;
+      }
       this.$store.commit("setRouterForward", true);
       this.$router.push("/mineinfo");
+    },
+    goLogin() {
+      this.$store.commit("setRouterForward", true);
+      this.$router.push("/login");
     },
     Backs() {
       if (this.popupBankeEnd) {
@@ -479,7 +484,13 @@ export default {
   padding: 10px;
   background: #fff;
 }
-.baout-main .avatarpart > img {
+.baout-main .avatarpart > .no-Login {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.baout-main .avatarpart > .no-Login .namepart {
+  margin-top: 0;
 }
 </style>
 <style>

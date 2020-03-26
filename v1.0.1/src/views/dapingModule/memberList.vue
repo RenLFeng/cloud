@@ -10,7 +10,7 @@
             @click="selectGroup($event,item,index,v,sindex)"
           >
             <img :class="!v.state?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
-            <span class="name">{{v.name}}</span>
+            <span class="name" :class="!v.state?'opctive':''">{{v.name}}</span>
           </li>
         </ul>
         <!-- <ul v-for="(item,index) in members" :key="index" :class="group?'group':''">
@@ -30,7 +30,7 @@
         </ul>-->
       </div>
     </div>
-    <div class="popver-wrap" ref="popver" v-if="isShowPopver" @click="isShowPopver=false">
+    <!-- <div class="popver-wrap" ref="popver" v-if="isShowPopver" @click="isShowPopver=false">
       <p class="tit">请选择分组</p>
       <ul class="group-list">
         <li
@@ -42,7 +42,7 @@
         >{{i+1}}组</li>
       </ul>
       <i class="iconfont iconsanjiaoxing"></i>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -130,6 +130,9 @@ export default {
           }
           .name {
             margin-top: 10px;
+             &.opctive {
+              opacity: 0.4;
+            }
           }
         }
         .group-item {
