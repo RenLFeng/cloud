@@ -191,6 +191,7 @@ export default {
   },
   methods: {
     selectClick(e, v, i) {
+      if(!v.num) return;
       let curel = this.$refs.tbLi[i];
       this.moveBar = curel.offsetLeft;
       console.log(this.moveBar);
