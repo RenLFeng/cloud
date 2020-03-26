@@ -51,7 +51,7 @@ const state = {
 
     footerBarState: true,
     CliudBar: false,
-
+    isCreate:1,
     bankeSearchHistory: [], //班课搜索历史记录
     bindschool: false,
     detail_go_school: false,
@@ -251,6 +251,9 @@ const mutations = {
     SET_VIEW_AUDIO(v, t) {
         state.viewAudio.info = v;
         state.viewAudio.isShow = t;
+    },
+    SET_ISCREATE(state,v){
+        state.isCreate=v;
     }
 }
 

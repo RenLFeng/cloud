@@ -3,7 +3,7 @@
     <mt-header title="评测记录" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="van-navbr-wrap">
+    <div class="van-navbr-wrap" v-if="pingceHistoryList.length">
       <ul>
         <li
           v-for="(v,i) in tabBar"

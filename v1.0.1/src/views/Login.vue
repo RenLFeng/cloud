@@ -1,67 +1,70 @@
 <template>
   <div class="tc loginbg">
     <div class="fontmaintitle maintitle">
-      <!-- <img src="../assets/login_b.png" alt /> -->
-    </div>
-    <div class="fontlarge loginpart">
-      <div class="login-box" v-if="state">
-        <div class="loginline">
-          <img src="../assets/phone_icon.svg" alt class="position-l" />
-          <input
-            v-model="account"
-            placeholder="输入账户名"
-            autocomplete="off"
-            class="logininput fontnormal"
-            @keyup.enter="dologin"
-          />
-        </div>
-        <div class="loginline">
-          <img src="../assets/pwd_icon.svg" alt class="position-l" />
-          <input
-            v-model="password"
-            placeholder="输入密码"
-            type="password"
-            autocomplete="off"
-            class="logininput fontnormal"
-            @keyup.enter="dologin"
-          />
-        </div>
+      <div class="bg-pic-wrap">
+        <img src="../assets/login_b.png" alt class="login-bg" />
+        <img src="../assets/login_logo.png" alt class="login-icon position-c" />
       </div>
-      <div class="reg-box" v-if="!state">
-        <div class="loginline">
-          <img src="../assets/phone_icon.svg" alt />
-          <input
-            v-model="phone"
-            placeholder="输入手机号"
-            autocomplete="off"
-            class="logininput fontnormal"
-          />
+      <div class="fontlarge loginpart">
+        <div class="login-box" v-if="state">
+          <div class="loginline">
+            <img src="../assets/phone_icon.svg" alt class="position-l" />
+            <input
+              v-model="account"
+              placeholder="输入账户名"
+              autocomplete="off"
+              class="logininput fontnormal"
+              @keyup.enter="dologin"
+            />
+          </div>
+          <div class="loginline">
+            <img src="../assets/pwd_icon.svg" alt class="position-l" />
+            <input
+              v-model="password"
+              placeholder="输入密码"
+              type="password"
+              autocomplete="off"
+              class="logininput fontnormal"
+              @keyup.enter="dologin"
+            />
+          </div>
         </div>
-        <div class="loginline">
-          <input
-            v-model="phoneCode"
-            placeholder="输入验证码"
-            autocomplete="off"
-            class="logininput fontnormal phone-code"
-          />
-          <mt-button
-            type="primary"
-            size="small"
-            class="get-code"
-            @click="getCodeTimeEnd"
-          >{{codeTime>0?codeTime+"秒后重新获取":'获取验证码'}}</mt-button>
+        <div class="reg-box" v-if="!state">
+          <div class="loginline">
+            <img src="../assets/phone_icon.svg" alt />
+            <input
+              v-model="phone"
+              placeholder="输入手机号"
+              autocomplete="off"
+              class="logininput fontnormal"
+            />
+          </div>
+          <div class="loginline">
+            <input
+              v-model="phoneCode"
+              placeholder="输入验证码"
+              autocomplete="off"
+              class="logininput fontnormal phone-code"
+            />
+            <mt-button
+              type="primary"
+              size="small"
+              class="get-code"
+              @click="getCodeTimeEnd"
+            >{{codeTime>0?codeTime+"秒后重新获取":'获取验证码'}}</mt-button>
+          </div>
         </div>
-      </div>
-      <!-- <p class="login-tit">
+        <!-- <p class="login-tit">
         <span :class="state==1?'act':''" @click="selectFn(1)">密码登录</span>
         <span :class="state==0?'act':''" @click="weixinLogin">微信登陆</span>
-      </p>-->
-      <button
-        class="loginbtn fontnormal"
-        :class="isSbmit?'colord':'colora'"
-        @click="dologin"
-      >{{state?'登录':'下一步'}}</button>
-      <button class="loginbtn weixinLogin fontnormal" @click="weixinLogin">微信登陆</button>
+        </p>-->
+        <button
+          class="loginbtn fontnormal"
+          :class="isSbmit?'colord':'colora'"
+          @click="dologin"
+        >{{state?'登录':'下一步'}}</button>
+        <button class="loginbtn weixinLogin fontnormal" @click="weixinLogin">微信登陆</button>
+      </div>
     </div>
     <mt-popup
       v-model="popupWeiXxinLogin"
@@ -202,21 +205,17 @@ export default {
 }
 .maintitle {
   color: white;
-  top: 15vh;
   left: 0;
-  position: absolute;
 }
 .loginpart {
   position: absolute;
-  top: 35%;
-  height: 65%;
+  height: calc(100vh - 238px);
   left: 0;
+  bottom: 0;
   width: 100%;
   background-color: white;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-
-  /* padding-top:100px; */
+  border-top-left-radius: 0.53333rem;
+  border-top-right-radius: 0.53333rem;
 }
 .logininput {
   border: none;
@@ -266,36 +265,40 @@ textarea::-webkit-input-placeholder {
 .mint-button--small {
   padding: 0;
 }
+.bg-pic-wrap {
+  position: relative;
+}
+.login-bg {
+  height: 286px;
+  width: 100%;
+  max-width: 750px;
+}
+.login-icon {
+  width: 213px;
+  height: 63px;
+  transform: translate(-50%, -78%);
+}
 </style>
 <style lang="less">
 .loginbg {
-  background: url(../assets/login_b.png) no-repeat 50% 0;
-  background-size: contain;
   .maintitle {
     width: 100%;
-    height: 85vh;
-    background: url(../assets/login_logo.png) no-repeat 50% 0;
+    height: 100%;
     background-size: 5rem;
+    position: relative;
   }
   .loginpart {
     padding: 20px;
     .login-tit {
       text-align: left;
-      // padding-bottom: 3.125rem;
       span {
         color: #939393;
         display: inline-block;
         width: 33%;
-        // font-size: 1rem;
       }
       span.act {
         color: #0089ff;
-        // font-size: 1.125rem;
       }
-    }
-  }
-  .wechat-wrap {
-    html {
     }
   }
 }

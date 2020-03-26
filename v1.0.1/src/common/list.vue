@@ -39,11 +39,11 @@
       <div class="mainctitle ellipse">
         <img class="itemavatar object-fit-img" :src="item.avatar" :onerror="$defaultImg('account')" />
         {{item.name}}
-        <span
+        <!-- <span
           class="fr font-xs"
           :class="item.score>0?'colorA':'colorB'"
           v-if="ptype=='1'||ptype=='2'||ptype=='3'"
-        >{{item.score>0?'正确':'错误'}}</span>
+        >{{item.score>0?'正确':'错误'}}</span> -->
       </div>
       <div v-if="ptype!='6'" class="maincsubtitle ellipse">{{ptype=='10'?`投票给:`:`提交答案:`}} {{answer}}</div>
       <div v-if="ptype=='6'">{{item.isResponder}}</div>
@@ -83,7 +83,11 @@
       class="iconfont iconjiantou1 eicotrigger color9"
       @click.stop="edit(item)"
     ></i>
-    <i v-if="type=='group'" class="iconfont iconjiantou1 eicotrigger color9" @click.stop="edit(item)"></i>
+    <i
+      v-if="type=='group'"
+      class="iconfont iconjiantou1 eicotrigger color9"
+      @click.stop="edit(item)"
+    ></i>
     <i
       v-if="type!='pingcedetail' && type!='group'&& type!='common' && type!='pingce' "
       class="iconfont iconjiantou eicotrigger colord"
@@ -140,7 +144,7 @@ export default {
           return str;
         }
       } else if (this.ptype == "10") {
-         return this.item.toName;
+        return this.item.toName;
       }
     },
     week() {
