@@ -11,6 +11,21 @@ var nativecode = {};
 
 //! https://www.npmjs.com/package/weixin-js-sdk
 
+
+nativecode.haswifiroom = function()
+{
+    if (process.env.NODE_ENV !== "production")
+    {
+        return true;
+    }
+    if (nativecode.platform == 'exsoftwindows'
+        || nativecode.platform == 'exsoftandroid'
+        || nativecode.platform == 'exsoftios'){
+        return true;
+    }
+    return false;
+}
+
 nativecode.detectplatform = function () {
     var ua = navigator.userAgent;
     //console.log(ua);
@@ -36,8 +51,10 @@ nativecode.detectplatform = function () {
         if (ua.indexOf('WebDaPing') > -1) {
             pa = 'exsoftdaping';
         }
+        else{
+            pa = 'exsoftwindows';
+        }
 
-        pa = 'exsoftwindows';
     }
 
     function wxready() {
@@ -162,6 +179,8 @@ nativecode.initfirst = function () {
     console.log('nativecode.initfirst');
     if (nativecode.platform == 'miniprogram' ||
         nativecode.platform == '' //! 有可能平台正在检测中
+        || nativecode.platform == 'exsoftios'
+        || nativecode.platform == 'exsoftandroid'
     ) {
         try {
             let szcookie = nativecode.parseurlparam('cookie');
@@ -197,7 +216,10 @@ nativecode.hasloginpage = function () {
    // return false;
 
 
-    if (nativecode.platform == 'miniprogram') {
+    if (nativecode.platform == 'miniprogram'
+    || nativecode.platform == 'exsoftandroid'
+        || nativecode.platform == 'exsoftios'
+    ) {
         return false;
     }
     return true;
@@ -211,6 +233,10 @@ nativecode.navigateToLogin = function(vueobj){
             url: '/pages/index/login'
         });
         return;
+    }
+    else if (nativecode.platform == 'exsoftios'
+    || nativecode.platform == 'exsoftandroid'){
+        nativecode.ncall('toNativePage', {page:'login'});
     }
     vueobj.$store.commit("setLoginUser", {});
     vueobj.$store.commit("setRouterForward", true);
@@ -589,13 +615,25 @@ nativecode.isimageobj = function (fitem) {
 }
 
 
+//! cjy: 是否能预览图片
+nativecode.canpreviewImage = function()
+{
+    if (nativecode.platform == ''
+    || nativecode.platform == 'exsoftwindows'
+        || nativecode.platform == 'exsoftdaping'
+    ){
+        return false;
+    }
+    return true;
+}
+
 nativecode.fileviewSingle = function (vuethis, fitem) {
     if (!fitem.filepath && fitem.url) {
         fitem.filepath = fitem.url;
     }
 
     fitem.downurl = nativecode.getUsedUrl(fitem.filepath);
-    if (nativecode.isimageobj(fitem)) {
+    if (nativecode.canpreviewImage() && nativecode.isimageobj(fitem)) {
         nativecode.previewImage(vuethis, fitem.downurl);
         return;
     }
@@ -681,9 +719,10 @@ nativecode.fileviewZuoye = function (vuethis, objargs) {
     }
     if (
         //items[cindex].filetype == 1
+        nativecode.canpreviewImage() &&
         nativecode.isimageobj(items[cindex])
     ) {
-        isimage = 1;
+        isimage = true;
     }
     //console.log(items);
     //console.log('fileviewzuoye:' + isimage);

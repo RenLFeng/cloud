@@ -61,7 +61,9 @@
         :class="isSbmit?'colord':'colora'"
         @click="dologin"
       >{{state?'登录':'下一步'}}</button>
+      <!-- cjy： 微信登陆暂时隐藏，但新版本小程序发布后，再打开
       <button class="loginbtn weixinLogin fontnormal" @click="weixinLogin">微信登陆</button>
+      -->
     </div>
     <mt-popup
       v-model="popupWeiXxinLogin"

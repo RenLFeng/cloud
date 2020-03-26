@@ -1,6 +1,13 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
+      <li class="fontlarge dp" @click="gotowifiroom" >
+        <span>WIFI教室</span>
+        <i
+                class="iconfont icondapingmu eicotrigger bigfont fr"
+                style="color:#0055FF"
+        ></i>
+      </li>
       <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
         <i
@@ -90,6 +97,9 @@ export default {
     isTeacher() {
       return this.$store.getters.caneditbanke;
     },
+      haswifiroom(){
+          return nativecode.haswifiroom();
+      },
       hassign(){
         return nativecode.hassign();
       },
@@ -156,6 +166,16 @@ export default {
         params: { bankeid: this.bankeid }
       });
     },
+      gotowifiroom(){
+          let curbanke = this.$store.state.curbanke;
+          let argobj={
+              page:'wifiroom',
+              bankeid:this.bankeid,
+              bankename:curbanke.name,
+              isTeacher:this.isTeacher
+          }
+          nativecode.ncall('toNativePage', argobj);
+      },
      //弹幕
     Danmu() {
       this.$store.commit("setRouterForward", true);
