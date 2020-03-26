@@ -1,10 +1,10 @@
 <template>
-  <div class="biggp-group-wrap" ref="doch">
+  <div class="biggp-group-wrap" ref="doch" v-if="isLoad">
     <div class="fixed-header">
       <HeaderNav :navInfo="navInfo" />
     </div>
     <div class="main">
-      <div class="member-wrap">
+      <div class="member-wrap" v-if="isOpenSign">
         <div class="MemberList">
           <MemberList :members="signMemberList" />
           <p class="outer" v-if="[].length">旁听学生 6</p>
@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div class="qrcode-info-wrap" v-if="isOpenSign">
+    <div class="qrcode-info-wrap" v-if="isOpenSign && base64">
       <div class="code-wrap">
         <img class="qrcode-img" :src="base64" alt />
         <!-- <canvas id="canvas"></canvas> -->
@@ -31,6 +31,11 @@
         @click="onScrollFn(1)"
       ></i>
     </div>
+    <p class="open-sign-wrap" v-if="!isOpenSign">
+      <a class="open-sign-btn" @click="openSign">
+        <span class="text position-c colorf">开启签到</span>
+      </a>
+    </p>
   </div>
 </template>
 
@@ -44,7 +49,6 @@ export default {
   props: {},
   data() {
     return {
-      msg: "年开始的奶粉",
       navInfo: {
         letTitle: "学生名单",
         bankeName: "",
@@ -67,7 +71,8 @@ export default {
       bankeid: "",
       signdata: {},
       base64: "",
-      timer: null
+      timer: null,
+      isLoad: false
     };
   },
   computed: {},
@@ -79,7 +84,6 @@ export default {
       id = id.split("#/")[0];
     }
     this.bankeid = id;
-    // console.log("UrlParams", UrlParams);
     this.signquery();
   },
   mounted() {
@@ -97,9 +101,8 @@ export default {
           if (res.data.code == 0) {
             console.log("resresres", res);
             if (res.data.data && res.data.data.signdata) {
-              this.isOpenSign = true;
               this.signdata = res.data.data.signdata;
-               this.navInfo.bankeName=this.signdata.bankename;
+              this.navInfo.bankeName = this.signdata.bankename;
               this.Signquerymember(this.signdata.id);
               // let timer = setInterval(() => {
               //   this.Signquerymember(this.signdata.id);
@@ -110,10 +113,12 @@ export default {
             }
           } else {
             Toast("未开启签到");
+            Indicator.close();
+            this.isLoad = true;
           }
-          Indicator.close();
         })
         .catch(() => {
+          this.isLoad = true;
           Indicator.close();
         });
     },
@@ -146,10 +151,6 @@ export default {
                   noSign.push(item);
                 }
               }
-              // for (let j = 0; j < 3; j++) {
-              //   Data.signmembers = [...Data.signmembers, ...Data.signmembers];
-              //   // this.signMemberList.push(Data.signmembers);
-              // }
               this.tempList = [...isSign, ...noSign];
               this.signMemberList = [...isSign, ...noSign];
               console.log("学生打卡记录", this.signMemberList);
@@ -160,22 +161,29 @@ export default {
                 }
               });
             }
+            this.isOpenSign = true;
           } else {
           }
+          Indicator.close();
+          this.isLoad = true;
         })
-        .catch(() => {});
+        .catch(() => {
+          Indicator.close();
+          this.isLoad = true;
+        });
     },
     getSignCode() {
-        //! cjy: 由客户端生成scene场景， 方便后续维护
-        let scene = 'sign;id=' + this.signdata.id
+      //! cjy: 由客户端生成scene场景， 方便后续维护
+      let scene = "sign;id=" + this.signdata.id;
       this.$http
         .post(
-            //"/api/weixin/qrcodesign",
-            '/api/weixin/appqrcode',
-            {
-                //bankeid: this.bankeid
-                'scene': scene
-            })
+          //"/api/weixin/qrcodesign",
+          "/api/weixin/appqrcode",
+          {
+            //bankeid: this.bankeid
+            scene: scene
+          }
+        )
         .then(res => {
           if (res.data.code == 0) {
             if (res.data.data) {
@@ -185,6 +193,7 @@ export default {
         })
         .catch(() => {});
     },
+
     useqrcode() {
       let canvas = document.getElementById("canvas");
       Qrcode.toDataURL(
@@ -202,6 +211,28 @@ export default {
         }
       );
     },
+    openSign() {
+      Indicator.open("加载中...");
+      this.$http
+        .post("/api/sign/signadd", {
+          bankeid: this.bankeid,
+          info: ""
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            console.log("教师打卡上课,", res);
+            let signData = res.data.data.sign;
+            this.Signquerymember(signData.id);
+          } else {
+            Toast("签到失败");
+          }
+          Indicator.close();
+        })
+        .catch(() => {
+          Toast("出错了...");
+          Indicator.close();
+        });
+    },
     scrollAnimation(currentY, targetY) {
       // 获取当前位置方法
       // const currentY = document.documentElement.scrollTop || document.body.scrollTop
@@ -214,7 +245,7 @@ export default {
         const dist = Math.ceil(needScrollTop / 20);
         _currentY += dist;
         window.scrollTo(_currentY, currentY);
-        // 如果移动幅度小于十个像素，直接移动，否则递归调用，实现动画效果
+        // 如果移动幅度小于二十个像素，直接移动，否则递归调用，实现动画效果
         if (needScrollTop > 20 || needScrollTop < -20) {
           this.scrollAnimation(_currentY, targetY);
         } else {
@@ -304,7 +335,7 @@ export default {
     transform: translate(0, -50%);
     z-index: 12;
     .code-wrap {
-      .qrcode-img{
+      .qrcode-img {
         width: 15vw;
       }
       #canvas {
@@ -329,6 +360,7 @@ export default {
         font-weight: bold;
         background: rgba(236, 236, 236, 1);
         margin-top: 30px;
+        padding: 0 30px;
       }
     }
   }
@@ -355,6 +387,29 @@ export default {
       margin: 0 15px;
       &.opacity {
         opacity: 0.3;
+      }
+    }
+  }
+  .open-sign-wrap {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%;-50%);
+    .open-sign-btn {
+      position: relative;
+      display: block;
+      width: 247px;
+      height: 247px;
+      background: linear-gradient(
+        180deg,
+        rgba(153, 205, 250, 1) 0%,
+        rgba(0, 130, 241, 1) 100%
+      );
+      box-shadow: 0px 6px 6px rgba(0, 137, 255, 0.36);
+      border-radius: 50%;
+      opacity: 1;
+      .text {
+        font-size: 30px;
       }
     }
   }

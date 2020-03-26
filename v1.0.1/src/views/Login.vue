@@ -1,7 +1,7 @@
 <template>
   <div class="tc loginbg">
     <div class="fontmaintitle maintitle">
-      <!-- 云平台Cloud -->
+      <!-- <img src="../assets/login_b.png" alt /> -->
     </div>
     <div class="fontlarge loginpart">
       <div class="login-box" v-if="state">
@@ -81,7 +81,7 @@
         :appid="wxlogin.appid"
         :scope="wxlogin.scope"
         :redirect_uri="encodeURIComponent(wxlogin.redirect_uri)"
-        href="data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHtkaXNwbGF5OiBub25lO30KLmltcG93ZXJCb3ggLmluZm8ge2Rpc3BsYXk6IG5vbmU7fQouc3RhdHVzX2ljb24ge2Rpc3BsYXk6IG5vbmV9Ci5pbXBvd2VyQm94IC5zdGF0dXMge3RleHQtYWxpZ246IGNlbnRlcjt9Ci5pbXBvd2VyQm94IC5xcmNvZGV7cG9zaXRpb246IGZpeGVkO2xlZnQ6IDUwJTt0b3A6IDUwJTt0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTt9"
+        :href="wxlogin.href"
       ></wxlogin>
       <p style="font-size:18px;color:#000">请使用微信扫一扫完成登录</p>
     </mt-popup>
@@ -113,7 +113,7 @@ export default {
         scope: "snsapi_login",
         redirect_uri: "https://www2.exsoft.com.cn/#/WechatLogin/callback.do",
         href:
-          "LmltcG93ZXJCb3ggLnFyY29kZSB7d2lkdGg6IDIwMHB4O30KLmltcG93ZXJCb3ggLnRpdGxlIHtkaXNwbGF5OiBub25lO30KLmltcG93ZXJCb3ggLmluZm8ge3dpZHRoOiAyMDBweDt9Ci5zdGF0dXNfaWNvbiB7ZGlzcGxheTogbm9uZX0KLmltcG93ZXJCb3ggLnN0YXR1cyB7dGV4dC1hbGlnbjogY2VudGVyO30gCi5pbXBvd2VyQm94OjpiZWZvcmUge2NvbnRlbnQ6Iuagh+mimCLvvJtjb2xvcjoiIzAwMCI7fQ=="
+          "data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHtkaXNwbGF5OiBub25lO30KLmltcG93ZXJCb3ggLmluZm8ge2Rpc3BsYXk6IG5vbmU7fQouc3RhdHVzX2ljb24ge2Rpc3BsYXk6IG5vbmV9Ci5pbXBvd2VyQm94IC5zdGF0dXMge3RleHQtYWxpZ246IGNlbnRlcjt9Ci5pbXBvd2VyQm94IC5xcmNvZGV7cG9zaXRpb246IGZpeGVkO2xlZnQ6IDUwJTt0b3A6IDUwJTt0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTt9"
       }
     };
   },

@@ -35,7 +35,7 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <BindSchoolInfo :info="showSchoolInfo" @back="onBack" :caneditbanke="detail_go_school"/>
+      <BindSchoolInfo :info="showSchoolInfo" @back="onBack" :caneditbanke="detail_go_school" />
     </mt-popup>
   </div>
 </template>
@@ -44,7 +44,7 @@
 import BindSchoolInfo from "./bindSchool-info";
 import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
 import Empty from "@/common/empty";
-import {parseURL } from "@/util";
+import { parseURL } from "@/util";
 export default {
   name: "BindSchoolList",
   props: {},
@@ -53,18 +53,26 @@ export default {
       popupBindSchoolInfo: false,
       BindSchoolListData: [],
       showSchoolInfo: {},
+      userid:''
     };
   },
   computed: {
-       caneditbanke() {
+    caneditbanke() {
       let caneditbanke = this.$store.getters.caneditbanke;
       return caneditbanke;
     },
     detail_go_school() {
-          return this.$store.state.detail_go_school;
-        }
+      return this.$store.state.detail_go_school;
+    }
   },
   created() {
+    const UrlParams = parseURL(window.location.href);
+    let params = this.$route.params;
+    if (UrlParams.userid) {
+      this.userid = UrlParams.userid;
+    } else {
+      this.userid = params.userid;
+    }
     this.querybind();
   },
   mounted() {},
@@ -72,16 +80,22 @@ export default {
     popupBindSchoolInfo: function(newValue, oldValue) {}
   },
   methods: {
-      snodesc(item){
-          if (item.schoolrole == 10){
-              return '工号'
-          }
-          return '学号'
-      },
+    snodesc(item) {
+      if (item.schoolrole == 10) {
+        return "工号";
+      }
+      return "学号";
+    },
     querybind() {
+      let postData = {};
+      if (this.detail_go_school) {
+        postData.userids = [this.userid];
+      }
       Indicator.open("加载中...");
       this.$http
-        .post("/api/school/querybind", {})
+        .post("/api/school/querybind", {
+          userids: postData.userids
+        })
         .then(res => {
           console.log("querybind", res);
           if (res.data.code == "0") {
@@ -110,7 +124,7 @@ export default {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "BindSchool",
-        params: { ShowType: true}
+        params: { ShowType: true }
       });
     },
     showSchollInfo(v) {
@@ -127,7 +141,7 @@ export default {
       this.$store.commit("SET_BIND_SCHOLL", true);
       this.$store.commit("SET_FOOTER_BAR_STATE", true);
       this.$router.go(-1);
-        //! cjy: 这里直接返回到 home； 否则一定场景比较怪异：   bindschool->back->
+      //! cjy: 这里直接返回到 home； 否则一定场景比较怪异：   bindschool->back->
     }
   },
   components: {
