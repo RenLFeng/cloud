@@ -1,6 +1,6 @@
 <template>
   <div class="banshu-wrap">
-    <mt-header title="课堂板书">
+    <mt-header title="课堂板书" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
@@ -207,6 +207,7 @@ export default {
 .banshu-wrap {
   .main {
     background: #f0f0f0;
+    margin-top: 50px;
     .pic {
       li {
         width: 100%;

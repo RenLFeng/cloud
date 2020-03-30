@@ -17,10 +17,10 @@
           ></BankeZiyuan>
         </mt-tab-container-item>
         <mt-tab-container-item id="chengyuan">
-          <div class="chengyuan-head tc" @click="groupFn">
+          <!-- <div class="chengyuan-head tc" @click="groupFn">
             <i class="iconfont iconxiaozu eicotrigger"></i>
             <p>分组方案</p>
-          </div>
+          </div>-->
           <BankeChengyuan :bankeid="id" v-if="showchengyuan" :schollid="curbanke.schoolid"></BankeChengyuan>
         </mt-tab-container-item>
 
@@ -69,6 +69,12 @@
           <i
             class="iconfont iconkeqian-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.zyTips?'reddot-Tips':''"
+            v-if="selected=='ziyuan'"
+          ></i>
+          <i
+            class="iconfont iconziyuan reddot-Tips-wrap"
+            :class="eventmsgs.zyTips?'reddot-Tips':''"
+            v-else
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课前</span>
         </div>
@@ -78,6 +84,12 @@
           <i
             class="iconfont iconkezhong-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.hdTips.count?'reddot-Tips':''"
+            v-if="selected=='hudong'"
+          ></i>
+          <i
+            class="iconfont iconhudong reddot-Tips-wrap"
+            :class="eventmsgs.hdTips.count?'reddot-Tips':''"
+            v-else
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课中</span>
         </div>
@@ -104,6 +116,12 @@
           <i
             class="iconfont iconxueqing-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.cyTips?'reddot-Tips':''"
+            v-if="selected=='chengyuan'"
+          ></i>
+          <i
+            class="iconfont iconchengyuan1 reddot-Tips-wrap"
+            :class="eventmsgs.cyTips?'reddot-Tips':''"
+            v-else
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">学情</span>
         </div>
@@ -113,6 +131,12 @@
           <i
             class="iconfont iconbanke-wode-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.xqTips?'reddot-Tips':''"
+            v-if="selected=='tongzhi'"
+          ></i>
+          <i
+            class="iconfont iconbankexiangqing reddot-Tips-wrap"
+            :class="eventmsgs.xqTips?'reddot-Tips':''"
+            v-else
           ></i>
           <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">我的</span>
         </div>
@@ -141,27 +165,27 @@ export default {
       myFootBar: [
         {
           id: "ziyuan",
-          text: "课前",
+          text: "课前1",
           icon: "iconkeqian-xuanzhong"
         },
         {
           id: "hudong",
-          text: "课中",
+          text: "课中1",
           icon: "iconkezhong-xuanzhong"
         },
         {
           id: "zuoye",
-          text: "课后",
+          text: "课后1",
           icon: "iconkehou-xuanzhong"
         },
         {
           id: "chengyuan",
-          text: "学情",
+          text: "学情1",
           icon: "iconxueqing-xuanzhong"
         },
         {
           id: "tongzhi",
-          text: "我的",
+          text: "我的1",
           icon: "iconbanke-wode-xuanzhong"
         }
       ],

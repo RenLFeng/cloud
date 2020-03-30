@@ -84,7 +84,7 @@ nativecode.detectplatform = function () {
     //! 测试
     // return 'exsoftdaping';
 
-    return '';
+    return pa;
 }
 
 nativecode.platform = ''

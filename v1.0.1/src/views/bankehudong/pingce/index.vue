@@ -173,7 +173,7 @@ export default {
   },
   methods: {
     selectClick(e, v, i) {
-      if(!v.num) return;
+      if (!v.num) return;
       let curel = this.$refs.tbLi[i];
       this.moveBar = curel.offsetLeft;
       console.log(this.moveBar);
@@ -239,6 +239,13 @@ export default {
         .post("api/pingce/query", qobj)
         .then(res => {
           if (res.data.code == "0") {
+            if (res.data.data.length) {
+              for (let v of res.data.data) {
+                if(v.ptype==2 || v.ptype==3){
+                  v.optdesc=JSON.parse(v.optdesc)
+                }
+              }
+            }
             if (res.data.data.length < this.pagesize) {
               this.loading = true;
               this.scorllEd = true;
@@ -262,6 +269,7 @@ export default {
                 this.details(this.pingceHistoryList[0]);
               }
             }
+            console.log('pingceHistoryList',this.pingceHistoryList);
           } else {
             Toast("连接错误");
           }
@@ -271,6 +279,7 @@ export default {
         });
     },
     details(v) {
+      console.log("dddd", v);
       this.pingceItemfile = v;
       if (
         this.pingceItemfile.info &&
@@ -283,7 +292,6 @@ export default {
           );
         }
       }
-      console.log("vcvc", v);
       this.popupDeatil = true;
     },
     Backs() {

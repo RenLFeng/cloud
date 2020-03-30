@@ -15,6 +15,7 @@
       <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
           <Audio :AudioInfo="audiofileinfo" @Backs="popupAudio=false" v-if="popupAudio"/>
       </mt-popup>
+      <div class="dp-hd-wrap"  v-if="hudong" @click="hudongFn">多屏互动</div>
   </div>
 </template>
 
@@ -93,6 +94,7 @@ export default {
 
   data() {
     return {
+      hudong:false,
       transitionName: "slide-forward",
       testtext: 'showua:' + navigator.userAgent,
       showtest: true,
@@ -186,6 +188,9 @@ export default {
     }
   },
   methods: {
+    hudongFn(){
+      console.log('开始互动');
+    },
     onToggleClick(data) {
       if (!data) {
         this.tempLocalfiles = [];
@@ -525,5 +530,21 @@ export default {
   text-align: center;
   color: #999;
   padding: 10px 0 20px 0;
+}
+</style>
+<style lang="less" scoped>
+.dp-hd-wrap{
+  position: fixed;
+  bottom: 100px;
+  right: 10px;
+  z-index: 99999999999;
+  width: 100px;
+  height: 100px;
+ background:rgba(0,137,255,.5);
+  color:rgba(255, 255, 255, .9);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 100px;
+  font-size: 20px;
 }
 </style>

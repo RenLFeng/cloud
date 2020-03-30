@@ -57,7 +57,7 @@
       </div>
       <div class="footer">
         <span class="color9 font-xs">{{item.submittime}}</span>
-        <span class="fr colory">得分&nbsp;{{item.score}}</span>
+        <span class="fr colory font18">得分&nbsp;{{item.score}}</span>
       </div>
     </div>
     <!-- 成员分组 -->
@@ -191,7 +191,7 @@ export default {
 }
 .mainpart.pingcedetail {
   height: auto;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
 }
 .mainpart.pingcedetail .pingc-img-wrap {
   padding: 42% 0 0;
