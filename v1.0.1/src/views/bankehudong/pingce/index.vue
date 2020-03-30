@@ -37,7 +37,7 @@
       <!-- <p v-if="isScorll && !scorllEd" class="tc color9">
         <van-loading size="24px">加载中...</van-loading>
       </p>-->
-      <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p>
+      <!-- <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p> -->
     </div>
     <Empty v-else />
 
@@ -157,24 +157,6 @@ export default {
           num: 0,
           isActive: false
         }
-        // {
-        //   id: 5,
-        //   label: "写作",
-        //   num: 0,
-        //   isActive: false
-        // },
-        // {
-        //   id: 6,
-        //   label: "抢答",
-        //   num: 0,
-        //   isActive: false
-        // },
-        // {
-        //   id: 10,
-        //   label: "投票",
-        //   num: 0,
-        //   isActive: false
-        // }
       ]
     };
   },

@@ -6,14 +6,13 @@
         slot="right"
         v-if="pagemode=='submit'"
         @click="popupSubmit=true"
-      >{{$t('bankeTask.Submit_job')}}</mt-button> -->
-       <mt-button
+      >{{$t('bankeTask.Submit_job')}}</mt-button>-->
+      <mt-button
         slot="right"
         v-if="pagemode=='submit'"
         @click="onbtnsubmit"
         :disabled="submitdisabled || prohibit"
-      >提交
-      </mt-button>
+      >提交</mt-button>
 
       <mt-button slot="right" v-else-if="showstopbtn" @click="showmzuoyemenu=true">操作</mt-button>
     </mt-header>
@@ -29,7 +28,11 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">
             {{zuoyeitem.name}}
-            <i class="iconfont iconcollect eicotrigger fr" :class="isShuoc?'colory':'color9'" @click="shuoc"></i>
+            <i
+              class="iconfont iconcollect eicotrigger fr"
+              :class="isShuoc?'colory':'color9'"
+              @click="shuoc"
+            ></i>
           </div>
           <div class="zuoyesubtitle">
             <span
@@ -80,7 +83,7 @@
         <div class="zashowbtnpart" :class="pagemode=='submit'?'submit':'result'">
           <!-- <div v-if="pagemode=='submit'">
             <div class="zashowbtn zashowbtnactive">{{$t('bankeTask.My_submission')}}</div>
-          </div> -->
+          </div>-->
           <div v-if="pagemode=='result'">
             <div
               @click="selectPF(1)"
@@ -93,31 +96,36 @@
           </div>
         </div>
 
-
         <div v-if="pagemode=='submit'" style="padding:10px;" class="showemptydesc-submit">
           <div v-if="canEditzy" class="isZySbmitEdit">
-            <p class="text-tips position-c">
-                {{isZySbmitEdit}}
-            </p>
-            </div>
-          <P v-if="results.length" class="tr colord fontsmall " style="padding:10px;position:relative;" ><span class="position-r"  @click="onSeeAllSubmit(results[0])">编辑记录{{results.length}}</span></P>
-            <zuoyedetailedit @textChange="ontextChange" :zdetail="zdetailsubmit" :canEditzy="canEditzy"></zuoyedetailedit>
+            <p class="text-tips position-c">{{isZySbmitEdit}}</p>
+          </div>
+          <P
+            v-if="results.length"
+            class="tr colord fontsmall"
+            style="padding:10px;position:relative;"
+          >
+            <span class="position-r" @click="onSeeAllSubmit(results[0])">编辑记录{{results.length}}</span>
+          </P>
+          <zuoyedetailedit
+            @textChange="ontextChange"
+            :zdetail="zdetailsubmit"
+            :canEditzy="canEditzy"
+          ></zuoyedetailedit>
         </div>
         <div v-else>
           <div v-for="(ritem,selindex) in results" v-bind:key="selindex">
             <div v-if="showitem(ritem)">
-                  <ZuoyeAnswerItem
-                    :resultitem="ritem"
-                    @commentClicked="onCommentClick"
-                    @scoreClicked="onScoreClick"
-                    @seeAllSubmit="onSeeAllSubmit"
-                  ></ZuoyeAnswerItem>
-                  <div class="devide"></div>
+              <ZuoyeAnswerItem
+                :resultitem="ritem"
+                @commentClicked="onCommentClick"
+                @scoreClicked="onScoreClick"
+                @seeAllSubmit="onSeeAllSubmit"
+              ></ZuoyeAnswerItem>
+              <div class="devide"></div>
             </div>
           </div>
-          <div v-if="showemptydesc" class="tc">
-           {{emptydesc}}
-          </div>
+          <div v-if="showemptydesc" class="tc">{{emptydesc}}</div>
         </div>
         <!-- <div v-for="(ritem,selindex) in results" v-bind:key="selindex">
           {{pagemode}}==hkhk
@@ -136,11 +144,11 @@
               <zuoyedetailedit :zdetail="zdetailsubmit"></zuoyedetailedit>
           </div>
           <div v-else>{{emptydesc}}</div>
-        </div> -->
+        </div>-->
       </mt-loadmore>
     </div>
 
-<!-- 提交作业 -->
+    <!-- 提交作业 -->
     <!-- <mt-popup v-model="popupSubmit" position="right" class="mint-popup-3" :modal="false">
       <mt-header :title="$t('bankeTask.Submit_job')">
         <mt-button
@@ -151,16 +159,16 @@
         <mt-button slot="left" @click="popupSubmit = false">{{$t('common.Close')}}</mt-button>
       </mt-header>
       <zuoyedetailedit :zdetail="zdetailsubmit"></zuoyedetailedit>
-    </!--> 
+    </!-->
 
-<!-- 评论 -->
+    <!-- 评论 -->
     <mt-popup v-model="popupZuoyePL" position="right" class="mint-popup-3" :modal="false">
       <mt-header :title="$t('bankeTask.Job_Results')+' '+$t('bankeTask.Comment_area')">
         <mt-button slot="left" icon="back" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <Discuss :itemInfo="studentInfo" :popupZuoyePL="popupZuoyePL"></Discuss>
+      <Discuss :itemInfo="studentInfo" :popupZuoyePL="popupZuoyePL" @plMessage="onplMessage"></Discuss>
     </mt-popup>
-<!-- 评分 -->
+    <!-- 评分 -->
     <mt-popup v-model="popupZuoyePF" position="bottom" class="pf-container-popup">
       <div class="pf-container">
         <p class="tit border-bottom-e5 text-center">
@@ -183,7 +191,7 @@
         </ul>
       </div>
     </mt-popup>
- <!-- 作业信息 -->
+    <!-- 作业信息 -->
     <mt-popup
       v-model="popuPzouyeInfo"
       position="right"
@@ -226,7 +234,7 @@
       :modal="false"
       :style="Preview?{overflow: 'scroll'}:''"
     >
-      <mt-header :title="`${AllsubmitName} 提交历史`" class="">
+      <mt-header :title="`${AllsubmitName} 提交历史`" class>
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <div v-for="(ritem,selindex) in popupAllsubmitItem" v-bind:key="selindex">
@@ -244,8 +252,7 @@
       </div>
     </mt-popup>
 
-
-    <mt-actionsheet :actions="mzuoyemenu" v-model="showmzuoyemenu" ></mt-actionsheet>
+    <mt-actionsheet :actions="mzuoyemenu" v-model="showmzuoyemenu"></mt-actionsheet>
   </div>
 </template>
 
@@ -256,7 +263,7 @@ import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
-import nativecode from '@/nativecode'
+import nativecode from "@/nativecode";
 
 import maintools from "./maintools";
 import commontools from "../commontools";
@@ -266,7 +273,7 @@ import FileAttachList from "./components/FileAttachList";
 import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
 import Answer from "./banKeZuoye/answer";
-import { parseURL, CollectionFn } from "@/util";
+import { parseURL, CollectionFn, formateTime } from "@/util";
 export default {
   name: "ZuoyeResult",
   props: {
@@ -278,7 +285,7 @@ export default {
   },
   data() {
     return {
-      showZdetail: true,  //! cjy: 默认显示详细
+      showZdetail: true, //! cjy: 默认显示详细
 
       studentInfo: {},
       ScoreItemInfo: {},
@@ -291,8 +298,8 @@ export default {
       popuPzouyeAllMark: false,
       popupAnswer: false,
       popupAllsubmit: false,
-      popupAllsubmitItem:[],
-      AllsubmitName:'',
+      popupAllsubmitItem: [],
+      AllsubmitName: "",
       mark: "",
       studentName: "",
       zreadonly: true,
@@ -309,7 +316,7 @@ export default {
         score: 10
       },
 
-        showmzuoyemenu:false,
+      showmzuoyemenu: false,
 
       allZuoyeitem: [],
       allInitData: [],
@@ -334,49 +341,51 @@ export default {
       zashowbtnactive: true,
       markArr: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       loadingState: false,
-        ismaster:false,
-        mymember:true,  //! 是否在提交成员名单中
+      ismaster: false,
+      mymember: true, //! 是否在提交成员名单中
 
-      isShuoc:false,
-      prohibit:true,
-      canEditzy:false,
-      seeMySbmit:false,
+      isShuoc: false,
+      prohibit: true,
+      canEditzy: false,
+      seeMySbmit: false
     };
   },
-    watch: {
-       zanswerTextChange() {
-        //  this.canEditzy=true;
-            // console.log('监听zdetailsubmit变化',this.zdetailsubmit);
-        }
+  watch: {
+    zanswerTextChange() {
+      //  this.canEditzy=true;
+      // console.log('监听zdetailsubmit变化',this.zdetailsubmit);
+    }
   },
   computed: {
-     zanswerTextChange() {
-            // return this.zdetailsubmit.ztext;
-        },
+    curbanke() {
+      return this.$store.state.curbanke;
+    },
+    zanswerTextChange() {
+      // return this.zdetailsubmit.ztext;
+    },
     Preview() {
       return this.$store.state.Preview.isPreview;
     },
-      mzuoyemenu(){
-        let objret = [];
-        if (nativecode.hassharecommon()){
-            objret.push({
-                name:'分享作业',
-                method:this.doshare,
-            })
-        }
-          objret.push({
-              name:'编辑作业',
-              method:this.doedit,
-          })
-        if (this.zuoyeitem.state == 100){
-
-            objret.push({
-                name:'结束作业',
-                method:this.dostop
-            })
-        }
-        return objret;
-      },
+    mzuoyemenu() {
+      let objret = [];
+      if (nativecode.hassharecommon()) {
+        objret.push({
+          name: "分享作业",
+          method: this.doshare
+        });
+      }
+      objret.push({
+        name: "编辑作业",
+        method: this.doedit
+      });
+      if (this.zuoyeitem.state == 100) {
+        objret.push({
+          name: "结束作业",
+          method: this.dostop
+        });
+      }
+      return objret;
+    },
     answerdesc() {
       return this.zuoyeitem.answerdesc
         ? this.zuoyeitem.answerdesc
@@ -390,27 +399,27 @@ export default {
     },
     titledesc() {
       if (this.pagemode == "submit") {
-        return '作答';
+        return "作答";
       }
       return this.$t("bankeTask.Job_Results");
     },
-      caneditzuoye(){
-        if (this.ismaster){
-            return true;
-        }
-          let isteacher = this.$store.getters.caneditbanke;
-          if (!isteacher){
-              return false;
-          }
-          return true
-      },
-      showstopbtn(){
-        return this.caneditzuoye;
-          // if (this.zuoyeitem.state == 100){
-          //     return true;
-          // }
-          // return false
-      },
+    caneditzuoye() {
+      if (this.ismaster) {
+        return true;
+      }
+      let isteacher = this.$store.getters.caneditbanke;
+      if (!isteacher) {
+        return false;
+      }
+      return true;
+    },
+    showstopbtn() {
+      return this.caneditzuoye;
+      // if (this.zuoyeitem.state == 100){
+      //     return true;
+      // }
+      // return false
+    },
     statedesc() {
       if (this.zuoyeitem.state == 100) {
         return this.$t("bankeTask.Have_in_hand");
@@ -441,12 +450,12 @@ export default {
       return true;
     },
     emptydesc() {
-        if (this.zuoyeitem.state == 100){
-            //! 评测进行中
-            if (!this.ismaster && !this.mymember){
-                return '作业尚未结束，不能查看学员的提交'
-            }
+      if (this.zuoyeitem.state == 100) {
+        //! 评测进行中
+        if (!this.ismaster && !this.mymember) {
+          return "作业尚未结束，不能查看学员的提交";
         }
+      }
       if (this.showfilter == "score") {
         return this.$t("bankeTask.No_score_yet");
       }
@@ -496,16 +505,16 @@ export default {
         "%i " + this.$t("common.Person") + this.$t("bankeTask.Not_submitted");
       return commontools.sprintf(tfmt, ni);
     },
-    isZySbmitEdit(){
-      if(this.canEditzy){
-        return '作业已被评分，不能编辑，如需修改，请联系教师。'
-      }else{
-        return ''
+    isZySbmitEdit() {
+      if (this.canEditzy) {
+        return "作业已被评分，不能编辑，如需修改，请联系教师。";
+      } else {
+        return "";
       }
     },
-         user() {
+    user() {
       return this.$store.getters.curuser;
-    },
+    }
   },
   methods: {
     loadTop() {
@@ -515,7 +524,7 @@ export default {
     goBacks() {
       if (this.popupAllsubmit && !this.popupZuoyePL)
         this.popupAllsubmit = false;
-         this.seeMySbmit=false;
+      this.seeMySbmit = false;
       if (this.popupZuoyePL) {
         this.popupZuoyePL = false;
         this.loadAll();
@@ -534,7 +543,7 @@ export default {
       console.log("作业 info", ritem);
     },
     onScoreClick(ritem) {
-      let isteacher = this.caneditzuoye;// this.$store.getters.caneditbanke;
+      let isteacher = this.caneditzuoye; // this.$store.getters.caneditbanke;
       this.ScoreItemInfo = ritem.info;
       console.log("作业 info", ritem);
       if (!isteacher) {
@@ -554,20 +563,20 @@ export default {
         // }
       }
     },
-    AnswerFn(){
-      if(this.zuoyeitem.answerdesc){
-          this.popupAnswer=true;
+    AnswerFn() {
+      if (this.zuoyeitem.answerdesc) {
+        this.popupAnswer = true;
       }
     },
-    ontextChange(){
-      this.prohibit=false;
+    ontextChange() {
+      this.prohibit = false;
     },
     onSeeAllSubmit(item) {
       // console.log( item);
-        //! 查看个人的所有提交
+      //! 查看个人的所有提交
       if (item) {
         this.popupAllsubmit = true;
-        this.seeMySbmit=true;
+        this.seeMySbmit = true;
         var url =
           "/api/api/zuoyeresultquery?zuoyeid=" +
           this.zuoyeid +
@@ -582,15 +591,13 @@ export default {
             if (res.data.code == 0) {
               let zitem = res.data.data.results;
               for (var i = 0; i < zitem.length; i++) {
-                  zitem[
-                  i
-                ].localfiles = maintools.localfilesFromFilelist(
-                      zitem[i].files
+                zitem[i].localfiles = maintools.localfilesFromFilelist(
+                  zitem[i].files
                 );
               }
-                this.popupAllsubmitItem = zitem;
-                this.AllsubmitName=this.user.id==zitem[0].userid?'我的':zitem[0].username;
-
+              this.popupAllsubmitItem = zitem;
+              this.AllsubmitName =
+                this.user.id == zitem[0].userid ? "我的" : zitem[0].username;
             } else {
               Toast(res.data.msg);
             }
@@ -619,6 +626,7 @@ export default {
           if (res.data.code == 0) {
             //  console.log("评分成功");
             this.ScoreItemInfo.score = res.data.data.score;
+            // this.mimiMessage("pf");
           } else {
             // console.log("评分错误", res);
           }
@@ -630,9 +638,51 @@ export default {
           console.log("评分失败");
         });
     },
+    onplMessage(v) {
+      // this.mimiMessage(v);
+    },
+    //  发送作业批改消息
+    mimiMessage(type) {
+      let templateid = "aL_1yDadpBIgcjcnkj4xliRol38CgMQ4H7D8RvGYPCo";
+      let topage = "/#/zuoyeresult/" + this.zuoyeid;
+      let date = formateTime(new Date(), "-");
+      let data = {};
+      let userid = "";
+      if (type == "pf") {
+        data.thing1 = this.curbanke.name;
+        data.thing2 = this.zuoyeitem.name;
+        data.phrase3 = `作业得${this.ScoreItemInfo.score}分`;
+        data.thing4 = "个红包飞韩国";
+        userid = [this.ScoreItemInfo.userid];
+      } else if (type == "pl") {
+        data.thing1 = this.curbanke.name;
+        data.thing2 = this.zuoyeitem.name;
+        data.phrase3 = `有新的评论`;
+        data.thing4 = "回复个地方";
+        userid = [this.studentInfo.userid];
+      } else if (type == "submit") {
+        data.name1 = this.user.name;
+        data.thing2 = this.zuoyeitem.name;
+        data.date3 = date;
+        userid = [this.zuoyeitem.userid];
+        templateid = "w45YLK2VOms4UJkKoqVIYZFBVyXnc5niGIzleAosf4M";
+      }
+      this.$http
+        .post("/api/weixin/pushnotify", {
+          templateid: templateid,
+          topage: topage,
+          data: data,
+          sendto: {
+            type: "users",
+            userids: userid
+          }
+        })
+        .then(res => {})
+        .catch(() => {});
+    },
     changeMark() {},
     goback() {
-        console.log('goback()');
+      console.log("goback()");
       if (this.pagemode == "submit") {
         var btip = false;
         if (!this.zuoyeitem.submitnum) {
@@ -645,17 +695,17 @@ export default {
             btip = true;
           }
         }
-        if (this.results.length > 0){
-            btip = false
+        if (this.results.length > 0) {
+          btip = false;
         }
         if (btip) {
           MessageBox.confirm("退出作业提交？").then(() => {
-            this.$back()
+            this.$back();
           });
           return;
         }
       }
-       this.$back()
+      this.$back();
     },
     showitem(ritem) {
       if (!ritem.submitnum) {
@@ -715,8 +765,8 @@ export default {
           }
         }
       }
-      if (data.ismaster){
-          this.ismaster = true
+      if (data.ismaster) {
+        this.ismaster = true;
       }
       this.zuoyeitem = data["zuoye"];
       this.allZuoyeitem = data.results;
@@ -726,27 +776,27 @@ export default {
         }
       }
       this.mymember = data.mymember;
-      if (this.zuoyeitem.state == 100
-          && !this.$store.getters.haseditbankerole) {
+      if (
+        this.zuoyeitem.state == 100 &&
+        !this.$store.getters.haseditbankerole
+      ) {
         //! 提交模式
-          if (data.mymember){
-              //! 在提交名单内才提交
-              this.pagemode = "submit";
-          }
-
+        if (data.mymember) {
+          //! 在提交名单内才提交
+          this.pagemode = "submit";
+        }
       }
-      if (data['zdetail']){
-          this.zdetail.ztext = data["zdetail"].ztext;
-          this.zdetail.localfiles = maintools.localfilesFromFilelist(
-              data["zdetail"].files
-          );
-
+      if (data["zdetail"]) {
+        this.zdetail.ztext = data["zdetail"].ztext;
+        this.zdetail.localfiles = maintools.localfilesFromFilelist(
+          data["zdetail"].files
+        );
       }
-      if (data['zanswer']){
-          this.zanswer.ztext = data["zanswer"].ztext;
-          this.zanswer.localfiles = maintools.localfilesFromFilelist(
-              data["zanswer"].files
-          );
+      if (data["zanswer"]) {
+        this.zanswer.ztext = data["zanswer"].ztext;
+        this.zanswer.localfiles = maintools.localfilesFromFilelist(
+          data["zanswer"].files
+        );
       }
 
       var dresults = data["results"];
@@ -756,54 +806,53 @@ export default {
         );
       }
       this.results = dresults;
-      if(dresults.length){
-      this.zdetailsubmit.ztext=this.results[0].ztext;
-      this.zdetailsubmit.localfiles=this.results[0].localfiles;
-        if(dresults[0].score>-1){
-          this.canEditzy=true
+      if (dresults.length) {
+        this.zdetailsubmit.ztext = this.results[0].ztext;
+        this.zdetailsubmit.localfiles = this.results[0].localfiles;
+        if (dresults[0].score > -1) {
+          this.canEditzy = true;
         }
       }
     },
-      doshare(){
-        nativecode.dosharecommon('zuoye', this.zuoyeid, this.zuoyeitem.name);
-      },
-      doedit(){
-        let bid = this.zuoyeitem.ownerid;
-          this.$store.commit("setBankeData", {
-              modulename: "zuoyelist",
-              bankeid: bid,
-              fn: fobj => {
-                  fobj.editingZuoye = this.zuoyeitem;
-              }
+    doshare() {
+      nativecode.dosharecommon("zuoye", this.zuoyeid, this.zuoyeitem.name);
+    },
+    doedit() {
+      let bid = this.zuoyeitem.ownerid;
+      this.$store.commit("setBankeData", {
+        modulename: "zuoyelist",
+        bankeid: bid,
+        fn: fobj => {
+          fobj.editingZuoye = this.zuoyeitem;
+        }
+      });
+      this.$store.commit("setRouterForward", true);
+      this.$router.push("/zuoyenew/" + bid);
+    },
+    dostop() {
+      MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(() => {
+        Indicator.open(this.$t("Indicator.Processing"));
+        let newstate = 10;
+        this.$http
+          .post("/api/api/bankezuoyesetstate", {
+            zuoyeid: this.zuoyeid,
+            state: newstate
+          })
+          .then(res => {
+            Indicator.close();
+            if (res.data.code == 0) {
+              this.zuoyeitem.state = newstate;
+            } else {
+              Toast(res.data.msg);
+            }
+          })
+          .catch(() => {
+            Indicator.close();
           });
-          this.$store.commit("setRouterForward", true);
-          this.$router.push("/zuoyenew/" + bid);
-      },
-      dostop(){
-          MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(() => {
-              Indicator.open(this.$t("Indicator.Processing"));
-              let newstate = 10;
-              this.$http
-                  .post("/api/api/bankezuoyesetstate", {
-                      zuoyeid: this.zuoyeid,
-                      state: newstate
-                  })
-                  .then(res => {
-                      Indicator.close();
-                      if (res.data.code == 0) {
-                         this.zuoyeitem.state = newstate
-
-                      } else {
-                          Toast(res.data.msg);
-                      }
-                  })
-                  .catch(() => {
-                      Indicator.close();
-                  });
-          });
-      },
+      });
+    },
     onbtnsubmit() {
-        console.log('onbtnsubmit');
+      console.log("onbtnsubmit");
       MessageBox.confirm("现在提交作业？").then(() => {
         this.dosubmit();
       });
@@ -835,7 +884,8 @@ export default {
             // this.zdetailsubmit.ztext = "";
             // this.zdetailsubmit.localfiles.length = 0;
             //   this.zdetailsubmit.localfiles=[];
-             this.prohibit=true;
+            this.prohibit = true;
+            // this.mimiMessage("submit");
           } else {
             //! Toast 不可见
             MessageBox(res.data.msg);
@@ -863,43 +913,45 @@ export default {
         this.results = this.resultsTemp;
       }
     },
-    shuoc(){
-      if(this.isShuoc){
-        Toast('你已经收藏过了')
-        return ;
+    shuoc() {
+      if (this.isShuoc) {
+        Toast("你已经收藏过了");
+        return;
       }
-      this.Collection()
+      this.Collection();
     },
-        //收藏
+    //收藏
     Collection() {
       // console.log(this.zuoyeitem);
       let imgIcon = "zuoye";
-     CollectionFn(this.zuoyeitem, 3, imgIcon, this.zuoyeitem.id,this.zuoyeitem.ownerid)
-         .then(()=>{
-             //！
-             this.isShuoc = true
-         })
-
+      CollectionFn(
+        this.zuoyeitem,
+        3,
+        imgIcon,
+        this.zuoyeitem.id,
+        this.zuoyeitem.ownerid
+      ).then(() => {
+        //！
+        this.isShuoc = true;
+      });
     },
     //是否收藏
-    queryuserfav(){
-
-     this.$http
+    queryuserfav() {
+      this.$http
         .post("/api/userfav/query", {
-           eventtype:3, 
-           eventids:[this.zuoyeid]
-           })
+          eventtype: 3,
+          eventids: [this.zuoyeid]
+        })
         .then(res => {
           if (res.data.code == "0") {
-            console.log('queryuserfav',res);
+            console.log("queryuserfav", res);
             if (res.data.data.length) {
-                this.isShuoc=true;
+              this.isShuoc = true;
             }
           }
         })
-        .catch(err => {
-        });
-    },
+        .catch(err => {});
+    }
   },
   created() {
     // var dd = this.$store.getters.getBankeData("zuoyeresult", this.zuoyeid);
@@ -907,7 +959,7 @@ export default {
     //   //console.log(dd.resultdata);
     //   this.onHttpData(dd.resultdata);
     // } else
-        {
+    {
       this.loadAll();
     }
     this.queryuserfav();
@@ -926,44 +978,43 @@ export default {
 .zouye-results-wrap {
   background: #fff;
   top: 55px;
-  .main{
-    .showemptydesc-submit{
+  .main {
+    .showemptydesc-submit {
       .zdetail {
-          height: 20vh;
-}
-.attachdesc{
-  text-align: left;
-}
-.blockborder{
-      position: relative;
-          border: 1px dashed #ccc;
-      .textadd{
-        position: absolute;
+        height: 20vh;
       }
-}
-.imgblock{
-  width:60px;
-  height:60px;
-}
+      .attachdesc {
+        text-align: left;
+      }
+      .blockborder {
+        position: relative;
+        border: 1px dashed #ccc;
+        .textadd {
+          position: absolute;
+        }
+      }
+      .imgblock {
+        width: 60px;
+        height: 60px;
+      }
     }
   }
   .mint-cell-value.is-link {
     margin-right: 30px;
-}
-.version{
-      height: 53px;
+  }
+  .version {
+    height: 53px;
     padding: 0 10px;
-    line-height:53px;
-}
-.Allsubmit-history{
-  .zacontainer{
-    padding:0 10px;
-    .zatextmain{
-      margin-top:0;
-
+    line-height: 53px;
+  }
+  .Allsubmit-history {
+    .zacontainer {
+      padding: 0 10px;
+      .zatextmain {
+        margin-top: 0;
+      }
     }
   }
-}
 }
 .pf-container-popup {
   width: 100%;
@@ -1021,17 +1072,17 @@ export default {
   padding: 5px;
   margin-right: 10px;
 }
-.zashowbtnpart{
-  height:auto;
-  min-height:10px;
+.zashowbtnpart {
+  height: auto;
+  min-height: 10px;
   min-height: 10px;
   padding: 10px;
-  background:#f0f0f0;
+  background: #f0f0f0;
 }
-.zashowbtnpart.submit{
+.zashowbtnpart.submit {
   /* height:10px; */
 }
-.zashowbtnpart.result{
+.zashowbtnpart.result {
   /* height:44px; */
 }
 .zashowbtnactive {
@@ -1089,19 +1140,19 @@ export default {
 .showZdetail-main.act {
   border-bottom: 1px solid #f0f0f0;
 }
-.isZySbmitEdit{
-  position:relative;
-  height:71px;
+.isZySbmitEdit {
+  position: relative;
+  height: 71px;
 
-background:rgba(255,137,0,1);
+  background: rgba(255, 137, 0, 1);
 }
-.isZySbmitEdit .text-tips{
-  width:100%;
-  height:50px;
-    padding:0 10px;
-font-size:18px;
-font-weight:400;
-line-height:25px;
-color:rgba(255,255,255,1);
+.isZySbmitEdit .text-tips {
+  width: 100%;
+  height: 50px;
+  padding: 0 10px;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 25px;
+  color: rgba(255, 255, 255, 1);
 }
 </style>

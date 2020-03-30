@@ -117,12 +117,12 @@ const xuanzhe = [
     label: "F",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 const panduan = [
   {
@@ -139,12 +139,12 @@ const panduan = [
     label: "错",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 const zhuguan = [
   {
@@ -156,12 +156,12 @@ const zhuguan = [
     label: "已作答",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 const qiangda = [
   {
@@ -173,12 +173,12 @@ const qiangda = [
     label: "已参与",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 export default {
   name: "",
@@ -219,7 +219,10 @@ export default {
       xuanzhe,
       panduan,
       zhuguan,
-      qiangda
+      qiangda,
+      allmembers: [],
+
+      NaMembers: []
     };
   },
   computed: {
@@ -319,6 +322,8 @@ export default {
                   }
                 }
               }
+              // this.bankememberquery();
+              console.log("nan", this.NaMembers);
               console.log("详细", this.memberData);
               if (this.pingceItemfile.ptype == "1") {
                 for (let item of this.memberData) {
@@ -374,6 +379,32 @@ export default {
         .catch(err => {
           // Toast("异常");
         });
+    },
+    bankememberquery() {
+      this.$http
+        .post("/api/api/bankememberquery", {
+          bankeid: this.pingceItemfile.classid
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            this.allmembers = res.data.data.members;
+            for (let v of this.allmembers) {
+              for (let item of this.memberData) {
+                if (v.memberuserid == item.userid) {
+                  v.submit = true;
+                }
+              }
+            }
+            for (let v of this.allmembers) {
+              if (!v.submit) {
+                this.NaMembers.push(v);
+              }
+            }
+            console.log("allmembers", this.allmembers);
+            // console.log("nanaan", this.NaMembers);
+          }
+        })
+        .catch(err => {});
     },
     onMemberClick(v) {
       if (this.pingceItemfile.ptype == "5") {

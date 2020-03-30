@@ -14,7 +14,6 @@
             v-if="showziyuan"
             @UploadLinkSelectEd="onUploadLinkSelectEd"
             @popupZiyuanEdit="onPopupZiyuanEdit"
-          
           ></BankeZiyuan>
         </mt-tab-container-item>
         <mt-tab-container-item id="chengyuan">
@@ -41,11 +40,28 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
+    <div class="my-foot-bar" v-if="Preview && !zyEditState && footerbar && isAndroid">
+      <ul class="items clearfix">
+        <li
+          class="item fl reddot-Tips-wrap"
+          :class="v.id==selected?'act':''"
+          v-for="(v,i) in myFootBar"
+          :key="i"
+          @click="tabarClick(v)"
+        >
+          <span
+            class="icon"
+            :class="`iconfont ${v.icon} ${v.icon=='iconjiahao'?'colory position-c':''}`"
+          ></span>
+          <span class="fontnormal text" v-if="!v.isOpen">{{v.text}}</span>
+        </li>
+      </ul>
+    </div>
     <mt-tabbar
       v-model="selected"
       fixed
       :class="{hide:tabbarhide}"
-      v-if="Preview && !zyEditState && footerbar"
+      v-if="Preview && !zyEditState && footerbar && !isAndroid"
       style="background:#fff"
     >
       <mt-tab-item id="ziyuan">
@@ -115,15 +131,40 @@ import BankeHuDong from "./bankehudong";
 import BankeChengyuan from "./BankeChengyuan";
 import BankeZuoye from "./BankeZuoye";
 import listIcon from "../common/lists-icon";
-//import pic from "../assets/dis.jpg";
 import bankeZouyeXq from "./banKeDetail/index";
-
 import nativecode from "../nativecode";
 
 export default {
   name: "BankeHome",
   data() {
     return {
+      myFootBar: [
+        {
+          id: "ziyuan",
+          text: "课前",
+          icon: "iconkeqian-xuanzhong"
+        },
+        {
+          id: "hudong",
+          text: "课中",
+          icon: "iconkezhong-xuanzhong"
+        },
+        {
+          id: "zuoye",
+          text: "课后",
+          icon: "iconkehou-xuanzhong"
+        },
+        {
+          id: "chengyuan",
+          text: "学情",
+          icon: "iconxueqing-xuanzhong"
+        },
+        {
+          id: "tongzhi",
+          text: "我的",
+          icon: "iconbanke-wode-xuanzhong"
+        }
+      ],
       selected: "ziyuan",
       //curbanke: "common.Curbanke",
       //    Curbanke: {
@@ -178,11 +219,24 @@ export default {
     }
   },
   watch: {
-    selected() {
+    selected: function(newValue, oldValue) {
       this.checkNeedShow();
+      if (newValue == "zuoye") {
+        this.myFootBar[2].icon = "iconjiahao";
+        this.myFootBar[2].isOpen = true;
+      } else {
+        this.myFootBar[2].icon = "iconkehou-xuanzhong";
+        this.myFootBar[2].isOpen = false;
+      }
     }
   },
   computed: {
+    isAndroid() {
+      if (nativecode.platform == "exsoftandroid") {
+        return true;
+      }
+      return false;
+    },
     hasnavbar() {
       return nativecode.hasnavbar();
     },
@@ -223,6 +277,12 @@ export default {
     }
   },
   methods: {
+    tabarClick(v) {
+      this.selected = v.id;
+      if (v.id == "zuoye" && v.isOpen) {
+        this.onclickzuoye();
+      }
+    },
     onPopupZiyuanEdit(v) {
       this.zyEditState = v;
     },
@@ -436,5 +496,42 @@ export default {
 }
 .mint-tabbar > .mint-tab-item.is-selected i {
   color: #26a2ff;
+}
+</style>
+<style lang="less" scoped>
+.my-foot-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 86px;
+  background: #fff;
+  box-shadow: 0 0 6px 1px #ccc;
+  .items {
+    height: 100%;
+    .item {
+      height: 100%;
+      width: 20%;
+      color: #aaaaaa;
+      position: relative;
+      text-align: center;
+      padding-top: 15px;
+      span {
+        display: block;
+      }
+      .icon {
+        padding-bottom: 0;
+        font-size: 30px;
+        &.iconjiahao {
+          font-size: 37px;
+        }
+      }
+      .text {
+      }
+      &.act {
+        color: #0089ff;
+      }
+    }
+  }
 }
 </style>

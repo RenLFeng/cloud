@@ -153,15 +153,15 @@ export default {
     bankeInfo: {
       default() {
         return {
-           name: "",
-        avatar: "",
-        id: 0,
-        info:"",
-                scorerule1:"",
-scorerule2:"",
-scorerule3:"",
-scorerule4:"",
-scorerule5:"",
+          name: "",
+          avatar: "",
+          id: 0,
+          info: "",
+          scorerule1: "",
+          scorerule2: "",
+          scorerule3: "",
+          scorerule4: "",
+          scorerule5: ""
         };
       }
     }
@@ -221,7 +221,7 @@ scorerule5:"",
   methods: {
     showSchoo() {
       // console.log("vv", this.bankeInfo);
-        console.log(this.bankeInfo)
+      console.log(this.bankeInfo);
       if (!this.bankeInfo.schoolid) {
         Toast("未绑定过学校");
         return;
@@ -267,7 +267,7 @@ scorerule5:"",
     },
     //学情统计
     situation() {
-      let url = `http://192.168.0.237:8088/ClassStatistics?id=${this.bankeInfo.id}`;
+      let url = `https://www2.exsoft.com.cn/#/ClassStatistics?id=${this.bankeInfo.id}`;
       url =
         "http://localhost:9982/backend/#/ClassStatistics?id=" +
         this.bankeInfo.id;

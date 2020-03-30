@@ -29,35 +29,6 @@
             />
           </div>
         </div>
-        <div class="reg-box" v-if="!state">
-          <div class="loginline">
-            <img src="../assets/phone_icon.svg" alt />
-            <input
-              v-model="phone"
-              placeholder="输入手机号"
-              autocomplete="off"
-              class="logininput fontnormal"
-            />
-          </div>
-          <div class="loginline">
-            <input
-              v-model="phoneCode"
-              placeholder="输入验证码"
-              autocomplete="off"
-              class="logininput fontnormal phone-code"
-            />
-            <mt-button
-              type="primary"
-              size="small"
-              class="get-code"
-              @click="getCodeTimeEnd"
-            >{{codeTime>0?codeTime+"秒后重新获取":'获取验证码'}}</mt-button>
-          </div>
-        </div>
-        <!-- <p class="login-tit">
-        <span :class="state==1?'act':''" @click="selectFn(1)">密码登录</span>
-        <span :class="state==0?'act':''" @click="weixinLogin">微信登陆</span>
-        </p>-->
         <button
           class="loginbtn fontnormal"
           :class="isSbmit?'colord':'colora'"
@@ -131,10 +102,6 @@ export default {
   methods: {
     weixinLogin() {
       this.popupWeiXxinLogin = true;
-      let el = document.querySelector(".wechat-wrap");
-      let body = el.querySelector("body");
-      // let impowerBoxTitleEl=impowerBoxEl.querySelector('.title');
-      console.log("impowerBoxTitleEl", el);
     },
     selectFn(state) {
       this.state = state;
@@ -224,6 +191,7 @@ export default {
   padding: 5px;
   margin: 20px auto;
   padding-left: 30px;
+  color: #000;
 }
 
 input::-webkit-input-placeholder,

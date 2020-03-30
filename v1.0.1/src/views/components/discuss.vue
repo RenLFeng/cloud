@@ -327,6 +327,7 @@ export default {
             this.noComment = false;
             this.init();
             Indicator.close();
+            this.$emit('plMessage','pl');
           } else {
             Indicator.close();
           }

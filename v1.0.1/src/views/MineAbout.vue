@@ -44,6 +44,8 @@
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
     <div class="devide"></div>
     <mt-cell v-if="weiximiniprogram" title="扫一扫" is-link @click.native="scanCode"></mt-cell>
+     <div class="devide"></div>
+    <mt-cell v-if="weiximiniprogram" title="消息订阅" is-link @click.native="onMessage"></mt-cell>
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -352,6 +354,9 @@ export default {
     },
     scanCode() {
       nativecode.navigateToScan();
+    },
+    onMessage(){
+      
     },
     //清除提示
     clearEvnet() {
