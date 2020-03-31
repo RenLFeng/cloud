@@ -31,8 +31,6 @@ nativecode.detectplatform = function () {
     //console.log(ua);
     //alert(ua);
 
-
-
     let pa = '';
     if (ua.indexOf('ExsoftIosWeb') > -1) {
         pa = 'exsoftios';
@@ -45,8 +43,8 @@ nativecode.detectplatform = function () {
     if (window.ExsoftAndroid) {
         pa = 'exsoftandroid';
     }
-    if (window.ExsoftWindows) {
-
+    if (window.ExsoftWindows)
+    {
         //! 检测是否是大屏端
         if (ua.indexOf('WebDaPing') > -1) {
             pa = 'exsoftdaping';
@@ -54,7 +52,6 @@ nativecode.detectplatform = function () {
         else{
             pa = 'exsoftwindows';
         }
-
     }
 
     function wxready() {
@@ -74,7 +71,7 @@ nativecode.detectplatform = function () {
         }
     }
 
-    console.log('in detectplatform:' + pa);
+
     if (pa == 'miniprogram' || pa == '') {
         //! windows电脑端， 无法通过ua来判断是否是小程序
 
@@ -98,10 +95,8 @@ nativecode.detectplatform = function () {
         }
     }
 
-    //! 测试
-    // return 'exsoftdaping';
-
-    return '';
+    console.log('in detectplatform:' + pa);
+    return pa;
 }
 
 nativecode.platform = ''
@@ -122,8 +117,6 @@ nativecode.parseurlparam = function (paraName) {
     var url = document.location.toString();
 
     var arrObj = url.split("?");
-
-
 
     if (arrObj.length > 1) {
 
@@ -190,7 +183,7 @@ nativecode.initfirst = function () {
                 szcookie = szcookie.substr(0, nindex);
             }
             if ((szcookie.length) > 0) {
-                if (nativecode.platform == 'miniprogram') {
+                if (nativecode.platform.length > 0) {
                     nativecode.setcookie(szcookie)
                 } else {
                     //! 因为miniprogram的检测通常会延迟，这里为了快速登陆，总是先设置
@@ -209,6 +202,16 @@ nativecode.initfirst = function () {
 
 nativecode.doneinit = nativecode.initfirst();
 
+
+//！ 是否有退出登录
+nativecode.haslogout  =function()
+{
+    if (nativecode.platform == 'miniprogram'
+    ) {
+        return false;
+    }
+    return true;
+}
 
 //! 是否有登陆页
 nativecode.hasloginpage = function () {

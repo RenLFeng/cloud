@@ -394,10 +394,16 @@ export default {
     },
     wsonopen() {
       this.wssetstate("logining");
+      let role = '';
+      if (nativecode.platform == 'miniprogram'){
+          //! 小程序支持与其他端同时打开
+          role = 'weixin';
+      }
       let logindata = {
         cmd: "login",
         data: {
-          cookie: this.localuser.cookie
+          cookie: this.localuser.cookie,
+            role:role
         }
       };
       this.websock.send(JSON.stringify(logindata));

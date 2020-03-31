@@ -20,11 +20,12 @@
       </div>
       <div class="lable tc">
         <p :class="!isJoin?'act navbar':''" @click="selectClass(0)">
-          <span class="tit-name fontsmall">我加入的班课</span>
+          <!-- cjy: 此界面会被其他人所见，不应当显示 我加入的 -->
+          <span class="tit-name fontsmall">加入的班课</span>
           <span class="tit-nub font16">{{myJoin.length?myJoin.length:0}}</span>
         </p>
         <p :class="isJoin?'act navbar':''" @click="selectClass(1)">
-          <span class="tit-name fontsmall">我创建的班课</span>
+          <span class="tit-name fontsmall">创建的班课</span>
           <span class="tit-nub font16">{{myCreate.length?myCreate.length:0}}</span>
         </p>
       </div>

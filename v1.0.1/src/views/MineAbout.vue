@@ -33,7 +33,7 @@
     <div class="devide"></div>
     <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
     <div class="devide"></div>
-    <mt-cell v-if="hasloginpage" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
+    <mt-cell v-if="haslogout" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
     <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
     <!--  cjy: 绑定账户功能暂时隐藏
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
@@ -146,8 +146,8 @@ export default {
     this.$store.commit("SET_CLOUD_BAR", false);
   },
   computed: {
-    hasloginpage() {
-      return nativecode.hasloginpage();
+    haslogout() {
+      return nativecode.haslogout();
     },
     shownewaccount() {
       if (this.bindaccount.length > 0) {

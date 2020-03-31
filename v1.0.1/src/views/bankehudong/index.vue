@@ -1,7 +1,7 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
-      <li class="fontlarge dp" @click="gotowifiroom" >
+      <li class="fontlarge dp" @click="gotowifiroom" v-if="haswifiroom">
         <span>WIFI教室</span>
         <i
                 class="iconfont icondapingmu eicotrigger bigfont fr"
