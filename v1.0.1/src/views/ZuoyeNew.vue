@@ -20,7 +20,10 @@
       <mt-cell v-if="hassubmittime" title="允许超时提交作业">
         <mt-switch v-model="allowpasstime"></mt-switch>
       </mt-cell>
-      <p class="tips font-xxs" v-if="hassubmittime">开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>
+      <p
+        class="tips font-xxs"
+        v-if="hassubmittime"
+      >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>
       <mt-cell title="答案设置" is-link @click.native="onZAnaswer">{{zanswerdesc}}</mt-cell>
       <p class="tips font-xxs">学生可在互评中或作业结束后查看参考答案，你可以随时对参考答案进行编辑。</p>
     </div>
@@ -60,6 +63,7 @@ import zuoyedetailedit from "./ZuoyeDetailEdit";
 import Answer from "./banKeZuoye/answer";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import maintools from "./maintools";
+import { formateTime } from "@/util.js";
 
 export default {
   name: "ZuoyeNew",
@@ -98,6 +102,9 @@ export default {
     }
   },
   computed: {
+    curbanke() {
+      return this.$store.state.curbanke;
+    },
     zdetaildesc() {
       if (this.zuoyeitem.detaildesc) {
         return this.zuoyeitem.detaildesc;
@@ -293,6 +300,7 @@ export default {
           if (res.data.code == 0) {
             Toast(this.isEditMode ? "保存成功" : "创建成功");
             this.$router.back();
+            // this.mimiMessage();
           } else {
             Toast(res.data.msg);
           }
@@ -301,6 +309,26 @@ export default {
           Indicator.close();
           Toast("异常");
         });
+    },
+    //  发送作业消息
+    mimiMessage() {
+      let date = formateTime(new Date(), "-");
+      this.$http
+        .post("/api/weixin/pushnotify", {
+          templateid: "yEWdaUgS7luynNFryYXXwZUqEKqqXcglt7gD70Aue7s",
+          topage: '/#/zuoyeresult/' + this.zuoyeitem.id,
+          data: {
+            thing3: "今天作业已经发布",
+            name5: this.curbanke.name,
+            date7: date
+          },
+          sendto: {
+            type: "banke",
+            bankeid: this.curbanke.id
+          }
+        })
+        .then(res => {})
+        .catch(() => {});
     },
     onTimePicker() {
       //  var testdate = new Date(this.zuoyeitem.submittime);
@@ -425,15 +453,14 @@ export default {
         height: 0;
       }
     }
-      .mint-switch-input:checked + .mint-switch-core {
-    border-color: #4cd964;
-    background-color: #4cd964;
+    .mint-switch-input:checked + .mint-switch-core {
+      border-color: #4cd964;
+      background-color: #4cd964;
+    }
+    .tips {
+      color: #939393;
+      padding: 10px;
+    }
   }
-  .tips{
-    color: #939393;
-    padding: 10px;
-  }
-  }
-
 }
 </style>

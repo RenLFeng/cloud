@@ -20,7 +20,7 @@
       </div>
       <div class="big-wrap">
         <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10'">
-          <ul>
+          <ul v-if="memberData.length">
             <li
               v-for="(v,i) in tabBar"
               :key="i"
@@ -39,18 +39,34 @@
             <!-- <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
             <span class="fl">{{memberData.length}} 人提交</span>
             </p>-->
-            <List
-              v-for="(v,index) in memberData"
-              :key="index"
-              :item="v"
-              type="pingcedetail"
-              :ptype="pingceItemfile.ptype"
-              @click.native="onMemberClick(v)"
-              @previewimg="onPreviewimg"
-            />
+            <div v-if="filterType!='NA'">
+              <List
+                v-for="(v,index) in memberData"
+                :key="index"
+                :item="v"
+                type="pingcedetail"
+                :ptype="pingceItemfile.ptype"
+                @click.native="onMemberClick(v)"
+                @previewimg="onPreviewimg"
+              />
+            </div>
+            <div class="na-wrap" v-if="filterType=='NA'">
+              <ul v-for="(v,i) in NaMembers" :key="i" class="item">
+                <li>
+                  <img :src="v.avatar" alt />
+                  <span class="color0 font18">{{v.name}}</span>
+                </li>
+                <li style="    padding-top: 10px;">
+                  <span class="font18 colora">{{NAdes}}</span>
+                </li>
+                <li class="tr colory font18">得分 &nbsp; 0分</li>
+              </ul>
+            </div>
           </div>
         </div>
-        <div v-else class="list-main">无提交</div>
+        <div v-else class="list-main">
+          <span class="position-c">无提交</span>
+        </div>
       </div>
     </div>
     <mt-popup v-model="popupDeatil" position="right" class="mint-popup" :modal="false" style>
@@ -81,49 +97,6 @@ import Empty from "@/common/empty";
 import nativecode from "@/nativecode";
 import FileList from "../pingceing/vote/filelist";
 import { sortFn } from "@/util";
-const xuanzhe = [
-  {
-    label: "ALL",
-    num: 0,
-    isActive: true
-  },
-  {
-    label: "A",
-    num: 0,
-    isActive: false
-  },
-  {
-    label: "B",
-    num: 0,
-    isActive: false
-  },
-  {
-    label: "C",
-    num: 0,
-    isActive: false
-  },
-
-  {
-    label: "D",
-    num: 0,
-    isActive: false
-  },
-  {
-    label: "E",
-    num: 0,
-    isActive: false
-  },
-  {
-    label: "F",
-    num: 0,
-    isActive: false
-  }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
-];
 const panduan = [
   {
     label: "ALL",
@@ -139,12 +112,12 @@ const panduan = [
     label: "错",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 const zhuguan = [
   {
@@ -156,12 +129,12 @@ const zhuguan = [
     label: "已作答",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 const qiangda = [
   {
@@ -173,12 +146,12 @@ const qiangda = [
     label: "已参与",
     num: 0,
     isActive: false
+  },
+  {
+    label: "NA",
+    num: 0,
+    isActive: false
   }
-  // {
-  //   label: "NA",
-  //   num: 0,
-  //   isActive: false
-  // }
 ];
 export default {
   name: "",
@@ -197,7 +170,7 @@ export default {
   watch: {
     data: function(newValue, oldValue) {
       this.pingceItemfile = newValue;
-      console.log("000000", this.pingceItemfile);
+      console.log("fsfs", this.pingceItemfile);
       this.querySubmitDetail();
     }
   },
@@ -216,21 +189,29 @@ export default {
 
       moveBar: 0,
       filterType: "",
-      xuanzhe,
+      xuanz: [],
       panduan,
       zhuguan,
-      qiangda
+      qiangda,
+      allmembers: [],
+      NaMembers: []
     };
   },
   computed: {
+    NAdes() {
+      let type = this.pingceItemfile.ptype;
+      return "未作答";
+    },
     tabBar() {
       switch (this.pingceItemfile.ptype) {
         case 1:
           return this.panduan;
         case 2:
-          return this.xuanzhe;
+          this.opts();
+          return this.xuanz;
         case 3:
-          return this.xuanzhe;
+          this.opts();
+          return this.xuanz;
         case 4:
           return this.zhuguan;
         case 5:
@@ -246,12 +227,39 @@ export default {
   },
   mounted() {},
   methods: {
+    opts() {
+      this.xuanz = [
+        {
+          label: "ALL",
+          num: 0,
+          isActive: true
+        },
+        {
+          label: "NA",
+          num: 0,
+          isActive: false
+        }
+      ];
+      let opts = this.pingceItemfile.optdesc.opts;
+      for (let i = 0; i < opts.length; i++) {
+        let v = opts[i];
+        this.xuanz.splice(i + 1, 0, {
+          label: v,
+          num: 0,
+          isActive: false
+        });
+      }
+    },
     selectClick(e, v, i) {
       let curel = this.$refs.tbLi[i];
       console.log(curel.offsetLeft);
       this.moveBar = curel.offsetLeft;
       this.filterType = v.label;
-
+      if (v.label == "NA") {
+        // this.memberData = this.NaMembers;
+        console.log("gggg", this.NaMembers);
+        return;
+      }
       for (let v of this.tabBar) {
         v.isActive = false;
       }
@@ -294,8 +302,9 @@ export default {
             }
           }
         }
+        // this.tabBar[this.tabBar.length - 1].num = this.NaMembers.length;
       }
-      console.log("ccc", this.tabBar);
+      console.log("tabBartabBar", this.tabBar);
     },
     previewimg() {
       nativecode.previewImage(this, this.pingceItemfile.files);
@@ -319,7 +328,6 @@ export default {
                   }
                 }
               }
-              console.log("详细", this.memberData);
               if (this.pingceItemfile.ptype == "1") {
                 for (let item of this.memberData) {
                   for (let key in item.answerdesc.opts) {
@@ -359,8 +367,10 @@ export default {
                 console.log("qqqqqq", this.voteInfos);
               }
               this.tempMemberData = this.memberData;
-              this.filterData(this.filterType);
               this.Statistics(this.tempMemberData);
+              this.filterData(this.filterType);
+              this.bankememberquery(this.memberData);
+              console.log("提交详细", this.memberData);
             } else {
               this.memberData = [];
               this.tempMemberData = [];
@@ -374,6 +384,36 @@ export default {
         .catch(err => {
           // Toast("异常");
         });
+    },
+    bankememberquery(memberData) {
+      this.NaMembers = [];
+      this.$http
+        .post("/api/api/bankememberquery", {
+          bankeid: this.pingceItemfile.classid
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            this.allmembers = res.data.data.members;
+            for (let v of this.allmembers) {
+              for (let item of memberData) {
+                if (v.memberuserid == item.userid) {
+                  v.submit = true;
+                }
+              }
+            }
+            for (let v of this.allmembers) {
+              if (!v.submit) {
+                this.NaMembers.push(v);
+              }
+            }
+            this.tabBar[this.tabBar.length - 1].num = this.NaMembers.length;
+            // this.Statistics(this.tempMemberData);
+            console.log("allmembers", this.allmembers);
+            console.log("nanaan", this.NaMembers);
+            console.log("hhhhhh", this.tabBar);
+          }
+        })
+        .catch(err => {});
     },
     onMemberClick(v) {
       if (this.pingceItemfile.ptype == "5") {
@@ -396,6 +436,7 @@ export default {
       }
     },
     initStatistics() {
+      console.log("sb", this.tabBar);
       for (let v of this.tabBar) {
         v.num = 0;
       }
@@ -424,6 +465,7 @@ export default {
     .big-wrap {
       position: relative;
       .list-main {
+        position: relative;
         height: 60vh;
         min-height: 60vh;
         background: #f0f0f0;
@@ -431,7 +473,7 @@ export default {
         overflow: scroll;
         .content {
           background: #fff;
-          padding: 10px;
+          // padding: 10px;
           .tit {
             border-bottom: 1px solid #f0f0f0;
             padding: 10px 0;
@@ -485,6 +527,20 @@ export default {
           width: 52px;
           height: 3px;
           background: #0089ff;
+        }
+      }
+    }
+    .na-wrap {
+      .item {
+        padding: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        li {
+          img {
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            margin-right: 10px;
+          }
         }
       }
     }

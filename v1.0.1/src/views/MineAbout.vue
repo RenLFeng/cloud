@@ -17,7 +17,7 @@
         <i class="iconfont iconcellyoucejiantou position-r"></i>
       </div>
       <div v-else class="no-Login">
-        <img src :onerror="$defaultImg('account')" class="avatarimgpart avatar position-l" />
+        <img src :onerror="$defaultImg('account')" class="avatarimgpart avatar position-l"/>
         <div class="fontsmall namepart ellipse position-c" @click.stop="goLogin">未登陆，点击登陆</div>
       </div>
     </div>
@@ -43,7 +43,9 @@
     <div class="devide"></div>
     <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
     <div class="devide"></div>
-    <mt-cell title="扫一扫" is-link @click.native="scanCode"></mt-cell>
+    <mt-cell v-if="weiximiniprogram" title="扫一扫" is-link @click.native="scanCode"></mt-cell>
+     <div class="devide"></div>
+    <mt-cell v-if="weiximiniprogram" title="消息订阅" is-link @click.native="onMessage"></mt-cell>
     <!-- 国际化 -->
     <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
@@ -351,11 +353,10 @@ export default {
       // Toast("暂未实现");
     },
     scanCode() {
-      if (this.weiximiniprogram) {
-        nativecode.navigateToScan();
-      } else {
-        Toast("请在小程序使用此功能");
-      }
+      nativecode.navigateToScan();
+    },
+    onMessage(){
+      
     },
     //清除提示
     clearEvnet() {

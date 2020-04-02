@@ -51,7 +51,7 @@ const state = {
 
     footerBarState: true,
     CliudBar: false,
-
+    isCreate: 1,
     bankeSearchHistory: [], //班课搜索历史记录
     bindschool: false,
     detail_go_school: false,
@@ -203,12 +203,12 @@ const mutations = {
     SET_BANKEZHIYUANLINKITEM(state, obj) {
         let item = obj.item;
         if (item.length) {
-            if (obj.type==1) {
+            if (obj.type == 1) {
                 state.bankeZhiYuanLinkItem = [...item, ...state.bankeZhiYuanLinkItem];
-            } else if(obj.type==2) {
+            } else if (obj.type == 2) {
                 state.bankeZhiYuanLinkItem = [...state.bankeZhiYuanLinkItem, ...item];
-            }else if(obj.type==3){
-                state.bankeZhiYuanLinkItem=item;
+            } else if (obj.type == 3) {
+                state.bankeZhiYuanLinkItem = item;
             }
         } else {
             state.bankeZhiYuanLinkItem = []
@@ -251,7 +251,10 @@ const mutations = {
     SET_VIEW_AUDIO(v, t) {
         state.viewAudio.info = v;
         state.viewAudio.isShow = t;
-    }
+    },
+    SET_ISCREATE(state, v) {
+        state.isCreate = v;
+    },
 }
 
 

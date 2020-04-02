@@ -84,12 +84,11 @@ export default {
       DetailItem: {},
       chartData: {},
 
-      actionShow: false,
-
+      actionShow: false
     };
   },
   computed: {
-     isteacher() {
+    isteacher() {
       let isteacher = this.$store.getters.caneditbanke;
       return isteacher;
     },
@@ -99,21 +98,21 @@ export default {
       }
       return false;
     },
-      actions(){
-        let objret = [];
+    actions() {
+      let objret = [];
+      objret.push({
+        name: "查看",
+        method: this.see
+      });
+      let canopt = this.$store.getters.caneditbanke;
+      if (canopt) {
         objret.push({
-            name: "查看",
-            method: this.see
+          name: "删除",
+          method: this.dlMember
         });
-        let canopt = this.$store.getters.caneditbanke
-          if (canopt){
-              objret.push({
-                  name: "删除",
-                  method: this.dlMember
-              })
-          }
-          return objret
-      },
+      }
+      return objret;
+    },
     membersempty() {
       if (this.members.length) {
         return false;
@@ -212,8 +211,8 @@ export default {
           if (res.data.code == 0) {
             let members = res.data.data["members"];
             for (let v of members) {
-              if(!v.name){
-                v.name='未知名';
+              if (!v.name) {
+                v.name = "未知名";
               }
               this.membersid.push(v.memberuserid);
             }
@@ -261,7 +260,7 @@ export default {
                 for (let item of res.data.data.bind) {
                   if (v.memberuserid == item.userid) {
                     v.sno = item.sno;
-                    v.snoTitle=item.schoolrole>5?'工号':'学号'
+                    v.snoTitle = item.schoolrole > 5 ? "工号" : "学号";
                   }
                 }
               }
@@ -304,7 +303,7 @@ export default {
 .membernumdesc {
   float: right;
 }
-.Average-wrap{
+.Average-wrap {
   background: #fff;
 }
 .Average i {
@@ -336,18 +335,15 @@ export default {
 
 .uploadpart {
 }
-.listcontainer.Member{
-    padding-bottom: 100px;
-        height: 72vh;
-    min-height: 72vh;
-    overflow: scroll;
-} 
-.content-main {
+.listcontainer.Member {
+  height: 71vh;
+  min-height: 71vh;
+  overflow: scroll;
 }
-.popup-scroll-MemberDetail{
-    height: 100vh;
-    min-height:100vh;
-    overflow: auto ;
-    padding-bottom:50px;
+.popup-scroll-MemberDetail {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: auto;
+  padding-bottom: 50px;
 }
 </style>

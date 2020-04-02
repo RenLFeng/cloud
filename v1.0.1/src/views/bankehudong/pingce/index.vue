@@ -3,7 +3,7 @@
     <mt-header title="评测记录" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="van-navbr-wrap">
+    <div class="van-navbr-wrap" v-if="pingceHistoryList.length">
       <ul>
         <li
           v-for="(v,i) in tabBar"
@@ -37,7 +37,7 @@
       <!-- <p v-if="isScorll && !scorllEd" class="tc color9">
         <van-loading size="24px">加载中...</van-loading>
       </p>-->
-      <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p>
+      <!-- <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p> -->
     </div>
     <Empty v-else />
 
@@ -157,24 +157,6 @@ export default {
           num: 0,
           isActive: false
         }
-        // {
-        //   id: 5,
-        //   label: "写作",
-        //   num: 0,
-        //   isActive: false
-        // },
-        // {
-        //   id: 6,
-        //   label: "抢答",
-        //   num: 0,
-        //   isActive: false
-        // },
-        // {
-        //   id: 10,
-        //   label: "投票",
-        //   num: 0,
-        //   isActive: false
-        // }
       ]
     };
   },
@@ -191,6 +173,7 @@ export default {
   },
   methods: {
     selectClick(e, v, i) {
+      if (!v.num) return;
       let curel = this.$refs.tbLi[i];
       this.moveBar = curel.offsetLeft;
       console.log(this.moveBar);
@@ -256,6 +239,13 @@ export default {
         .post("api/pingce/query", qobj)
         .then(res => {
           if (res.data.code == "0") {
+            if (res.data.data.length) {
+              for (let v of res.data.data) {
+                if(v.ptype==2 || v.ptype==3){
+                  v.optdesc=JSON.parse(v.optdesc)
+                }
+              }
+            }
             if (res.data.data.length < this.pagesize) {
               this.loading = true;
               this.scorllEd = true;
@@ -279,6 +269,7 @@ export default {
                 this.details(this.pingceHistoryList[0]);
               }
             }
+            console.log('pingceHistoryList',this.pingceHistoryList);
           } else {
             Toast("连接错误");
           }
@@ -288,6 +279,7 @@ export default {
         });
     },
     details(v) {
+      console.log("dddd", v);
       this.pingceItemfile = v;
       if (
         this.pingceItemfile.info &&
@@ -300,7 +292,6 @@ export default {
           );
         }
       }
-      console.log("vcvc", v);
       this.popupDeatil = true;
     },
     Backs() {

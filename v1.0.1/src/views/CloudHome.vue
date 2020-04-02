@@ -36,7 +36,10 @@
     </mt-header>-->
 
     <!-- main -->
-    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'" :style="`margin-top:${selected=='banke'?'20':'0'}px`">
+    <div
+      :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'"
+      :style="`margin-top:${selected=='banke'?'20':'0'}px`"
+    >
       <mt-tab-container class="page-tabbar-container" v-model="selected">
         <mt-tab-container-item id="banke">
           <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
@@ -156,7 +159,7 @@ export default {
   data() {
     return {
       filterCurbankes: [],
-      isCreate: 1,
+      // isCreate: 1,
       order: false,
 
       isBind: false,
@@ -201,6 +204,9 @@ export default {
     };
   },
   computed: {
+    isCreate() {
+      return this.$store.state.isCreate;
+    },
     CliudBar() {
       return this.$store.state.CliudBar;
     },
@@ -259,9 +265,6 @@ export default {
       if (this.selected == "banke") {
         this.initbanke();
       } else if (this.selected == "mine") {
-        if (!this.isCreate) {
-          this.isCreate = 1;
-        }
         this.initmine();
       }
     },
@@ -283,7 +286,8 @@ export default {
   methods: {
     selectClass(type) {
       if (this.isCreate == type) return;
-      this.isCreate = type;
+      // this.isCreate = type;
+      this.$store.commit("SET_ISCREATE", type);
       this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 0);
     },
     orderFn() {
@@ -338,35 +342,35 @@ export default {
         nativecode.dosharebanke(this.bankeitem);
       }
     },
-      islogined(){
-          //  return false;
-          let u = this.$store.getters.curuser;
-          //console.log(u);
-          if (u && u.id){
-              return true;
-          }
-          return false;
-      },
-      checklogin(){
-          if (this.islogined()){
-              return true;
-          }
-          MessageBox.confirm("", {
-              title: '登陆提示',
-              message: '您未登陆，是否现在登陆？',
-              confirmButtonText: '登陆',
-              cancelButtonText: '取消',
-              showCancelButton: true
-          }).then(() => {
-              nativecode.navigateToLogin(this);
-          });
-          return false;
-      },
+    islogined() {
+      //  return false;
+      let u = this.$store.getters.curuser;
+      //console.log(u);
+      if (u && u.id) {
+        return true;
+      }
+      return false;
+    },
+    checklogin() {
+      if (this.islogined()) {
+        return true;
+      }
+      MessageBox.confirm("", {
+        title: "登陆提示",
+        message: "您未登陆，是否现在登陆？",
+        confirmButtonText: "登陆",
+        cancelButtonText: "取消",
+        showCancelButton: true
+      }).then(() => {
+        nativecode.navigateToLogin(this);
+      });
+      return false;
+    },
     // 创建班课
     onadd() {
-        if (!this.checklogin()){
-            return;
-        }
+      if (!this.checklogin()) {
+        return;
+      }
       var isteacher = this.$store.getters.isteacher;
       if (isteacher) {
         //! 跳转新增课堂
@@ -379,9 +383,9 @@ export default {
     },
     //加入班课
     jion() {
-        if (!this.checklogin()){
-            return;
-        }
+      if (!this.checklogin()) {
+        return;
+      }
       // this.popupJoin = true;
       this.$store.commit("setRouterForward", true);
       this.$router.push("/Join");
@@ -562,7 +566,8 @@ export default {
       }
       //首次加载
       if (temp.length == 0 && first) {
-        this.isCreate = 0;
+        // this.isCreate = 0;
+        this.$store.commit("SET_ISCREATE", 0);
         temp = bankes.filter(item => item.userid != this.curuser.id);
       }
       if (!temp.length && !first) {
