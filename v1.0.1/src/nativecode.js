@@ -393,6 +393,14 @@ nativecode.navigateToScan = function () {
         url: tourl
     });
 }
+//! 跳转消息订阅界面
+nativecode.navigateToMsg = function(){
+    let wx = nativecode.getwx();
+    let tourl = '/pages/share/gzh';
+    wx.miniProgram.navigateTo({
+        url: tourl
+    });
+}
 
 nativecode.wxcall = function (funname, argobj) {
     console.log("wxcall");
@@ -579,6 +587,14 @@ nativecode.previewImage = function (vuethis, objargs) {
         objargs.urls.push(objargs.current);
         objargs.index = 0;
     }
+    console.log('previewimage');
+    if (!nativecode.canpreviewImage()){
+        let fitem = {
+            downurl:objargs.current
+        }
+        nativecode.ncallFileLink(vuethis, fitem);
+        return;
+    }
     if (nativecode.platform == 'miniprogram') {
         let wx = nativecode.getwx();
         wx.previewImage({
@@ -621,7 +637,7 @@ nativecode.isimageobj = function (fitem) {
 //! cjy: 是否能预览图片
 nativecode.canpreviewImage = function()
 {
-    if (nativecode.platform == ''
+    if (nativecode.platform == ''  //! 网页端也更改为下载
     || nativecode.platform == 'exsoftwindows'
         || nativecode.platform == 'exsoftdaping'
     ){

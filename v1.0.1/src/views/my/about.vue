@@ -21,7 +21,7 @@ export default {
   props: {},
   data() {
     return {
-        buildver:'20033101'
+        buildver:'20040201'
     };
   },
   computed: {},

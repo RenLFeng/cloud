@@ -150,6 +150,8 @@
 <script>
 import { Indicator, Toast, MessageBox } from "mint-ui";
 
+import { parseURL } from "@/util";
+
 import BankeZiyuan from "./BankeZiyuan";
 import BankeHuDong from "./bankehudong";
 import BankeChengyuan from "./BankeChengyuan";
@@ -256,9 +258,9 @@ export default {
   },
   computed: {
     isAndroid() {
-      if (nativecode.platform == "exsoftandroid") {
-        return true;
-      }
+      // if (nativecode.platform == "exsoftandroid") {
+      //   return true;
+      // }
       return false;
     },
     hasnavbar() {
@@ -419,17 +421,20 @@ export default {
     //console.log(this.$store.getters);
 
     //! 消除可能的wx缓存
-    this.$http.post("/api/api/uservalidate").then(res => {
-      if (res.data.code == 0) {
-        this.$store.commit("setLoginUser", res.data.data);
-      } else {
-        this.$store.commit("setLoginUser", {});
-        this.$store.commit("setRouterForward", true);
-        this.$router.push("/login");
+      if (!this.$store.getters.hasloginuser){
+          this.$http.post("/api/api/uservalidate").then(res => {
+              if (res.data.code == 0) {
+                  this.$store.commit("setLoginUser", res.data.data);
+              } else {
+                  this.$store.commit("setLoginUser", {});
+                  this.$store.commit("setRouterForward", true);
+                  this.$router.push("/login");
 
-        nativecode.jsLogin(0, {});
+                  nativecode.jsLogin(0, {});
+              }
+          });
       }
-    });
+
 
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
     this.bankeid = this.id;
@@ -445,6 +450,10 @@ export default {
     if (ss) {
       this.selected = ss;
     }
+      const UrlParams = parseURL(window.location.href);
+      if (UrlParams.select) {
+          this.selected = UrlParams.select;
+      }
     this.checkNeedShow();
     console.log("班可", this.curbanke);
     this.eventmsgsOnbanke();

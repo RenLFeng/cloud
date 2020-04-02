@@ -20,7 +20,12 @@ export default {
       default() {
         return {};
       }
-    }
+    },
+      emitclick:{
+        default(){
+            return false;
+        }
+      }
   },
   data() {
     return {
@@ -41,7 +46,13 @@ export default {
   methods: {
     queryfinished() {},
     bankeclick(bankeitem) {
+
       this.bankeitem = bankeitem;
+      if (this.emitclick){
+          this.$emit('bankeclick', bankeitem);
+          return;
+      }
+
       this.bankeDedail();
     },
     //进入班课

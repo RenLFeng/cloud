@@ -1,20 +1,34 @@
 <template>
-  <div class="big-main-login">
+
+  <div  class="big-main-login">
     <div class="container bg-d">
       <div class="top tc">
-        <p class="icon">
-          <i class="iconfont icondapingmu eicotrigger"></i>
-        </p>
-        <p>请输入大屏上的连接码进行登录</p>
-        <p class="code clearfix">
-          <span :class="v.isact?'act':''" v-for="(v,index) in codes" :key="index">{{v.i}}</span>
-        </p>
+        <div v-if="!hascode">
+          <p class="icon">
+            <i class="iconfont icondapingmu eicotrigger"></i>
+          </p>
+          <p>请输入大屏上的连接码进行登录</p>
+          <p class="code clearfix">
+            <span :class="v.isact?'act':''" v-for="(v,index) in codes" :key="index">{{v.i}}</span>
+          </p>
+        </div>
+        <div v-else>
+          <div class="info">
+            <img :src="bankeItem.avatar" alt :onerror="$defaultImg('banke')"/>
+            <p class="colorf">{{bankeItem.name}}</p>
+          </div>
+        </div>
         <p class="icon-wrap" @click="autoSign">
           <i class="iconfont iconok- position-l" :class="isAuto?'act':''"></i>
           连接大屏后自动开始签到
         </p>
       </div>
-      <div class="key">
+      <div class="buttonkey" v-if="hascode">
+        <div class="button-worp">
+          <mt-button class="button-auto-96" @click="submitLogin">大屏登录</mt-button>
+        </div>
+      </div>
+      <div class="key" v-else>
         <van-number-keyboard
           :show="show"
           :hide-on-click-outside="false"
@@ -38,12 +52,21 @@ export default {
   props: {
     bankeid: {
       default: 0
-    }
+    },
+      bankeItem:{
+        default:{
+            name:'test'
+        }
+      },
+      ecode:{
+        default:0
+      }
   },
   components: {},
   data() {
     return {
       show: true,
+        hascode:false,
       codes: [
         {
           i: "",
@@ -68,7 +91,11 @@ export default {
       isAuto: true
     };
   },
-  mounted() {},
+  mounted() {
+    if (this.bankeItem.id){
+        this.hascode = true;
+    }
+  },
   methods: {
     onInput(value) {
       if (this.count > 3) return;
@@ -100,31 +127,40 @@ export default {
       this.tempCode.splice(this.tempCode.length - 1, 1);
       //   console.log(this.tempCode);
     },
-    dapinglogin() {
+      submitLogin(){
+
+        this.code = this.ecode;
+        this.dapinglogin(this.bankeItem.id);
+      },
+    dapinglogin(v) {
       //! cjy: 检测当前bankeid的有效性
-      if (this.bankeid == 0) {
+        let bid = v;
+        if (!v){
+            bid = this.bankeid;
+        }
+      if (bid == 0) {
         Toast("当前班课无效， 请返回重试");
         return;
       }
       this.$http
         .post("/api/banke/dapinglogin", {
           code: this.code,
-          bankeid: this.bankeid
+          bankeid: bid
         })
         .then(res => {
           if (res.data.code == "0") {
             this.$emit("login", res.data.data.daping);
-            Toast("连接成功");
+            Toast("登录成功");
             // console.log("dapinglogin", res);
             if (this.isAuto) {
               this.postdapingmsg();
             }
           } else {
-            Toast("连接错误：" + res.data.msg);
+            Toast("登录错误：" + res.data.msg);
           }
         })
         .catch(err => {
-          Toast("异常");
+          Toast("异常"+err);
         });
     },
     postdapingmsg() {
@@ -150,12 +186,57 @@ export default {
 </script>
 
 <style lang='less' scoped>
+
+  .submit-join-wrap {
+    position: relative;
+    height: 100vh;
+    min-height: 100vh;
+    width: 100%;
+    .main {
+      background: #fff;
+      .info {
+        background: #0089ff;
+        text-align: center;
+        padding: 20px;
+        img {
+          width: 100px;
+          height: 100px;
+        }
+        p {
+          padding: 15px 0;
+        }
+      }
+      .name {
+        padding: 10px;
+      }
+    }
+
+  }
+
 .big-main-login {
   max-height: 100vh;
   overflow: hidden;
   .top {
     height: 60vh;
     position: relative;
+    .info {
+
+      text-align: center;
+      padding: 10vh;
+      img {
+        width: 20vh;
+        height: 20vh;
+        border-radius:10px;
+      }
+      p {
+        padding: 5vh 0;
+        font-size:30px;
+        color: #000000;
+      }
+    }
+    .name {
+      padding: 10px;
+    }
     .icon {
       height: 165px;
       line-height: 165px;
@@ -190,6 +271,19 @@ export default {
   .key {
     height: 32vh;
     background: #f0f0f0;
+  }
+  .buttonkey{
+    height:32vh;
+
+  }
+  .button-worp {
+    width: 100%;
+    position: absolute;
+    bottom: 15vh;
+    button {
+      background: #0089ff;
+      color: #fff;
+    }
   }
   .icon-wrap {
     position: absolute;

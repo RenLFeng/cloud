@@ -15,7 +15,15 @@
       <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
           <Audio :AudioInfo="audiofileinfo" @Backs="popupAudio=false" v-if="popupAudio"/>
       </mt-popup>
+    <!--
       <div class="dp-hd-wrap"  v-if="hudong" @click="hudongFn">多屏互动</div>
+      -->
+    <float-icons padding="10 10 60 10" class="icons-warp" v-if="haswifiroom">
+      <div class="float-icon-item" @click="gotowifiroom()">
+        <span>多屏<br/>互动</span>
+      </div>
+
+    </float-icons>
   </div>
 </template>
 
@@ -26,11 +34,16 @@ import "./styles/common.less";
 import "./styles/style.css";
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 import Audio from '@/common/audio'
+
+import FloatIcons from '@/components/s-icons'
+
+
 export default {
   name: "Home",
   components: {
     preview,
       Audio,
+      'float-icons': FloatIcons
   },
   computed: {
     showloginfail() {
@@ -43,6 +56,12 @@ export default {
       }
       return false;
     },
+      haswifiroom(){
+        if (!this.$store.getters.hasloginuser){
+            return false;
+        }
+        return nativecode.haswifiroom();
+      },
     show: {
       get: function() {
         return this.$store.state.Preview.show;
@@ -94,7 +113,7 @@ export default {
 
   data() {
     return {
-      hudong:false,
+      hudong:true,
       transitionName: "slide-forward",
       testtext: 'showua:' + navigator.userAgent,
       showtest: true,
@@ -191,6 +210,12 @@ export default {
     hudongFn(){
       console.log('开始互动');
     },
+      gotowifiroom(){
+          let argobj={
+              page:'wifiroom'
+          }
+          nativecode.ncall('toNativePage', argobj);
+      },
     onToggleClick(data) {
       if (!data) {
         this.tempLocalfiles = [];
@@ -404,6 +429,10 @@ export default {
           //! 小程序支持与其他端同时打开
           role = 'weixin';
       }
+      else if (nativecode.platform == ''
+      || nativecode.platform == 'exsoftwindows'){
+          role = 'pc';
+      }
       let logindata = {
         cmd: "login",
         data: {
@@ -552,5 +581,28 @@ export default {
   text-align: center;
   line-height: 100px;
   font-size: 20px;
+}
+
+.icons-warp {
+  border-radius: 25px;
+  .float-icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    img {
+      width: 25px;
+      height: 25px;
+      margin-bottom: 3px;
+    }
+    span {
+      font-size: 16px;
+      color: #666666;
+      font-weight: bold;
+    }
+  }
 }
 </style>

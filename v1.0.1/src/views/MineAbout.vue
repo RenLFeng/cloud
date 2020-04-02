@@ -356,7 +356,7 @@ export default {
       nativecode.navigateToScan();
     },
     onMessage(){
-      
+      nativecode.navigateToMsg();
     },
     //清除提示
     clearEvnet() {

@@ -112,7 +112,7 @@ export default {
             } else {
             }
           } else {
-            Toast("未开启签到");
+          //  Toast("未开启签到");
             Indicator.close();
             this.isLoad = true;
           }
@@ -224,7 +224,7 @@ export default {
             let signData = res.data.data.sign;
             this.Signquerymember(signData.id);
           } else {
-            Toast("签到失败");
+            Toast("开启失败："+res.data.msg);
           }
           Indicator.close();
         })

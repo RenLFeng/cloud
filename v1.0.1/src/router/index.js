@@ -100,6 +100,11 @@ let routers = new Router({
 routers.beforeEach((to, from, next) => {
     // next();
     // return;
+
+    if (process.env.NODE_ENV !== "production"){
+        console.log('router, topath:' + to.path);
+    }
+
     function isneedloginpath(topath){
         if (topath.indexOf('/login')
         || topath.indexOf('/WechatLogin')

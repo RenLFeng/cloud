@@ -163,6 +163,15 @@ export const fixCaptureImage = (file, tofile = false) => {
         // if (orientation === 3 || orientation === 6 || orientation === 8)
         {
           const canvas = document.createElement("canvas");
+
+          if (tofile){
+            if (!canvas.toBlob){
+              //! 有些浏览器没有此函数; 例如目前windows使用的cef
+                console.log('has no canvas.toBlob');
+                return reject(rejectres);
+            }
+          }
+
           const ctx = canvas.getContext("2d");
           switch (orientation) {
             case 3: // 旋转180°

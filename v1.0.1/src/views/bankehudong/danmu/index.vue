@@ -178,7 +178,12 @@ export default {
           if (res.data.code == "0") {
             if (res.data.data.length) {
               for (let v of res.data.data) {
-                v.info = JSON.parse(v.info);
+                  try{
+                      v.info = JSON.parse(v.info);
+                  }catch(e){
+
+                  }
+
                 v.time = v.createtime.split(" ")[1];
                 v.day = this.getDayName(v.createtime);
               }
@@ -205,7 +210,7 @@ export default {
     },
     submitDanmu() {
       if (!this.isLink) {
-        Toast("请先连接到大屏端");
+        Toast("当前班课未开课");
         return;
       }
       if (!this.inputVal) {
@@ -269,8 +274,14 @@ export default {
             if (res.data.data == null) {
               //  this.isLink=true;
             } else {
-              this.isLink = true;
-              this.LinkInfo = res.data.data.daping;
+                this.LinkInfo = res.data.data.daping;
+                console.log(this.LinkInfo);
+                let curbanke = this.$store.state.curbanke;
+                if(curbanke.id == this.LinkInfo.bankeid){
+                    this.isLink = true;
+                }
+
+
             }
           }
           Indicator.close();

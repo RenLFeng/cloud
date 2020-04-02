@@ -1,13 +1,15 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
+      <!-- cjy: 使用悬浮窗
       <li class="fontlarge dp" @click="gotowifiroom" v-if="haswifiroom">
-        <span>WIFI教室</span>
+        <span>多屏互动</span>
         <i
                 class="iconfont icondapingmu eicotrigger bigfont fr"
                 style="color:#0055FF"
         ></i>
       </li>
+      -->
       <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
         <i
@@ -16,7 +18,7 @@
                 style="color:#0055FF"
         ></i>
       </li>
-      <li class="fontlarge" @click="onwxsign()">
+      <li class="fontlarge" @click="onwxsign()" v-if="haswxsign">
         <span>签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
