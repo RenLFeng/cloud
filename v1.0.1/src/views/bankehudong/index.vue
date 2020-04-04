@@ -18,7 +18,8 @@
                 style="color:#0055FF"
         ></i>
       </li>
-      <li class="fontlarge" @click="onwxsign()" v-if="haswxsign">
+      <!-- cjy：因为红点的原因，这里暂不隐藏 -->
+      <li class="fontlarge" @click="onwxsign()" >
         <span>签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
@@ -106,10 +107,11 @@ export default {
         return nativecode.hassign();
       },
     haswxsign() {
-      if (nativecode.platform == "miniprogram") {
-        return true;
-      }
-      return false;
+        return nativecode.hassign();
+      // if (nativecode.platform == "miniprogram") {
+      //   return true;
+      // }
+      // return false;
     }
     ,showstuc(){
         if (nativecode.platform == 'exsoftdaping'){
@@ -134,7 +136,7 @@ export default {
         nativecode.navigateToSign(this.bankeid,this.isTeacher, curbanke);
       }else{
         // this.teacherFn();
-          Toast('请在小程序中查看签到');
+          Toast('请在云班课小程序中查看');
       }
     },
     teacherFn() {

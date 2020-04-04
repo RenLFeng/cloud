@@ -138,7 +138,8 @@
             :class="eventmsgs.xqTips?'reddot-Tips':''"
             v-else
           ></i>
-          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">我的</span>
+          <!--  班课为详情页 -->
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">详情</span>
         </div>
       </mt-tab-item>
     </mt-tabbar>

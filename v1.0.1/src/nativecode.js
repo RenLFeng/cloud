@@ -220,8 +220,8 @@ nativecode.hasloginpage = function () {
 
 
     if (nativecode.platform == 'miniprogram'
-    || nativecode.platform == 'exsoftandroid'
-        || nativecode.platform == 'exsoftios'
+    // || nativecode.platform == 'exsoftandroid'
+    //     || nativecode.platform == 'exsoftios'
     ) {
         return false;
     }
@@ -237,10 +237,10 @@ nativecode.navigateToLogin = function(vueobj){
         });
         return;
     }
-    else if (nativecode.platform == 'exsoftios'
-    || nativecode.platform == 'exsoftandroid'){
-        nativecode.ncall('toNativePage', {page:'login'});
-    }
+    // else if (nativecode.platform == 'exsoftios'
+    // || nativecode.platform == 'exsoftandroid'){
+    //     nativecode.ncall('toNativePage', {page:'login'});
+    // }
     vueobj.$store.commit("setLoginUser", {});
     vueobj.$store.commit("setRouterForward", true);
     vueobj.$router.push("/login");

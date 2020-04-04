@@ -216,7 +216,8 @@ export default {
       this.$http
         .post("/api/sign/signadd", {
           bankeid: this.bankeid,
-          info: ""
+          info: "",
+            usedaping:1,  //! 使用大屏的info
         })
         .then(res => {
           if (res.data.code == 0) {
