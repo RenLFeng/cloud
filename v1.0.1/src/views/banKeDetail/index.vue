@@ -76,7 +76,7 @@
               </li>
             </div>
             <div v-else>
-              <li @click="closeBk" class="dange" v-if="showbankedange">
+              <li @click="quitBk" class="dange" v-if="showbankedange">
                 <mt-cell title="退出班课" is-link></mt-cell>
               </li>
             </div>
@@ -334,30 +334,31 @@ export default {
         })
         .catch(() => {});
     },
+      quitBk(){
+          MessageBox.confirm("", {
+              title: "提示",
+              message: "确认退出当前班课?",
+              confirmButtonText: "退出",
+              cancelButtonText: "取消",
+              showCancelButton: true
+          }).then(res => {
+              this.$http
+                  .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
+                  .then(res => {
+                      if (res.data.code == 0) {
+                          MessageBox.alert("退出成功").then(() => {
+                              this.$store.commit("setRouterForward", true);
+                              this.$router.push("/");
+                          });
+                      } else {
+                          MessageBox.alert(res.data.msg).then(() => {});
+                      }
+                  });
+          });
+          return;
+      },
     closeBk() {
-      if (!this.caneditbanke) {
-        MessageBox.confirm("", {
-          title: "提示",
-          message: "确认退出当前班课?",
-          confirmButtonText: "退出",
-          cancelButtonText: "取消",
-          showCancelButton: true
-        }).then(res => {
-          this.$http
-            .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
-            .then(res => {
-              if (res.data.code == 0) {
-                MessageBox.alert("退出成功").then(() => {
-                  this.$store.commit("setRouterForward", true);
-                  this.$router.push("/");
-                });
-              } else {
-                MessageBox.alert(res.data.msg).then(() => {});
-              }
-            });
-        });
-        return;
-      }
+
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),
