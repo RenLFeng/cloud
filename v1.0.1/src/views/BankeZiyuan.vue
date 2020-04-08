@@ -716,7 +716,7 @@ export default {
                 item.imgsrc = require("../assets/file_icon/IT.svg");
               } else if (item.ftype == "file") {
                 if (item.finttype == "1") {
-                  if (item.info) {
+                  if (item.info && item.info.metainfo && item.info.metainfo.snapsuffix) {
                     item.imgsrc =
                       item.info.filepath + item.info.metainfo.snapsuffix;
                   } else {
@@ -915,7 +915,7 @@ export default {
               item.imgsrc = require("../assets/file_icon/IT.svg");
             } else if (item.ftype == "file") {
               if (item.finttype == "1") {
-                if (item.info) {
+                if (item.info && item.info.metainfo && item.info.metainfo.snapsuffix) {
                   item.imgsrc =
                     item.info.filepath + item.info.metainfo.snapsuffix;
                 }

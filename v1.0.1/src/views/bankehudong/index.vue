@@ -18,8 +18,8 @@
                 style="color:#0055FF"
         ></i>
       </li>
-      <!-- cjy：因为红点的原因，这里暂不隐藏 -->
-      <li class="fontlarge" @click="onwxsign()" >
+      <!-- cjy：因为红点的原因，这里暂不隐藏---综合考虑app的行为，仍然隐藏 -->
+      <li class="fontlarge" @click="onwxsign()" v-if="haswxsign">
         <span>签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
