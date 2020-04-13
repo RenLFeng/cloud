@@ -330,6 +330,7 @@ export const parseURL = (url) => {
   return params
 }
 
+//！ cjy： require 方式为导入base64， 不推荐， 太占用资源
 export const getFileTypeImg = (typein) => {
   if (typein.length > 6 && typein.lastIndexOf('.') > 0) {
     return typein; //! 已经是路径
@@ -338,55 +339,55 @@ export const getFileTypeImg = (typein) => {
   let type = typein.toLocaleLowerCase();
   switch (type) {
     case 'account':
-      srcstr += require("./assets/account_default.png");
+      srcstr += ("/assets/account_default.png");
       return srcstr;
     case 'banke':
-      srcstr += require("./assets/banke_default.png");
+      srcstr += ("/assets/banke_default.png");
       return srcstr;
     case 'zuoye':
-      srcstr += require("./assets/zuoye_default.png");
+      srcstr += ("/assets/zuoye_default.png");
       return srcstr;
     case 'file':
-      srcstr += require("./assets/file_default.png");
+      srcstr += ("/assets/file_default.png");
       return srcstr;
     case 'txt':
-      srcstr += require("./assets/file_icon/txt.svg");
+      srcstr += ("/assets/file_icon/txt.svg");
       return srcstr;
     case 'rar':
-      srcstr += require("./assets/file_icon/rar.svg");
+      srcstr += ("/assets/file_icon/rar.svg");
       return srcstr;
     case 'xlsx':
-      srcstr += require("./assets/file_icon/xlsx.svg");
+      srcstr += ("/assets/file_icon/xlsx.svg");
       return srcstr;
     case 'docx':
-      srcstr += require("./assets/file_icon/docx.svg");
+      srcstr += ("/assets/file_icon/docx.svg");
       return srcstr;
     case 'ppt':
-      srcstr += require("./assets/file_icon/ppt.svg");
+      srcstr += ("/assets/file_icon/ppt.svg");
       return srcstr;
     case 'pdf':
-      srcstr += require("./assets/file_icon/pdf.svg");
+      srcstr += ("/assets/file_icon/pdf.svg");
       return srcstr;
     case 'it':
-      srcstr += require("./assets/file_icon/IT.svg");
+      srcstr += ("/assets/file_icon/IT.svg");
       return srcstr;
     case 'mp4':
-      srcstr += require("./assets/file_icon/MP4.png");
+      srcstr += ("/assets/file_icon/MP4.png");
       return srcstr;
     case 'mp3':
-      srcstr += require("./assets/file_icon/MP3.png");
+      srcstr += ("/assets/file_icon/MP3.png");
       return srcstr;
     case 'school':
-      srcstr += require("./assets/school.png");
+      srcstr += ("/assets/school.png");
       return srcstr;
     case 'folder':
-      srcstr += require("./assets/file_icon/folder.svg");
+      srcstr += ("/assets/file_icon/folder.svg");
       return srcstr;
     case 'img':
-      srcstr += require("./assets/file_icon/default_img.png");
+      srcstr += ("/assets/file_icon/default_img.png");
       return srcstr;
     default:
-      srcstr += require("./assets/file_default.png");
+      srcstr += ("/assets/file_default.png");
       break;
   }
   return srcstr;

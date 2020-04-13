@@ -51,7 +51,7 @@
   </div>
 </template>
 <script>
-import defaultPic from "../../assets/account_default.png";
+
 import { Cell, Button, MessageBox, Field, Indicator } from "mint-ui";
 import mimgcrop from "@/common/m-image-crop";
 export default {
@@ -86,7 +86,7 @@ export default {
       imgobj: {},
 
       pic: "",
-      defaultPic: defaultPic,
+      defaultPic: '/assets/account_default.png',
       banji: "",
       bankeNmae: "",
       bankeInfoData: {},
@@ -102,7 +102,7 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += require("../../assets/100x100.png");
+      srcstr += ("/assets/100x100.png");
       srcstr += '"';
       return srcstr;
     }

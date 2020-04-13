@@ -53,7 +53,7 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += require("@/assets/100x100.png");
+      srcstr += ("/assets/100x100.png");
       srcstr += '"';
       return srcstr;
     },

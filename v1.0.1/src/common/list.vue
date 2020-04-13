@@ -39,15 +39,16 @@
       <div class="mainctitle ellipse">
         <img class="itemavatar object-fit-img" :src="item.avatar" :onerror="$defaultImg('account')" />
         {{item.name}}
-        <!-- <span
+        <!--  cjy：不再显示正确错误  <span
           class="fr font-xs"
           :class="item.score>0?'colorA':'colorB'"
           v-if="ptype=='1'||ptype=='2'||ptype=='3'"
         >{{item.score>0?'正确':'错误'}}</span> -->
       </div>
-      <div v-if="ptype!='6'" class="maincsubtitle ellipse">{{ptype=='10'?`投票给:`:`提交答案:`}} {{answer}}</div>
-      <div v-if="ptype=='6'">{{item.isResponder}}</div>
-      <div v-if="ptype=='4'" class="pingc-img-wrap">
+      <div v-if="!item.hassubmit">未提交</div>
+      <div v-if="ptype!='6' && item.hassubmit" class="maincsubtitle ellipse">{{ptype=='10'?`投票给:`:`提交答案:`}} {{answer}}</div>
+      <div v-if="ptype=='6' && item.hassubmit">{{item.isResponder}}</div>
+      <div v-if="ptype=='4' && item.hassubmit" class="pingc-img-wrap">
         <img
           class="pingc-img"
           :src="`${item.answerdesc.file}_snap.jpg`"
@@ -55,7 +56,7 @@
           @click="previewimg(item)"
         />
       </div>
-      <div class="footer">
+      <div class="footer" v-if="item.hassubmit">
         <span class="color9 font-xs">{{item.submittime}}</span>
         <span class="fr colory font18">得分&nbsp;{{item.score}}</span>
       </div>
@@ -152,7 +153,7 @@ export default {
     },
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += require("../assets/100x100.png");
+      srcstr += ("/assets/100x100.png");
       srcstr += '"';
       return srcstr;
     },

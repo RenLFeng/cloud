@@ -54,8 +54,10 @@ export default {
       default: 0
     },
       bankeItem:{
-        default:{
-            name:'test'
+        default(){
+            return {
+                name:'test'
+            }
         }
       },
       ecode:{
@@ -145,16 +147,19 @@ export default {
       this.$http
         .post("/api/banke/dapinglogin", {
           code: this.code,
-          bankeid: bid
+          bankeid: bid,
+            logininfo:{
+              sign:this.isAuto
+            }
         })
         .then(res => {
           if (res.data.code == "0") {
             this.$emit("login", res.data.data.daping);
             Toast("登录成功");
             // console.log("dapinglogin", res);
-            if (this.isAuto) {
-              this.postdapingmsg();
-            }
+           // if (this.isAuto) {
+             // this.postdapingmsg();
+          //  }
           } else {
             Toast("登录错误：" + res.data.msg);
           }
@@ -163,21 +168,22 @@ export default {
           Toast("异常"+err);
         });
     },
-    postdapingmsg() {
-      this.$http
-        .post("/api/banke/postdapingmsg", {
-          bankeid: this.bankeid,
-          ecode: this.code,
-          data: "",
-          cmd: "sign"
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-          } else {
-          }
-        })
-        .catch(err => {});
-    },
+      //! cjy: 因为大屏登录流程限制，这里立即发送的dapingmsg可能来不及处理
+    // postdapingmsg() {
+    //   this.$http
+    //     .post("/api/banke/postdapingmsg", {
+    //       bankeid: this.bankeid,
+    //       ecode: this.code,
+    //       data: "",
+    //       cmd: "sign"
+    //     })
+    //     .then(res => {
+    //       if (res.data.code == "0") {
+    //       } else {
+    //       }
+    //     })
+    //     .catch(err => {});
+    // },
     autoSign() {
       this.isAuto = !this.isAuto;
     }

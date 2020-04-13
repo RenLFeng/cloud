@@ -84,7 +84,7 @@
           <div class="attachdesc border-bottom-e5">添加附件</div>
           <div class="listc">
             <!-- <FileAttachList :urlinfo="urlinfo" :localfiles="localfiles" ></FileAttachList> -->
-            <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
+            <img src="/assets/zuoye_add.png" alt @click="unloadFn" />
             <a v-for="(item,index) in imgSrc" :key="index">
               <img class="hf-Submit-pic" :src="item.src" alt />
               <i @click="dele(index)">x</i>
@@ -95,7 +95,7 @@
     </mt-popup>
     <div class="submit-msg clearIt">
       <div class="upload-content">
-        <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
+        <img src="/assets/zuoye_add.png" alt @click="unloadFn" />
         <input
           ref="uploadPic"
           type="file"

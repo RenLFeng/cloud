@@ -2,13 +2,13 @@
   <div class="tc loginbg">
     <div class="fontmaintitle maintitle">
       <div class="bg-pic-wrap">
-        <img src="../assets/login_b.png" alt class="login-bg" />
-        <img src="../assets/login_logo.png" alt class="login-icon position-c" />
+        <img src="/assets/login_b.png" alt class="login-bg" />
+        <img src="/assets/login_logo.png" alt class="login-icon position-c" />
       </div>
       <div class="fontlarge loginpart">
         <div class="login-box" v-if="state">
           <div class="loginline">
-            <img src="../assets/phone_icon.svg" alt class="position-l" />
+            <img src="/assets/phone_icon.svg" alt class="position-l" />
             <input
               v-model="account"
               placeholder="输入账户名"
@@ -18,7 +18,7 @@
             />
           </div>
           <div class="loginline">
-            <img src="../assets/pwd_icon.svg" alt class="position-l" />
+            <img src="/assets/pwd_icon.svg" alt class="position-l" />
             <input
               v-model="password"
               placeholder="输入密码"

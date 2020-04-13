@@ -447,7 +447,7 @@ export default {
 </script>
 
 <style >
-@import "./fon/iconfont.css";
+@import "./assets/iconfont/iconfont.css";
 @import "styles/style.css";
 .Router {
   position: absolute;

@@ -5,11 +5,11 @@
     </div>
     <div class="mainright">
       <div class="rightcontrol" @click="icoclick">
-        <img src="../../assets/zuoye_edit.png" class="rightcontrolimg" v-if="hasedit" />
+        <img src="/assets/zuoye_edit.png" class="rightcontrolimg" v-if="hasedit" />
       </div>
       <div class="rightstate" :class="{'rightstatemid':!hasedit}">
         <div v-if="zuoyeitem.state == 100">
-          <img src="../../assets/zuoye_st_play.png" class="rightstateimg" />
+          <img src="/assets/zuoye_st_play.png" class="rightstateimg" />
           <div class="rightsttext rightstplay">{{$t('bankeTask.Have_in_hand')}}</div>
         </div>
         <div v-else-if="zuoyeitem.state == 10" class="rightsttext">
@@ -39,12 +39,12 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += require("../../assets/zuoye_icon.png");
+      srcstr += ("/assets/zuoye_icon.png");
       srcstr += '"';
       return srcstr;
     },
     userimg() {
-      var url = require("../../assets/zuoye_icon.png");
+      var url = ("/assets/zuoye_icon.png");
       return url;
     },
     memberdesc() {

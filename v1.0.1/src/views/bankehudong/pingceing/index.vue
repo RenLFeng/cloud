@@ -139,6 +139,13 @@ export default {
     if (this.urlbankeid) {
       this.bankeid = this.urlbankeid;
     }
+
+    //! cjy: 通知已进入评测页面
+    nativecode.ncall('jsEnterPingce',
+        {
+            bankeid:this.bankeid
+        });
+
     if (doquery) {
       this.querycur();
     }
@@ -185,7 +192,7 @@ export default {
     },
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += require("@/assets/100x100.png");
+      srcstr += ("/assets/100x100.png");
       srcstr += '"';
       return srcstr;
     }
@@ -272,6 +279,25 @@ export default {
             //   userid: 1001
             // };
             // this.onpingcedata(rdata);
+
+
+              //！ cjy: 测试主观题
+              // let rdata = {
+              //     "answerdesc" : "",
+              //     "classid" : 1000,
+              //     "createtime" : "2020-01-16 09:23:51",
+              //     "files" : "\/downloads\/pingce\/20200116\/d60d9358227fb231d278e15a22457c89.jpeg",
+              //     "id" : 1143,
+              //     "info" : null,
+              //     "joinnum" : 0,
+              //     "optdesc" : "{\n  \"opts\" : [\n\n  ]\n}",
+              //     "ptype" : 4,
+              //     "score" : 10,
+              //     "timelimit" : 0,
+              //     "totalnum" : 5,
+              //     "userid" : 1001
+              // };
+              // this.onpingcedata(rdata);
 
             Toast("当前没有评测");
           }
