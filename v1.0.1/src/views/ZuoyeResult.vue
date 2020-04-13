@@ -667,18 +667,19 @@ export default {
         userid = [this.zuoyeitem.userid];
         templateid = "w45YLK2VOms4UJkKoqVIYZFBVyXnc5niGIzleAosf4M";
       }
-      this.$http
-        .post("/api/weixin/pushnotify", {
-          templateid: templateid,
-          topage: topage,
-          data: data,
-          sendto: {
-            type: "users",
-            userids: userid
-          }
-        })
-        .then(res => {})
-        .catch(() => {});
+      //! cjy: 发送消息接口不再提供给客户端，防止伪造的客户端越权
+      // this.$http
+      //   .post("/api/weixin/pushnotify", {
+      //     templateid: templateid,
+      //     topage: topage,
+      //     data: data,
+      //     sendto: {
+      //       type: "users",
+      //       userids: userid
+      //     }
+      //   })
+      //   .then(res => {})
+      //   .catch(() => {});
     },
     changeMark() {},
     goback() {

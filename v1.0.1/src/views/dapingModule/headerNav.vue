@@ -6,13 +6,19 @@
         <div class="banke-name">{{navInfo.bankeName}}</div>
         <div class="num-member">
           <div class="num">
-            <span class="sign-Total">{{navInfo.signTotal}}</span>
-            <span class="total">/{{navInfo.total}}</span>
+            <span class="sign-Total" v-if="navInfo.issign">{{navInfo.signTotal}}</span>
+            <span class="total"><span v-if="navInfo.issign">/</span>{{navInfo.total}}</span>
           </div>
           <div class="text">
-            <span class="sign-Total">实际签到</span>
-            <span>/</span>
-            <span class="total">应签到</span>
+            <span v-if="navInfo.issign">
+              <span class="sign-Total">实际签到</span>
+              <span>/</span>
+              <span class="total">应签到</span>
+            </span>
+            <span v-else>
+              <span class="total">班课人数</span>
+            </span>
+
           </div>
         </div>
       </div>

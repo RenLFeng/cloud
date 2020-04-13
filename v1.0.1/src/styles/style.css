@@ -613,7 +613,7 @@ textarea {
 }
 
 .object-fit-img {
-    object-fit: cover !important;
+    object-fit: contain !important;
 }
 
 .van-search__content {

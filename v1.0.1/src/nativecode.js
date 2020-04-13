@@ -11,12 +11,25 @@ var nativecode = {};
 
 //! https://www.npmjs.com/package/weixin-js-sdk
 
+
+nativecode.haswifiroom = function()
+{
+    if (process.env.NODE_ENV !== "production")
+    {
+        return true;
+    }
+    if (nativecode.platform == 'exsoftwindows'
+        || nativecode.platform == 'exsoftandroid'
+        || nativecode.platform == 'exsoftios'){
+        return true;
+    }
+    return false;
+}
+
 nativecode.detectplatform = function () {
     var ua = navigator.userAgent;
     //console.log(ua);
     //alert(ua);
-
-
 
     let pa = '';
     if (ua.indexOf('ExsoftIosWeb') > -1) {
@@ -30,14 +43,15 @@ nativecode.detectplatform = function () {
     if (window.ExsoftAndroid) {
         pa = 'exsoftandroid';
     }
-    if (window.ExsoftWindows) {
-
+    if (window.ExsoftWindows)
+    {
         //! 检测是否是大屏端
         if (ua.indexOf('WebDaPing') > -1) {
             pa = 'exsoftdaping';
         }
-
-        pa = 'exsoftwindows';
+        else{
+            pa = 'exsoftwindows';
+        }
     }
 
     function wxready() {
@@ -57,7 +71,7 @@ nativecode.detectplatform = function () {
         }
     }
 
-    console.log('in detectplatform:' + pa);
+
     if (pa == 'miniprogram' || pa == '') {
         //! windows电脑端， 无法通过ua来判断是否是小程序
 
@@ -81,9 +95,7 @@ nativecode.detectplatform = function () {
         }
     }
 
-    //! 测试
-    // return 'exsoftdaping';
-
+    console.log('in detectplatform:' + pa);
     return pa;
 }
 
@@ -105,8 +117,6 @@ nativecode.parseurlparam = function (paraName) {
     var url = document.location.toString();
 
     var arrObj = url.split("?");
-
-
 
     if (arrObj.length > 1) {
 
@@ -162,6 +172,8 @@ nativecode.initfirst = function () {
     console.log('nativecode.initfirst');
     if (nativecode.platform == 'miniprogram' ||
         nativecode.platform == '' //! 有可能平台正在检测中
+        || nativecode.platform == 'exsoftios'
+        || nativecode.platform == 'exsoftandroid'
     ) {
         try {
             let szcookie = nativecode.parseurlparam('cookie');
@@ -171,7 +183,7 @@ nativecode.initfirst = function () {
                 szcookie = szcookie.substr(0, nindex);
             }
             if ((szcookie.length) > 0) {
-                if (nativecode.platform == 'miniprogram') {
+                if (nativecode.platform.length > 0) {
                     nativecode.setcookie(szcookie)
                 } else {
                     //! 因为miniprogram的检测通常会延迟，这里为了快速登陆，总是先设置
@@ -191,13 +203,26 @@ nativecode.initfirst = function () {
 nativecode.doneinit = nativecode.initfirst();
 
 
+//！ 是否有退出登录
+nativecode.haslogout  =function()
+{
+    if (nativecode.platform == 'miniprogram'
+    ) {
+        return false;
+    }
+    return true;
+}
+
 //! 是否有登陆页
 nativecode.hasloginpage = function () {
     //return false;
    // return false;
 
 
-    if (nativecode.platform == 'miniprogram') {
+    if (nativecode.platform == 'miniprogram'
+    // || nativecode.platform == 'exsoftandroid'
+    //     || nativecode.platform == 'exsoftios'
+    ) {
         return false;
     }
     return true;
@@ -212,6 +237,10 @@ nativecode.navigateToLogin = function(vueobj){
         });
         return;
     }
+    // else if (nativecode.platform == 'exsoftios'
+    // || nativecode.platform == 'exsoftandroid'){
+    //     nativecode.ncall('toNativePage', {page:'login'});
+    // }
     vueobj.$store.commit("setLoginUser", {});
     vueobj.$store.commit("setRouterForward", true);
     vueobj.$router.push("/login");
@@ -360,6 +389,14 @@ nativecode.navigateToSign = function (bankeid, isteacher, curbanke) {
 nativecode.navigateToScan = function () {
     let wx = nativecode.getwx();
     let tourl = '/pages/scan/scan';
+    wx.miniProgram.navigateTo({
+        url: tourl
+    });
+}
+//! 跳转消息订阅界面
+nativecode.navigateToMsg = function(){
+    let wx = nativecode.getwx();
+    let tourl = '/pages/share/gzh';
     wx.miniProgram.navigateTo({
         url: tourl
     });
@@ -550,6 +587,14 @@ nativecode.previewImage = function (vuethis, objargs) {
         objargs.urls.push(objargs.current);
         objargs.index = 0;
     }
+    console.log('previewimage');
+    if (!nativecode.canpreviewImage()){
+        let fitem = {
+            downurl:objargs.current
+        }
+        nativecode.ncallFileLink(vuethis, fitem);
+        return;
+    }
     if (nativecode.platform == 'miniprogram') {
         let wx = nativecode.getwx();
         wx.previewImage({
@@ -589,13 +634,25 @@ nativecode.isimageobj = function (fitem) {
 }
 
 
+//! cjy: 是否能预览图片
+nativecode.canpreviewImage = function()
+{
+    if (nativecode.platform == ''  //! 网页端也更改为下载
+    || nativecode.platform == 'exsoftwindows'
+        || nativecode.platform == 'exsoftdaping'
+    ){
+        return false;
+    }
+    return true;
+}
+
 nativecode.fileviewSingle = function (vuethis, fitem) {
     if (!fitem.filepath && fitem.url) {
         fitem.filepath = fitem.url;
     }
 
     fitem.downurl = nativecode.getUsedUrl(fitem.filepath);
-    if (nativecode.isimageobj(fitem)) {
+    if (nativecode.canpreviewImage() && nativecode.isimageobj(fitem)) {
         nativecode.previewImage(vuethis, fitem.downurl);
         return;
     }
@@ -681,9 +738,10 @@ nativecode.fileviewZuoye = function (vuethis, objargs) {
     }
     if (
         //items[cindex].filetype == 1
+        nativecode.canpreviewImage() &&
         nativecode.isimageobj(items[cindex])
     ) {
-        isimage = 1;
+        isimage = true;
     }
     //console.log(items);
     //console.log('fileviewzuoye:' + isimage);

@@ -80,6 +80,13 @@ const getters = {
 
         return lm;
     },
+    hasloginuser:(state, getters)=>{
+        let lm = getters.curuser;
+        if (lm && lm.id){
+            return true;
+        }
+        return false;
+    },
     islogin: (state, getters) => {
         var lm = getters.curuser;
         if (!lm || !lm.id) {

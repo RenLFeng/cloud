@@ -1,6 +1,15 @@
 <template>
   <div class="hu-dong-container">
     <ul class="list-main">
+      <!-- cjy: 使用悬浮窗
+      <li class="fontlarge dp" @click="gotowifiroom" v-if="haswifiroom">
+        <span>多屏互动</span>
+        <i
+                class="iconfont icondapingmu eicotrigger bigfont fr"
+                style="color:#0055FF"
+        ></i>
+      </li>
+      -->
       <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
         <span>大屏登录</span>
         <i
@@ -9,7 +18,8 @@
                 style="color:#0055FF"
         ></i>
       </li>
-      <li class="fontlarge" @click="onwxsign()">
+      <!-- cjy：因为红点的原因，这里暂不隐藏---综合考虑app的行为，仍然隐藏 -->
+      <li class="fontlarge" @click="onwxsign()" v-if="haswxsign">
         <span>签到</span>
         <i
           class="iconfont iconqiandao2 eicotrigger bigfont fr"
@@ -90,14 +100,18 @@ export default {
     isTeacher() {
       return this.$store.getters.caneditbanke;
     },
+      haswifiroom(){
+          return nativecode.haswifiroom();
+      },
       hassign(){
         return nativecode.hassign();
       },
     haswxsign() {
-      if (nativecode.platform == "miniprogram") {
-        return true;
-      }
-      return false;
+        return nativecode.hassign();
+      // if (nativecode.platform == "miniprogram") {
+      //   return true;
+      // }
+      // return false;
     }
     ,showstuc(){
         if (nativecode.platform == 'exsoftdaping'){
@@ -122,7 +136,7 @@ export default {
         nativecode.navigateToSign(this.bankeid,this.isTeacher, curbanke);
       }else{
         // this.teacherFn();
-          Toast('请在小程序中查看签到');
+          Toast('请在云班课小程序中查看');
       }
     },
     teacherFn() {
@@ -156,6 +170,16 @@ export default {
         params: { bankeid: this.bankeid }
       });
     },
+      gotowifiroom(){
+          let curbanke = this.$store.state.curbanke;
+          let argobj={
+              page:'wifiroom',
+              bankeid:this.bankeid,
+              bankename:curbanke.name,
+              isTeacher:this.isTeacher
+          }
+          nativecode.ncall('toNativePage', argobj);
+      },
      //弹幕
     Danmu() {
       this.$store.commit("setRouterForward", true);

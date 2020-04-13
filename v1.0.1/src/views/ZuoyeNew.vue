@@ -312,23 +312,24 @@ export default {
     },
     //  发送作业消息
     mimiMessage() {
-      let date = formateTime(new Date(), "-");
-      this.$http
-        .post("/api/weixin/pushnotify", {
-          templateid: "yEWdaUgS7luynNFryYXXwZUqEKqqXcglt7gD70Aue7s",
-          topage: '/#/zuoyeresult/' + this.zuoyeitem.id,
-          data: {
-            thing3: "今天作业已经发布",
-            name5: this.curbanke.name,
-            date7: date
-          },
-          sendto: {
-            type: "banke",
-            bankeid: this.curbanke.id
-          }
-        })
-        .then(res => {})
-        .catch(() => {});
+        //! cjy: 发送消息接口不再提供给客户端，防止伪造的客户端越权
+      // let date = formateTime(new Date(), "-");
+      // this.$http
+      //   .post("/api/weixin/pushnotify", {
+      //     templateid: "yEWdaUgS7luynNFryYXXwZUqEKqqXcglt7gD70Aue7s",
+      //     topage: '/#/zuoyeresult/' + this.zuoyeitem.id,
+      //     data: {
+      //       thing3: "今天作业已经发布",
+      //       name5: this.curbanke.name,
+      //       date7: date
+      //     },
+      //     sendto: {
+      //       type: "banke",
+      //       bankeid: this.curbanke.id
+      //     }
+      //   })
+      //   .then(res => {})
+      //   .catch(() => {});
     },
     onTimePicker() {
       //  var testdate = new Date(this.zuoyeitem.submittime);
