@@ -108,7 +108,7 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += require("../assets/file_icon/file.svg");
+      srcstr += ("/assets/file_icon/file.svg");
       srcstr += '"';
       return srcstr;
     }

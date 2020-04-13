@@ -18,7 +18,8 @@
     <div v-else>
     <div v-if="isLogin" class="isLogin">
       <div class="tc no-class empty">
-        <i class="iconfont icondapingmu fontmaintitle"></i>
+
+        <i class="iconfont icondapingmu fontmaintitle" @click="sinOut"></i>
         <p class style="color:#000">已登录到大屏</p>
         <div class style="color:#000">
           <p>{{userInfo.mac}}</p>
@@ -26,8 +27,12 @@
         </div>
         <p>下课后请及时退出大屏登录</p>
         <div class="button-worp">
+          <mt-button class="button-auto-96" @click="Backs">我知道了</mt-button>
+          </div>
+        <div class="button-worp2">
           <mt-button class="button-auto-96" @click="sinOut">退出大屏</mt-button>
         </div>
+
       </div>
     </div>
     <div v-else>
@@ -225,6 +230,13 @@ export default {
       button {
         background: #0089ff;
         color: #fff;
+      }
+    }
+    .button-worp2{
+      margin-top: 30px;
+      button {
+        color: #0089ff;
+        background:none;
       }
     }
   }

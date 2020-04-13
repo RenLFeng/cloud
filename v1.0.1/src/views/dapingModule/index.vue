@@ -255,7 +255,7 @@ export default {
     },
     getSignCode() {
       //! cjy: 由客户端生成scene场景， 方便后续维护
-      let scene = "sign;id=" + this.signdata.id;
+      let scene = "sign;id=" + this.signid
       this.$http
         .post(
           //"/api/weixin/qrcodesign",
@@ -288,6 +288,7 @@ export default {
           if (res.data.code == 0) {
             console.log("教师打卡上课,", res);
             let signData = res.data.data.sign;
+            this.signdata = signData;
             this.signid = signData.id;
             this.isOpenSign = true;
             this.updatecontent();

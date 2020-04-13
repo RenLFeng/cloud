@@ -701,13 +701,23 @@ export default {
         }
         if (btip) {
           MessageBox.confirm("退出作业提交？").then(() => {
-            this.$back();
+            this.doback();
           });
           return;
         }
       }
-      this.$back();
+      this.doback();
     },
+      doback(){
+        if (this.zuoyeitem && this.zuoyeitem.ownerid){
+            let tourl = "/bankehome/" + this.zuoyeitem.ownerid
+             {
+                this.$router.replace(tourl);
+                return;
+            }
+        }
+        this.$router.replace('/');
+      },
     showitem(ritem) {
       if (!ritem.submitnum) {
         return false;

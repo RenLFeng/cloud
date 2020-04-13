@@ -184,7 +184,7 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += require("../assets/account_default.png");
+      srcstr += ("/assets/account_default.png");
       srcstr += '"';
       return srcstr;
     },

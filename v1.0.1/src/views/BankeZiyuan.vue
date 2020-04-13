@@ -713,7 +713,7 @@ export default {
                 item.isAct = false;
               }
               if (item.ftype == "link") {
-                item.imgsrc = require("../assets/file_icon/IT.svg");
+                item.imgsrc = ("/assets/file_icon/IT.svg");
               } else if (item.ftype == "file") {
                 if (item.finttype == "1") {
                   if (item.info && item.info.metainfo && item.info.metainfo.snapsuffix) {
@@ -726,7 +726,7 @@ export default {
                   item.imgsrc = getZYFileTypeIcon(item.info.filepath); //commontools.fileType(item.info);
                 }
               } else if (item.ftype == "folder") {
-                item.imgsrc = require("../assets/file_icon/folder.svg");
+                item.imgsrc = ("/assets/file_icon/folder.svg");
               }
             }
             // console.log("方式发多少", res.data.data.files);
@@ -912,7 +912,7 @@ export default {
             this.parseOneItem(res.data.data);
             let item = res.data.data;
             if (item.ftype == "link") {
-              item.imgsrc = require("../assets/file_icon/IT.svg");
+              item.imgsrc = ("/assets/file_icon/IT.svg");
             } else if (item.ftype == "file") {
               if (item.finttype == "1") {
                 if (item.info && item.info.metainfo && item.info.metainfo.snapsuffix) {

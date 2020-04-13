@@ -105,7 +105,7 @@
           <img
             v-if="!itemzuoyenormal"
             slot="icon"
-            src="../assets/zuoye_add.png"
+            src="/assets/zuoye_add.png"
             class="tabitemmid"
             @click="onclickzuoye"
           />
@@ -274,7 +274,9 @@ export default {
       return true;
     },
     footerbar() {
-      return this.$store.state.footerBarState;
+        //！ cjyL 目前这个footerbar存在不稳定性问题，所以总是返回true； 例如：查看成员得分页面，然后点击浏览器的back键
+        return true;
+      //return this.$store.state.footerBarState;
     },
     Preview() {
       return this.$store.state.Preview.isPreview;

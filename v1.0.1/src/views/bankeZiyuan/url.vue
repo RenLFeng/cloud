@@ -74,7 +74,7 @@ export default {
             MessageBox.alert("添加成功").then(() => {
               let arr = [];
               arr[0] = res.data.data;
-              res.data.data.imgsrc = require("../../assets/file_icon/IT.svg");
+              res.data.data.imgsrc = ("/assets/file_icon/IT.svg");
               this.$store.commit("SET_BANKEZHIYUANLINKITEM", {item:arr,type:1});
               this.$emit("addLinkState", true);
               this.$store.commit("SET_FOOTER_BAR_STATE", true);

@@ -70,6 +70,9 @@
             ref="drawcanvas"
             :style="drawcstyle"
             id="mycanvas"
+            @mousedown="mouseststart($event)"
+            @mousemove="mousestmove($event)"
+            @mouseup="mousestup($event)"
             @touchstart="canvaststart($event)"
             @touchend="canvastend($event)"
             @touchmove="canvastmove($event)"
@@ -87,10 +90,11 @@
             <p class="fl" @click="controlCanvas('')">
               <i class="iconfont iconhuabi eicotrigger" style="color:#0089FF"></i>
             </p>
-            <!--
+
           <p class="fl" @click="controlCanvas('clear')">
             <i class="iconfont iconxiangpi eicotrigger" style="color:#fff"></i>
           </p>
+            <!--
           <p class="fl" @click="controlCanvas('prev')">
             <i class="iconfont iconwithdraw eicotrigger" style="color:#fff"></i>
           </p>
@@ -193,6 +197,7 @@ export default {
         ctx: null,
         img: null,
         lasttouches: [],
+          lastmouse:{},
         touchmode: "", //! multi single draw
         usegesture: null
       },
@@ -200,6 +205,8 @@ export default {
       popupDraw: false,
       isSubmit: false,
       imgData: "",
+
+        defaultimgurl:'',  //! 默认图片
 
       uploadData: {}
     };
@@ -330,6 +337,32 @@ export default {
       // 空绘图表面进栈
       //  this.middleAry.push(preData);
     },
+      mousestmove(e){
+          if (this.drawdata.touchmode == "draw") {
+              e.preventDefault();
+              let pos = {};
+              pos.x = e.pageX;
+              pos.y = e.pageY;
+              pos = this.clienttocanvas(pos);
+              let ctx = this.drawdata.ctx;
+              ctx.lineTo(pos.x, pos.y);
+              ctx.stroke();
+          } else if (this.drawdata.touchmode == "begindraw") {
+              this.drawdata.touchmode = "draw";
+              {
+                  this.cdrawsetstyle();
+                  let ctx = this.drawdata.ctx;
+                  ctx.beginPath();
+                  let pos = {
+                      x: e.pageX,
+                      y: e.pageY,
+                  };
+                  pos = this.clienttocanvas(pos);
+                  ctx.moveTo(pos.x, pos.y);
+                  e.preventDefault();
+              }
+          }
+      },
     canvastmove(e) {
       if (e.touches.length != 1) {
         return;
@@ -383,6 +416,12 @@ export default {
         this.context.beginPath();
       }
     },
+      mousestup(e){
+          if (this.drawdata.touchmode == "draw") {
+              e.preventDefault();
+              this.drawdata.touchmode = "";
+          }
+      },
     canvastend(e) {
       if (this.drawdata.touchmode == "draw") {
         e.preventDefault();
@@ -663,8 +702,15 @@ export default {
       }
       return pos;
     },
+      mouseststart(e){
+        console.log('mousestart');
+        console.log(e);
+        e.preventDefault();
+        this.drawdata.lastmouse = e;
+        this.drawdata.touchmode = 'begindraw';
+      },
     canvaststart(e) {
-      //  console.log('canvaststart:');
+        console.log('canvaststart:');
       //  console.log(e);
       let ox = e.target.offsetLeft;
       let oy = e.target.offsetTop;
@@ -735,15 +781,16 @@ export default {
           }
           break;
         case "clear":
-          this.context.clearRect(
-            0,
-            0,
-            this.context.canvas.width,
-            this.context.canvas.height
-          );
-          this.preDrawAry = [];
-          this.nextDrawAry = [];
-          this.middleAry = [this.middleAry[0]];
+          // this.context.clearRect(
+            //   0,
+            //   0,
+            //   this.context.canvas.width,
+            //   this.context.canvas.height
+            // );
+            // this.preDrawAry = [];
+            // this.nextDrawAry = [];
+            // this.middleAry = [this.middleAry[0]];
+            this.cdrawsetimg(this.defaultimgurl);
           break;
       }
     },
@@ -945,6 +992,7 @@ export default {
       if (this.pingceData.editimgurl) {
         url = this.pingceData.editimgurl;
       }
+      this.defaultimgurl = url;
       this.cdrawsetimg(url);
       this.popupDraw = true;
     },

@@ -20,7 +20,7 @@
       </div>
       <div class="big-wrap">
         <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10'">
-          <ul v-if="memberData.length">
+          <ul>
             <li
               v-for="(v,i) in tabBar"
               :key="i"
@@ -34,12 +34,14 @@
             <span class="move-bar" :style="`left:${moveBar}px`"></span>
           </ul>
         </div>
+
+        <!--  学生提交展示 -->
         <div class="list-main" v-if="memberData.length" :class="pingceItemfile.ptype!=10?'top':''">
           <div class="content">
             <!-- <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
             <span class="fl">{{memberData.length}} 人提交</span>
             </p>-->
-            <div v-if="filterType!='NA'">
+            <div >
               <List
                 v-for="(v,index) in memberData"
                 :key="index"
@@ -49,18 +51,6 @@
                 @click.native="onMemberClick(v)"
                 @previewimg="onPreviewimg"
               />
-            </div>
-            <div class="na-wrap" v-if="filterType=='NA'">
-              <ul v-for="(v,i) in NaMembers" :key="i" class="item">
-                <li>
-                  <img :src="v.avatar" alt />
-                  <span class="color0 font18">{{v.name}}</span>
-                </li>
-                <li style="    padding-top: 10px;">
-                  <span class="font18 colora">{{NAdes}}</span>
-                </li>
-                <li class="tr colory font18">得分 &nbsp; 0分</li>
-              </ul>
             </div>
           </div>
         </div>
@@ -188,13 +178,13 @@ export default {
       voteInfos: [],
 
       moveBar: 0,
-      filterType: "",
+      filterType: "ALL",
       xuanz: [],
       panduan,
       zhuguan,
       qiangda,
       allmembers: [],
-      NaMembers: []
+    //  NaMembers: []
     };
   },
   computed: {
@@ -255,11 +245,11 @@ export default {
       console.log(curel.offsetLeft);
       this.moveBar = curel.offsetLeft;
       this.filterType = v.label;
-      if (v.label == "NA") {
-        // this.memberData = this.NaMembers;
-        console.log("gggg", this.NaMembers);
-        return;
-      }
+      // if (v.label == "NA") {
+      //   // this.memberData = this.NaMembers;
+      //   console.log("gggg", this.NaMembers);
+      //   return;
+      // }
       for (let v of this.tabBar) {
         v.isActive = false;
       }
@@ -272,6 +262,15 @@ export default {
         return;
       }
       this.memberData = this.tempMemberData.filter(item => {
+          if (type == 'NA'){
+              if (item.hassubmit){
+                  return false;
+              }
+              return true;
+          }
+          if (!item.hassubmit){
+              return false;
+          }
         if (this.pingceItemfile.ptype == 4) {
           return item.answerdesc.file;
         } else if (this.pingceItemfile.ptype == 5) {
@@ -289,16 +288,34 @@ export default {
         this.tabBar[0].num = arr.length;
         for (let j = 1; j < this.tabBar.length; j++) {
           let v = this.tabBar[j];
+
+
+
           for (let i = 0; i < arr.length; ++i) {
-            let opts = JSON.stringify(arr[i].answerdesc.opts);
+
+              if (v.label == 'NA'){
+                  if (!arr[i].hassubmit){
+                      v.num++;
+                  }
+                  continue;
+              }
+              if (!arr[i].hassubmit){
+                  continue;
+              }
+
             if (this.pingceItemfile.ptype == 4) {
               v.num++;
             } else if (this.pingceItemfile.ptype == 5) {
               v.num++;
             } else {
-              if (opts.includes(v.label)) {
-                v.num++;
-              }
+                let and = arr[i].answerdesc;
+                if (and && and.opts && typeof and.opts == 'object'){
+                    let opts = JSON.stringify(and.opts);
+                    if (opts.includes(v.label)) {
+                        v.num++;
+                    }
+                }
+
             }
           }
         }
@@ -310,26 +327,52 @@ export default {
       nativecode.previewImage(this, this.pingceItemfile.files);
     },
     querySubmitDetail() {
+        //! 清空当前数据
+        this.memberData = [];
       this.$http
-        .post("api/pingce/querysubmit", {
+        .post("api/pingce/querysubmit2", {   //！ cjy： 使用新接口请求带有未提交的submit
           id: this.pingceItemfile.id,
           bankeid: this.pingceItemfile.classid
         })
         .then(res => {
           if (res.data.code == "0") {
             if (res.data.data.submit.length) {
-              this.memberData = res.data.data.submit;
-              for (let item of this.memberData) {
-                item.answerdesc = JSON.parse(item.answerdesc);
+
+              let members = res.data.data.submit;
+              for (let item of members) {
+                  //! cjy: 目前得分为0 则视为未提交
+                  if (item.score){
+                      item.hassubmit = true;
+                  }
+                  else{
+                      item.hassubmit = false;
+                  }
+                  try{
+                      item.answerdesc = JSON.parse(item.answerdesc);
+                  }catch(e){
+
+                  }
+                  if (!item.answerdesc){
+                      //! 设为空串
+                      item.answerdesc = {};
+                  }
+
+                  let hasuinfo = false;
+
                 for (let v of res.data.data.users) {
                   if (item.userid == v.id) {
                     item.avatar = v.avatar;
                     item.name = v.name;
+                    hasuinfo = true;
+                    break;
                   }
+                }
+                if (!hasuinfo){
+                    item.name = '未知用户';
                 }
               }
               if (this.pingceItemfile.ptype == "1") {
-                for (let item of this.memberData) {
+                for (let item of members) {
                   for (let key in item.answerdesc.opts) {
                     let v = item.answerdesc.opts[key];
                     switch (v) {
@@ -344,8 +387,11 @@ export default {
                 }
               }
               if (this.pingceItemfile.ptype == "6") {
-                for (let item of this.memberData) {
-                  item.isResponder = "抢答成功";
+                for (let item of members) {
+                    if (item.hassubmit){
+                        item.isResponder = "抢答成功";
+                    }
+
                 }
               }
               if (this.pingceItemfile.ptype == "10") {
@@ -353,24 +399,27 @@ export default {
                 for (let v of this.voteInfos) {
                   v.count = 0;
                 }
-                for (let item of this.memberData) {
-                  for (let v of item.answerdesc.opts) {
-                    for (let key in this.voteInfos) {
-                      if (v == key) {
-                        this.voteInfos[key].count++;
-                        item.toName = this.voteInfos[key].name;
-                      }
+                for (let item of members) {
+                    if (item.answerdesc.opts){
+                        for (let v of item.answerdesc.opts) {
+                            for (let key in this.voteInfos) {
+                                if (v == key) {
+                                    this.voteInfos[key].count++;
+                                    item.toName = this.voteInfos[key].name;
+                                }
+                            }
+                        }
                     }
-                  }
                 }
                 this.voteInfos.sort(sortFn("count", 1));
                 console.log("qqqqqq", this.voteInfos);
               }
-              this.tempMemberData = this.memberData;
+              this.tempMemberData = members;
               this.Statistics(this.tempMemberData);
               this.filterData(this.filterType);
-              this.bankememberquery(this.memberData);
-              console.log("提交详细", this.memberData);
+              //! cjy: server 的 querysubmit 优化， 返回所有应提交的名单； 因为参与学生可能会变动
+           //   this.bankememberquery(this.memberData);
+            //  console.log("提交详细", members);
             } else {
               this.memberData = [];
               this.tempMemberData = [];
@@ -385,36 +434,37 @@ export default {
           // Toast("异常");
         });
     },
-    bankememberquery(memberData) {
-      this.NaMembers = [];
-      this.$http
-        .post("/api/api/bankememberquery", {
-          bankeid: this.pingceItemfile.classid
-        })
-        .then(res => {
-          if (res.data.code == "0") {
-            this.allmembers = res.data.data.members;
-            for (let v of this.allmembers) {
-              for (let item of memberData) {
-                if (v.memberuserid == item.userid) {
-                  v.submit = true;
-                }
-              }
-            }
-            for (let v of this.allmembers) {
-              if (!v.submit) {
-                this.NaMembers.push(v);
-              }
-            }
-            this.tabBar[this.tabBar.length - 1].num = this.NaMembers.length;
-            // this.Statistics(this.tempMemberData);
-            console.log("allmembers", this.allmembers);
-            console.log("nanaan", this.NaMembers);
-            console.log("hhhhhh", this.tabBar);
-          }
-        })
-        .catch(err => {});
-    },
+      //! cjy:
+    // bankememberquery(memberData) {
+    //   this.NaMembers = [];
+    //   this.$http
+    //     .post("/api/api/bankememberquery", {
+    //       bankeid: this.pingceItemfile.classid
+    //     })
+    //     .then(res => {
+    //       if (res.data.code == "0") {
+    //         this.allmembers = res.data.data.members;
+    //         for (let v of this.allmembers) {
+    //           for (let item of memberData) {
+    //             if (v.memberuserid == item.userid) {
+    //               v.submit = true;
+    //             }
+    //           }
+    //         }
+    //         for (let v of this.allmembers) {
+    //           if (!v.submit) {
+    //             this.NaMembers.push(v);
+    //           }
+    //         }
+    //         this.tabBar[this.tabBar.length - 1].num = this.NaMembers.length;
+    //         // this.Statistics(this.tempMemberData);
+    //         console.log("allmembers", this.allmembers);
+    //         console.log("nanaan", this.NaMembers);
+    //         console.log("hhhhhh", this.tabBar);
+    //       }
+    //     })
+    //     .catch(err => {});
+    // },
     onMemberClick(v) {
       if (this.pingceItemfile.ptype == "5") {
         this.memBerItem = v;

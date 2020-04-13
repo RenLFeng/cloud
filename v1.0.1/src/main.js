@@ -17,7 +17,7 @@ Vue.prototype.$defaultImg = defaultImg;
 Vue.prototype.$back = function () {
     //! cjy: 小程序的history 不准确， 这里直接调用 go(-1);
   //  Vm.$router.go(-1);
-   // alert(window.history.length);
+    //alert(window.history.length);
     if (window.history.length > 2) {
         Vm.$router.go(-1);
     } else {

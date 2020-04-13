@@ -92,7 +92,7 @@
         <div class="add-pic">
           <div class="attachdesc border-bottom-e5">添加附件</div>
           <div class="listc">
-            <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
+            <img src="/assets/zuoye_add.png" alt @click="unloadFn" />
             <a v-for="(v,i) in commentPicSrc" :key="i">
               <img :src="v" alt />
               <i @click="dele(i)">x</i>
@@ -103,7 +103,7 @@
     </mt-popup>
     <div class="submit-msg clearIt">
       <div class="upload-content">
-        <img src="../../assets/zuoye_add.png" alt @click="unloadFn" />
+        <img src="/assets/zuoye_add.png" alt @click="unloadFn" />
         <input
           ref="uploadPic"
           type="file"
