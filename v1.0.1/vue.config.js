@@ -56,8 +56,8 @@ module.exports = {
     
     lintOnSave: false,
     devServer: {
-        //  proxy: 'http://192.168.0.2:9982'
+         proxy: 'http://192.168.0.2:9982'
         //   proxy: 'http://192.168.40.104:9982'
-        proxy: 'https://www2.exsoft.com.cn'
+        // proxy: 'https://www2.exsoft.com.cn'
     }
 }
