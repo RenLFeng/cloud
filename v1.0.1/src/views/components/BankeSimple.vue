@@ -73,6 +73,7 @@ export default {
     position: relative;
     border-top: 1px solid #f0f0f0;
     padding:13px 13px 13px 80px;
+    background: #fff;
     .reddot-Tips-wrap {
       position: absolute;
       width: 55px;

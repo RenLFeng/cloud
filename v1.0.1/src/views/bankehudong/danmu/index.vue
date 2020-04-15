@@ -10,9 +10,8 @@
         infinite-scroll-distance="100"
         infinite-scroll-immediate-check="false"
         class="list-scoll-wrap"
-        @click="isOpen=false"
       >
-        <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill">
+        <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill"  :top-distance="180">
           <div class="wrap">
             <div class="aaa" v-if="danmuDataList.length">
               <div class="item" v-for="(v,i) in danmuDataList" :key="i">
@@ -38,12 +37,23 @@
           class="iconfont iconyangshi eicotrigger position-l"
           style="color:#38ADA9"
         ></span>
-        <mt-field
+        <!-- <mt-field
           class="fl position-c"
           placeholder="请输入弹幕内容"
           :attr="{ maxlength: 24 }"
           v-model="inputVal"
-        ></mt-field>
+          @keyup.enter.capture="submitDanmu"
+        ></mt-field>-->
+        <div class="mint-field fl position-c">
+          <input
+            v-model="inputVal"
+            placeholder="请输入弹幕内容"
+            autocomplete="off"
+            class="text-input"
+            @keyup.enter="submitDanmu"
+          />
+        </div>
+
         <span class="position-r submit-btn" @click="submitDanmu">发送</span>
       </div>
       <div class="colors-wrap">
@@ -178,11 +188,9 @@ export default {
           if (res.data.code == "0") {
             if (res.data.data.length) {
               for (let v of res.data.data) {
-                  try{
-                      v.info = JSON.parse(v.info);
-                  }catch(e){
-
-                  }
+                try {
+                  v.info = JSON.parse(v.info);
+                } catch (e) {}
 
                 v.time = v.createtime.split(" ")[1];
                 v.day = this.getDayName(v.createtime);
@@ -237,7 +245,7 @@ export default {
             res.data.data.info = JSON.parse(res.data.data.info);
             res.data.data.time = res.data.data.createtime.split(" ")[1];
             res.data.data.day = this.getDayName(res.data.data.createtime);
-            this.danmuDataList = [...[res.data.data], ...this.danmuDataList];
+            this.danmuDataList = [...this.danmuDataList, ...[res.data.data]];
           } else {
             Toast("发送失败");
           }
@@ -274,14 +282,12 @@ export default {
             if (res.data.data == null) {
               //  this.isLink=true;
             } else {
-                this.LinkInfo = res.data.data.daping;
-                console.log(this.LinkInfo);
-                let curbanke = this.$store.state.curbanke;
-                if(curbanke.id == this.LinkInfo.bankeid){
-                    this.isLink = true;
-                }
-
-
+              this.LinkInfo = res.data.data.daping;
+              console.log(this.LinkInfo);
+              let curbanke = this.$store.state.curbanke;
+              if (curbanke.id == this.LinkInfo.bankeid) {
+                this.isLink = true;
+              }
             }
           }
           Indicator.close();
@@ -405,6 +411,13 @@ export default {
         width: 69%;
         min-height: 48px;
         padding-right: 9%;
+        .text-input {
+          width: 100%;
+          background: rgba(249, 249, 249, 1);
+          border: 1px solid rgba(240, 240, 240, 1);
+          opacity: 1;
+          border-radius: 8px;
+        }
       }
     }
     .colors-wrap {

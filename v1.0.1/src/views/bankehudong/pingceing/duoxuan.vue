@@ -1,12 +1,16 @@
 <template>
   <div class="footer-item footer-item-d">
-    <ul class="clearfix">
+    <ul class="clearfix" :class="indexNumber.length<4?'flex':''">
       <li class="fl" v-for="(item,index) in indexNumber" :key="index" @click="select(item)">
         <span :class="item.isTrue?'act':''">{{item.v}}</span>
       </li>
     </ul>
     <p class="submit-btn">
-      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">{{isSubmitEnd?'已提交':'提交'}}</mt-button>
+      <mt-button
+        type="default"
+        :class="isSubmit?'act':''"
+        @click="sumint"
+      >{{isSubmitEnd?'已提交':'提交'}}</mt-button>
     </p>
   </div>
 </template>
@@ -113,6 +117,10 @@ export default {
 .footer-item {
   ul {
     margin-bottom: 20px;
+    &.flex {
+      display: flex;
+      justify-content: center;
+    }
     li {
       width: 25%;
       margin-bottom: 10px;

@@ -17,42 +17,43 @@
         <i class="iconfont iconcellyoucejiantou position-r"></i>
       </div>
       <div v-else class="no-Login">
-        <img src :onerror="$defaultImg('account')" class="avatarimgpart avatar position-l"/>
+        <img src :onerror="$defaultImg('account')" class="avatarimgpart avatar position-l" />
         <div class="fontsmall namepart ellipse position-c" @click.stop="goLogin">未登陆，点击登陆</div>
       </div>
     </div>
+    <div class="min-wrap">
+      <div class="devide"></div>
+      <mt-cell title="我的收藏" is-link @click.native="seeCollection"></mt-cell>
+      <mt-cell title="已结束班课" is-link @click.native="queryfinished"></mt-cell>
 
-    <div class="devide"></div>
-    <mt-cell title="我的收藏" is-link @click.native="seeCollection"></mt-cell>
-    <mt-cell title="已结束班课" is-link @click.native="queryfinished"></mt-cell>
+      <mt-cell title="清除所有消息提示" is-link @click.native="clearEvnet"></mt-cell>
 
-    <mt-cell title="清除所有消息提示" is-link @click.native="clearEvnet"></mt-cell>
-
-    <div class="devide"></div>
-    <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell v-if="haslogout" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
-    <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
-    <!--  cjy: 绑定账户功能暂时隐藏
+      <div class="devide"></div>
+      <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell v-if="haslogout" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
+      <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
+      <!--  cjy: 绑定账户功能暂时隐藏
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
-    -->
-    <!-- <div class="devide"></div>
-    <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
-    <div class="devide"></div>
-    <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
-    <div class="devide"></div>
-    <mt-cell v-if="weiximiniprogram" title="扫一扫" is-link @click.native="scanCode"></mt-cell>
-     <div class="devide"></div>
-    <mt-cell v-if="weiximiniprogram" title="消息订阅" is-link @click.native="onMessage"></mt-cell>
-    <!-- 国际化 -->
-    <!-- <mt-cell
+      -->
+      <!-- <div class="devide"></div>
+      <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
+      <div class="devide"></div>
+      <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell v-if="weiximiniprogram" title="扫一扫" is-link @click.native="scanCode"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell v-if="weiximiniprogram" title="消息订阅" is-link @click.native="onMessage"></mt-cell>
+      <!-- 国际化 -->
+      <!-- <mt-cell
       v-for="(item,index) in $t('langs')"
       :key="index"
       :title="item.name"
       @click.native="selectLang(item)"
-    ></mt-cell>-->
+      ></mt-cell>-->
+    </div>
 
     <mt-popup v-model="popupBind" position="right" class="mint-popup-3" :modal="false">
       <mt-header title="绑定账户">
@@ -184,7 +185,7 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/account_default.png");
+      srcstr += "/assets/account_default.png";
       srcstr += '"';
       return srcstr;
     },
@@ -355,7 +356,7 @@ export default {
     scanCode() {
       nativecode.navigateToScan();
     },
-    onMessage(){
+    onMessage() {
       nativecode.navigateToMsg();
     },
     //清除提示
@@ -510,6 +511,11 @@ export default {
 }
 .mint-cell-title {
   color: #1c1c1c;
+}
+.min-wrap {
+  height: 70vh;
+  overflow: auto;
+  background: #f0f0f0;
 }
 </style>
 

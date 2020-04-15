@@ -19,7 +19,13 @@
       </mt-loadmore>
       <div class="pingce-ing" v-if="isPingce">
         <div class="subject" v-if="pingceData.ptype!='10'">
-          <img :src="pingceimg" alt :onerror="defaultimg" @click="viewimg" class="object-fit-img" />
+          <img
+            :src="pingceimg"
+            alt
+            :onerror="defaultimg"
+            @click="viewimg"
+            class="position-c object-fit-img"
+          />
         </div>
         <div class="footer">
           <p class="tit border-b" v-if="pingceData.ptype!='10'">请点击选项作答</p>
@@ -141,10 +147,9 @@ export default {
     }
 
     //! cjy: 通知已进入评测页面
-    nativecode.ncall('jsEnterPingce',
-        {
-            bankeid:this.bankeid
-        });
+    nativecode.ncall("jsEnterPingce", {
+      bankeid: this.bankeid
+    });
 
     if (doquery) {
       this.querycur();
@@ -155,29 +160,26 @@ export default {
     $route(to, from) {
       // 对路由变化作出响应...
       console.log("pingceing , route changed");
-    }
-    ,webcmd(lnew, lold){
-        if (lnew.cmd == 'offline'){
-            //! 离线
-            if (this.isArgLoad){
-                this.Backs();
-            }
+    },
+    webcmd(lnew, lold) {
+      if (lnew.cmd == "offline") {
+        //! 离线
+        if (this.isArgLoad) {
+          this.Backs();
         }
-        else if (lnew.cmd == 'pingcestop'){
-            console.log(lnew)
-            if (lnew.bankeid == this.bankeid){
-                //! 评测被结束； tudo ： 自动提交？
-                this.Backs();
-            }
-
+      } else if (lnew.cmd == "pingcestop") {
+        console.log(lnew);
+        if (lnew.bankeid == this.bankeid) {
+          //! 评测被结束； tudo ： 自动提交？
+          this.Backs();
         }
-
       }
+    }
   },
   computed: {
-      webcmd(){
-          return this.$store.state.webcmd;
-      },
+    webcmd() {
+      return this.$store.state.webcmd;
+    },
     pagetitle() {
       return this.isPingce ? pingceType(this.pingceData.ptype) : "评测";
     },
@@ -192,7 +194,7 @@ export default {
     },
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/100x100.png");
+      srcstr += "/assets/100x100.png";
       srcstr += '"';
       return srcstr;
     }
@@ -280,24 +282,23 @@ export default {
             // };
             // this.onpingcedata(rdata);
 
-
-              //！ cjy: 测试主观题
-              // let rdata = {
-              //     "answerdesc" : "",
-              //     "classid" : 1000,
-              //     "createtime" : "2020-01-16 09:23:51",
-              //     "files" : "\/downloads\/pingce\/20200116\/d60d9358227fb231d278e15a22457c89.jpeg",
-              //     "id" : 1143,
-              //     "info" : null,
-              //     "joinnum" : 0,
-              //     "optdesc" : "{\n  \"opts\" : [\n\n  ]\n}",
-              //     "ptype" : 4,
-              //     "score" : 10,
-              //     "timelimit" : 0,
-              //     "totalnum" : 5,
-              //     "userid" : 1001
-              // };
-              // this.onpingcedata(rdata);
+            //！ cjy: 测试主观题
+            // let rdata = {
+            //     "answerdesc" : "",
+            //     "classid" : 1000,
+            //     "createtime" : "2020-01-16 09:23:51",
+            //     "files" :  "/downloads/pingce/20200107/477a000a99fb4c4104540194521eb575.jpg",
+            //     "id" : 1143,
+            //     "info" : null,
+            //     "joinnum" : 0,
+            //     "optdesc" : "{\n  \"opts\" : []\n}",
+            //     "ptype" : 3,
+            //     "score" : 10,
+            //     "timelimit" : 0,
+            //     "totalnum" : 5,
+            //     "userid" : 1001
+            // };
+            // this.onpingcedata(rdata);
 
             Toast("当前没有评测");
           }
@@ -344,7 +345,7 @@ export default {
             this.submited = true;
           } else {
             this.tempAnswer = [];
-            Toast("提交失败:"+res.data.msg);
+            Toast("提交失败:" + res.data.msg);
           }
         })
         .catch(err => {
@@ -375,14 +376,21 @@ export default {
     }
     .pingce-ing {
       .subject {
-        background: #f0f0f0;
+        position: relative;
+        width: 100%;
+        height: 35vh;
         padding: 60px 0;
+        &::before {
+        }
         img {
-          width: 100%;
-          height: 200px;
+          display: block;
+          width: 80%;
+          max-width: 100%;
+          height: 100%;
         }
       }
       .footer {
+        // height: 65vh;
         position: relative;
         .tit {
           padding: 10px;

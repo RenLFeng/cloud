@@ -44,7 +44,7 @@ const mutations = {
         //console.log(state.curbankes);
     },
 
-    setBankes(state, bankes){
+    setBankes(state, bankes) {
         state.curbankes = bankes;
     },
 

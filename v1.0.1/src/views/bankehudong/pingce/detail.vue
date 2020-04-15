@@ -20,7 +20,7 @@
       </div>
       <div class="big-wrap">
         <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10'">
-          <ul>
+          <ul ref="mainwrap" :style="`left:-${Slide}px`">
             <li
               v-for="(v,i) in tabBar"
               :key="i"
@@ -41,7 +41,7 @@
             <!-- <p class="clearfix tit" v-if="pingceItemfile.ptype!='10'">
             <span class="fl">{{memberData.length}} 人提交</span>
             </p>-->
-            <div >
+            <div>
               <List
                 v-for="(v,index) in memberData"
                 :key="index"
@@ -159,6 +159,7 @@ export default {
   },
   watch: {
     data: function(newValue, oldValue) {
+      this.moveBar=0;
       this.pingceItemfile = newValue;
       console.log("fsfs", this.pingceItemfile);
       this.querySubmitDetail();
@@ -166,6 +167,7 @@ export default {
   },
   data() {
     return {
+      Slide: 0,
       pingceItemfile: {},
       memberData: [],
       tempMemberData: [],
@@ -183,8 +185,8 @@ export default {
       panduan,
       zhuguan,
       qiangda,
-      allmembers: [],
-    //  NaMembers: []
+      allmembers: []
+      //  NaMembers: []
     };
   },
   computed: {
@@ -198,6 +200,7 @@ export default {
           return this.panduan;
         case 2:
           this.opts();
+
           return this.xuanz;
         case 3:
           this.opts();
@@ -242,7 +245,6 @@ export default {
     },
     selectClick(e, v, i) {
       let curel = this.$refs.tbLi[i];
-      console.log(curel.offsetLeft);
       this.moveBar = curel.offsetLeft;
       this.filterType = v.label;
       // if (v.label == "NA") {
@@ -262,15 +264,15 @@ export default {
         return;
       }
       this.memberData = this.tempMemberData.filter(item => {
-          if (type == 'NA'){
-              if (item.hassubmit){
-                  return false;
-              }
-              return true;
+        if (type == "NA") {
+          if (item.hassubmit) {
+            return false;
           }
-          if (!item.hassubmit){
-              return false;
-          }
+          return true;
+        }
+        if (!item.hassubmit) {
+          return false;
+        }
         if (this.pingceItemfile.ptype == 4) {
           return item.answerdesc.file;
         } else if (this.pingceItemfile.ptype == 5) {
@@ -289,33 +291,29 @@ export default {
         for (let j = 1; j < this.tabBar.length; j++) {
           let v = this.tabBar[j];
 
-
-
           for (let i = 0; i < arr.length; ++i) {
-
-              if (v.label == 'NA'){
-                  if (!arr[i].hassubmit){
-                      v.num++;
-                  }
-                  continue;
+            if (v.label == "NA") {
+              if (!arr[i].hassubmit) {
+                v.num++;
               }
-              if (!arr[i].hassubmit){
-                  continue;
-              }
+              continue;
+            }
+            if (!arr[i].hassubmit) {
+              continue;
+            }
 
             if (this.pingceItemfile.ptype == 4) {
               v.num++;
             } else if (this.pingceItemfile.ptype == 5) {
               v.num++;
             } else {
-                let and = arr[i].answerdesc;
-                if (and && and.opts && typeof and.opts == 'object'){
-                    let opts = JSON.stringify(and.opts);
-                    if (opts.includes(v.label)) {
-                        v.num++;
-                    }
+              let and = arr[i].answerdesc;
+              if (and && and.opts && typeof and.opts == "object") {
+                let opts = JSON.stringify(and.opts);
+                if (opts.includes(v.label)) {
+                  v.num++;
                 }
-
+              }
             }
           }
         }
@@ -327,37 +325,34 @@ export default {
       nativecode.previewImage(this, this.pingceItemfile.files);
     },
     querySubmitDetail() {
-        //! 清空当前数据
-        this.memberData = [];
+      //! 清空当前数据
+      this.memberData = [];
       this.$http
-        .post("api/pingce/querysubmit2", {   //！ cjy： 使用新接口请求带有未提交的submit
+        .post("api/pingce/querysubmit2", {
+          //！ cjy： 使用新接口请求带有未提交的submit
           id: this.pingceItemfile.id,
           bankeid: this.pingceItemfile.classid
         })
         .then(res => {
           if (res.data.code == "0") {
             if (res.data.data.submit.length) {
-
               let members = res.data.data.submit;
               for (let item of members) {
-                  //! cjy: 目前得分为0 则视为未提交
-                  if (item.score){
-                      item.hassubmit = true;
-                  }
-                  else{
-                      item.hassubmit = false;
-                  }
-                  try{
-                      item.answerdesc = JSON.parse(item.answerdesc);
-                  }catch(e){
+                //! cjy: 目前得分为0 则视为未提交
+                if (item.score) {
+                  item.hassubmit = true;
+                } else {
+                  item.hassubmit = false;
+                }
+                try {
+                  item.answerdesc = JSON.parse(item.answerdesc);
+                } catch (e) {}
+                if (!item.answerdesc) {
+                  //! 设为空串
+                  item.answerdesc = {};
+                }
 
-                  }
-                  if (!item.answerdesc){
-                      //! 设为空串
-                      item.answerdesc = {};
-                  }
-
-                  let hasuinfo = false;
+                let hasuinfo = false;
 
                 for (let v of res.data.data.users) {
                   if (item.userid == v.id) {
@@ -367,8 +362,8 @@ export default {
                     break;
                   }
                 }
-                if (!hasuinfo){
-                    item.name = '未知用户';
+                if (!hasuinfo) {
+                  item.name = "未知用户";
                 }
               }
               if (this.pingceItemfile.ptype == "1") {
@@ -388,10 +383,9 @@ export default {
               }
               if (this.pingceItemfile.ptype == "6") {
                 for (let item of members) {
-                    if (item.hassubmit){
-                        item.isResponder = "抢答成功";
-                    }
-
+                  if (item.hassubmit) {
+                    item.isResponder = "抢答成功";
+                  }
                 }
               }
               if (this.pingceItemfile.ptype == "10") {
@@ -400,16 +394,16 @@ export default {
                   v.count = 0;
                 }
                 for (let item of members) {
-                    if (item.answerdesc.opts){
-                        for (let v of item.answerdesc.opts) {
-                            for (let key in this.voteInfos) {
-                                if (v == key) {
-                                    this.voteInfos[key].count++;
-                                    item.toName = this.voteInfos[key].name;
-                                }
-                            }
+                  if (item.answerdesc.opts) {
+                    for (let v of item.answerdesc.opts) {
+                      for (let key in this.voteInfos) {
+                        if (v == key) {
+                          this.voteInfos[key].count++;
+                          item.toName = this.voteInfos[key].name;
                         }
+                      }
                     }
+                  }
                 }
                 this.voteInfos.sort(sortFn("count", 1));
                 console.log("qqqqqq", this.voteInfos);
@@ -418,8 +412,8 @@ export default {
               this.Statistics(this.tempMemberData);
               this.filterData(this.filterType);
               //! cjy: server 的 querysubmit 优化， 返回所有应提交的名单； 因为参与学生可能会变动
-           //   this.bankememberquery(this.memberData);
-            //  console.log("提交详细", members);
+              //   this.bankememberquery(this.memberData);
+              //  console.log("提交详细", members);
             } else {
               this.memberData = [];
               this.tempMemberData = [];
@@ -434,7 +428,7 @@ export default {
           // Toast("异常");
         });
     },
-      //! cjy:
+    //! cjy:
     // bankememberquery(memberData) {
     //   this.NaMembers = [];
     //   this.$http
@@ -542,17 +536,20 @@ export default {
       z-index: 99;
       top: 0;
       left: 0;
-      overflow: hidden;
+      overflow-x: scroll;
       background: #fff;
       border-bottom: 1px solid #f0f0f0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       > ul {
         position: absolute;
         left: 0;
         top: 0;
         display: flex;
+        transition: all 0.3s;
         li {
           display: flex;
-          width: 60px;
+          width: 58px;
           height: 54px;
           flex-direction: column;
           align-items: center;
@@ -577,7 +574,11 @@ export default {
           width: 52px;
           height: 3px;
           background: #0089ff;
+          transition: all 0.3s;
         }
+      }
+      &::-webkit-scrollbar {
+        display: none;
       }
     }
     .na-wrap {

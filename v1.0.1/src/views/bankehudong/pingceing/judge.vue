@@ -94,9 +94,6 @@ export default {
         this.$emit("submitFn", this.Answer);
         this.Answer = [];
         this.isSubmit = false;
-        for (let v of this.indexNumber) {
-          v.isTrue = false;
-        }
       } else if (this.type == "5") {
         this.$emit("submitFn", this.textareaAnswer);
          this.isSubmit = false;

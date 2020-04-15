@@ -17,7 +17,7 @@
       <mt-button slot="right" v-else-if="showstopbtn" @click="showmzuoyemenu=true">操作</mt-button>
     </mt-header>
 
-    <div class="noheaderscroll main">
+    <div class="noheaderscroll main main-f" id="main">
       <mt-loadmore
         :top-method="loadTop"
         @top-status-change="handleTopChange"
@@ -257,9 +257,10 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import Discuss from "./components/discuss";
 import ZuoyeAnswerItem from "./components/ZuoyeAnswerItem";
-import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet ,Loadmore} from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
@@ -274,6 +275,7 @@ import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
 import Answer from "./banKeZuoye/answer";
 import { parseURL, CollectionFn, formateTime } from "@/util";
+Vue.component(Loadmore.name, Loadmore);
 export default {
   name: "ZuoyeResult",
   props: {
@@ -970,9 +972,8 @@ export default {
     //   //console.log(dd.resultdata);
     //   this.onHttpData(dd.resultdata);
     // } else
-    {
-      this.loadAll();
-    }
+     this.loadAll();
+    //  this.loadTop();
     this.queryuserfav();
   },
   components: {
@@ -988,8 +989,10 @@ export default {
 <style lang="less">
 .zouye-results-wrap {
   background: #fff;
-  top: 55px;
   .main {
+    height: 94vh;
+    min-height: 94vh;
+    padding-bottom: 0;
     .showemptydesc-submit {
       .zdetail {
         height: 20vh;

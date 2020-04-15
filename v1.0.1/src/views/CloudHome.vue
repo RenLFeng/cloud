@@ -1,5 +1,8 @@
 <template>
-  <div class="fontsmall cloudHome" :style="`top:${selected=='banke'?'70':'0'}px`">
+  <div
+    class="fontsmall cloudHome"
+    :class="selected=='banke'?'banke':''"
+  >
     <!-- <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
       <mt-button
         v-if="hasmainback"
@@ -38,11 +41,32 @@
     <!-- main -->
     <div
       :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'"
-      :style="`margin-top:${selected=='banke'?'20':'0'}px`"
+      :style="`margin-top:${selected=='banke'?'84':'0'}px`"
     >
-      <mt-tab-container class="page-tabbar-container" v-model="selected">
-        <mt-tab-container-item id="banke">
-          <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
+      <mt-tab-container
+        class="page-tabbar-container"
+        :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
+        v-model="selected"
+      >
+        <div
+          class="banke-wrap"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-disabled="loading"
+          infinite-scroll-distance="100"
+          infinite-scroll-immediate-check="false"
+
+        >
+          <mt-tab-container-item id="banke">
+            <mt-loadmore
+              :top-method="loadTop"
+              @top-status-change="handleTopChange"
+              ref="loadmore"
+              class
+              :auto-fill="autofill"
+              :top-distance="180"
+              :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
+            >
+              <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
             <div class="div_sech" @click="onFocus">
               <div class="box">
                 <span class="color9">搜索</span>
@@ -50,29 +74,47 @@
               </div>
             </div>
             <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
-          </div>-->
-          <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
-          <p class="v"></p>
-          <div class="bankecontainer">
-            <BankeSimple
-              v-for="(item,selindex) in curbankes"
-              :key="selindex"
-              :classitem="curbankes[selindex]"
-              @click.native="bankeclick(item)"
-              @showMenu="onShowMenu"
-              :homeEventmsgs="homeEventmsgs"
-            ></BankeSimple>
-            <div v-if="!bankeempty&&bankestatedesc=='当前无班课'" class="tc no-class empty">
-              <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
-              <p v-if="isteacher">暂无班课，点击创建或加入班课</p>
-              <p v-else>暂无班课，点击加入班课</p>
-            </div>
-            <div v-if="!bankeempty &&bankestatedesc!='当前无班课' " class="tc">{{bankestatedesc}}</div>
-          </div>
-        </mt-tab-container-item>
-        <mt-tab-container-item id="exam">
+              </div>-->
+              <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
+              <p class="v"></p>
+              <div
+                class="bankecontainer"
+                :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
+              >
+                <BankeSimple
+                  v-for="(item,selindex) in curbankes"
+                  :key="selindex"
+                  :classitem="curbankes[selindex]"
+                  @click.native="bankeclick(item)"
+                  @showMenu="onShowMenu"
+                  :homeEventmsgs="homeEventmsgs"
+                ></BankeSimple>
+                <BottomLoadmore
+                  v-if="loading && page && !listLoadend"
+                  loadtext="加载中..."
+                  type="triple-bounce"
+                  color
+                />
+              </div>
+              <div
+                v-if="!bankeempty&&bankestatedesc=='当前无班课'"
+                class="tc no-class empty bankeempty-icon"
+              >
+                <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
+                <p v-if="isteacher">暂无班课，点击创建或加入班课</p>
+                <p v-else>暂无班课，点击加入班课</p>
+              </div>
+              <div
+                v-if="!bankeempty &&bankestatedesc!='当前无班课' "
+                class="tc bankeempty-icon"
+              >{{bankestatedesc}}</div>
+            </mt-loadmore>
+          </mt-tab-container-item>
+        </div>
+
+        <!-- <mt-tab-container-item id="exam">
           <examhome></examhome>
-        </mt-tab-container-item>
+        </mt-tab-container-item> -->
         <mt-tab-container-item id="mine">
           <MineAbout @changeSelected="onChangeSelected" @clearevnt="onClearevnt"></MineAbout>
         </mt-tab-container-item>
@@ -150,7 +192,15 @@ import MineAbout from "./MineAbout";
 
 import nativecode from "../nativecode";
 import Empty from "@/common/empty";
-import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
+import BottomLoadmore from "@/common/bottom-loadmore";
+import {
+  Indicator,
+  Toast,
+  MessageBox,
+  Actionsheet,
+  Spinner,
+  InfiniteScroll
+} from "mint-ui";
 import Search from "vant/lib/search";
 import "vant/lib/search/style";
 import { mapState } from "vuex";
@@ -200,7 +250,14 @@ export default {
       homeEventmsgs: false,
       bankeitem: {
         ordernum: 0
-      }
+      },
+      page: 0,
+      pagesize: 10,
+      topStatus: "",
+      autofill: true,
+
+      loading: false,
+      listLoadend: false
     };
   },
   computed: {
@@ -263,7 +320,7 @@ export default {
     selected() {
       // console.log(this.selected);
       if (this.selected == "banke") {
-        this.initbanke();
+        // this.initbanke();
       } else if (this.selected == "mine") {
         this.initmine();
       }
@@ -273,17 +330,31 @@ export default {
       }
     }
   },
-  created: function() {
+  created() {
     var osel = this.$store.state.homeselected;
     if (osel) {
       this.selected = osel;
     }
     if (this.selected == "banke") {
-      this.initbanke();
+      // this.initbanke();
     }
+    // this.initbanke();
+    this.loadMore();
     this.eventmsgsOnmain();
   },
   methods: {
+    loadTop() {
+      this.filterCurbankes = [];
+      this.page = 0;
+      this.loadMore();
+    },
+    handleTopChange(status) {
+      this.topStatus = status;
+    },
+    loadMore() {
+      this.loading = true;
+      this.initbanke();
+    },
     selectClass(type) {
       if (this.isCreate == type) return;
       // this.isCreate = type;
@@ -498,13 +569,26 @@ export default {
       }
       //! cjy: 防止出错， 总是重新拉取
       this.$http
-        .post(url)
+        .post(url, {
+          page: this.page,
+          pagesize: this.pagesize
+        })
         .then(res => {
+          this.$refs.loadmore.onTopLoaded();
           if (res.data.code == 0) {
             let arrId = [];
             for (let v of res.data.data) {
               arrId.push(v.id);
               // v.schoolid=1001
+            }
+            if (res.data.data.length >= this.pagesize) {
+              this.loading = false;
+              this.page++;
+            } else {
+              if (this.page) {
+                this.listLoadend = true;
+              }
+
             }
             this.eventmsgsOnbankes(res.data.data, arrId);
           }
@@ -515,6 +599,7 @@ export default {
         .catch(res => {
           console.log(res);
           this.bankestatedesc = "发生异常";
+          this.$refs.loadmore.onTopLoaded();
         });
     },
     //红点班课列表
@@ -533,16 +618,13 @@ export default {
                 }
               }
             }
-          } else {
           }
-          this.filterCurbankes = datas;
-          this.filterCurbankeFn(datas, this.isCreate, 1);
-          // this.$store.commit("banke/setBankes", datas);
+          this.filterCurbankes = [...this.filterCurbankes, ...datas];
+          this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 1);
         })
         .catch(err => {
-          this.filterCurbankes = datas;
-          this.filterCurbankeFn(datas, this.isCreate, 1);
-          // this.$store.commit("banke/setBankes", datas);
+          this.filterCurbankes = [...this.filterCurbankes, ...datas];
+          this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 1);
         });
     },
     //红点班课主页
@@ -594,14 +676,15 @@ export default {
     [Search.name]: Search,
     //  [Tab.name]: Tab,
     //   [Tabs.name]: Tabs,
-    Empty
+    Empty,
+    BottomLoadmore
   }
 };
 </script>
 
 <style scoped>
 .mint-tab-container-item {
-  background: #fff;
+  /* background: #fff; */
 }
 .v {
   background: #fff;
@@ -613,11 +696,6 @@ export default {
 .btnadd {
   font-size: 30px;
 }
-
-.bankecontainer {
-  height: 100%;
-}
-
 .bankedevide {
   height: 10px;
 }
@@ -657,6 +735,8 @@ export default {
   font-size: 25px;
   color: #d9d9d9;
   padding-right: 5px;
+}
+.bankeempty-icon {
 }
 .no-class {
   color: #999;
@@ -699,12 +779,26 @@ export default {
   bottom: -5px;
   transform: translate(-50%, 0);
 }
-.page-wrap {
-  overflow: auto;
-  padding-bottom: 157px;
+.cloudHome{
+  overflow: hidden;
 }
-.cloudHome {
-  /* top: 70px; */
+.cloudHome.banke {
+  /* height: 75vh;
+  min-height: 78vh; */
+}
+.cloudHome.banke .page-wrap {
+  height: 100%;
+  /* min-height: 75vh; */
+}
+.page-wrap {
+  /* overflow: auto; */
+}
+.cloudHome.banke .page-wrap .bankecontainer {
+  min-height: 73vh;
+  padding-bottom: 10px;
+}
+.cloudHome.banke .page-wrap .bankecontainer.bankeempty {
+  min-height: 78vh;
 }
 </style>
 
@@ -760,5 +854,25 @@ export default {
   > i {
     font-size: 30px;
   }
+}
+</style>
+<style>
+.mint-loadmore.bankeempty {
+  height: 100%;
+}
+.mint-loadmore.bankeempty .mint-loadmore-content {
+  position: relative;
+  height: 100%;
+}
+.page-tabbar-container.bankeempty {
+  height: 100%;
+}
+.mint-tabbar.is-fixed {
+  /* position: absolute!important; */
+}
+.banke-wrap{
+     width: 100%;
+    height: 75vh;
+    overflow: auto;
 }
 </style>

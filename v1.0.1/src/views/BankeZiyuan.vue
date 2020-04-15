@@ -13,12 +13,12 @@
         <mt-button slot="right" class="iconfont iconjia icons" @click="selects"></mt-button>
         <mt-button slot="right" class="iconfont iconjia icons" @click="onSort"></mt-button>
         <mt-button slot="right" class="iconfont iconjia icons" @click="onaddFile"></mt-button>
-      </div> -->
+      </div>-->
     </mt-header>
     <!-- <p class="Prev-btn" v-if="Previd" @click="onprev">
       <i class="iconfont iconwithdraw-fill colord position-l"></i>
       <span style="color:#a5a5a5">返回上一层...</span>
-    </p> -->
+    </p>-->
 
     <div v-if="showupload" class="uploadpart">
       <mt-tabbar v-model="selected" class="uploadtabbar">
@@ -39,54 +39,69 @@
     </div>
     <div class="items-container">
       <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
-      <mt-tab-container
-        v-model="selected"
-        v-infinite-scroll="loadMore"
-        infinite-scroll-disabled="loading"
-        infinite-scroll-distance="100"
-        infinite-scroll-immediate-check="false"
-      >
-        <mt-tab-container-item id="1">
-          <div class="listcontainer">
-            <div class="wrap">
-              <div
-                v-for="(fitem,selindex) in bankeZhiYuanLinkItem"
-                v-bind:key="selindex"
-                class="item-wrap"
-              >
+      <mt-tab-container v-model="selected">
+        <mt-tab-container-item id="1" class="listcontainer-wrap" :class="showupload?'showupload':''">
+          <div
+            class="listcontainer"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="loading"
+            infinite-scroll-distance="50"
+            infinite-scroll-immediate-check="false"
+          >
+            <mt-loadmore
+              :top-method="loadTop"
+              @top-status-change="handleTopChange"
+              ref="loadmore"
+              class="zyloadmore"
+              :class="filesempty?'filesempty':''"
+              :auto-fill="autofill"
+              :top-distance="180"
+            >
+              <div class="wrap">
                 <div
-                  v-if="fitem.ftype=='folder'"
-                  class="folder-wrap-item"
-                  @click="onFolderClick(fitem)"
+                  v-for="(fitem,selindex) in bankeZhiYuanLinkItem"
+                  v-bind:key="selindex"
+                  class="item-wrap"
                 >
-                  <img
-                    class="img object-fit-img position-l;"
-                    :src="fitem.imgsrc"
-                    :onerror="$defaultImg('')"
-                  />
-                  <div class="info-wrap position-r">
-                    <p class="name ellipse position-t">{{fitem.name}}</p>
-                    <p class="time font-xxs colora5 position-b">
-                      {{fitem.createtime}}&nbsp;更新
-                      <span class="fr">文件夹</span>
-                    </p>
+                  <div
+                    v-if="fitem.ftype=='folder'"
+                    class="folder-wrap-item"
+                    @click="onFolderClick(fitem)"
+                  >
+                    <img
+                      class="img object-fit-img position-l;"
+                      :src="fitem.imgsrc"
+                      :onerror="$defaultImg('')"
+                    />
+                    <div class="info-wrap position-r">
+                      <p class="name ellipse position-t">{{fitem.name}}</p>
+                      <p class="time font-xxs colora5 position-b">
+                        {{fitem.createtime}}&nbsp;更新
+                        <span class="fr">文件夹</span>
+                      </p>
+                    </div>
                   </div>
+                  <BankeFileSimple
+                    v-else
+                    :fileitem="bankeZhiYuanLinkItem[selindex]"
+                    :index="selindex"
+                    :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
+                    :fileInfo="fileInfo"
+                    :selection="selection"
+                    @editclick="oneditclick"
+                    @normalclick="onviewfile"
+                    @selectionClick="onSelectionClick"
+                  ></BankeFileSimple>
                 </div>
-                <BankeFileSimple
-                  v-else
-                  :fileitem="bankeZhiYuanLinkItem[selindex]"
-                  :index="selindex"
-                  :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
-                  :fileInfo="fileInfo"
-                  :selection="selection"
-                  @editclick="oneditclick"
-                  @normalclick="onviewfile"
-                  @selectionClick="onSelectionClick"
-                ></BankeFileSimple>
+                <BottomLoadmore
+                  v-if="loading && page && !loadend"
+                  loadtext="加载中..."
+                  type="triple-bounce"
+                  color
+                />
               </div>
-              <!-- <div v-if="loading &&  bankeZhiYuanLinkItem.length>10" class="tc color9 font-xs">我是有底线的...</div> -->
-            </div>
-            <div v-if="filesempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
+              <div v-if="filesempty" class="tc emptydesc position-c">{{$t(liststatedesc)}}</div>
+            </mt-loadmore>
           </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
@@ -198,6 +213,7 @@ const _URL = window.URL || window.webkitURL;
 // _URL.createObjectURL(file),
 import Vue from "vue";
 import { fixCaptureImage } from "../util";
+import BottomLoadmore from "@/common/bottom-loadmore";
 import {
   Indicator,
   Toast,
@@ -291,7 +307,9 @@ export default {
 
       selection: false,
       selectnmb: 0,
-      dlid: null
+      dlid: null,
+
+      loadend: false
     };
   },
   watch: {
@@ -433,7 +451,8 @@ export default {
     URL,
     Audio,
     AddSuperLink,
-    UpLoadFile
+    UpLoadFile,
+    BottomLoadmore
   },
   methods: {
     //选择
@@ -682,6 +701,18 @@ export default {
         }
       }
     },
+    loadTop() {
+      this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+        item: [],
+        type: 1
+      });
+      this.page = 0;
+      this.loadend = false;
+      this.loadMore();
+    },
+    handleTopChange(status) {
+      this.topStatus = status;
+    },
     loadMore() {
       this.loading = true;
       this.loadMoreFile();
@@ -694,6 +725,7 @@ export default {
           pagesize: this.pagesize
         })
         .then(res => {
+          this.$refs.loadmore.onTopLoaded();
           if (res.data.code == 0) {
             this.filetotal = res.data.data.total;
             if (res.data.data.files.length >= this.pagesize) {
@@ -713,10 +745,14 @@ export default {
                 item.isAct = false;
               }
               if (item.ftype == "link") {
-                item.imgsrc = ("/assets/file_icon/IT.svg");
+                item.imgsrc = "/assets/file_icon/IT.svg";
               } else if (item.ftype == "file") {
                 if (item.finttype == "1") {
-                  if (item.info && item.info.metainfo && item.info.metainfo.snapsuffix) {
+                  if (
+                    item.info &&
+                    item.info.metainfo &&
+                    item.info.metainfo.snapsuffix
+                  ) {
                     item.imgsrc =
                       item.info.filepath + item.info.metainfo.snapsuffix;
                   } else {
@@ -726,7 +762,7 @@ export default {
                   item.imgsrc = getZYFileTypeIcon(item.info.filepath); //commontools.fileType(item.info);
                 }
               } else if (item.ftype == "folder") {
-                item.imgsrc = ("/assets/file_icon/folder.svg");
+                item.imgsrc = "/assets/file_icon/folder.svg";
               }
             }
             // console.log("方式发多少", res.data.data.files);
@@ -740,6 +776,7 @@ export default {
           }
         })
         .catch(res => {
+          this.$refs.loadmore.onTopLoaded();
           console.log(res);
           //! cjy: 这里server 的http code 非200 页会走这里。
           //! 因此不能继续加载
@@ -912,10 +949,14 @@ export default {
             this.parseOneItem(res.data.data);
             let item = res.data.data;
             if (item.ftype == "link") {
-              item.imgsrc = ("/assets/file_icon/IT.svg");
+              item.imgsrc = "/assets/file_icon/IT.svg";
             } else if (item.ftype == "file") {
               if (item.finttype == "1") {
-                if (item.info && item.info.metainfo && item.info.metainfo.snapsuffix) {
+                if (
+                  item.info &&
+                  item.info.metainfo &&
+                  item.info.metainfo.snapsuffix
+                ) {
                   item.imgsrc =
                     item.info.filepath + item.info.metainfo.snapsuffix;
                 }
@@ -967,11 +1008,6 @@ export default {
 </script>
 
 <style scoped>
-.mint-tab-container {
-  /* height: 75vh;
-  min-height: 75vh;
-  overflow-y: auto; */
-}
 .mint-tabbar > .mint-tab-item.is-selected {
   background: none;
 }
@@ -983,11 +1019,6 @@ export default {
   background: #fff;
   position: static;
 }
-
-.emptydesc {
-  margin-top: 50px;
-}
-
 .uploadimgsize {
   width: 35px;
   height: 35px;
@@ -1002,13 +1033,30 @@ export default {
 .uploadpart {
 }
 .listcontainer {
+  position: relative;
+  height: 100%;
   border-top: 1px solid #eaeaea;
 }
-.listcontainer .wrap {
-  margin-bottom: 70px;
+.listcontainer-wrap {
+  height: calc(100vh - 180px);
+  min-height:calc(100vh - 180px);
+  position: relative;
 }
-.url-wrap .items-container {
-  margin-bottom: 17px;
+.listcontainer-wrap .listcontainer .wrap {
+  min-height: calc(100vh - 180px);
+}
+
+
+.listcontainer-wrap.showupload {
+  height:calc(100vh - 260px);
+  min-height: calc(100vh - 260px);
+  position: relative;
+}
+.listcontainer-wrap.showupload .listcontainer .wrap {
+  min-height: calc(100vh - 260px);
+}
+.listcontainer-wrap .listcontainer {
+  overflow: scroll;
 }
 </style>
 <style lang="less" scoped>
@@ -1172,5 +1220,17 @@ export default {
       }
     }
   }
+}
+</style>
+<style>
+.mint-tab-container-wrap {
+  /* height: 100%; */
+}
+.mint-loadmore.filesempty {
+  /* height: 100%; */
+}
+.mint-loadmore.filesempty .mint-loadmore-content {
+  /* position: relative;
+  height: 100%; */
 }
 </style>
