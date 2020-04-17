@@ -153,18 +153,23 @@ textarea {
 .clrok {
     color: #00c626;
 }
-.color0{
-    color:#000;
+
+.color0 {
+    color: #000;
 }
-.color1{
-    color:#1C1C1C;
+
+.color1 {
+    color: #1C1C1C;
 }
+
 .color9 {
     color: #999;
 }
+
 .colora {
     color: #AAAAAA;
 }
+
 .colora5 {
     color: #a5a5a5;
 }
@@ -203,7 +208,7 @@ textarea {
     /* position: fixed;  */
     /* top: 72px; */
     /* top: 50px; */
-     /* left: 0px;
+    /* left: 0px;
     width: 100%;
     height: 100%;  */
 }
@@ -261,9 +266,11 @@ textarea {
 .fontsmall {
     font-size: 18px;
 }
+
 .font18 {
     font-size: 18px;
 }
+
 .font16 {
     font-size: 16px;
 }
@@ -534,16 +541,19 @@ textarea {
     top: 50%;
     transform: translate(0, -50%);
 }
+
 .position-t {
     position: absolute;
     top: 10px;
     left: 0;
 }
+
 .position-b {
     position: absolute;
     bottom: 10px;
     left: 0;
 }
+
 .position-fb {
     position: fixed;
     width: 100%;
@@ -629,7 +639,8 @@ textarea {
 .iconwangyelianjie {
     color: #8ECBFF;
 }
-.navbar::after{
+
+.navbar::after {
     content: '';
     position: absolute;
     width: 100%;
@@ -640,8 +651,21 @@ textarea {
     z-index: 99;
     transform: translate(-50%, 0);
 }
-.mint-datetime{
+
+.mint-datetime {
     height: 50vh;
 }
 
+.mint-loadmore-text {
+    font-size: 14px !important;
+    color: #999 !important;
+}
 
+.scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}

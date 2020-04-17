@@ -2,12 +2,7 @@
   <div class="pingce-dtail-warp">
     <div class="main">
       <div class="pic" v-if="pingceItemfile.ptype!='10'">
-        <img
-          :src="`${pingceItemfile.files}_snap.jpg`"
-          class="object-fit-img"
-          alt
-          @click="previewimg"
-        />
+        <img :src="`${pingceItemfile.files}_snap.jpg`" class alt @click="previewimg" />
         <p class="color9">
           题目
           <span class="fr">{{pingceItemfile.createtime}}</span>
@@ -19,7 +14,7 @@
         </div>
       </div>
       <div class="big-wrap">
-        <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10'">
+        <div class="van-navbr-wrap" v-if="pingceItemfile.ptype!='10' && memberData.length">
           <ul ref="mainwrap" :style="`left:-${Slide}px`">
             <li
               v-for="(v,i) in tabBar"
@@ -159,7 +154,7 @@ export default {
   },
   watch: {
     data: function(newValue, oldValue) {
-      this.moveBar=0;
+      this.moveBar = 0;
       this.pingceItemfile = newValue;
       console.log("fsfs", this.pingceItemfile);
       this.querySubmitDetail();
@@ -496,11 +491,13 @@ export default {
     .vote-wrap {
     }
     .pic {
-      width: 75%;
+      width: 60%;
+      height: 28vh;
       margin: 0 auto;
       padding: 30px 0 10px 0;
       img {
         width: 100%;
+        height: 100%;
       }
       p {
         margin-top: 20px;
@@ -510,10 +507,10 @@ export default {
       position: relative;
       .list-main {
         position: relative;
+        width: 100%;
         height: 60vh;
         min-height: 60vh;
         background: #f0f0f0;
-
         overflow: scroll;
         .content {
           background: #fff;
@@ -524,7 +521,7 @@ export default {
           }
         }
         &.top {
-          padding-top: 60px;
+          padding-top: 26px;
         }
       }
     }

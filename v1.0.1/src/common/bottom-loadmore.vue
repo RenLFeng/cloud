@@ -1,8 +1,8 @@
 <template>
   <div class="bottom-loadmore-wrap">
     <div class="main">
-      <div class="box">
-        <mt-spinner class="load-icon" :type="type" :color="color"></mt-spinner>
+      <div class="box" :class="showType=='loading'?'loading':''">
+        <mt-spinner v-if="showType=='loading'" class="load-icon" :type="type" :color="color"></mt-spinner>
         <p class="load-text">{{loadtext}}</p>
       </div>
     </div>
@@ -13,11 +13,14 @@
 import { Spinner } from "mint-ui";
 export default {
   props: {
+    showType: {
+      default: "loading"
+    },
     loadtext: {
       default: "加载中..."
     },
     type: {
-      default: "snake"
+      default: "triple-bounce"
     },
     color: {
       default: "#ccc"
@@ -40,7 +43,7 @@ export default {
   .main {
     .box {
       position: relative;
-      height: 60px;
+      height: 40px;
       .load-icon {
         position: absolute;
         top: 10px;
@@ -49,9 +52,19 @@ export default {
       }
       .load-text {
         position: absolute;
-        bottom: 10px;
+        top: 50%;
         left: 50%;
-        transform: translate(-50%, 0);
+        transform: translate(-50%, -50%);
+        color: #999;
+        font-size: 14px;
+      }
+      &.loading {
+        height: 60px;
+        .load-text {
+          bottom: 10px;
+          left: 50%;
+          transform: translate(-50%, 0);
+        }
       }
     }
   }

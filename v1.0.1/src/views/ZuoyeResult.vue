@@ -21,9 +21,11 @@
       <mt-loadmore
         :top-method="loadTop"
         @top-status-change="handleTopChange"
+        :top-distance="120"
         ref="loadmore"
         class="zyloadmore"
         :auto-fill="autofill"
+        :distanceIndex="3"
       >
         <div class="titlecontainer">
           <div class="zuoyetitle">
@@ -86,11 +88,14 @@
           </div>-->
           <div v-if="pagemode=='result'">
             <div
-              @click="selectPF(1)"
+              @click="selectPF(1,submitnum)"
               :class="zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' "
-            >{{$t('common.Whole')}}({{submitnum}})</div>
+            >
+              {{$t('common.Whole')}}({{submitnum}})
+              <!-- {{$t('common.Whole')}}({{results.length}}) -->
+            </div>
             <div
-              @click="selectPF(0)"
+              @click="selectPF(0,uncommentnum)"
               :class="!zashowbtnactive?'zashowbtnactive zashowbtn':'zashowbtn' "
             >{{$t('bankeTask.No_score')}}({{uncommentnum}})</div>
           </div>
@@ -257,10 +262,10 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue from "vue";
 import Discuss from "./components/discuss";
 import ZuoyeAnswerItem from "./components/ZuoyeAnswerItem";
-import { Indicator, Toast, MessageBox, Actionsheet ,Loadmore} from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet, Loadmore } from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
@@ -305,9 +310,6 @@ export default {
       mark: "",
       studentName: "",
       zreadonly: true,
-      topStatus: "",
-      bottomStatus: "",
-      autofill: true,
       zuoyeitem: {
         name: "",
         state: 10,
@@ -349,7 +351,15 @@ export default {
       isShuoc: false,
       prohibit: true,
       canEditzy: false,
-      seeMySbmit: false
+      seeMySbmit: false,
+
+      page: 0,
+      pagesize: 10,
+      autofill: false,
+      listLoadend: false,
+      topStatus: "",
+      bottomStatus: "",
+      allLoaded: false
     };
   },
   watch: {
@@ -467,7 +477,7 @@ export default {
     submitnum() {
       var ni = 0;
       for (var i = 0; i < this.results.length; i++) {
-        if (this.results[i].submitnum) {
+        if (this.resultsTemp[i].submitnum) {
           ni++;
         }
       }
@@ -486,7 +496,9 @@ export default {
       if (!this.zuoyeitem.hassubmittime) {
         return this.$t("bankeTask.Unlimited_submission_time");
       }
-      var tdesc = commontools.timeToHummanRead(this.zuoyeitem.submittime);
+      var tdesc = commontools.timeToHummanRead(
+        this.zuoyeitem.submittime.replace(/-/g, "/")
+      );
       var tallowpass = this.$t("bankeTask.Allow_timeout_submission");
       if (!this.zuoyeitem.allowpasstime) {
         tallowpass = this.$t("bankeTask.Timeout_submission_not_allowed");
@@ -710,16 +722,16 @@ export default {
       }
       this.doback();
     },
-      doback(){
-        if (this.zuoyeitem && this.zuoyeitem.ownerid){
-            let tourl = "/bankehome/" + this.zuoyeitem.ownerid
-             {
-                this.$router.replace(tourl);
-                return;
-            }
+    doback() {
+      if (this.zuoyeitem && this.zuoyeitem.ownerid) {
+        let tourl = "/bankehome/" + this.zuoyeitem.ownerid;
+        {
+          this.$router.replace(tourl);
+          return;
         }
-        this.$router.replace('/');
-      },
+      }
+      this.$router.replace("/");
+    },
     showitem(ritem) {
       if (!ritem.submitnum) {
         return false;
@@ -758,6 +770,7 @@ export default {
             //   }
             // }
             this.onHttpData(res.data.data);
+
             //  console.log(this.results);
           } else {
             Toast(res.data.msg);
@@ -819,6 +832,7 @@ export default {
         );
       }
       this.results = dresults;
+      this.resultsTemp = dresults;
       if (dresults.length) {
         this.zdetailsubmit.ztext = this.results[0].ztext;
         this.zdetailsubmit.localfiles = this.results[0].localfiles;
@@ -901,7 +915,11 @@ export default {
             // this.mimiMessage("submit");
           } else {
             //! Toast 不可见
-            MessageBox(res.data.msg);
+            if (res.data.msg.indexOf("over submit")>-1) {
+                MessageBox('已超时，无法再提交作业，请联系老师');
+            } else {
+              MessageBox(res.data.msg);
+            }
           }
         })
         .catch(() => {
@@ -917,13 +935,13 @@ export default {
       this.allInitData = this.allZuoyeitem;
       this.popuPzouyeAllMark = true;
     },
-    selectPF(active) {
-      this.zashowbtnactive = active;
-      if (!active) {
-        this.resultsTemp = this.results;
-        this.results = this.noPingFengStudentInfo;
-      } else {
+    selectPF(type, num) {
+      if (!num) return;
+      this.zashowbtnactive = type;
+      if (type) {
         this.results = this.resultsTemp;
+      } else {
+        this.results = this.resultsTemp.filter(item => item.score < 0);
       }
     },
     shuoc() {
@@ -972,7 +990,7 @@ export default {
     //   //console.log(dd.resultdata);
     //   this.onHttpData(dd.resultdata);
     // } else
-     this.loadAll();
+    this.loadAll();
     //  this.loadTop();
     this.queryuserfav();
   },

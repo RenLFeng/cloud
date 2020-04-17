@@ -4,14 +4,20 @@
       <mt-button slot="left" icon="back" @click="$back">返回</mt-button>
     </mt-header>
     <div class="main main-f">
-      <div
-        v-infinite-scroll="loadMore"
+      <!-- v-infinite-scroll="loadMore"
         infinite-scroll-disabled="loading"
         infinite-scroll-distance="100"
-        infinite-scroll-immediate-check="false"
-        class="list-scoll-wrap"
-      >
-        <mt-loadmore :top-method="loadTop" ref="loadmore" :auto-fill="autofill"  :top-distance="180">
+      infinite-scroll-immediate-check="false"-->
+      <div class="list-scoll-wrap">
+        <mt-loadmore
+          ref="loadmore"
+          :auto-fill="autofill"
+          :bottom-method="loadMore"
+          @bottom-status-change="handleBottomChange"
+          :bottom-all-loaded="allLoaded"
+          :bottom-distance="100"
+          :distanceIndex="3"
+        >
           <div class="wrap">
             <div class="aaa" v-if="danmuDataList.length">
               <div class="item" v-for="(v,i) in danmuDataList" :key="i">
@@ -21,8 +27,13 @@
                   <p class="font-xxs time">{{v.day}}&nbsp;{{v.time}}</p>
                 </div>
               </div>
-              <p class="tc color9" v-if="loading && page && !listLoadend">加载中...</p>
-              <p class="tc color9" v-if="listLoadend">我是有底线的...</p>
+              <BottomLoadmore
+                v-if="allLoaded && listLoadend"
+                showType
+                loadtext="已经加载全部了"
+                type
+                color
+              />
             </div>
             <Empty v-else :text="['无数据']" />
           </div>
@@ -37,13 +48,6 @@
           class="iconfont iconyangshi eicotrigger position-l"
           style="color:#38ADA9"
         ></span>
-        <!-- <mt-field
-          class="fl position-c"
-          placeholder="请输入弹幕内容"
-          :attr="{ maxlength: 24 }"
-          v-model="inputVal"
-          @keyup.enter.capture="submitDanmu"
-        ></mt-field>-->
         <div class="mint-field fl position-c">
           <input
             v-model="inputVal"
@@ -51,6 +55,8 @@
             autocomplete="off"
             class="text-input"
             @keyup.enter="submitDanmu"
+            @input="textChange($event.target.value)"
+            maxlength="24"
           />
         </div>
 
@@ -83,7 +89,8 @@ import {
   InfiniteScroll
 } from "mint-ui";
 import Empty from "@/common/empty";
-import { parseURL } from "@/util";
+import { parseURL, uniqueArr } from "@/util";
+import BottomLoadmore from "@/common/bottom-loadmore";
 export default {
   name: "Danmu",
   props: {},
@@ -131,21 +138,19 @@ export default {
       ],
       page: 0,
       pagesize: 10,
-      autofill: true,
       loading: false,
-      listLoadend: false
+
+      autofill: false,
+      listLoadend: false,
+      topStatus: "",
+      bottomStatus: "",
+      allLoaded: false,
+      dropType: 0
     };
   },
   computed: {
     user() {
       return this.$store.getters.curuser;
-    },
-    maxLen() {
-      if (this.inputVal.length > 23) {
-        return true;
-      } else {
-        return false;
-      }
     },
     caneditbanke() {
       let caneditbanke = this.$store.getters.caneditbanke;
@@ -173,8 +178,11 @@ export default {
       this.loadMore();
     },
     loadMore() {
-      this.loading = true;
+      // this.loading = true;
       this.queryDanmu();
+    },
+    handleBottomChange(status) {
+      this.bottomStatus = status;
     },
     queryDanmu() {
       Indicator.open("查询中...");
@@ -187,6 +195,15 @@ export default {
         .then(res => {
           if (res.data.code == "0") {
             if (res.data.data.length) {
+              if (res.data.data.length >= this.pagesize) {
+                // this.loading = false;
+                this.page++;
+              } else {
+                if (this.page) {
+                  this.listLoadend = true;
+                }
+                this.allLoaded = true;
+              }
               for (let v of res.data.data) {
                 try {
                   v.info = JSON.parse(v.info);
@@ -195,26 +212,32 @@ export default {
                 v.time = v.createtime.split(" ")[1];
                 v.day = this.getDayName(v.createtime);
               }
+              res.data.data = res.data.data.reverse();
               this.danmuDataList = [...this.danmuDataList, ...res.data.data];
-              if (res.data.data.length >= this.pagesize) {
-                this.loading = false;
-                this.page++;
-              } else {
-                if (this.page) {
-                  this.listLoadend = true;
-                }
-              }
+              let obj = {};
+              this.danmuDataList = this.danmuDataList.reduce((cur, next) => {
+                obj[next.id] ? "" : (obj[next.id] = true && cur.push(next));
+                return cur;
+              }, []);
+            } else {
+              this.allLoaded = true;
             }
           } else {
             Toast("查询失败");
           }
           Indicator.close();
-          this.$refs.loadmore.onTopLoaded();
+          this.$refs.loadmore.onBottomLoaded();
         })
         .catch(err => {
+          this.$refs.loadmore.onBottomLoaded();
           Toast("服务异常");
           Indicator.close();
         });
+    },
+    textChange(v) {
+      if (v.length > 23) {
+        Toast("最大可输入24个字符");
+      }
     },
     submitDanmu() {
       if (!this.isLink) {
@@ -246,6 +269,7 @@ export default {
             res.data.data.time = res.data.data.createtime.split(" ")[1];
             res.data.data.day = this.getDayName(res.data.data.createtime);
             this.danmuDataList = [...this.danmuDataList, ...[res.data.data]];
+            this.allLoaded = false;
           } else {
             Toast("发送失败");
           }
@@ -321,7 +345,8 @@ export default {
     }
   },
   components: {
-    Empty
+    Empty,
+    BottomLoadmore
   }
 };
 </script>

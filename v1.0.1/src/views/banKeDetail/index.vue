@@ -206,7 +206,7 @@ export default {
     },
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/100x100.png");
+      srcstr += "/assets/100x100.png";
       srcstr += '"';
       return srcstr;
     },
@@ -334,31 +334,40 @@ export default {
         })
         .catch(() => {});
     },
-      quitBk(){
-          MessageBox.confirm("", {
-              title: "提示",
-              message: "确认退出当前班课?",
-              confirmButtonText: "退出",
-              cancelButtonText: "取消",
-              showCancelButton: true
-          }).then(res => {
-              this.$http
-                  .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
-                  .then(res => {
-                      if (res.data.code == 0) {
-                          MessageBox.alert("退出成功").then(() => {
-                              this.$store.commit("setRouterForward", true);
-                              this.$router.push("/");
-                          });
-                      } else {
-                          MessageBox.alert(res.data.msg).then(() => {});
-                      }
-                  });
-          });
-          return;
-      },
+    quitBk() {
+      MessageBox.confirm("", {
+        title: "提示",
+        message:
+          "退出当前班课后,提交的作业及得分等数据将会清空,无法恢复,请谨慎操作！",
+        confirmButtonText: "确认退出",
+        cancelButtonText: "取消",
+        showCancelButton: true
+      }).then(res => {
+        MessageBox.confirm("", {
+          title: "提示",
+          message:
+            "请再次确认是否要退出当前班课,退出当前班课后,提交的作业及得分等数据将会清空,无法恢复,请谨慎操作！",
+          confirmButtonText: "退出并清除数据",
+          cancelButtonText: "取消",
+          showCancelButton: true
+        }).then(res => {
+          this.$http
+            .post("/api/banke/reqmemberleave", { bankeid: this.bankeInfo.id })
+            .then(res => {
+              if (res.data.code == 0) {
+                MessageBox.alert("退出成功").then(() => {
+                  this.$store.commit("setRouterForward", true);
+                  this.$router.push("/");
+                });
+              } else {
+                MessageBox.alert(res.data.msg).then(() => {});
+              }
+            });
+        });
+      });
+      return;
+    },
     closeBk() {
-
       let BankeData = this.$store.state.banke.curbankes;
       MessageBox.confirm("", {
         title: this.$t("confirm.Tips"),

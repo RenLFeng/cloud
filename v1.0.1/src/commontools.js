@@ -70,7 +70,7 @@ commontools.timeToHummanRead = function (timedate) {
 
 }
 
-//! return yyyy-mm-dd HH:ii:ss
+//! return yyyy/mm/dd HH:ii:ss
 commontools.timeJsDateToTimedate = function (datestr) {
     var date = new Date(datestr);
     var y = date.getFullYear();
@@ -84,7 +84,7 @@ commontools.timeJsDateToTimedate = function (datestr) {
     minute = minute < 10 ? ('0' + minute) : minute;
     var second = date.getSeconds();
     second = second < 10 ? ('0' + second) : second;
-    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+    return y + '/' + m + '/' + d + ' ' + h + ':' + minute + ':' + second;
 }
 commontools.timeIsValidTimedate = function (datestr) {
     if (!datestr) {

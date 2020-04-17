@@ -78,6 +78,8 @@ export default {
               this.$store.commit("SET_BANKEZHIYUANLINKITEM", {item:arr,type:1});
               this.$emit("addLinkState", true);
               this.$store.commit("SET_FOOTER_BAR_STATE", true);
+              this.url='';
+               this.urlTitle='';
             });
           } else {
             MessageBox.alert(res.data.msg);

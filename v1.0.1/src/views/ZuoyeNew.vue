@@ -133,7 +133,7 @@ export default {
       if (!this.zuoyeitem.hassubmittime) {
         return "";
       }
-      return commontools.timeToHummanRead(this.zuoyeitem.submittime);
+      return commontools.timeToHummanRead(this.zuoyeitem.submittime.replace(/-/g,'/'));
     },
     savedisable() {
       if (this.zuoyeitem.name) {
@@ -343,7 +343,6 @@ export default {
       if (!this.zuoyeitem.hassubmittime) {
         return;
       }
-
       this.curdatetime = new Date();
       this.pickervalue = commontools.timeTimedateToJsDate(
         this.zuoyeitem.submittime

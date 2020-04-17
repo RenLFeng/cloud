@@ -40,22 +40,29 @@
     <div class="items-container">
       <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
       <mt-tab-container v-model="selected">
-        <mt-tab-container-item id="1" class="listcontainer-wrap" :class="showupload?'showupload':''">
-          <div
-            class="listcontainer"
-            v-infinite-scroll="loadMore"
+        <mt-tab-container-item
+          id="1"
+          class="listcontainer-wrap"
+          :class="showupload?'showupload':''"
+        >
+          <!-- v-infinite-scroll="loadMore"
             infinite-scroll-disabled="loading"
             infinite-scroll-distance="50"
-            infinite-scroll-immediate-check="false"
-          >
+          infinite-scroll-immediate-check="false"-->
+          <div class="listcontainer">
             <mt-loadmore
               :top-method="loadTop"
               @top-status-change="handleTopChange"
+              :top-distance="120"
+              :bottom-method="loadMore"
+              @bottom-status-change="handleBottomChange"
+              :bottom-all-loaded="allLoaded"
+              :bottom-distance="100"
               ref="loadmore"
               class="zyloadmore"
               :class="filesempty?'filesempty':''"
               :auto-fill="autofill"
-              :top-distance="180"
+              :distanceIndex="3"
             >
               <div class="wrap">
                 <div
@@ -94,9 +101,10 @@
                   ></BankeFileSimple>
                 </div>
                 <BottomLoadmore
-                  v-if="loading && page && !loadend"
-                  loadtext="加载中..."
-                  type="triple-bounce"
+                  v-if="allLoaded && listLoadend"
+                  showType
+                  loadtext="已经加载全部了"
+                  type
                   color
                 />
               </div>
@@ -266,7 +274,6 @@ export default {
       files: [],
       liststatedesc: "common.Loading",
       list: ["11", "22"],
-      topStatus: "",
       loadingState: false,
       popupUploadLink: false,
 
@@ -277,7 +284,6 @@ export default {
       noViewUserList: [],
 
       topid: "",
-      autofill: false,
       loadMorePosition: "bottom",
       editItemFile: {},
 
@@ -285,11 +291,9 @@ export default {
 
       actionShow: false,
 
-      page: 0,
-      pagesize: 10,
       filetotal: 0,
 
-      loading: false,
+      // loading: false,
 
       popupAudio: false,
       viewfileItem: {},
@@ -309,7 +313,14 @@ export default {
       selectnmb: 0,
       dlid: null,
 
-      loadend: false
+      page: 0,
+      pagesize: 10,
+      autofill: false,
+      listLoadend: false,
+      topStatus: "",
+      bottomStatus: "",
+      allLoaded: false,
+      dropType: 0
     };
   },
   watch: {
@@ -443,8 +454,7 @@ export default {
       item: [],
       type: 0
     });
-    // this.loadMoreFile();
-    this.loadMore();
+    this.loadMoreFile();
   },
   components: {
     BankeFileSimple,
@@ -707,15 +717,21 @@ export default {
         type: 1
       });
       this.page = 0;
-      this.loadend = false;
-      this.loadMore();
+      this.listLoadend = false;
+      this.allLoaded = false;
+      this.dropType = 0;
+      this.loadMoreFile();
+    },
+    loadMore() {
+      // this.loading = true;
+      this.dropType = 1;
+      this.loadMoreFile();
     },
     handleTopChange(status) {
       this.topStatus = status;
     },
-    loadMore() {
-      this.loading = true;
-      this.loadMoreFile();
+    handleBottomChange(status) {
+      this.bottomStatus = status;
     },
     loadMoreFile() {
       this.$http
@@ -725,16 +741,16 @@ export default {
           pagesize: this.pagesize
         })
         .then(res => {
-          this.$refs.loadmore.onTopLoaded();
           if (res.data.code == 0) {
             this.filetotal = res.data.data.total;
             if (res.data.data.files.length >= this.pagesize) {
-              this.loading = false;
+              // this.loading = false;
               this.page++;
             } else {
               if (this.page) {
-                this.loadend = true;
+                this.listLoadend = true;
               }
+              this.allLoaded = true;
             }
             console.log("资源", res);
             let ids = [];
@@ -774,9 +790,18 @@ export default {
           } else {
             this.loadingState = true;
           }
+          if (this.dropType) {
+            this.$refs.loadmore.onBottomLoaded();
+          } else {
+            this.$refs.loadmore.onTopLoaded();
+          }
         })
         .catch(res => {
-          this.$refs.loadmore.onTopLoaded();
+          if (this.dropType) {
+            this.$refs.loadmore.onBottomLoaded();
+          } else {
+            this.$refs.loadmore.onTopLoaded();
+          }
           console.log(res);
           //! cjy: 这里server 的http code 非200 页会走这里。
           //! 因此不能继续加载
@@ -1039,16 +1064,15 @@ export default {
 }
 .listcontainer-wrap {
   height: calc(100vh - 180px);
-  min-height:calc(100vh - 180px);
+  min-height: calc(100vh - 180px);
   position: relative;
 }
 .listcontainer-wrap .listcontainer .wrap {
   min-height: calc(100vh - 180px);
 }
 
-
 .listcontainer-wrap.showupload {
-  height:calc(100vh - 260px);
+  height: calc(100vh - 260px);
   min-height: calc(100vh - 260px);
   position: relative;
 }

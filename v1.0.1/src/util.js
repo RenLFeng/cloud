@@ -164,11 +164,11 @@ export const fixCaptureImage = (file, tofile = false) => {
         {
           const canvas = document.createElement("canvas");
 
-          if (tofile){
-            if (!canvas.toBlob){
+          if (tofile) {
+            if (!canvas.toBlob) {
               //! 有些浏览器没有此函数; 例如目前windows使用的cef
-                console.log('has no canvas.toBlob');
-                return reject(rejectres);
+              console.log('has no canvas.toBlob');
+              return reject(rejectres);
             }
           }
 

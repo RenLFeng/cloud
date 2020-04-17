@@ -18,28 +18,34 @@
         <span class="move-bar" :style="`left:${moveBar}px`"></span>
       </ul>
     </div>
-    <div
-      class="main"
-      v-if="pingceHistoryList.length"
-      v-infinite-scroll="loadMore"
+    <!-- v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="500"
-      infinite-scroll-immediate-check="false"
-    >
-      <List
-        v-for="(v,index) in pingceHistoryList"
-        :key="index"
-        :item="v"
-        type="pingce"
-        @click.native="details(v)"
-        @edit="onEdit"
-      />
-      <!-- <p v-if="isScorll && !scorllEd" class="tc color9">
-        <van-loading size="24px">加载中...</van-loading>
-      </p>-->
-      <!-- <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p> -->
+    infinite-scroll-immediate-check="false"-->
+    <div class="main">
+      <mt-loadmore
+        :bottom-method="loadMore"
+        @bottom-status-change="handleBottomChange"
+        :bottom-all-loaded="allLoaded"
+        :bottom-distance="100"
+        ref="loadmore"
+        :auto-fill="autofill"
+        :distanceIndex="3"
+      >
+        <div v-if="pingceHistoryList.length" class="box">
+          <List
+            v-for="(v,index) in pingceHistoryList"
+            :key="index"
+            :item="v"
+            type="pingce"
+            @click.native="details(v)"
+            @edit="onEdit"
+          />
+          <BottomLoadmore v-if="allLoaded && listLoadend" showType loadtext="已经加载全部了" type color />
+        </div>
+        <Empty v-else />
+      </mt-loadmore>
     </div>
-    <Empty v-else />
 
     <mt-popup
       v-model="popupDeatil"
@@ -62,6 +68,7 @@ import Empty from "@/common/empty";
 import List from "@/common/list";
 import Deatil from "./detail";
 import { pingceType, CollectionFn } from "@/util";
+import BottomLoadmore from "@/common/bottom-loadmore";
 import {
   Button,
   Indicator,
@@ -80,7 +87,8 @@ export default {
   components: {
     List,
     Deatil,
-    Empty
+    Empty,
+    BottomLoadmore
   },
 
   data() {
@@ -96,10 +104,6 @@ export default {
 
       page: 0,
       pagesize: 10,
-      loading: false,
-      isScorll: false,
-      scorllEd: false,
-
       actions: [
         {
           name: "收藏",
@@ -157,7 +161,14 @@ export default {
           num: 0,
           isActive: false
         }
-      ]
+      ],
+
+      autofill: false,
+      listLoadend: false,
+      topStatus: "",
+      bottomStatus: "",
+      allLoaded: false,
+      dropType: 0
     };
   },
   mounted() {
@@ -183,7 +194,6 @@ export default {
       // let ev = e || window.event;
       // console.log(ev);
       // this.$nextTick(()=>{
-      //   alert(ev.offsetX)
       // })
       for (let v of this.tabBar) {
         v.isActive = false;
@@ -221,9 +231,10 @@ export default {
       CollectionFn(cobj, 4, imgIcon, this.editItemObj.id, this.bankeid, title);
     },
     loadMore() {
-      this.loading = true;
-      this.isScorll = true;
       this.HistoryListRQuery();
+    },
+    handleBottomChange(status) {
+      this.bottomStatus = status;
     },
     HistoryListRQuery() {
       let qobj = {
@@ -241,18 +252,19 @@ export default {
           if (res.data.code == "0") {
             if (res.data.data.length) {
               for (let v of res.data.data) {
-                if(v.ptype==2 || v.ptype==3){
-                  v.optdesc=JSON.parse(v.optdesc)
+                if (v.ptype == 2 || v.ptype == 3) {
+                  v.optdesc = JSON.parse(v.optdesc);
                 }
               }
             }
-            if (res.data.data.length < this.pagesize) {
-              this.loading = true;
-              this.scorllEd = true;
-            } else {
-              this.loading = false;
-              this.isScorll = false;
+            if (res.data.data.length >= this.pagesize) {
+              // this.loading = false;
               this.page++;
+            } else {
+              if (this.page) {
+                this.listLoadend = true;
+              }
+              this.allLoaded = true;
             }
             this.pingceHistoryList = [
               ...this.pingceHistoryList,
@@ -269,12 +281,14 @@ export default {
                 this.details(this.pingceHistoryList[0]);
               }
             }
-            console.log('pingceHistoryList',this.pingceHistoryList);
+            console.log("pingceHistoryList", this.pingceHistoryList);
           } else {
             Toast("连接错误");
           }
+          this.$refs.loadmore.onBottomLoaded();
         })
         .catch(err => {
+          this.$refs.loadmore.onBottomLoaded();
           Toast("异常");
         });
     },
@@ -296,8 +310,6 @@ export default {
     },
     Backs() {
       this.$back();
-      //alert('pcindex:'+window.history.length);
-      //   window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
     },
     goBacks() {
       if (this.popupDeatil) {
@@ -337,6 +349,7 @@ export default {
 
 <style lang='less' scoped>
 .pingce-wrap {
+  overflow: hidden;
   .van-navbr-wrap {
     position: fixed;
     z-index: 99;
@@ -382,6 +395,11 @@ export default {
   }
   .main {
     margin-top: 110px;
+    height: 84vh;
+    overflow: auto;
+    .box{
+      min-height: 84vh;
+    }
   }
 }
 </style>

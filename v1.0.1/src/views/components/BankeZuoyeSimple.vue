@@ -128,6 +128,7 @@ export default {
 
 <style scoped>
 .mainpart {
+  position: relative;
   height: 83px;
   border-bottom: 1px solid #eaeaea;
   padding: 10px;

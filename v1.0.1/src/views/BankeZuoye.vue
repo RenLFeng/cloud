@@ -10,15 +10,18 @@
       >{{bitem.name}}</div>
     </div>
 
-    <div>
+    <div class="zy-list-box">
       <mt-loadmore
         :top-method="loadTop"
+        :top-distance="120"
         @top-status-change="handleTopChange"
         ref="loadmore"
         class="zyloadmore"
         :bottom-method="loadBottom"
         @bottom-status-change="handleBottomChange"
+        :bottom-all-loaded="allLoaded"
         :auto-fill="autofill"
+        :distanceIndex="3"
       >
         <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
           <BankeZuoyeSimple
@@ -56,7 +59,7 @@ import { Indicator, Toast, MessageBox } from "mint-ui";
 import commontools from "../commontools";
 import { CollectionFn, getZYFileType } from "@/util";
 
-import nativecode from '@/nativecode'
+import nativecode from "@/nativecode";
 
 export default {
   name: "BankeZuoye",
@@ -74,14 +77,12 @@ export default {
     editmenudata() {
       var odatas = [];
       console.log(this.curzuoye);
-      if (
-          this.curzuoye) {
-
-        if (nativecode.hassharecommon() && this.curzuoye.state > 0){
-            odatas.push({
-                name:'分享作业',
-                method:this.sharezuoye
-            })
+      if (this.curzuoye) {
+        if (nativecode.hassharecommon() && this.curzuoye.state > 0) {
+          odatas.push({
+            name: "分享作业",
+            method: this.sharezuoye
+          });
         }
 
         if (this.curzuoye.state == 100) {
@@ -109,14 +110,13 @@ export default {
             method: this.menudel
           });
         }
-        if (this.curzuoye.state > 0){
-            //! 开始后才允许收藏
-            odatas.push({
-                name: '收藏',
-                method: this.Collection
-            });
+        if (this.curzuoye.state > 0) {
+          //! 开始后才允许收藏
+          odatas.push({
+            name: "收藏",
+            method: this.Collection
+          });
         }
-
       }
       return odatas;
     }
@@ -126,12 +126,19 @@ export default {
   },
 
   methods: {
-    Collection(){
+    Collection() {
       // console.log(this.curzuoye)
-        let imgIcon = "zuoye";
-        let title = this.curzuoye.name;
-        let cobj = {};
-         CollectionFn(cobj, 3, imgIcon, this.curzuoye.id,this.curzuoye.ownerid, title);
+      let imgIcon = "zuoye";
+      let title = this.curzuoye.name;
+      let cobj = {};
+      CollectionFn(
+        cobj,
+        3,
+        imgIcon,
+        this.curzuoye.id,
+        this.curzuoye.ownerid,
+        title
+      );
     },
     onbtnclick(sindex) {
       this.curbtnindex = sindex;
@@ -140,11 +147,11 @@ export default {
     menustop() {
       this.domenuopt(10);
     },
-      sharezuoye(){
-        if (this.curzuoye){
-            nativecode.dosharecommon('zuoye', this.curzuoye.id, this.curzuoye.name)
-        }
-      },
+    sharezuoye() {
+      if (this.curzuoye) {
+        nativecode.dosharecommon("zuoye", this.curzuoye.id, this.curzuoye.name);
+      }
+    },
     menudel() {
       MessageBox.confirm("您确定要删除吗？").then(res => {
         this.$http
@@ -227,45 +234,42 @@ export default {
       if (this.curzuoye) {
         console.log(this.curzuoye);
 
-        let doopt = ()=>{
-            Indicator.open(this.$t("Indicator.Processing"));
-            this.$http
-                .post("/api/api/bankezuoyesetstate", {
-                    zuoyeid: this.curzuoye.id,
-                    state: nstateto
-                })
-                .then(res => {
-                    Indicator.close();
-                    if (res.data.code == 0) {
-                        for (let item of this.zuoyelist) {
-                            if (item.id == this.curzuoye.id) {
-                                item.state = nstateto;
-                                return;
-                            }
-                        }
-                        // commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
-                    } else {
-                        Toast(res.data.msg);
-                    }
-                })
-                .catch(() => {
-                    Indicator.close();
-                });
-        }
-
-        if (nstateto == 10){
-            MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(()=>{
-                doopt();
+        let doopt = () => {
+          Indicator.open(this.$t("Indicator.Processing"));
+          this.$http
+            .post("/api/api/bankezuoyesetstate", {
+              zuoyeid: this.curzuoye.id,
+              state: nstateto
             })
-        }
-        else{
-            doopt();
-        }
+            .then(res => {
+              Indicator.close();
+              if (res.data.code == 0) {
+                for (let item of this.zuoyelist) {
+                  if (item.id == this.curzuoye.id) {
+                    item.state = nstateto;
+                    return;
+                  }
+                }
+                // commontools.arrayMergeAsIds(this.zuoyelist, res.data.data);
+              } else {
+                Toast(res.data.msg);
+              }
+            })
+            .catch(() => {
+              Indicator.close();
+            });
+        };
 
+        if (nstateto == 10) {
+          MessageBox.confirm("结束作业？\r\n结束后学生不可再提交").then(() => {
+            doopt();
+          });
+        } else {
+          doopt();
+        }
 
         //!
         //this.curzuoye.state = nstateto;
-
       }
     },
     onitemedit(zitem) {
@@ -304,6 +308,7 @@ export default {
       return false;
     },
     loadTop() {
+      this.allLoaded = false;
       this.doQueryZuoye(true);
     },
     loadBottom() {
@@ -333,45 +338,43 @@ export default {
             this.$refs.loadmore.onBottomLoaded();
           }
           if (res.data.code == 0) {
-              let zlist = res.data.data;
-              for(let v of zlist){
-                  v.eventmsgs = false;  //! 预创建member
-              }
+            if (!res.data.data.length) {
+              this.allLoaded = true;
+            }
+            let zlist = res.data.data;
+            for (let v of zlist) {
+              v.eventmsgs = false; //! 预创建member
+            }
             if (ball) {
               //! clear cur all
-             // this.zuoyelist = [];  //! cjy: 这里清空会导致vue界面闪烁（呈现为无item的界面）
-                //! 这里需要清空， 否则遗留上个班课或上个账户的作业
+              // this.zuoyelist = [];  //! cjy: 这里清空会导致vue界面闪烁（呈现为无item的界面）
+              //! 这里需要清空， 否则遗留上个班课或上个账户的作业
               //  this.zuoyelist = zlist;
+            } else {
+              //    commontools.arrayMergeAsIds(this.zuoyelist, zlist);
             }
-            else{
-            //    commontools.arrayMergeAsIds(this.zuoyelist, zlist);
-            }
-
-
 
             let ids = [];
             for (let v of res.data.data) {
               ids.push(v.id);
             }
             this.eventmsgsOnactivity(res.data.data, ids, ball);
-
           }
         })
         .catch(() => {});
     },
-      appendzlist(serverData, ball){
-        if (ball){
-            this.zuoyelist = serverData
-        }
-        else{
-            commontools.arrayMergeAsIds(this.zuoyelist, serverData);
-        }
-      },
+    appendzlist(serverData, ball) {
+      if (ball) {
+        this.zuoyelist = serverData;
+      } else {
+        commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+      }
+    },
     //红点查询
     eventmsgsOnactivity(serverData, eventids, ball) {
-        if (serverData.length == 0){
-            return
-        }
+      if (serverData.length == 0) {
+        return;
+      }
       this.$http
         .post("/api/eventmsgs/onactivity", {
           bankeid: this.bankeid,
@@ -379,7 +382,7 @@ export default {
           eventids: [...eventids]
         })
         .then(res => {
-          if (res.data.code == "0" ) {
+          if (res.data.code == "0") {
             for (let v of serverData) {
               for (let id of res.data.data) {
                 if (v.id == id) {
@@ -391,11 +394,11 @@ export default {
             //  commontools.arrayMergeAsIds(this.zuoyelist, serverData);
           } else {
           }
-          this.appendzlist(serverData, ball)
+          this.appendzlist(serverData, ball);
         })
         .catch(err => {
-        //  commontools.arrayMergeAsIds(this.zuoyelist, serverData);
-            this.appendzlist(serverData, ball)
+          //  commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+          this.appendzlist(serverData, ball);
         });
     }
   },
@@ -424,7 +427,10 @@ export default {
       topStatus: "",
       bottomStatus: "",
       autofill: false,
-      hasedit: this.$store.getters.caneditbanke
+      hasedit: this.$store.getters.caneditbanke,
+      page: 0,
+      pagesize: 10,
+      allLoaded: false
     };
   },
   created() {
@@ -504,5 +510,9 @@ export default {
 }
 .mint-actionsheet {
   bottom: 68px;
+}
+.zy-list-box {
+  height: 71vh;
+  overflow: auto;
 }
 </style>

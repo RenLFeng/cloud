@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="fontsmall cloudHome"
-    :class="selected=='banke'?'banke':''"
-  >
+  <div class="fontsmall cloudHome" :class="selected=='banke'?'banke':''">
     <!-- <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
       <mt-button
         v-if="hasmainback"
@@ -48,22 +45,24 @@
         :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
         v-model="selected"
       >
-        <div
-          class="banke-wrap"
-          v-infinite-scroll="loadMore"
+        <!-- v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
           infinite-scroll-distance="100"
-          infinite-scroll-immediate-check="false"
-
-        >
+        infinite-scroll-immediate-check="false"-->
+        <div class="banke-wrap">
           <mt-tab-container-item id="banke">
             <mt-loadmore
               :top-method="loadTop"
               @top-status-change="handleTopChange"
+              :top-distance="120"
+              :bottom-method="loadMore"
+              @bottom-status-change="handleBottomChange"
+              :bottom-all-loaded="allLoaded"
+              :bottom-distance="100"
               ref="loadmore"
               class
               :auto-fill="autofill"
-              :top-distance="180"
+              :distanceIndex="3"
               :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
             >
               <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
@@ -89,10 +88,18 @@
                   @showMenu="onShowMenu"
                   :homeEventmsgs="homeEventmsgs"
                 ></BankeSimple>
+                <!-- <div slot="top" class="mint-loadmore-top">
+                  <span
+                    v-show="topStatus !== 'loading'"
+                    :class="{ 'rotate': topStatus === 'drop' }"
+                  >↓</span>
+                  <span v-show="topStatus === 'loading'">Loading...</span>
+                </div>-->
                 <BottomLoadmore
-                  v-if="loading && page && !listLoadend"
-                  loadtext="加载中..."
-                  type="triple-bounce"
+                  v-if="allLoaded && listLoadend && bankeempty"
+                  showType
+                  loadtext="已经加载全部了"
+                  type
                   color
                 />
               </div>
@@ -114,7 +121,7 @@
 
         <!-- <mt-tab-container-item id="exam">
           <examhome></examhome>
-        </mt-tab-container-item> -->
+        </mt-tab-container-item>-->
         <mt-tab-container-item id="mine">
           <MineAbout @changeSelected="onChangeSelected" @clearevnt="onClearevnt"></MineAbout>
         </mt-tab-container-item>
@@ -254,10 +261,12 @@ export default {
       page: 0,
       pagesize: 10,
       topStatus: "",
-      autofill: true,
-
-      loading: false,
-      listLoadend: false
+      bottomStatus: "",
+      autofill: false,
+      // loading: false,
+      listLoadend: false,
+      allLoaded: false,
+      dropType: 0
     };
   },
   computed: {
@@ -338,22 +347,27 @@ export default {
     if (this.selected == "banke") {
       // this.initbanke();
     }
-    // this.initbanke();
-    this.loadMore();
+    this.initbanke();
     this.eventmsgsOnmain();
   },
   methods: {
     loadTop() {
       this.filterCurbankes = [];
       this.page = 0;
-      this.loadMore();
+      this.allLoaded = false;
+      this.dropType = 0;
+      this.initbanke();
+    },
+    loadMore() {
+      // this.loading = true;
+      this.dropType = 1;
+      this.initbanke();
     },
     handleTopChange(status) {
       this.topStatus = status;
     },
-    loadMore() {
-      this.loading = true;
-      this.initbanke();
+    handleBottomChange(status) {
+      this.bottomStatus = status;
     },
     selectClass(type) {
       if (this.isCreate == type) return;
@@ -574,7 +588,6 @@ export default {
           pagesize: this.pagesize
         })
         .then(res => {
-          this.$refs.loadmore.onTopLoaded();
           if (res.data.code == 0) {
             let arrId = [];
             for (let v of res.data.data) {
@@ -582,24 +595,33 @@ export default {
               // v.schoolid=1001
             }
             if (res.data.data.length >= this.pagesize) {
-              this.loading = false;
+              // this.loading = false;
               this.page++;
             } else {
               if (this.page) {
                 this.listLoadend = true;
               }
-
+              this.allLoaded = true;
             }
             this.eventmsgsOnbankes(res.data.data, arrId);
           }
           if (!this.bankeempty) {
             this.bankestatedesc = "当前无班课";
           }
+          if (this.dropType) {
+            this.$refs.loadmore.onBottomLoaded();
+          } else {
+            this.$refs.loadmore.onTopLoaded();
+          }
         })
         .catch(res => {
           console.log(res);
           this.bankestatedesc = "发生异常";
-          this.$refs.loadmore.onTopLoaded();
+          if (this.dropType) {
+            this.$refs.loadmore.onBottomLoaded();
+          } else {
+            this.$refs.loadmore.onTopLoaded();
+          }
         });
     },
     //红点班课列表
@@ -779,7 +801,7 @@ export default {
   bottom: -5px;
   transform: translate(-50%, 0);
 }
-.cloudHome{
+.cloudHome {
   overflow: hidden;
 }
 .cloudHome.banke {
@@ -868,11 +890,11 @@ export default {
   height: 100%;
 }
 .mint-tabbar.is-fixed {
-  /* position: absolute!important; */
+  background: #fff;
 }
-.banke-wrap{
-     width: 100%;
-    height: 75vh;
-    overflow: auto;
+.banke-wrap {
+  width: 100%;
+  height: 75vh;
+  overflow: auto;
 }
 </style>

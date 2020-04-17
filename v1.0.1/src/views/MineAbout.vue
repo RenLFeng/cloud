@@ -32,8 +32,6 @@
       <mt-cell title="学校绑定" is-link @click.native="bindSchool"></mt-cell>
       <div class="devide"></div>
       <mt-cell title="个人学情" is-link @click.native="MyXueQing"></mt-cell>
-      <div class="devide"></div>
-      <mt-cell v-if="haslogout" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
       <!-- <mt-cell  title="绑定账户" is-link  @click.native="onbindaccount"></mt-cell> -->
       <!--  cjy: 绑定账户功能暂时隐藏
     <mt-cell v-if="canbindaccount" title="绑定账户" is-link @click.native="onbindaccount"></mt-cell>
@@ -42,6 +40,8 @@
       <mt-cell :title="$t('personal.Set_up')" is-link @click.native="onset"></mt-cell>-->
       <div class="devide"></div>
       <mt-cell :title="$t('personal.About')" is-link @click.native="onabout"></mt-cell>
+      <div class="devide"></div>
+      <mt-cell v-if="haslogout" :title="$t('common.Logout')" is-link @click.native="onlogout"></mt-cell>
       <div class="devide"></div>
       <mt-cell v-if="weiximiniprogram" title="扫一扫" is-link @click.native="scanCode"></mt-cell>
       <div class="devide"></div>
