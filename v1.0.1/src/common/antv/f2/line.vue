@@ -22,10 +22,12 @@
 import { Tab, Tabs, Button } from "vant";
 import F2 from "@antv/f2/lib/index-all";
 import { getDate, formateTime, getChartDate, getNextDate } from "../../../util";
-const chartType = [{name:"资源得分", matchcol:'score1'},
-    {name:"作业得分",matchcol:'score3'},
-    {name:"评测得分", matchcol:'score4'},
-    {name:"签到得分", matchcol:'score2'}];
+const chartType = [
+  { name: "资源得分", matchcol: "score1" },
+  { name: "作业得分", matchcol: "score3" },
+  { name: "评测得分", matchcol: "score4" },
+  { name: "签到得分", matchcol: "score2" }
+];
 import uuidv1 from "uuid/v1";
 let chart = void 0;
 let data = [];
@@ -97,12 +99,11 @@ export default {
     }
   },
   mounted() {
-    console.log("this.$routethis.$route", this.$route);
   },
   methods: {
     getScoreinfo(item, start, n) {
       console.log("scoreinfo", item);
-      this.data=[];
+      this.data = [];
       this.$http
         .post("api/bankecount/scoreinfo", {
           userids: [item.memberuserid],
@@ -137,30 +138,30 @@ export default {
             // });
             this.serverData = res.data.data.scores;
 
-            let weeksignDate =  getChartDate(n, null); //getDate(this.serverData[0].countdate, n);
+            let weeksignDate = getChartDate(n, null); //getDate(this.serverData[0].countdate, n);
             let tempData = [];
             //！ 清空老数据
-              this.data.length = 0;
+            this.data.length = 0;
             for (let i = 0; i < weeksignDate.length; i++) {
               for (let v of chartType) {
                 this.data.push({
                   count: weeksignDate[i],
                   value: 0,
                   type: v.name,
-                    matchcol:v.matchcol
+                  matchcol: v.matchcol
                 });
               }
             }
             for (let item of this.data) {
               for (let v of this.serverData) {
                 if (item.count == v.countdate) {
-                    if (v[item.matchcol]){
-                        item.value = v[item.matchcol];
-                        if (item.value < 0){
-                            item.value = 0;
-                        }
-                        break;
+                  if (v[item.matchcol]) {
+                    item.value = v[item.matchcol];
+                    if (item.value < 0) {
+                      item.value = 0;
                     }
+                    break;
+                  }
                   // switch (item.type) {
                   //   case "资源得分":
                   //
@@ -251,7 +252,7 @@ export default {
           }
         });
         //陰影chart.area()
-                  //曲线  .shape("smooth")
+        //曲线  .shape("smooth")
         // chart.area().position('count*value').color('type').shape('')
         chart
           .line()
@@ -266,7 +267,7 @@ export default {
   },
   destroyed() {
     if (chart !== undefined) {
-     // chart.destroy();
+      // chart.destroy();
       chart = null;
     }
   }
@@ -302,13 +303,13 @@ export default {
   border-radius: 20px;
 }
 .van-tabs__nav:after {
-    content: ".";
-    width: 0;
-    height: 0;
-    visibility: hidden;
-    display: block;
-    clear: both;
-    overflow: hidden
+  content: ".";
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  display: block;
+  clear: both;
+  overflow: hidden;
 }
 .van-tab.van-tab--active .van-ellipsis {
   color: #fff;

@@ -108,11 +108,11 @@ export default {
               if (!type) {
                 for (let item of res.data.data) {
                   item.allScore =
-                    item.score1 +
-                    item.score2 +
-                    item.score3 +
-                    item.score4 +
-                    item.score5;
+                    (item.score1 * item.scorerule1) / 100 +
+                    (item.score2 * item.scorerule2) / 100 +
+                    (item.score3 * item.scorerule3) / 100 +
+                    (item.score4 * item.scorerule4) / 100 +
+                    (item.score5 * item.scorerule5) / 100;
                 }
                 this.myJoin = res.data.data;
                 this.classData = this.myJoin;
@@ -142,7 +142,7 @@ export default {
       this.$router.push({
         // name: "BindSchool",
         name: "BindSchoolList", //! cjy: 这里直接跳转到schoollist即可
-        params: {userid:this.memberuserid}
+        params: { userid: this.memberuserid }
       });
     },
     goBack() {

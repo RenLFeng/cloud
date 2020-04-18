@@ -89,7 +89,7 @@ import {
   InfiniteScroll
 } from "mint-ui";
 import Empty from "@/common/empty";
-import { parseURL, uniqueArr } from "@/util";
+import { parseURL, uniqueArr,sortFn } from "@/util";
 import BottomLoadmore from "@/common/bottom-loadmore";
 export default {
   name: "Danmu",
@@ -212,13 +212,13 @@ export default {
                 v.time = v.createtime.split(" ")[1];
                 v.day = this.getDayName(v.createtime);
               }
-              res.data.data = res.data.data.reverse();
               this.danmuDataList = [...this.danmuDataList, ...res.data.data];
               let obj = {};
               this.danmuDataList = this.danmuDataList.reduce((cur, next) => {
                 obj[next.id] ? "" : (obj[next.id] = true && cur.push(next));
                 return cur;
               }, []);
+               this.danmuDataList.sort(sortFn("id", 0));
             } else {
               this.allLoaded = true;
             }

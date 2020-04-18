@@ -1,12 +1,12 @@
 <template>
   <div class="new-zuoye-wrap">
-    <mt-header :title="pageTitle">
+    <mt-header :title="pageTitle" class="mint-header-f"> 
       <mt-button slot="left" @click="$back">取消</mt-button>
 
       <mt-button slot="right" :disabled="savedisable" @click="doSave">{{savebtntext}}</mt-button>
     </mt-header>
 
-    <div class="main">
+    <div class="main main-f">
       <div class="zuoye-info-wrap">
         <mt-field label placeholder="请输入作业标题" v-model="zuoyeitem.name"></mt-field>
         <zuoyedetailedit :zdetail="zdetail"></zuoyedetailedit>
@@ -422,11 +422,17 @@ export default {
 .mint-cell-value {
   color: #33a0ff;
 }
+.mint-header-f{
+  border-bottom: 1px solid #f0f0f0;
+}
 </style>
 <style lang="less">
 .new-zuoye-wrap {
+  overflow: hidden;
   .main {
-    margin-top: 10px;
+    height: 94vh;
+    min-height: 94vh;
+    overflow:auto;
     .zuoye-info-wrap {
       background: #fff;
       .mint-field {

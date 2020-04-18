@@ -485,6 +485,8 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             // Toast("成功");
+            this.filterCurbankes = [];
+            this.page = 0;
             this.initbanke();
           } else {
             Toast("失败");

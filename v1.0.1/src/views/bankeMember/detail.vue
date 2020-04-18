@@ -1,25 +1,28 @@
 <template>
   <div class="member-detail-main">
     <div>
-       <BankeMemberSimple :memberuser="memberuser" :memberDetail="true"></BankeMemberSimple>
-        <mt-cell title="个人学情" is-link @click.native="MyXueQingFn(true)"></mt-cell>
+      <BankeMemberSimple :memberuser="memberuser" :memberDetail="true"></BankeMemberSimple>
+      <mt-cell title="个人学情" is-link @click.native="MyXueQingFn(true)"></mt-cell>
     </div>
     <ul class="Statistics clearfix tc">
-      <li class="colory" style="width:100%;text-align:left;border-bottom: 1px solid #ccc;border-right:none">在本班课中得分:{{memberuser.score}}分</li>
+      <li
+        class="colory"
+        style="width:100%;text-align:left;border-bottom: 1px solid #ccc;border-right:none"
+      >在本班课中得分:{{memberuser.score}}分</li>
       <li class="fl">
-        <span class="colory fontsmall">{{memberuser.score1}}</span>
+        <span class="colory fontsmall">{{memberuser.score1 * curbanke.scorerule1/100}}</span>
         <span>资源得分</span>
       </li>
       <li class="fl">
-        <span class="colory fontsmall">{{memberuser.score3}}</span>
+        <span class="colory fontsmall">{{memberuser.score3 * curbanke.scorerule3/100}}</span>
         <span>作业得分</span>
       </li>
       <li class="fl">
-        <span class="colory fontsmall">{{memberuser.score4}}</span>
+        <span class="colory fontsmall">{{memberuser.score4 * curbanke.scorerule4/100}}</span>
         <span>评测得分</span>
       </li>
       <li class="fl" style="border-right: none;">
-        <span class="colory fontsmall">{{memberuser.score2}}</span>
+        <span class="colory fontsmall">{{memberuser.score2 * curbanke.scorerule2/100}}</span>
         <span>签到得分</span>
       </li>
     </ul>
@@ -30,16 +33,16 @@
         <canvas id="mountNode"></canvas>
       </div>-->
     </div>
-       <mt-popup
+    <mt-popup
       v-model="popupXueQing"
       position="right"
       class="popup-right info-popup"
       :modal="false"
       style="background:#f0f0f0"
     >
-    <div v-if="popupXueQing">
-        <XueQing :memberuserid="memberuser.memberuserid" :memberuser="memberuser" @goback="onBack"/>
-    </div>
+      <div v-if="popupXueQing">
+        <XueQing :memberuserid="memberuser.memberuserid" :memberuser="memberuser" @goback="onBack" />
+      </div>
     </mt-popup>
   </div>
 </template>
@@ -81,25 +84,30 @@ export default {
       Data: [],
       itemData: {},
       index: 2,
-      popupXueQing:false
+      popupXueQing: false
     };
   },
-  created() {
+  computed: {
+    curbanke() {
+      let curbanke = this.$store.state.curbanke;
+      return curbanke;
+    }
   },
+  created() {},
   mounted() {},
   methods: {
- MyXueQing() {
+    MyXueQing() {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
-       name: "MyXueQing",
+        name: "MyXueQing",
         params: {}
       });
     },
-    MyXueQingFn(type){
-      this.popupXueQing=type;
+    MyXueQingFn(type) {
+      this.popupXueQing = type;
     },
-    onBack(v){
-    this.MyXueQingFn(v)
+    onBack(v) {
+      this.MyXueQingFn(v);
     }
   }
 };
@@ -113,7 +121,7 @@ export default {
   }
   .Statistics {
     border-top: 1px solid #f0f0f0;
-        margin-top: 10px;
+    margin-top: 10px;
     li {
       width: 25%;
       padding: 10px;
@@ -128,7 +136,7 @@ export default {
     margin: 10px 0 20px 0;
   }
   .table-main {
-        // height: 59vh;
+    // height: 59vh;
     background: #fff;
   }
 }

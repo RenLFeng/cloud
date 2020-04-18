@@ -239,14 +239,10 @@ export default {
       }
     },
     selectClick(e, v, i) {
+      if (!v.num) return;
       let curel = this.$refs.tbLi[i];
       this.moveBar = curel.offsetLeft;
       this.filterType = v.label;
-      // if (v.label == "NA") {
-      //   // this.memberData = this.NaMembers;
-      //   console.log("gggg", this.NaMembers);
-      //   return;
-      // }
       for (let v of this.tabBar) {
         v.isActive = false;
       }
@@ -489,6 +485,7 @@ export default {
   .main {
     background: #fff;
     .vote-wrap {
+      width: 100%;
     }
     .pic {
       width: 60%;
