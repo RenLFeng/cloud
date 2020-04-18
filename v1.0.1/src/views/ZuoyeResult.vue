@@ -19,7 +19,7 @@
 
     <div class="noheaderscroll main main-f" id="main">
       <mt-loadmore
-        :top-method="loadTop"
+        :top-method="zuoyeitem.state != 100?loadTop:false"
         @top-status-change="handleTopChange"
         :top-distance="120"
         ref="loadmore"
@@ -1007,6 +1007,7 @@ export default {
 <style lang="less">
 .zouye-results-wrap {
   background: #fff;
+  overflow: hidden;
   .main {
     height: 94vh;
     min-height: 94vh;

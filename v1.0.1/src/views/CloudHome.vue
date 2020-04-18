@@ -36,10 +36,7 @@
     </mt-header>-->
 
     <!-- main -->
-    <div
-      :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'"
-      :style="`margin-top:${selected=='banke'?'84':'0'}px`"
-    >
+    <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
       <mt-tab-container
         class="page-tabbar-container"
         :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
@@ -807,15 +804,14 @@ export default {
   overflow: hidden;
 }
 .cloudHome.banke {
-  /* height: 75vh;
-  min-height: 78vh; */
+}
+.cloudHome .page-wrap {
+  height: 100%;
+  margin-top: 0;
 }
 .cloudHome.banke .page-wrap {
   height: 100%;
-  /* min-height: 75vh; */
-}
-.page-wrap {
-  /* overflow: auto; */
+  margin-top: 84px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
   min-height: 73vh;

@@ -122,7 +122,7 @@ export default {
       }
     }
     &.act {
-      background: #f9f9f9;
+      background: #f7f5f5;
     }
   }
 }
