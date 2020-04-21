@@ -42,7 +42,7 @@
       <mt-tab-container v-model="selected">
         <mt-tab-container-item
           id="1"
-          class="listcontainer-wrap"
+          class="listcontainer-wrap scrollingtouch"
           :class="showupload?'showupload':''"
         >
           <!-- v-infinite-scroll="loadMore"
@@ -53,16 +53,15 @@
             <mt-loadmore
               :top-method="loadTop"
               @top-status-change="handleTopChange"
-              :top-distance="120"
+              :top-distance="80"
               :bottom-method="loadMore"
               @bottom-status-change="handleBottomChange"
               :bottom-all-loaded="allLoaded"
-              :bottom-distance="100"
               ref="loadmore"
               class="zyloadmore"
               :class="filesempty?'filesempty':''"
               :auto-fill="autofill"
-              :distanceIndex="3"
+              bottomDropText="上拉加载更多"
             >
               <div class="wrap">
                 <div

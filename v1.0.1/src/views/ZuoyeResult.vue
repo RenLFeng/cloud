@@ -17,15 +17,14 @@
       <mt-button slot="right" v-else-if="showstopbtn" @click="showmzuoyemenu=true">操作</mt-button>
     </mt-header>
 
-    <div class="noheaderscroll main main-f" id="main">
+    <div class="noheaderscroll main main-f scrollingtouch" id="main">
       <mt-loadmore
         :top-method="zuoyeitem.state != 100?loadTop:false"
         @top-status-change="handleTopChange"
-        :top-distance="120"
+        :top-distance="80"
         ref="loadmore"
         class="zyloadmore"
         :auto-fill="autofill"
-        :distanceIndex="3"
       >
         <div class="titlecontainer">
           <div class="zuoyetitle">
@@ -476,7 +475,7 @@ export default {
     },
     submitnum() {
       var ni = 0;
-      for (var i = 0; i < this.results.length; i++) {
+      for (var i = 0; i < this.resultsTemp.length; i++) {
         if (this.resultsTemp[i].submitnum) {
           ni++;
         }
@@ -485,8 +484,8 @@ export default {
     },
     uncommentnum() {
       var ni = 0;
-      for (var i = 0; i < this.results.length; i++) {
-        if (this.results[i].score < 0 && this.results[i].submitnum) {
+      for (var i = 0; i < this.resultsTemp.length; i++) {
+        if (this.resultsTemp[i].score < 0 && this.resultsTemp[i].submitnum) {
           ni++;
         }
       }

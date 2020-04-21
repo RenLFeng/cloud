@@ -669,3 +669,7 @@ textarea {
 ::-webkit-scrollbar {
     display: none;
 }
+
+.scrollingtouch {
+    -webkit-overflow-scrolling: touch
+}

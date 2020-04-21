@@ -46,13 +46,10 @@ const i18n = new VueI18n({
 window.addEventListener("resize", function () {
     let clientWidth = window.innerWidth;
     if (!clientWidth) return;
-    if (clientWidth >= 640) {
-        document.documentElement.style.fontSize = '2.5rem';
+    if (clientWidth >= 540) {
+        document.documentElement.style.fontSize = '54px';
     }
 });
-// window.addEventListener('touchmove',function(e){
-//     e.preventDefault();
-// }, { passive: false })
 let Vm = new Vue({
     // router: createRouter(),
     router,

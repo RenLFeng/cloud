@@ -22,15 +22,17 @@
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="500"
     infinite-scroll-immediate-check="false"-->
-    <div class="main">
+    <div class="main scrollingtouch">
       <mt-loadmore
+        :top-method="loadTop"
+        @top-status-change="handleTopChange"
+        :top-distance="80"
         :bottom-method="loadMore"
         @bottom-status-change="handleBottomChange"
         :bottom-all-loaded="allLoaded"
-        :bottom-distance="100"
         ref="loadmore"
         :auto-fill="autofill"
-        :distanceIndex="3"
+        bottomDropText="上拉加载更多"
       >
         <div v-if="pingceHistoryList.length" class="box">
           <List
@@ -179,8 +181,7 @@ export default {
       this.pingceid = params.pingceid;
       this.showsingle = true;
     }
-    this.loadMore();
-    // this.HistoryListRQuery();
+    this.HistoryListRQuery();
   },
   methods: {
     selectClick(e, v, i) {
@@ -230,8 +231,20 @@ export default {
       let cobj = {};
       CollectionFn(cobj, 4, imgIcon, this.editItemObj.id, this.bankeid, title);
     },
-    loadMore() {
+    loadTop() {
+      this.pingceHistoryList = [];
+      this.tempHistory = [];
+      this.page = 0;
+      this.allLoaded = false;
+      this.dropType = 0;
       this.HistoryListRQuery();
+    },
+    loadMore() {
+      this.dropType = 1;
+      this.HistoryListRQuery();
+    },
+    handleTopChange(status) {
+      this.topStatus = status;
     },
     handleBottomChange(status) {
       this.bottomStatus = status;
@@ -285,10 +298,18 @@ export default {
           } else {
             Toast("连接错误");
           }
-          this.$refs.loadmore.onBottomLoaded();
+          if (this.dropType) {
+            this.$refs.loadmore.onBottomLoaded();
+          } else {
+            this.$refs.loadmore.onTopLoaded();
+          }
         })
         .catch(err => {
-          this.$refs.loadmore.onBottomLoaded();
+          if (this.dropType) {
+            this.$refs.loadmore.onBottomLoaded();
+          } else {
+            this.$refs.loadmore.onTopLoaded();
+          }
           Toast("异常");
         });
     },
@@ -397,7 +418,7 @@ export default {
     margin-top: 110px;
     height: 84vh;
     overflow: auto;
-    .box{
+    .box {
       min-height: 84vh;
     }
   }

@@ -10,10 +10,10 @@
       >{{bitem.name}}</div>
     </div>
 
-    <div class="zy-list-box">
+    <div class="zy-list-box scrollingtouch">
       <mt-loadmore
         :top-method="loadTop"
-        :top-distance="120"
+        :top-distance="80"
         @top-status-change="handleTopChange"
         ref="loadmore"
         class="zyloadmore"
@@ -21,7 +21,7 @@
         @bottom-status-change="handleBottomChange"
         :bottom-all-loaded="allLoaded"
         :auto-fill="autofill"
-        :distanceIndex="3"
+        bottomDropText="上拉加载更多"
       >
         <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
           <BankeZuoyeSimple
@@ -32,7 +32,7 @@
             @normalclick="onnormalclick"
           ></BankeZuoyeSimple>
         </div>
-
+        <!-- 
         <div slot="top" class="mint-loadmore-top">
           <span v-show="topStatus !== 'loading'">{{$t('common.Drop_down_refresh')}}</span>
           <span v-show="topStatus === 'loading'">{{$t('common.Loading')}}</span>
@@ -41,9 +41,16 @@
         <div slot="bottom" class="mint-loadmore-bottom">
           <span v-show="bottomStatus === 'drop'">{{$t('common.Pull_up_Load')}}</span>
           <span v-show="bottomStatus === 'loading'">{{$t('common.Loading')}}</span>
-        </div>
+        </div>-->
 
         <div v-if="zuoyelist.length==0" class="tc">{{$t('bankeTask.No_task')}}</div>
+        <BottomLoadmore
+          v-if="allLoaded && zuoyelist.length"
+          showType
+          loadtext="已经加载全部了"
+          type
+          color
+        />
       </mt-loadmore>
     </div>
 
@@ -60,7 +67,7 @@ import commontools from "../commontools";
 import { CollectionFn, getZYFileType } from "@/util";
 
 import nativecode from "@/nativecode";
-
+import BottomLoadmore from "@/common/bottom-loadmore";
 export default {
   name: "BankeZuoye",
   props: {
@@ -457,7 +464,8 @@ export default {
     }
   },
   components: {
-    BankeZuoyeSimple
+    BankeZuoyeSimple,
+    BottomLoadmore
   }
 };
 </script>

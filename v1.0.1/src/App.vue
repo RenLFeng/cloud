@@ -144,8 +144,8 @@ export default {
 
     let clientWidth = window.innerWidth;
     if (!clientWidth) return;
-    if (clientWidth >= 640) {
-      document.documentElement.style.fontSize = "2.5rem";
+    if (clientWidth >= 540) {
+      document.documentElement.style.fontSize = "54px";
     }
     // console.log("routerview page created, cur path:"+this.$router.path);
     //! 请求登录信息

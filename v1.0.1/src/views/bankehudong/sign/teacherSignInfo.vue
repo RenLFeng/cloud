@@ -272,7 +272,7 @@ export default {
     //教师上课
     teacherSignClass() {
       if (this.signState == "0" || !this.isTeacher) return;
-      let signType=['wifi','gps'];
+      let signType=['','gps'];
       let info = {
         // wifi: {
         //   SSID: "EXSOFT",

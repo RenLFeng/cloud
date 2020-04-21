@@ -7,15 +7,20 @@
       <div class="itempart">
         <div class="wrap">
           <div class="itemtitle ellipse">
-
-            <span class="maxlong maxlong8"><span v-if="classitem.inclass"  class="inclass">[上课中]</span>{{classitem.name}}</span>
+            <span class="maxlong maxlong8">
+              <span v-if="classitem.inclass" class="inclass">正在上课</span>
+              {{classitem.name}}
+            </span>
             <span class="membernum fonttiny fr color9">{{classitem.membernum}}人</span>
           </div>
           <div class="font-xs ellipse">
             <span class="maxlong">教师：{{classitem.username}}</span>
             <span class="class-nmuber font-xs fr">班课号:{{classitem.id}}</span>
           </div>
-          <div class="font-xs ellipse " :class="{'Notice':classitem.info}">公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
+          <div
+            class="font-xs ellipse"
+            :class="{'Notice':classitem.info}"
+          >公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>
       <span class="go" v-if="!end">
@@ -51,12 +56,12 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/banke_default.png");
+      srcstr += "/assets/banke_default.png";
       srcstr += '"';
       return srcstr;
-    }
-    ,hasnotice(){
-        return true;
+    },
+    hasnotice() {
+      return true;
     }
   },
   methods: {
@@ -72,7 +77,7 @@ export default {
   .item {
     position: relative;
     border-top: 1px solid #f0f0f0;
-    padding:13px 13px 13px 80px;
+    padding: 13px 13px 13px 80px;
     background: #fff;
     .reddot-Tips-wrap {
       position: absolute;
@@ -89,7 +94,7 @@ export default {
     }
 
     .itempart {
-              width: 85%;
+      width: 85%;
       .wrap {
         > div {
           .class-nmuber {
@@ -101,10 +106,14 @@ export default {
           .membernum {
           }
         }
-        .inclass{
-          color:white;
+        .inclass {
+          color: white;
           border-radius: 3px;
-          background-color: #ff8900;
+          background-color: #0089ff;
+          font-size: 16px;
+          padding: 2px 5px;
+          height: 25px;
+          display: inline-block;
         }
         .Notice {
           color: #ff8900;

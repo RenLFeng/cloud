@@ -63,6 +63,8 @@ const state = {
         },
         isShow: false
     },
+    Settedinfo:false,
+    schoolname:{},
 
 
 }
@@ -261,6 +263,12 @@ const mutations = {
     },
     SET_ISCREATE(state, v) {
         state.isCreate = v;
+    },
+    SET_SCHOOL_NAME(state, v) {
+        state.schoolname = v;
+    },
+    SET_TEDINFO(state, v) {
+        state.Settedinfo = v;
     },
 }
 

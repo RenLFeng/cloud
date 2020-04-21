@@ -19,7 +19,7 @@
       </ul>
     </div>
     <div class="cell-wrap">
-      <ul class="border-bottom-e5">
+      <ul class="">
         <li class="school" @click="showSchoo">
           <mt-cell title="所属学校" is-link></mt-cell>
         </li>
@@ -45,8 +45,9 @@
             <div class="devide" v-if="cansharebanke"></div>
 
             <li @click="edBk">
-              <mt-cell :title="$t('bankeXingQing.EndingClass')" is-link></mt-cell>
+              <mt-cell title="结束班课" is-link></mt-cell>
             </li>
+            
           </ul>
         </li>
         <li v-else>
@@ -468,6 +469,9 @@ export default {
   }
   .cell-wrap {
     margin-top: 20px;
+    height: 60vh;
+    min-height: 60vh;
+    overflow: auto;
     .list-wrap {
       background: #fff;
       .school {

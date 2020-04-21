@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="banke-home-wrap">
     <mt-header v-show="hasnavbar && selected!='ziyuan'" :title="bankename" class="mint-header-f">
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
@@ -475,6 +475,9 @@ export default {
 </script>
 
 <style scoped>
+.banke-home-wrap{
+  overflow: hidden;
+}
 .chengyuan-head {
   background: #fff;
   padding: 10px;

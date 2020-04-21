@@ -46,20 +46,19 @@
           infinite-scroll-disabled="loading"
           infinite-scroll-distance="100"
         infinite-scroll-immediate-check="false"-->
-        <div class="banke-wrap">
+        <div class="banke-wrap scrollingtouch">
           <mt-tab-container-item id="banke">
             <mt-loadmore
               :top-method="loadTop"
               @top-status-change="handleTopChange"
-              :top-distance="120"
+              :top-distance="80"
               :bottom-method="loadMore"
               @bottom-status-change="handleBottomChange"
               :bottom-all-loaded="allLoaded"
-              :bottom-distance="100"
+              bottomDropText="上拉加载更多"
               ref="loadmore"
               class
               :auto-fill="autofill"
-              :distanceIndex="3"
               :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
             >
               <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
@@ -72,7 +71,7 @@
             <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
               </div>-->
               <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
-              <p class="v"></p>
+              <!-- <p class="v"></p> -->
               <div
                 class="bankecontainer"
                 :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
@@ -85,13 +84,6 @@
                   @showMenu="onShowMenu"
                   :homeEventmsgs="homeEventmsgs"
                 ></BankeSimple>
-                <!-- <div slot="top" class="mint-loadmore-top">
-                  <span
-                    v-show="topStatus !== 'loading'"
-                    :class="{ 'rotate': topStatus === 'drop' }"
-                  >↓</span>
-                  <span v-show="topStatus === 'loading'">Loading...</span>
-                </div>-->
                 <BottomLoadmore
                   v-if="allLoaded && listLoadend && bankeempty"
                   showType
@@ -184,6 +176,15 @@
         </div>
       </div>
     </mt-popup>
+    <mt-popup
+      v-model="popupSettedinfo"
+      :position="routerforward?'right':'left'"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <SettedInfo @updateName="onUpdateName" />
+    </mt-popup>
   </div>
 </template>
 
@@ -193,7 +194,7 @@ import examhome from "../Exam/ExamHome";
 import BankeSimple from "./components/BankeSimple";
 
 import MineAbout from "./MineAbout";
-
+import SettedInfo from "./my/settedinfo";
 import nativecode from "../nativecode";
 import Empty from "@/common/empty";
 import BottomLoadmore from "@/common/bottom-loadmore";
@@ -263,10 +264,15 @@ export default {
       // loading: false,
       listLoadend: false,
       allLoaded: false,
-      dropType: 0
+      dropType: 0,
+
+      popupSettedinfo: false
     };
   },
   computed: {
+    routerforward() {
+      return this.$store.state.routerforward;
+    },
     isCreate() {
       return this.$store.state.isCreate;
     },
@@ -498,6 +504,11 @@ export default {
       this.$http.post("/api/api/uservalidate").then(res => {
         if (res.data.code == 0) {
           this.$store.commit("setLoginUser", res.data.data);
+          let curuser = this.$store.getters.curuser;
+          if (curuser.hassettedinfo == null) {
+            // this.popupSettedinfo = true;
+          }
+          console.log("sada", curuser);
         } else {
           this.$store.commit("setLoginUser", {});
           this.$store.commit("setRouterForward", true);
@@ -506,6 +517,10 @@ export default {
           nativecode.jsLogin(0, {});
         }
       });
+    },
+    onUpdateName(v) {
+      this.popupSettedinfo = v;
+      this.initmine();
     },
     //获得焦点
     onFocus() {
@@ -698,7 +713,8 @@ export default {
     //  [Tab.name]: Tab,
     //   [Tabs.name]: Tabs,
     Empty,
-    BottomLoadmore
+    BottomLoadmore,
+    SettedInfo
   }
 };
 </script>
@@ -811,11 +827,11 @@ export default {
 }
 .cloudHome.banke .page-wrap {
   height: 100%;
-  margin-top: 84px;
+  margin-top: 94px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
-  min-height: 73vh;
-  padding-bottom: 10px;
+  min-height: 74vh;
+  padding-bottom: 30px;
 }
 .cloudHome.banke .page-wrap .bankecontainer.bankeempty {
   min-height: 78vh;
@@ -892,7 +908,7 @@ export default {
 }
 .banke-wrap {
   width: 100%;
-  height: 75vh;
+  height: 76vh;
   overflow: auto;
 }
 </style>
