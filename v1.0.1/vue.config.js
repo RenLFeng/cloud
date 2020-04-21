@@ -36,21 +36,21 @@ module.exports = {
         daping: 'src/daping.js'
     },
     configureWebpack: config => {
-        // if (isProduction) {
+        if (isProduction) {
 
-        //     config.plugins.push(new CompressionWebpackPlugin({
+            config.plugins.push(new CompressionWebpackPlugin({
 
-        //         algorithm: 'gzip',
+                algorithm: 'gzip',
 
-        //         test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+                test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
 
-        //         threshold: 10240,
+                threshold: 10240,
 
-        //         minRatio: 0.8
+                minRatio: 0.8
 
-        //     }))
+            }))
 
-        // }
+        }
 
     },
 
