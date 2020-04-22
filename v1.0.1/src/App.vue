@@ -3,7 +3,7 @@
     <div class="bannertop" v-if="showloginfail" @click="uservalidate">连接失败，点击重连</div>
     <!-- <div class="bannertop" v-if="showtest">{{testtext}}</div> -->
     <transition :name="transitionName">
-      <router-view class="Router"></router-view>
+      <router-view class="Router" :class="exsoftios?'exsoftios':''"></router-view>
     </transition>
     <preview
       :pshow="show"
@@ -12,17 +12,19 @@
       :pindex="index"
       @toggleClick="onToggleClick"
     ></preview>
-      <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
-          <Audio :AudioInfo="audiofileinfo" @Backs="popupAudio=false" v-if="popupAudio"/>
-      </mt-popup>
+    <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
+      <Audio :AudioInfo="audiofileinfo" @Backs="popupAudio=false" v-if="popupAudio" />
+    </mt-popup>
     <!--
       <div class="dp-hd-wrap"  v-if="hudong" @click="hudongFn">多屏互动</div>
-      -->
+    -->
     <float-icons padding="10 10 60 10" class="icons-warp" v-if="haswifiroom">
       <div class="float-icon-item" @click="gotowifiroom()">
-        <span>多屏<br/>互动</span>
+        <span>
+          多屏
+          <br />互动
+        </span>
       </div>
-
     </float-icons>
   </div>
 </template>
@@ -33,17 +35,16 @@ import preview from "./common/preview";
 import "./styles/common.less";
 import "./styles/style.css";
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
-import Audio from '@/common/audio'
+import Audio from "@/common/audio";
 
-import FloatIcons from '@/components/s-icons'
-
+import FloatIcons from "@/components/s-icons";
 
 export default {
   name: "Home",
   components: {
     preview,
-      Audio,
-      'float-icons': FloatIcons
+    Audio,
+    "float-icons": FloatIcons
   },
   computed: {
     showloginfail() {
@@ -56,12 +57,12 @@ export default {
       }
       return false;
     },
-      haswifiroom(){
-        if (!this.$store.getters.hasloginuser){
-            return false;
-        }
-        return nativecode.haswifiroom();
-      },
+    haswifiroom() {
+      if (!this.$store.getters.hasloginuser) {
+        return false;
+      }
+      return nativecode.haswifiroom();
+    },
     show: {
       get: function() {
         return this.$store.state.Preview.show;
@@ -106,20 +107,26 @@ export default {
     localuser() {
       return this.$store.state.loginuser;
     },
-      audiofileinfo(){
-        return this.$store.state.audiofileinfo;
+    audiofileinfo() {
+      return this.$store.state.audiofileinfo;
+    },
+    exsoftios() {
+      if (nativecode.platform == "exsoftios") {
+        return true;
       }
+      return false;
+    }
   },
 
   data() {
     return {
-      hudong:true,
+      hudong: true,
       transitionName: "slide-forward",
-      testtext: 'showua:' + navigator.userAgent,
+      testtext: "showua:" + navigator.userAgent,
       showtest: true,
       map: {},
-        popupAudio:false,
-        myaudioinfo:{},
+      popupAudio: false,
+      myaudioinfo: {},
 
       //! cjy: websocket 相关
       websock: null,
@@ -153,20 +160,19 @@ export default {
   },
 
   watch: {
-      audiofileinfo(lnew, lold){
-        //  if (lnew.filepath != lold.filepath)
-        //  console.log(lnew);
-         // console.log(lold);
-          {
-              this.myaudioinfo = lnew;
-              if (!lnew.filepath){
-                  this.popupAudio = false
-              }
-              else{
-                  this.popupAudio = true
-              }
-          }
-      },
+    audiofileinfo(lnew, lold) {
+      //  if (lnew.filepath != lold.filepath)
+      //  console.log(lnew);
+      // console.log(lold);
+      {
+        this.myaudioinfo = lnew;
+        if (!lnew.filepath) {
+          this.popupAudio = false;
+        } else {
+          this.popupAudio = true;
+        }
+      }
+    },
     localuser(lnew, old) {
       console.log("localuser watch!!");
       if (lnew.id != old.id) {
@@ -207,15 +213,15 @@ export default {
     }
   },
   methods: {
-    hudongFn(){
-      console.log('开始互动');
+    hudongFn() {
+      console.log("开始互动");
     },
-      gotowifiroom(){
-          let argobj={
-              page:'wifiroom'
-          }
-          nativecode.ncall('toNativePage', argobj);
-      },
+    gotowifiroom() {
+      let argobj = {
+        page: "wifiroom"
+      };
+      nativecode.ncall("toNativePage", argobj);
+    },
     onToggleClick(data) {
       if (!data) {
         this.tempLocalfiles = [];
@@ -238,7 +244,7 @@ export default {
           .post(url)
           .then(res => {
             //  console.log(document.cookie);
-              console.log('user validate ret')
+            console.log("user validate ret");
             if (res.data.code == 0) {
               this.$store.commit("setLoginUser", res.data.data);
               // cjy: 大屏端，如果已登录， 应当自动跳转主页
@@ -251,7 +257,7 @@ export default {
               }
               nativecode.jsLogin(1, res.data.data);
             } else {
-                console.log(res)
+              console.log(res);
               //!  未登录， 强制跳转登录
               if (this.$route.path != "/login") {
                 this.$store.commit("setLoginUser", {});
@@ -344,11 +350,10 @@ export default {
           olss.onclose = null;
 
           let cmdobj = {};
-          cmdobj.cmd = 'offline';  //! 推送一个离线的cmd
-            this.$store.commit("setWebCmd", cmdobj);
+          cmdobj.cmd = "offline"; //! 推送一个离线的cmd
+          this.$store.commit("setWebCmd", cmdobj);
 
           olss.close();
-
         }
         this.websock = null;
       }
@@ -370,34 +375,34 @@ export default {
         }
       }
     },
-      cmdpingcestart(cmdobj){
-          //! 随意使用一个时间参数，用户
-          let uri = "/urlpingce/" + cmdobj.bankeid + "/" + new Date().getTime();
-          // uri += '&time=' + new Date().getTime();
-          //  this.$store.commit("setRouterForward", true);
-          // this.$router.push(uri);
-          // return ;
-          let curpath = this.$route.path;
-          console.log(curpath);
-          let navigate = () => {
-              this.$store.commit("setRouterForward", true);
-              this.$router.push({
-                  name: "PingCeing",
-                  params: {
-                      bankeid: cmdobj.bankeid,
-                      dataobj: cmdobj.data
-                  }
-              });
-          };
-          if (curpath == "/PingCeing") {
-              this.$back();
-              setTimeout(() => {
-                  navigate();
-              }, 300);
-          } else {
-              navigate();
+    cmdpingcestart(cmdobj) {
+      //! 随意使用一个时间参数，用户
+      let uri = "/urlpingce/" + cmdobj.bankeid + "/" + new Date().getTime();
+      // uri += '&time=' + new Date().getTime();
+      //  this.$store.commit("setRouterForward", true);
+      // this.$router.push(uri);
+      // return ;
+      let curpath = this.$route.path;
+      console.log(curpath);
+      let navigate = () => {
+        this.$store.commit("setRouterForward", true);
+        this.$router.push({
+          name: "PingCeing",
+          params: {
+            bankeid: cmdobj.bankeid,
+            dataobj: cmdobj.data
           }
-      },
+        });
+      };
+      if (curpath == "/PingCeing") {
+        this.$back();
+        setTimeout(() => {
+          navigate();
+        }, 300);
+      } else {
+        navigate();
+      }
+    },
     wsonmessage(e) {
       try {
         let cmdobj = JSON.parse(e.data);
@@ -412,32 +417,32 @@ export default {
         } else if (cmdobj.cmd == "kickout") {
           this.wssetstate("reject");
         } else if (cmdobj.cmd == "pingcestart") {
-            this.cmdpingcestart(cmdobj)
+          this.cmdpingcestart(cmdobj);
+        } else {
+          cmddealed = false;
         }
-        else{
-            cmddealed = false;
-        }
-        if (!cmddealed){
-            this.$store.commit("setWebCmd", cmdobj);
+        if (!cmddealed) {
+          this.$store.commit("setWebCmd", cmdobj);
         }
       } catch (e) {}
     },
     wsonopen() {
       this.wssetstate("logining");
-      let role = '';
-      if (nativecode.platform == 'miniprogram'){
-          //! 小程序支持与其他端同时打开
-          role = 'weixin';
-      }
-      else if (nativecode.platform == ''
-      || nativecode.platform == 'exsoftwindows'){
-          role = 'pc';
+      let role = "";
+      if (nativecode.platform == "miniprogram") {
+        //! 小程序支持与其他端同时打开
+        role = "weixin";
+      } else if (
+        nativecode.platform == "" ||
+        nativecode.platform == "exsoftwindows"
+      ) {
+        role = "pc";
       }
       let logindata = {
         cmd: "login",
         data: {
           cookie: this.localuser.cookie,
-            role:role
+          role: role
         }
       };
       this.websock.send(JSON.stringify(logindata));
@@ -460,9 +465,12 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
   font-size: 14px;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
-
+.Router.exsoftios {
+  height: 97vh;
+  min-height: 97vh;
+}
 .bannertop {
   z-index: 9999;
   position: absolute;
@@ -568,15 +576,15 @@ export default {
 }
 </style>
 <style lang="less" scoped>
-.dp-hd-wrap{
+.dp-hd-wrap {
   position: fixed;
   bottom: 100px;
   right: 10px;
   z-index: 99999999999;
   width: 100px;
   height: 100px;
- background:rgba(0,137,255,.5);
-  color:rgba(255, 255, 255, .9);
+  background: rgba(0, 137, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   text-align: center;
   line-height: 100px;

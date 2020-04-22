@@ -55,6 +55,7 @@
               :bottom-method="loadMore"
               @bottom-status-change="handleBottomChange"
               :bottom-all-loaded="allLoaded"
+              bottomPullText=""
               bottomDropText="上拉加载更多"
               ref="loadmore"
               class
@@ -829,8 +830,8 @@ export default {
   margin-top: 94px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
-  min-height:74vh;
-  padding-bottom: 30px;
+  min-height: 74vh;
+  /* padding-bottom: 30px; */
 }
 .cloudHome.banke .page-wrap .bankecontainer.bankeempty {
   min-height: 78vh;
@@ -907,7 +908,7 @@ export default {
 }
 .banke-wrap {
   width: 100%;
-  height: 76vh;
+  height: 74vh;
   overflow: auto;
 }
 </style>

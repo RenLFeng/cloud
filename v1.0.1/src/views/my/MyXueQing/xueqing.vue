@@ -29,7 +29,7 @@
           <span class="tit-nub font16">{{myCreate.length?myCreate.length:0}}</span>
         </p>
       </div>
-      <div class="info-list-wrap">
+      <div class="info-list-wrap scrollingtouch">
         <div v-if="classData.length">
           <div class="item" v-for="(v,i) in classData" :key="i">
             <img :src="v.avatar" :onerror="$defaultImg('account')" class="position-l avatarimgpart" />
@@ -160,6 +160,7 @@ export default {
 </script>
 <style scoped lang="less">
 .my-xueqing-wrap {
+  // border: 1px solid #f00;
   .main {
     .top {
       background: #fff;
@@ -209,9 +210,8 @@ export default {
     }
     .info-list-wrap {
       position: relative;
-      height: 66vh;
-      min-height: 66vh;
-      padding-bottom: 50px;
+      height: 60vh;
+      min-height: 60vh;
       overflow-y: auto;
       background: #fff;
       .item {

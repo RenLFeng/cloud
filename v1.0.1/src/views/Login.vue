@@ -34,7 +34,11 @@
           :class="isSbmit?'colord':'colora'"
           @click="dologin"
         >{{state?'登录':'下一步'}}</button>
-        <button v-if="hasnativewxlogin" class="loginbtn weixinLogin fontnormal" @click="weixinNativeLogin">微信登录</button>
+        <button
+          v-if="hasnativewxlogin"
+          class="loginbtn weixinLogin fontnormal"
+          @click="weixinNativeLogin"
+        >微信登录</button>
         <button class="loginbtn weixinLogin fontnormal" @click="weixinLogin">微信扫码登录</button>
       </div>
     </div>
@@ -65,7 +69,6 @@
 import { Indicator, Toast, MessageBox, Button } from "mint-ui";
 // import { setServers } from 'dns';
 // import { setInterval } from 'timers';
-
 
 import nativecode from "@/nativecode";
 import wxlogin from "vue-wxlogin";
@@ -98,24 +101,26 @@ export default {
       } else {
         return false;
       }
-    }
-    ,hasnativewxlogin(){
-        if (nativecode.platform == 'exsoftandroid'
-        || nativecode.platform == 'exsoftios'){
-            return true;
-        }
-        return false;
+    },
+    hasnativewxlogin() {
+      if (
+        nativecode.platform == "exsoftandroid" ||
+        nativecode.platform == "exsoftios"
+      ) {
+        return true;
       }
+      return false;
+    }
   },
   mounted() {},
   methods: {
     weixinLogin() {
       this.popupWeiXxinLogin = true;
     },
-      weixinNativeLogin(){
-        //! 微信原生登录
-          nativecode.ncall('reqWeixinLogin',{});
-      },
+    weixinNativeLogin() {
+      //! 微信原生登录
+      nativecode.ncall("reqWeixinLogin", {});
+    },
     selectFn(state) {
       this.state = state;
     },
@@ -123,7 +128,6 @@ export default {
       if (this.state) {
         this.login();
       } else {
-
       }
     },
     login() {

@@ -15,7 +15,8 @@
           :bottom-method="loadMore"
           @bottom-status-change="handleBottomChange"
           :bottom-all-loaded="allLoaded"
-           bottomDropText="上拉加载更多"
+          bottomPullText=""
+          bottomDropText="上拉加载更多"
         >
           <div class="wrap">
             <div class="aaa" v-if="danmuDataList.length">
@@ -88,7 +89,7 @@ import {
   InfiniteScroll
 } from "mint-ui";
 import Empty from "@/common/empty";
-import { parseURL, uniqueArr,sortFn } from "@/util";
+import { parseURL, uniqueArr, sortFn } from "@/util";
 import BottomLoadmore from "@/common/bottom-loadmore";
 export default {
   name: "Danmu",
@@ -206,8 +207,8 @@ export default {
               for (let v of res.data.data) {
                 try {
                   v.info = JSON.parse(v.info);
-                  let createtime=v.createtime.replace(/-/g,'/');
-                  v.timeStr=new Date(createtime).getTime();
+                  let createtime = v.createtime.replace(/-/g, "/");
+                  v.timeStr = new Date(createtime).getTime();
                 } catch (e) {}
 
                 v.time = v.createtime.split(" ")[1];
@@ -219,7 +220,7 @@ export default {
                 obj[next.id] ? "" : (obj[next.id] = true && cur.push(next));
                 return cur;
               }, []);
-               this.danmuDataList.sort(sortFn("timeStr", 0));
+              this.danmuDataList.sort(sortFn("timeStr", 0));
             } else {
               this.allLoaded = true;
             }

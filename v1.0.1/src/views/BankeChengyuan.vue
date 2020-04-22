@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="listcontainer Member">
+    <div class="listcontainer Member scrollingtouch">
       <div
         v-infinite-scroll="loadMoreMember"
         infinite-scroll-disabled="loadingState"

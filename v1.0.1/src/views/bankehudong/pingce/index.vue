@@ -32,6 +32,7 @@
         :bottom-all-loaded="allLoaded"
         ref="loadmore"
         :auto-fill="autofill"
+        bottomPullText=""
         bottomDropText="上拉加载更多"
       >
         <div v-if="pingceHistoryList.length" class="box">

@@ -61,6 +61,7 @@
               class="zyloadmore"
               :class="filesempty?'filesempty':''"
               :auto-fill="autofill"
+              bottomPullText=""
               bottomDropText="上拉加载更多"
             >
               <div class="wrap">

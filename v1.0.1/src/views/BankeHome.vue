@@ -259,7 +259,7 @@ export default {
   },
   computed: {
     isAndroid() {
-      // if (nativecode.platform == "exsoftandroid") {
+      // if (nativecode.platform == "exsoftios") {
       //   return true;
       // }
       return false;

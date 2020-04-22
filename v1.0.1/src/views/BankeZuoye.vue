@@ -21,6 +21,7 @@
         @bottom-status-change="handleBottomChange"
         :bottom-all-loaded="allLoaded"
         :auto-fill="autofill"
+        bottomPullText=""
         bottomDropText="上拉加载更多"
       >
         <div class="list-wrap">
