@@ -506,9 +506,8 @@ export default {
           this.$store.commit("setLoginUser", res.data.data);
           let curuser = this.$store.getters.curuser;
           if (curuser.hassettedinfo == null) {
-            // this.popupSettedinfo = true;
+            this.popupSettedinfo = true;
           }
-          console.log("sada", curuser);
         } else {
           this.$store.commit("setLoginUser", {});
           this.$store.commit("setRouterForward", true);
@@ -830,7 +829,7 @@ export default {
   margin-top: 94px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
-  min-height: 74vh;
+  min-height:74vh;
   padding-bottom: 30px;
 }
 .cloudHome.banke .page-wrap .bankecontainer.bankeempty {

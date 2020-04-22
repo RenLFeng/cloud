@@ -23,14 +23,17 @@
         :auto-fill="autofill"
         bottomDropText="上拉加载更多"
       >
-        <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
-          <BankeZuoyeSimple
-            :zuoyeitem="zuoyelist[sindex]"
-            :hasedit="hasedit"
-            v-if="showitem(zitem)"
-            @editclick="onitemedit"
-            @normalclick="onnormalclick"
-          ></BankeZuoyeSimple>
+        <div class="list-wrap">
+          <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
+            <BankeZuoyeSimple
+              :zuoyeitem="zuoyelist[sindex]"
+              :hasedit="hasedit"
+              v-if="showitem(zitem)"
+              @editclick="onitemedit"
+              @normalclick="onnormalclick"
+            ></BankeZuoyeSimple>
+          </div>
+          <div v-if="zuoyelist.length==0" class="tc position-c">{{$t('bankeTask.No_task')}}</div>
         </div>
         <!-- 
         <div slot="top" class="mint-loadmore-top">
@@ -42,8 +45,6 @@
           <span v-show="bottomStatus === 'drop'">{{$t('common.Pull_up_Load')}}</span>
           <span v-show="bottomStatus === 'loading'">{{$t('common.Loading')}}</span>
         </div>-->
-
-        <div v-if="zuoyelist.length==0" class="tc">{{$t('bankeTask.No_task')}}</div>
         <BottomLoadmore
           v-if="allLoaded && zuoyelist.length"
           showType
@@ -475,10 +476,9 @@ export default {
   z-index: 99999;
 }
 
-.zyloadmore {
-  min-height: 200px;
+.zyloadmore .list-wrap {
+  min-height: calc(100vh - 198px);
 }
-
 .controlpart {
   margin: 10px 10px;
   border: 1px solid #0089ff;
