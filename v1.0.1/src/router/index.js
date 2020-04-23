@@ -39,6 +39,8 @@ import Banshu from '../views/bankehudong/banshu/index'
 import Join from '../views/bankehome/join'
 //收藏
 import Collection from '../views/my/collection'
+//结束班课
+import EndClass from '../views/my/bankeEnd'
 //学校绑定
 import BindSchool from '../views/my/bindSchool'
 //学校绑定列表
@@ -86,6 +88,7 @@ let routers = new Router({
         { path: '/Group', name: 'Group', component: Group },
         { path: '/Banshu', name: 'Banshu', component: Banshu },
         { path: '/Collection', name: 'Collection', component: Collection },
+        { path: '/EndClass', name: 'EndClass', component: EndClass },
         { path: '/Join', name: 'Join', component: Join },
         { path: '/bankejoin/:bankeid', name: 'Join', component: Join, props: true },
         { path: '/BindSchool', name: 'BindSchool', component: BindSchool },

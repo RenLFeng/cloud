@@ -102,12 +102,12 @@
         </div>
       </div>
     </mt-popup>
-    <mt-popup v-model="popupBankeEnd" position="right" class="mint-popup-3" :modal="false">
+    <!-- <mt-popup v-model="popupBankeEnd" position="right" class="mint-popup-3" :modal="false">
       <mt-header title="已结束班课" class="mint-header-f">
         <mt-button slot="left" icon="back" @click="Backs">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <BankeEnd :curbankes="curbankes"></BankeEnd>
-    </mt-popup>
+    </mt-popup> -->
     <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false" style>
       <mt-header title="关于" class>
         <mt-button slot="left" icon="back" @click="Backs">我的</mt-button>
@@ -388,28 +388,38 @@ export default {
     },
     //查询已结束班课
     queryfinished() {
-      Indicator.open("加载中...");
-      this.$http
-        .post("/api/banke/queryfinished", {})
-        .then(res => {
-          if (res.data.code == "0") {
-            console.log(res);
-            if (res.data.data.length) {
-              this.curbankes = res.data.data;
-            } else {
-              Toast("无数据");
-            }
-            this.$store.commit("SET_CLOUD_BAR", true);
-            this.popupBankeEnd = true;
-          } else {
-            Toast("出错了");
-          }
-          Indicator.close();
-        })
-        .catch(err => {
-          Toast("服务异常...");
-          Indicator.close();
-        });
+       this.$store.commit("setRouterForward", true);
+      this.$router.push({
+        name: "EndClass",
+        params: {}
+      });
+      // this.$store.commit("SET_CLOUD_BAR", true);
+      // this.popupBankeEnd = true;
+      // Indicator.open("加载中...");
+      // this.$http
+      //   .post("/api/banke/queryfinished", {
+      //      page: 0,
+      //     pagesize: 10
+      //   })
+      //   .then(res => {
+      //     if (res.data.code == "0") {
+      //       console.log(res);
+      //       if (res.data.data.length) {
+      //         this.curbankes = res.data.data;
+      //       } else {
+      //         Toast("无数据");
+      //       }
+      //       this.$store.commit("SET_CLOUD_BAR", true);
+      //       this.popupBankeEnd = true;
+      //     } else {
+      //       Toast("出错了");
+      //     }
+      //     Indicator.close();
+      //   })
+      //   .catch(err => {
+      //     Toast("服务异常...");
+      //     Indicator.close();
+      //   });
     },
     onmine: function() {
       if (!this.islogined) {

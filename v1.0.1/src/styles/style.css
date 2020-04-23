@@ -673,6 +673,8 @@ textarea {
 .scrollingtouch {
     -webkit-overflow-scrolling: touch
 }
-.overflow-scroll{
+
+.overflow-scroll {
     overflow: scroll;
+    -webkit-overflow-scrolling: touch
 }

@@ -3,7 +3,14 @@
     <mt-header title="我的收藏" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="main main-f overflow-scroll" v-if="collectionHiostry.length">
+    <div
+      class="main main-f overflow-scroll"
+      v-if="collectionHiostry.length"
+      v-infinite-scroll="loadMore"
+      infinite-scroll-disabled="loading"
+      infinite-scroll-distance="10"
+      infinite-scroll-immediate-check="false"
+    >
       <List
         v-for="(v,index) in collectionHiostry"
         :key="index"
@@ -11,6 +18,14 @@
         type="common"
         @edit="onEdit"
         @click.native="filedetail(v)"
+      />
+      <BottomLoadmore v-if="listLoadend" showType loadtext="已经加载全部了" type color />
+      <BottomLoadmore
+        v-if="!listLoadend && loading"
+        showType="loading"
+        loadtext="加载中..."
+        type="triple-bounce"
+        color
       />
     </div>
     <Empty v-else />
@@ -22,7 +37,7 @@
 import List from "@/common/list";
 import Empty from "@/common/empty";
 import nativecode from "@/nativecode";
-
+import BottomLoadmore from "@/common/bottom-loadmore";
 import { getCollectionType } from "@/util";
 
 import {
@@ -43,6 +58,9 @@ export default {
       collectionHiostry: [],
       page: 0,
       pagesize: 10,
+      loading: false,
+      listLoadend: false,
+      allLoaded: false,
 
       actions: [
         {
@@ -65,8 +83,12 @@ export default {
   mounted() {},
   watch: {},
   methods: {
+    loadMore() {
+      this.loading = true;
+      this.userfavQuery();
+    },
     userfavQuery() {
-      Indicator.open("加载中...");
+      // Indicator.open("加载中...");
       this.$http
         .post("/api/userfav/query", {
           page: this.page,
@@ -76,22 +98,31 @@ export default {
           if (res.data.code == "0") {
             //  Toast("成功");
             let ch = res.data.data;
+            if (ch.length >= this.pagesize) {
+              this.loading = false;
+              this.page++;
+            } else {
+              if (this.page) {
+                this.listLoadend = true;
+              }
+              this.allLoaded = true;
+            }
             for (let v of ch) {
               v.info = JSON.parse(v.info);
               if (v.info.type) {
                 v.info.typeText = getCollectionType(v.info.type);
               }
             }
-            this.collectionHiostry = ch;
+            this.collectionHiostry = [...this.collectionHiostry, ...ch];
             console.log("success", this.collectionHiostry);
           } else {
             Toast("失败");
           }
-          Indicator.close();
+          // Indicator.close();
         })
         .catch(err => {
           Toast("异常");
-          Indicator.close();
+          // Indicator.close();
         });
     },
     onEdit(item) {
@@ -201,7 +232,8 @@ export default {
   },
   components: {
     List,
-    Empty
+    Empty,
+    BottomLoadmore
   }
 };
 </script>
