@@ -44,7 +44,7 @@
       >
         <!-- v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
-          infinite-scroll-distance="100"
+          infinite-scroll-distance="10"
         infinite-scroll-immediate-check="false"-->
         <div class="banke-wrap scrollingtouch">
           <mt-tab-container-item id="banke">
@@ -55,7 +55,7 @@
               :bottom-method="loadMore"
               @bottom-status-change="handleBottomChange"
               :bottom-all-loaded="allLoaded"
-              bottomPullText=""
+              bottomPullText
               bottomDropText="上拉加载更多"
               ref="loadmore"
               class
@@ -89,7 +89,7 @@
                   v-if="allLoaded && listLoadend && bankeempty"
                   showType
                   loadtext="已经加载全部了"
-                  type
+                  type="triple-bounce"
                   color
                 />
               </div>
@@ -262,7 +262,7 @@ export default {
       topStatus: "",
       bottomStatus: "",
       autofill: false,
-      // loading: false,
+      loading: false,
       listLoadend: false,
       allLoaded: false,
       dropType: 0,
@@ -327,6 +327,16 @@ export default {
     },
     curuser() {
       return this.$store.getters.curuser;
+    },
+    loadginState() {
+      if (this.loading) {
+        return true;
+      } else {
+        if (this.allLoaded && this.listLoadend && this.bankeempty) {
+          return true;
+        }
+        return false;
+      }
     }
   },
   watch: {
@@ -363,7 +373,7 @@ export default {
       this.initbanke();
     },
     loadMore() {
-      // this.loading = true;
+      this.loading = true;
       this.dropType = 1;
       this.initbanke();
     },
@@ -609,7 +619,7 @@ export default {
               // v.schoolid=1001
             }
             if (res.data.data.length >= this.pagesize) {
-              // this.loading = false;
+              this.loading = false;
               this.page++;
             } else {
               if (this.page) {
@@ -817,7 +827,6 @@ export default {
   transform: translate(-50%, 0);
 }
 .cloudHome {
-  overflow: hidden;
 }
 .cloudHome.banke {
 }

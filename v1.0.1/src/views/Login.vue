@@ -5,13 +5,17 @@
         <img src="/assets/login_b.png" alt class="login-bg" />
         <img src="/assets/login_logo.png" alt class="login-icon position-c" />
       </div>
-      <div class="fontlarge loginpart">
-        <div class="login-box" v-if="state">
+      <div class="fontlarge loginpart scrollingtouch">
+        <div class="tit-wrap">
+          <span :class="state?'act':''" @click="selectFn(1)">密码登录</span>
+          <span :class="!state?'act':''" @click="selectFn(0)">用户注册</span>
+        </div>
+        <div class="login-box">
           <div class="loginline">
             <img src="/assets/phone_icon.svg" alt class="position-l" />
             <input
               v-model="account"
-              placeholder="输入账户名"
+              :placeholder="state?'输入账户名':'请设置账户名'"
               autocomplete="off"
               class="logininput fontnormal"
               @keyup.enter="dologin"
@@ -21,7 +25,7 @@
             <img src="/assets/pwd_icon.svg" alt class="position-l" />
             <input
               v-model="password"
-              placeholder="输入密码"
+              :placeholder="state?'输入密码':'请设置密码'"
               type="password"
               autocomplete="off"
               class="logininput fontnormal"
@@ -33,7 +37,7 @@
           class="loginbtn fontnormal"
           :class="isSbmit?'colord':'colora'"
           @click="dologin"
-        >{{state?'登录':'下一步'}}</button>
+        >{{state?'登录':'注册'}}</button>
         <button
           v-if="hasnativewxlogin"
           class="loginbtn weixinLogin fontnormal"
@@ -123,20 +127,26 @@ export default {
     },
     selectFn(state) {
       this.state = state;
+      if (!state) {
+        this.account = "";
+        this.password = "";
+      }
     },
     dologin: function() {
-      if (this.state) {
-        this.login();
-      } else {
-      }
+      this.login();
     },
     login() {
       if (!this.isSbmit) {
         Toast("请填写详细信息");
         return;
       }
-      Indicator.open(this.$t("Indicator.Logon"));
+      let tips = "登录中...";
       var url = "/api/api/login";
+      if (!this.state) {
+        url = "/api/api/newaccount";
+        tips = "正全力注册...";
+      }
+      Indicator.open(tips);
       var othis = this;
       this.$http
         .post(url, {
@@ -146,11 +156,15 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
-            //console.log('login ok');
-            this.$store.commit("setLoginUser", res.data.data);
-            this.$store.commit("setRouterForward", true);
-            this.$router.push("/");
-            nativecode.jsLogin(1, res.data.data);
+            if (this.state) {
+              this.$store.commit("setLoginUser", res.data.data);
+              this.$store.commit("setRouterForward", true);
+              this.$router.push("/");
+              nativecode.jsLogin(1, res.data.data);
+            } else {
+              this.state = 1;
+              this.login();
+            }
           } else {
             Toast(res.data.msg);
           }
@@ -201,6 +215,7 @@ export default {
   background-color: white;
   border-top-left-radius: 0.53333rem;
   border-top-right-radius: 0.53333rem;
+  overflow: auto;
 }
 .logininput {
   border: none;
@@ -253,9 +268,11 @@ textarea::-webkit-input-placeholder {
 }
 .bg-pic-wrap {
   position: relative;
+  height: 286px;
+  min-height: 286px;
 }
 .login-bg {
-  height: 286px;
+  height: 100%;
   width: 100%;
   max-width: 750px;
 }
@@ -285,6 +302,16 @@ textarea::-webkit-input-placeholder {
       span.act {
         color: #0089ff;
       }
+    }
+  }
+}
+.tit-wrap {
+  display: flex;
+  color: #999;
+  justify-content: space-around;
+  span {
+    &.act {
+      color: #0089ff;
     }
   }
 }
