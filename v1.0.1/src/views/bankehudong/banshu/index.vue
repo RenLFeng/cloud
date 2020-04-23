@@ -4,17 +4,17 @@
       <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
-    <div class="main">
+    <div class="main overflow-scroll">
       <div v-if="banshuList.length">
         <ul
           class="pic"
           v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
-          infinite-scroll-distance="500"
+          infinite-scroll-distance="10"
           infinite-scroll-immediate-check="false"
         >
           <li class v-for="(v,i) in banshuList" :key="i" @click="preview(i)">
-            <img :src="`${v.files}_snap.jpg`" alt  class="object-fit-img"/>
+            <img :src="`${v.files}_snap.jpg`" alt class="object-fit-img" />
             <p class="fontsmall">
               {{v.uploadtime}}
               <i
@@ -24,10 +24,14 @@
             </p>
           </li>
         </ul>
-        <p v-if="isScorll && !scorllEd" class="tc color9">
-          <van-loading size="24px">加载中...</van-loading>
-        </p>
-        <p v-if="scorllEd && isScorll" class="tc color9">我是有底线的...</p>
+        <BottomLoadmore v-if="listLoadend" showType loadtext="已经加载全部了" type color />
+        <BottomLoadmore
+          v-if="!listLoadend && loading"
+          showType="loading"
+          loadtext="加载中..."
+          type="triple-bounce"
+          color
+        />
       </div>
       <Empty v-else />
       <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
@@ -44,7 +48,8 @@ import "@vant/touch-emulator/index";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
 import { parseURL, CollectionFn, getZYFileType } from "@/util";
-import nativecode from '../../../nativecode'
+import nativecode from "../../../nativecode";
+import BottomLoadmore from "@/common/bottom-loadmore";
 import {
   Button,
   Indicator,
@@ -72,8 +77,6 @@ export default {
       page: 0,
       pagesize: 10,
       loading: false,
-      isScorll: false,
-      scorllEd: false,
 
       editItemObj: {},
       actionShow: false,
@@ -109,14 +112,13 @@ export default {
     Collection() {
       let imgIcon = "";
       imgIcon = this.editItemObj.files + "_snap.jpg";
-      let name = '课堂板书'+this.editItemObj.uploadtime;
+      let name = "课堂板书" + this.editItemObj.uploadtime;
       let cobj = {
-          filepath:this.editItemObj.files
+        filepath: this.editItemObj.files
       };
-      CollectionFn(cobj, 100, imgIcon, this.editItemObj.id,this.bankeid, name);
+      CollectionFn(cobj, 100, imgIcon, this.editItemObj.id, this.bankeid, name);
     },
     loadMore() {
-      this.isScorll = true;
       this.loading = true;
       this.queryBanshu();
     },
@@ -129,16 +131,14 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-            // for (let i = 0; i < 5; i++) {
-            //   res.data.data.push(arr);
-            // }
-            if (res.data.data.length < this.pagesize) {
-              this.loading = true;
-              this.scorllEd = true;
-            } else {
+            if (res.data.data.length >= this.pagesize) {
               this.loading = false;
-              this.isScorll = false;
               this.page++;
+            } else {
+              if (this.page) {
+                this.listLoadend = true;
+              }
+              this.allLoaded = true;
             }
             this.banshuList = [...this.banshuList, ...res.data.data];
           } else {
@@ -156,9 +156,9 @@ export default {
         tempImgs.push(nativecode.getUsedUrl(item.files));
       }
       nativecode.previewImage(this, {
-          urls:tempImgs,
-          index:index
-      })
+        urls: tempImgs,
+        index: index
+      });
 
       // ImagePreview({
       //   images: tempImgs,
@@ -174,7 +174,8 @@ export default {
   components: {
     [ImagePreview.name]: ImagePreview,
     [Loading.name]: Loading,
-    Empty
+    Empty,
+    BottomLoadmore
   }
 };
 </script>
@@ -208,6 +209,8 @@ export default {
   .main {
     background: #f0f0f0;
     margin-top: 50px;
+    height: 93vh;
+    min-height: 93vh;
     .pic {
       li {
         width: 100%;

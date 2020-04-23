@@ -10,19 +10,25 @@
       >{{bitem.name}}</div>
     </div>
 
-    <div class="zy-list-box scrollingtouch">
+    <!-- :bottom-method="loadMore"
+        @bottom-status-change="handleBottomChange"
+        :bottom-all-loaded="allLoaded"
+        bottomPullText
+    bottomDropText="上拉加载更多"-->
+    <div
+      class="zy-list-box scrollingtouch"
+      v-infinite-scroll="loadMore"
+      infinite-scroll-disabled="loading"
+      infinite-scroll-distance="10"
+      infinite-scroll-immediate-check="false"
+    >
       <mt-loadmore
         :top-method="loadTop"
         :top-distance="80"
         @top-status-change="handleTopChange"
         ref="loadmore"
         class="zyloadmore"
-        :bottom-method="loadBottom"
-        @bottom-status-change="handleBottomChange"
-        :bottom-all-loaded="allLoaded"
         :auto-fill="autofill"
-        bottomPullText=""
-        bottomDropText="上拉加载更多"
       >
         <div class="list-wrap">
           <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
@@ -318,9 +324,11 @@ export default {
     },
     loadTop() {
       this.allLoaded = false;
+      this.loading = false;
       this.doQueryZuoye(true);
     },
-    loadBottom() {
+    loadMore() {
+      this.loading = true;
       this.doQueryZuoye(false);
     },
     handleTopChange(status) {
@@ -349,6 +357,9 @@ export default {
           if (res.data.code == 0) {
             if (!res.data.data.length) {
               this.allLoaded = true;
+               this.loading = true;
+            }else{
+                this.loading = false;
             }
             let zlist = res.data.data;
             for (let v of zlist) {
@@ -439,7 +450,8 @@ export default {
       hasedit: this.$store.getters.caneditbanke,
       page: 0,
       pagesize: 10,
-      allLoaded: false
+      allLoaded: false,
+      loading:false
     };
   },
   created() {

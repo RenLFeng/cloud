@@ -14,7 +14,7 @@
     >
       <mt-cell :title="$t('bankeTask.Has_ended')"></mt-cell>
     </p>
-    <div class>
+    <div class="person-wrap overflow-scroll">
       <!-- <p @click="selectTextFn" class="my-color border-c-bottom">切换为按({{selectText?'得分':'学号'}})显示</p> -->
       <lists :listsData="allInfo" />
     </div>
@@ -80,6 +80,10 @@ export default {
   .lists-container-icon {
     border-bottom: 1px solid #e5e5e5;
     border-top: 1px solid #e5e5e5;
+  }
+  .person-wrap{
+    height: 83vh;
+    min-height: 83vh;
   }
 }
 </style>

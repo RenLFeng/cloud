@@ -45,24 +45,27 @@
           class="listcontainer-wrap scrollingtouch"
           :class="showupload?'showupload':''"
         >
-          <!-- v-infinite-scroll="loadMore"
+          <!-- 
+             :bottom-method="loadMore"
+              @bottom-status-change="handleBottomChange"
+              :bottom-all-loaded="allLoaded"
+              bottomPullText
+          bottomDropText="上拉加载更多"-->
+          <div
+            class="listcontainer"
+            v-infinite-scroll="loadMore"
             infinite-scroll-disabled="loading"
-            infinite-scroll-distance="50"
-          infinite-scroll-immediate-check="false"-->
-          <div class="listcontainer">
+            infinite-scroll-distance="10"
+            infinite-scroll-immediate-check="false"
+          >
             <mt-loadmore
               :top-method="loadTop"
               @top-status-change="handleTopChange"
               :top-distance="80"
-              :bottom-method="loadMore"
-              @bottom-status-change="handleBottomChange"
-              :bottom-all-loaded="allLoaded"
               ref="loadmore"
               class="zyloadmore"
               :class="filesempty?'filesempty':''"
               :auto-fill="autofill"
-              bottomPullText=""
-              bottomDropText="上拉加载更多"
             >
               <div class="wrap">
                 <div
@@ -105,6 +108,13 @@
                   showType
                   loadtext="已经加载全部了"
                   type
+                  color
+                />
+                <BottomLoadmore
+                  v-if="!allLoaded && loading"
+                  showType="loading"
+                  loadtext="加载中..."
+                  type="triple-bounce"
                   color
                 />
               </div>
@@ -150,7 +160,7 @@
             <span :class="seeState?'act fr':'fr'" @click="see(1)">已查看（{{editItemFile.viewnum}}人）</span>
           </p>
         </div>
-        <ul class="list-content">
+        <ul class="list-content overflow-scroll">
           <li v-for="(item,index) in UserList" :key="index" class="clearfix">
             <span class="name ellipse position-l">{{item.name}}</span>
             <span class="score-wrap position-r tr">
@@ -293,7 +303,7 @@ export default {
 
       filetotal: 0,
 
-      // loading: false,
+      loading: false,
 
       popupAudio: false,
       viewfileItem: {},
@@ -320,7 +330,7 @@ export default {
       topStatus: "",
       bottomStatus: "",
       allLoaded: false,
-      dropType: 0
+      // dropType: 0
     };
   },
   watch: {
@@ -717,14 +727,13 @@ export default {
         type: 1
       });
       this.page = 0;
+      this.loading = false;
       this.listLoadend = false;
       this.allLoaded = false;
-      this.dropType = 0;
       this.loadMoreFile();
     },
     loadMore() {
-      // this.loading = true;
-      this.dropType = 1;
+      this.loading = true;
       this.loadMoreFile();
     },
     handleTopChange(status) {
@@ -744,12 +753,13 @@ export default {
           if (res.data.code == 0) {
             this.filetotal = res.data.data.total;
             if (res.data.data.files.length >= this.pagesize) {
-              // this.loading = false;
+              this.loading = false;
               this.page++;
             } else {
               if (this.page) {
                 this.listLoadend = true;
               }
+              this.loading = true;
               this.allLoaded = true;
             }
             console.log("资源", res);
@@ -790,18 +800,10 @@ export default {
           } else {
             this.loadingState = true;
           }
-          if (this.dropType) {
-            this.$refs.loadmore.onBottomLoaded();
-          } else {
-            this.$refs.loadmore.onTopLoaded();
-          }
+          this.$refs.loadmore.onTopLoaded();
         })
         .catch(res => {
-          if (this.dropType) {
-            this.$refs.loadmore.onBottomLoaded();
-          } else {
-            this.$refs.loadmore.onTopLoaded();
-          }
+          this.$refs.loadmore.onTopLoaded();
           console.log(res);
           //! cjy: 这里server 的http code 非200 页会走这里。
           //! 因此不能继续加载
@@ -1134,6 +1136,8 @@ export default {
         }
       }
       .list-content {
+        height: 70vh;
+        min-height: 70vh;
         li {
           position: relative;
           height: 55px;

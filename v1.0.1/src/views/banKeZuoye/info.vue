@@ -1,5 +1,5 @@
 <template>
-  <div class="zy-info">
+  <div class="zy-info-wrap">
     <div class="text-info">
       <div class="padding-right">
         <mt-cell :title="$t('bankeTask.Create_time')" :value="itemInfo.starttime"></mt-cell>
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang='less'>
-.zy-info {
+.zy-info-wrap {
   .mint-cell .mint-cell-wrapper {
     padding-right: 10px;
   }
@@ -153,6 +153,9 @@ export default {
     }
   }
   .list-wrap {
+    height: 67vh;
+    min-height: 67vh;
+    overflow: scroll;
     > li {
       background: #fff;
       padding: 10px;

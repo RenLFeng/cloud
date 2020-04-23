@@ -42,21 +42,23 @@
         :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
         v-model="selected"
       >
-        <!-- v-infinite-scroll="loadMore"
+        <!-- :bottom-method="loadMore"
+              @bottom-status-change="handleBottomChange"
+              :bottom-all-loaded="allLoaded"
+              bottomPullText
+        bottomDropText="上拉加载更多"-->
+        <div
+          class="banke-wrap scrollingtouch"
+          v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
           infinite-scroll-distance="10"
-        infinite-scroll-immediate-check="false"-->
-        <div class="banke-wrap scrollingtouch">
+          infinite-scroll-immediate-check="false"
+        >
           <mt-tab-container-item id="banke">
             <mt-loadmore
               :top-method="loadTop"
               @top-status-change="handleTopChange"
               :top-distance="80"
-              :bottom-method="loadMore"
-              @bottom-status-change="handleBottomChange"
-              :bottom-all-loaded="allLoaded"
-              bottomPullText
-              bottomDropText="上拉加载更多"
               ref="loadmore"
               class
               :auto-fill="autofill"
@@ -86,9 +88,16 @@
                   :homeEventmsgs="homeEventmsgs"
                 ></BankeSimple>
                 <BottomLoadmore
-                  v-if="loadginState"
+                  v-if="allLoaded && listLoadend"
                   showType
                   loadtext="已经加载全部了"
+                  type
+                  color
+                />
+                <BottomLoadmore
+                  v-if="!allLoaded && loading"
+                  showType="loading"
+                  loadtext="加载中..."
                   type="triple-bounce"
                   color
                 />
@@ -179,7 +188,7 @@
     </mt-popup>
     <mt-popup
       v-model="popupSettedinfo"
-     pop-transition="popup-fade"
+      pop-transition="popup-fade"
       class="popup-right"
       :modal="false"
       style="background:#f0f0f0"
@@ -266,7 +275,7 @@ export default {
       loading: false,
       listLoadend: false,
       allLoaded: false,
-      dropType: 0,
+      // dropType: 0,
       popupSettedinfo: false
     };
   },
@@ -327,16 +336,6 @@ export default {
     },
     curuser() {
       return this.$store.getters.curuser;
-    },
-    loadginState() {
-      if (this.loading) {
-        return true;
-      } else {
-        if (this.allLoaded && this.listLoadend && this.bankeempty) {
-          return true;
-        }
-        return false;
-      }
     }
   },
   watch: {
@@ -370,13 +369,13 @@ export default {
     loadTop() {
       this.filterCurbankes = [];
       this.page = 0;
+      this.loading = false;
+      this.listLoadend = false;
       this.allLoaded = false;
-      this.dropType = 0;
       this.initbanke();
     },
     loadMore() {
       this.loading = true;
-      this.dropType = 1;
       this.initbanke();
     },
     handleTopChange(status) {
@@ -616,13 +615,14 @@ export default {
               arrId.push(v.id);
               // v.schoolid=1001
             }
-            if (res.data.data.length >= this.pagesize) {
+            if (res.data.data.length == this.pagesize) {
               this.loading = false;
               this.page++;
             } else {
               if (this.page) {
                 this.listLoadend = true;
               }
+              this.loading = true;
               this.allLoaded = true;
             }
             this.eventmsgsOnbankes(res.data.data, arrId);
@@ -630,20 +630,12 @@ export default {
           if (!this.bankeempty) {
             this.bankestatedesc = "当前无班课";
           }
-          if (this.dropType) {
-            this.$refs.loadmore.onBottomLoaded();
-          } else {
-            this.$refs.loadmore.onTopLoaded();
-          }
+          this.$refs.loadmore.onTopLoaded();
         })
         .catch(res => {
           console.log(res);
           this.bankestatedesc = "发生异常";
-          if (this.dropType) {
-            this.$refs.loadmore.onBottomLoaded();
-          } else {
-            this.$refs.loadmore.onTopLoaded();
-          }
+          this.$refs.loadmore.onTopLoaded();
         });
     },
     //红点班课列表

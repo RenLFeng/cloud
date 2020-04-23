@@ -18,22 +18,25 @@
         <span class="move-bar" :style="`left:${moveBar}px`"></span>
       </ul>
     </div>
-    <!-- v-infinite-scroll="loadMore"
+
+    <!-- :bottom-method="loadMore"
+        @bottom-status-change="handleBottomChange"
+        :bottom-all-loaded="allLoaded"
+        bottomPullText
+    bottomDropText="上拉加载更多"-->
+    <div
+      class="main scrollingtouch"
+      v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
-      infinite-scroll-distance="500"
-    infinite-scroll-immediate-check="false"-->
-    <div class="main scrollingtouch">
+      infinite-scroll-distance="10"
+      infinite-scroll-immediate-check="false"
+    >
       <mt-loadmore
         :top-method="loadTop"
         @top-status-change="handleTopChange"
         :top-distance="80"
-        :bottom-method="loadMore"
-        @bottom-status-change="handleBottomChange"
-        :bottom-all-loaded="allLoaded"
         ref="loadmore"
         :auto-fill="autofill"
-        bottomPullText=""
-        bottomDropText="上拉加载更多"
       >
         <div v-if="pingceHistoryList.length" class="box">
           <List
@@ -45,6 +48,13 @@
             @edit="onEdit"
           />
           <BottomLoadmore v-if="allLoaded && listLoadend" showType loadtext="已经加载全部了" type color />
+          <BottomLoadmore
+            v-if="!allLoaded && loading"
+            showType="loading"
+            loadtext="加载中..."
+            type="triple-bounce"
+            color
+          />
         </div>
         <Empty v-else />
       </mt-loadmore>
@@ -171,7 +181,8 @@ export default {
       topStatus: "",
       bottomStatus: "",
       allLoaded: false,
-      dropType: 0
+      dropType: 0,
+      loading: false
     };
   },
   mounted() {
@@ -237,11 +248,12 @@ export default {
       this.tempHistory = [];
       this.page = 0;
       this.allLoaded = false;
-      this.dropType = 0;
+      this.listLoadend = false;
+      this.loading = false;
       this.HistoryListRQuery();
     },
     loadMore() {
-      this.dropType = 1;
+      this.loading = true;
       this.HistoryListRQuery();
     },
     handleTopChange(status) {
@@ -272,13 +284,14 @@ export default {
               }
             }
             if (res.data.data.length >= this.pagesize) {
-              // this.loading = false;
+              this.loading = false;
               this.page++;
             } else {
               if (this.page) {
                 this.listLoadend = true;
               }
               this.allLoaded = true;
+              this.loading = true;
             }
             this.pingceHistoryList = [
               ...this.pingceHistoryList,

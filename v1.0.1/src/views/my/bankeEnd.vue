@@ -1,6 +1,6 @@
 <template>
   <div class="bnake-end-wrap popup-scroll">
-    <div class="main main-f" v-if="EndCurbankes.length">
+    <div class="main main-f overflow-scroll" v-if="EndCurbankes.length">
       <div v-for="(item,selindex) in EndCurbankes" :key="selindex">
         <BankeSimple :classitem="item" :end="true" @click.native="bankeclick(item)"></BankeSimple>
       </div>
@@ -13,7 +13,7 @@
 import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
 import nativecode from "../../nativecode";
 import Empty from "@/common/empty";
-import BankeSimple from '../components/BankeSimple';
+import BankeSimple from "../components/BankeSimple";
 export default {
   props: {
     curbankes: {
@@ -21,11 +21,11 @@ export default {
         return {};
       }
     },
-      emitclick:{
-        default(){
-            return false;
-        }
+    emitclick: {
+      default() {
+        return false;
       }
+    }
   },
   data() {
     return {
@@ -39,18 +39,17 @@ export default {
   },
   mounted() {},
   watch: {
-    curbankes:function(New,old) {
-      this.EndCurbankes=New;
+    curbankes: function(New, old) {
+      this.EndCurbankes = New;
     }
   },
   methods: {
     queryfinished() {},
     bankeclick(bankeitem) {
-
       this.bankeitem = bankeitem;
-      if (this.emitclick){
-          this.$emit('bankeclick', bankeitem);
-          return;
+      if (this.emitclick) {
+        this.$emit("bankeclick", bankeitem);
+        return;
       }
 
       this.bankeDedail();
@@ -76,6 +75,8 @@ export default {
 <style scoped lang="less">
 .bnake-end-wrap {
   .main {
+    height: 94vh;
+    min-height: 94vh;
   }
 }
 </style>

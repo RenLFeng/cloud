@@ -3,7 +3,7 @@
     <mt-header title="我的收藏" class="mint-header-f">
       <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="main main-f" v-if="collectionHiostry.length">
+    <div class="main main-f overflow-scroll" v-if="collectionHiostry.length">
       <List
         v-for="(v,index) in collectionHiostry"
         :key="index"
@@ -54,7 +54,7 @@ export default {
           method: this.dl
         }
       ],
-      actionShow: false,
+      actionShow: false
     };
   },
   computed: {},
@@ -74,7 +74,7 @@ export default {
         })
         .then(res => {
           if (res.data.code == "0") {
-          //  Toast("成功");
+            //  Toast("成功");
             let ch = res.data.data;
             for (let v of ch) {
               v.info = JSON.parse(v.info);
@@ -197,7 +197,7 @@ export default {
         default:
           return "";
       }
-    },
+    }
   },
   components: {
     List,
@@ -209,6 +209,8 @@ export default {
 <style scoped lang="less">
 .collection-wrap {
   .main {
+    height: 94vh;
+    min-height: 94vh;
   }
 }
 </style>

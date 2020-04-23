@@ -4,19 +4,19 @@
       <mt-button slot="left" icon="back" @click="$back">返回</mt-button>
     </mt-header>
     <div class="main main-f">
-      <!-- v-infinite-scroll="loadMore"
-        infinite-scroll-disabled="loading"
-        infinite-scroll-distance="100"
-      infinite-scroll-immediate-check="false"-->
+      <!-- :bottom-method="loadMore"
+          @bottom-status-change="handleBottomChange"
+          :bottom-all-loaded="allLoaded"
+          bottomPullText=""
+      bottomDropText="上拉加载更多"-->
       <div class="list-scoll-wrap">
         <mt-loadmore
           ref="loadmore"
           :auto-fill="autofill"
-          :bottom-method="loadMore"
-          @bottom-status-change="handleBottomChange"
-          :bottom-all-loaded="allLoaded"
-          bottomPullText=""
-          bottomDropText="上拉加载更多"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-disabled="loading"
+          infinite-scroll-distance="10"
+          infinite-scroll-immediate-check="false"
         >
           <div class="wrap">
             <div class="aaa" v-if="danmuDataList.length">
@@ -27,11 +27,12 @@
                   <p class="font-xxs time">{{v.day}}&nbsp;{{v.time}}</p>
                 </div>
               </div>
+              <BottomLoadmore v-if="listLoadend" showType loadtext="已经加载全部了" type color />
               <BottomLoadmore
-                v-if="allLoaded && listLoadend"
-                showType
-                loadtext="已经加载全部了"
-                type
+                v-if="!listLoadend && loading"
+                showType="loading"
+                loadtext="加载中..."
+                type="triple-bounce"
                 color
               />
             </div>
@@ -172,20 +173,20 @@ export default {
   mounted() {},
   watch: {},
   methods: {
-    loadTop() {
-      this.page = 0;
-      this.danmuDataList = [];
-      this.loadMore();
-    },
+    // loadTop() {
+    //   this.page = 0;
+    //   this.danmuDataList = [];
+    //   this.loadMore();
+    // },
     loadMore() {
-      // this.loading = true;
+      this.loading = true;
       this.queryDanmu();
     },
     handleBottomChange(status) {
       this.bottomStatus = status;
     },
     queryDanmu() {
-      Indicator.open("查询中...");
+      // Indicator.open("查询中...");
       this.$http
         .post("/api/danmu/query", {
           bankeid: this.bankeid,
@@ -196,7 +197,7 @@ export default {
           if (res.data.code == "0") {
             if (res.data.data.length) {
               if (res.data.data.length >= this.pagesize) {
-                // this.loading = false;
+                this.loading = false;
                 this.page++;
               } else {
                 if (this.page) {
@@ -227,13 +228,13 @@ export default {
           } else {
             Toast("查询失败");
           }
-          Indicator.close();
+          // Indicator.close();
           this.$refs.loadmore.onBottomLoaded();
         })
         .catch(err => {
           this.$refs.loadmore.onBottomLoaded();
           Toast("服务异常");
-          Indicator.close();
+          // Indicator.close();
         });
     },
     textChange(v) {
@@ -272,6 +273,8 @@ export default {
             res.data.data.day = this.getDayName(res.data.data.createtime);
             this.danmuDataList = [...this.danmuDataList, ...[res.data.data]];
             this.allLoaded = false;
+            this.listLoadend=false;
+            this.loading=false;
           } else {
             Toast("发送失败");
           }
