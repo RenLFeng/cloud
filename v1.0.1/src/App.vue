@@ -36,7 +36,6 @@ import "./styles/common.less";
 import "./styles/style.css";
 import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 import Audio from "@/common/audio";
-
 import FloatIcons from "@/components/s-icons";
 
 export default {
@@ -264,7 +263,6 @@ export default {
                 this.$store.commit("setRouterForward", true);
                 this.$router.push("/login");
               }
-
               nativecode.jsLogin(0, {});
             }
           })

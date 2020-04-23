@@ -86,7 +86,7 @@
                   :homeEventmsgs="homeEventmsgs"
                 ></BankeSimple>
                 <BottomLoadmore
-                  v-if="allLoaded && listLoadend && bankeempty"
+                  v-if="loadginState"
                   showType
                   loadtext="已经加载全部了"
                   type="triple-bounce"
@@ -179,7 +179,7 @@
     </mt-popup>
     <mt-popup
       v-model="popupSettedinfo"
-      :position="routerforward?'right':'left'"
+     pop-transition="popup-fade"
       class="popup-right"
       :modal="false"
       style="background:#f0f0f0"
@@ -195,10 +195,11 @@ import examhome from "../Exam/ExamHome";
 import BankeSimple from "./components/BankeSimple";
 
 import MineAbout from "./MineAbout";
-import SettedInfo from "./my/settedinfo";
+
 import nativecode from "../nativecode";
 import Empty from "@/common/empty";
 import BottomLoadmore from "@/common/bottom-loadmore";
+import SettedInfo from "@/views/my/settedinfo";
 import {
   Indicator,
   Toast,
@@ -266,7 +267,6 @@ export default {
       listLoadend: false,
       allLoaded: false,
       dropType: 0,
-
       popupSettedinfo: false
     };
   },
@@ -361,9 +361,11 @@ export default {
     if (this.selected == "banke") {
       // this.initbanke();
     }
+    this.initmine();
     this.initbanke();
     this.eventmsgsOnmain();
   },
+  mounted() {},
   methods: {
     loadTop() {
       this.filterCurbankes = [];
@@ -527,10 +529,6 @@ export default {
           nativecode.jsLogin(0, {});
         }
       });
-    },
-    onUpdateName(v) {
-      this.popupSettedinfo = v;
-      this.initmine();
     },
     //获得焦点
     onFocus() {
@@ -705,6 +703,10 @@ export default {
       }
       this.$store.commit("banke/setBankes", temp);
     },
+    onUpdateName(v) {
+      this.popupSettedinfo = v;
+      this.initmine();
+    },
     onClearevnt(v) {
       if (v) {
         this.homeEventmsgs = false;
@@ -720,8 +722,6 @@ export default {
     examhome,
     BankeSimple,
     [Search.name]: Search,
-    //  [Tab.name]: Tab,
-    //   [Tabs.name]: Tabs,
     Empty,
     BottomLoadmore,
     SettedInfo

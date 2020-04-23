@@ -47,6 +47,8 @@ import BindSchoolList from '../views/my/bindSchool/bindend-list'
 import Audio from '../common/audio'
 //个人学情
 import MyXueQing from '../views/my/MyXueQing/xueqing'
+//edinfo引导页
+import SetEdinfo from '../views/my/settedinfo'
 //微信 登陆 完成页面
 import WechatLogin from '../views/wechatLogin'
 import nativecode from '../nativecode'
@@ -90,6 +92,7 @@ let routers = new Router({
         { path: '/BindSchoolList', name: 'BindSchoolList', component: BindSchoolList },
         { path: '/Audio', name: 'Audio', component: Audio },
         { path: '/MyXueQing', name: 'MyXueQing', component: MyXueQing },
+        { path: '/SetEdinfo', name: 'SetEdinfo', component: SetEdinfo },
         { path: '/Danmu', name: 'Danmu', component: Danmu },
         { path: '/WechatLogin/:str', name: 'WechatLogin', component: WechatLogin },
 

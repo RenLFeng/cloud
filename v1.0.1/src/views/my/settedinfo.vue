@@ -27,6 +27,7 @@
 <script>
 import { Cell, Field, Button, Toast, MessageBox } from "mint-ui";
 export default {
+  name: "SetEdinfo",
   props: {
     curuser: {
       default() {
@@ -70,23 +71,20 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
-            this.$emit("updateName", false);
-            this.$store.commit("SET_SCHOOL_NAME", {});
+            this.back();
           } else {
             MessageBox({
               title: "设置失败",
-              message: "你可以在我的页面设置相关想项?",
+              message: "你可以在我的页面设置相关选项?",
               showCancelButton: false
             }).then(action => {
-              this.$emit("updateName", false);
-              this.$store.commit("SET_SCHOOL_NAME", {});
+              this.back();
             });
           }
         })
         .catch(error => {
           Toast("服务异常");
-          this.$emit("updateName", false);
-          this.$store.commit("SET_SCHOOL_NAME", {});
+          this.back();
         });
     },
     onbindNewSchool() {
@@ -97,6 +95,14 @@ export default {
         name: "BindSchool",
         params: { ShowType: true }
       });
+    },
+    back() {
+      if (this.$route.path == "/SetEdinfo") {
+        this.$router.push("/");
+      } else {
+        this.$emit("updateName", false);
+      }
+      this.$store.commit("SET_SCHOOL_NAME", {});
     }
   },
   components: {}
@@ -146,6 +152,7 @@ export default {
     .toips {
       padding: 5px 10px 13px;
       color: #999;
+      font-size: 14px;
     }
   }
 }
