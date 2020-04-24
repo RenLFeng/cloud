@@ -6,14 +6,24 @@
       </li>
     </ul>
     <div v-if="type=='5'">
-      <mt-field v-model="textareaAnswer" :disabled="isSubmitEnd" placeholder="请输入答案后点击提交" type="textarea" rows="6"></mt-field>
+      <mt-field
+        v-model="textareaAnswer"
+        :disabled="isSubmitEnd"
+        placeholder="请输入答案后点击提交"
+        type="textarea"
+        rows="6"
+      ></mt-field>
     </div>
     <div v-if="type=='6'">
       <div class="Responder tc fontnormal" v-if="!ponderState" @click="ResponderFn">点击抢答</div>
       <p v-if="ponderState" class="colory tc Responder-ed">{{ResponderText}}</p>
     </div>
     <p class="submit-btn" v-if="type!='6'">
-      <mt-button type="default" :class="isSubmit?'act':''" @click="sumint">{{isSubmitEnd?'已提交':'提交'}}</mt-button>
+      <mt-button
+        type="default"
+        :class="isSubmit?'act':''"
+        @click="sumint"
+      >{{isSubmitEnd?'已提交':'提交'}}</mt-button>
     </p>
   </div>
 </template>
@@ -56,7 +66,7 @@ export default {
   },
   data() {
     return {
-      indexNumber,
+      indexNumber: [],
       isSubmit: false,
       isSubmitEnd: false,
       Answer: [],
@@ -67,6 +77,15 @@ export default {
   computed: {
     ResponderText() {
       return "抢答成功，请您作答...";
+    }
+  },
+  created() {
+    for (let v of indexNumber) {
+      this.indexNumber.push({
+        v:v.v,
+        id: v.id,
+        isTrue: false
+      });
     }
   },
   methods: {
@@ -96,7 +115,7 @@ export default {
         this.isSubmit = false;
       } else if (this.type == "5") {
         this.$emit("submitFn", this.textareaAnswer);
-         this.isSubmit = false;
+        this.isSubmit = false;
       }
     },
     //抢答

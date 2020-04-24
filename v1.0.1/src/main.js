@@ -49,7 +49,7 @@ window.addEventListener("resize", function () {
     let clientWidth = window.innerWidth;
     if (!clientWidth) return;
     if (clientWidth >= 540) {
-        document.documentElement.style.fontSize = '54px';
+        document.documentElement.style.fontSize = '40px';
     }
 });
 let Vm = new Vue({
