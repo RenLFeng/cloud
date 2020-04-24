@@ -96,6 +96,7 @@ export default {
       state: 1,
       codeTime: 0,
       Times: null,
+      showwxlogin:true,
       popupWeiXxinLogin: false,
       wxlogin: {
         appid: "wx40632058fe27bbb6",
@@ -133,19 +134,26 @@ export default {
     hasnativewxlogin() {
       if (
         nativecode.platform == "exsoftandroid" ||
-        (nativecode.platform == "exsoftios" && this.superAdmin)
+        (nativecode.platform == "exsoftios" && this.showwxlogin)
       ) {
         return true;
       }
       return false;
     },
     superAdmin() {
-      if (this.account == "exsoftwe") {
-        return true;
-      }
+      return this.showwxlogin
     }
   },
-  mounted() {},
+  mounted() {
+    if (nativecode.platform == "exsoftios"){
+      this.showwxlogin = false;
+      let ot = nativecode.ncall("supportwx", {});
+      if (ot && ot.haswx){
+        this.showwxlogin = true;
+      }
+    }
+
+  },
   methods: {
     weixinLogin() {
       this.popupWeiXxinLogin = true;
