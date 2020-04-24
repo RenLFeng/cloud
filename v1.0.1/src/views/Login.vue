@@ -19,6 +19,7 @@
               autocomplete="off"
               class="logininput fontnormal"
               @keyup.enter="dologin"
+              @blur="$setInputScroll"
             />
           </div>
           <div class="loginline">
@@ -30,6 +31,7 @@
               autocomplete="off"
               class="logininput fontnormal"
               @keyup.enter="dologin"
+              @blur="$setInputScroll"
             />
           </div>
         </div>
@@ -43,7 +45,11 @@
           class="loginbtn weixinLogin fontnormal"
           @click="weixinNativeLogin"
         >微信登录</button>
-        <button class="loginbtn weixinLogin fontnormal" @click="weixinLogin">微信扫码登录</button>
+        <button
+          v-if="superAdmin"
+          class="loginbtn weixinLogin fontnormal"
+          @click="weixinLogin"
+        >微信扫码登录</button>
       </div>
     </div>
     <mt-popup
@@ -69,10 +75,12 @@
   </div>
 </template>
 
+
 <script>
 import { Indicator, Toast, MessageBox, Button } from "mint-ui";
 // import { setServers } from 'dns';
 // import { setInterval } from 'timers';
+
 
 import nativecode from "@/nativecode";
 import wxlogin from "vue-wxlogin";
@@ -95,7 +103,8 @@ export default {
         redirect_uri: "https://www2.exsoft.com.cn/#/WechatLogin/callback.do",
         href:
           "data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHtkaXNwbGF5OiBub25lO30KLmltcG93ZXJCb3ggLmluZm8ge2Rpc3BsYXk6IG5vbmU7fQouc3RhdHVzX2ljb24ge2Rpc3BsYXk6IG5vbmV9Ci5pbXBvd2VyQm94IC5zdGF0dXMge3RleHQtYWxpZ246IGNlbnRlcjt9Ci5pbXBvd2VyQm94IC5xcmNvZGV7cG9zaXRpb246IGZpeGVkO2xlZnQ6IDUwJTt0b3A6IDUwJTt0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTt9"
-      }
+      },
+      tips: ""
     };
   },
   computed: {
@@ -103,17 +112,37 @@ export default {
       if (this.account && this.password) {
         return true;
       } else {
-        return false;
+        if (!this.account) {
+          if (this.state) {
+            this.tips = "请填写账号";
+          } else {
+            this.tips = "请设置账号";
+          }
+          return;
+        }
+        if (!this.password) {
+          if (this.state) {
+            this.tips = "请填写密码";
+          } else {
+            this.tips = "请设置密码";
+          }
+        }
       }
+      return false;
     },
     hasnativewxlogin() {
       if (
         nativecode.platform == "exsoftandroid" ||
-        nativecode.platform == "exsoftios"
+        (nativecode.platform == "exsoftios" && this.superAdmin)
       ) {
         return true;
       }
       return false;
+    },
+    superAdmin() {
+      if (this.account == "exsoftwe") {
+        return true;
+      }
     }
   },
   mounted() {},
@@ -137,7 +166,7 @@ export default {
     },
     login() {
       if (!this.isSbmit) {
-        Toast("请填写详细信息");
+        Toast(this.tips);
         return;
       }
       let tips = "登录中...";
@@ -166,13 +195,13 @@ export default {
               this.login();
             }
           } else {
-            Toast(res.data.msg);
+            Toast("账户和密码不正确");
           }
         })
         .catch(res => {
           // console.log(res);
           Indicator.close();
-          Toast("异常");
+          Toast("服务出错了");
         });
     },
     regFn() {},
@@ -192,7 +221,7 @@ export default {
       this.popupWeiXxinLogin = false;
       // let child = document.getElementById("wechat");
       // child.parentNode.removeChild(child);
-    }
+    },
   },
   components: {
     wxlogin

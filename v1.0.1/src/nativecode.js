@@ -84,7 +84,7 @@ nativecode.detectplatform = function () {
                     console.log('wx detect timeout')
                     nativecode.platform = ''; //! 重置
                     nativecode.setcookie('') //! 已经设过cache， 清空该cache
-                    alert('wx detect timeout');
+                    // alert('wx detect timeout');
                 }
             }
             setTimeout(wxtimeout, 3000)

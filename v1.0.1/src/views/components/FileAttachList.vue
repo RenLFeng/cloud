@@ -45,7 +45,7 @@ import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import nativecode from "../../nativecode";
-import {getZYFileTypeIcon, fixCaptureImage} from '@/util'
+import { getZYFileTypeIcon, fixCaptureImage } from "@/util";
 Vue.use(ImagePreview);
 export default {
   name: "FileAttachList",
@@ -114,10 +114,10 @@ export default {
   mounted() {},
   methods: {
     onImagePreview(item, index) {
-        nativecode.fileviewZuoye(this, {
-            items:item,
-            index:index
-        });
+      nativecode.fileviewZuoye(this, {
+        items: item,
+        index: index
+      });
       // // console.log(item);
       // this.tempLocalfiles = [];
       // this.tempImgs = [];
@@ -167,11 +167,11 @@ export default {
     onItemClick(fitem) {
       if (!this.isupload) {
         // Toast('文件浏览请使用原生实现:' + fitem.filepath);
-          console.log('file attachlist:onItemclick');
+        console.log("file attachlist:onItemclick");
         //fitem.name = fitem.filename;
-      // fitem.downurl = nativecode.getDownUrl(fitem.filepath);
-      //  fitem.ftype = "file";
-       // nativecode.ncall("jsFileLink", fitem);
+        // fitem.downurl = nativecode.getDownUrl(fitem.filepath);
+        //  fitem.ftype = "file";
+        // nativecode.ncall("jsFileLink", fitem);
       }
     },
     uploadstate(findex) {
@@ -238,12 +238,11 @@ export default {
 
           vo.filesize = file[i].size;
           vo.filename = file[i].name;
-            if (vo.ftype == "img") {
-                vo.imgsrc = URL.createObjectURL(file[i]);
-            }
-            else{
-                vo.imgsrc = getZYFileTypeIcon(vo.filename);
-            }
+          if (vo.ftype == "img") {
+            vo.imgsrc = URL.createObjectURL(file[i]);
+          } else {
+            vo.imgsrc = getZYFileTypeIcon(vo.filename);
+          }
           vo.uploadState = "wait";
           vo.uploadProgress = 0;
 
@@ -252,7 +251,7 @@ export default {
           this.localfiles.push(vo);
         }
         this.tryNextUpload();
-        this.$emit('fileChange',true)
+        this.$emit("fileChange", true);
       }
     },
     cancelAllUpload() {
@@ -282,53 +281,49 @@ export default {
     douploadfile(findex) {
       var fitem = this.localfiles[findex];
       if (fitem && fitem.file) {
+        this.curUploadingFile = fitem;
+        this.$set(fitem, "uploadState", "doing");
+        fitem.uploadProgress = 0;
 
-          this.curUploadingFile = fitem;
-          this.$set(fitem, "uploadState", "doing");
-          fitem.uploadProgress = 0;
+        let funupload = file => {
+          var formdata = new FormData();
+          formdata.append("file", file);
 
+          var CancelToken = this.$http.CancelToken;
+          var source = CancelToken.source();
 
-          let funupload = (file)=>{
-              var formdata = new FormData();
-              formdata.append("file", file);
+          fitem.uploadCancel = source;
 
-              var CancelToken = this.$http.CancelToken;
-              var source = CancelToken.source();
-
-              fitem.uploadCancel = source;
-
-              var url = this.urlinfo.urlupload;
-              this.$http({
-                  url: url,
-                  method: "post",
-                  onUploadProgress: pevent => {
-                      this.updateProgress(pevent, fitem);
-                  },
-                  cancelToken: source.token,
-                  data: formdata
-              })
-                  .then(res => {
-                      if (res.data.code == 0) {
-                          this.finishUpload(fitem, res.data.data);
-                      } else {
-                          this.finishUpload(fitem, false);
-                      }
-                  })
-                  .catch(() => {
-                      this.finishUpload(fitem, false);
-                  });
-          };
-
-
-          //! cjy: 处理照片相关： 旋转， 压缩（10M+）
-          fixCaptureImage(fitem.file, true).then(res=>{
-              funupload(res);
+          var url = this.urlinfo.urlupload;
+          this.$http({
+            url: url,
+            method: "post",
+            onUploadProgress: pevent => {
+              this.updateProgress(pevent, fitem);
+            },
+            cancelToken: source.token,
+            data: formdata
           })
-              .catch(res=>{
-                  funupload(res);
-              })
+            .then(res => {
+              if (res.data.code == 0) {
+                this.finishUpload(fitem, res.data.data);
+              } else {
+                this.finishUpload(fitem, false);
+              }
+            })
+            .catch(() => {
+              this.finishUpload(fitem, false);
+            });
+        };
 
-
+        //! cjy: 处理照片相关： 旋转， 压缩（10M+）
+        fixCaptureImage(fitem.file, true)
+          .then(res => {
+            funupload(res);
+          })
+          .catch(res => {
+            funupload(res);
+          });
       }
     },
     finishUpload(fitem, bok) {
@@ -360,8 +355,8 @@ export default {
       this.$set(fitem, "uploadProgress", complete);
     },
     getimgico(fitem) {
-        return getZYFileTypeIcon(fitem.filepath);
-     // return commontools.fileType(fitem);
+      return getZYFileTypeIcon(fitem.filepath);
+      // return commontools.fileType(fitem);
     },
     getimgnativeico(fitem) {
       console.log(fitem);
@@ -380,9 +375,8 @@ export default {
           this.cancelAllUpload();
         }
         this.localfiles.splice(findex, 1);
-         this.$emit('fileChange',true)
+        this.$emit("fileChange", true);
       });
-
     },
     onbtnupload() {
       this.$refs.uploadfilebtn.value = "";
@@ -470,6 +464,9 @@ export default {
   transform: translateX(-50%);
 }
 .imgcontainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
 }
 
 .iconclass {

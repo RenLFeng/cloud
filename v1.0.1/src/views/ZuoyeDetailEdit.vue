@@ -27,6 +27,7 @@
         class="zdetail"
         :disabled="canEditzy"
         @input="textChange($event.target.value)"
+        @blur="$setInputScroll"
       ></textarea>
 
       <div class="attachdesc">{{$t('bankeTask.Add_Enclosure')}}</div>

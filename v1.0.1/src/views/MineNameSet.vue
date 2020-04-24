@@ -9,7 +9,7 @@
         </mt-header>
 
         <div class="textline tc">
-            <input v-model="myname" :placeholder="$t('personal.Nickname_entry')" autocomplete="off" class="textinput fontnormal">
+            <input v-model="myname" :placeholder="$t('personal.Nickname_entry')" autocomplete="off" class="textinput fontnormal" @blur="$setInputScroll">
             <div class="tl" style="margin-top:5px;">{{$t('personal.Nickname_tips')}}</div>
 
         </div>

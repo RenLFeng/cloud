@@ -1,4 +1,5 @@
 import axios from 'axios'
+import nativecode from "@/nativecode";
 import {
   Indicator,
   Toast,
@@ -504,6 +505,28 @@ export const sortFn = (property, sort) => {
       return value2 - value1;
     } else {
       return value1 - value2;
+    }
+  }
+}
+
+export const setInputScroll = () => {
+  let fn = () => {
+    return setTimeout(function () {
+      var scrollHeight =
+        document.documentElement.scrollTop || document.body.scrollTop || 0;
+      window.scrollTo(0, Math.max(scrollHeight - 1, 0));
+    }, 100);
+  };
+  if (process.env.NODE_ENV === 'production') {
+    if (
+      nativecode.platform == "miniprogram"
+    ) {
+      fn();
+    }
+  } else {
+    var ua = window.navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      fn();
     }
   }
 }

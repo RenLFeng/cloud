@@ -6,6 +6,7 @@
       rows="8"
       v-model="bankeInfo.info"
       :disabled="!caneditbanke"
+      @blur.native.capture="$setInputScroll"
     ></mt-field>
     <mt-button v-if="caneditbanke" type="primary" @click.native="submit">发布</mt-button>
   </div>

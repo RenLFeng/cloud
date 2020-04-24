@@ -9,7 +9,7 @@
           :bottom-all-loaded="allLoaded"
           bottomPullText=""
       bottomDropText="上拉加载更多"-->
-      <div class="list-scoll-wrap">
+      <div class="list-scoll-wrap scrollingtouch">
         <mt-loadmore
           ref="loadmore"
           :auto-fill="autofill"
@@ -57,6 +57,7 @@
             class="text-input"
             @keyup.enter="submitDanmu"
             @input="textChange($event.target.value)"
+            @blur="$setInputScroll"
             maxlength="24"
           />
         </div>
@@ -92,6 +93,7 @@ import {
 import Empty from "@/common/empty";
 import { parseURL, uniqueArr, sortFn } from "@/util";
 import BottomLoadmore from "@/common/bottom-loadmore";
+import nativecode from "@/nativecode";
 export default {
   name: "Danmu",
   props: {},
@@ -159,6 +161,12 @@ export default {
     },
     detail_go_school() {
       return this.$store.state.detail_go_school;
+    },
+    weiximiniprogram() {
+      if (nativecode.platform == "miniprogram") {
+        return true;
+      }
+      return false;
     }
   },
   created() {
@@ -224,6 +232,7 @@ export default {
               this.danmuDataList.sort(sortFn("timeStr", 0));
             } else {
               this.allLoaded = true;
+              this.listLoadend = true;
             }
           } else {
             Toast("查询失败");
@@ -241,6 +250,17 @@ export default {
       if (v.length > 23) {
         Toast("最大可输入24个字符");
       }
+    },
+    setScroll() {
+      if(this.weiximiniprogram){};
+      setTimeout(function() {
+        var scrollHeight =
+          document.documentElement.scrollTop || document.body.scrollTop || 0;
+        window.scrollTo(0, Math.max(scrollHeight - 1, 0));
+      }, 100);
+
+      // window.scrollTo(0, 0);
+      // window.scrollTo(0,document.documentElement.clientHeight);
     },
     submitDanmu() {
       if (!this.isLink) {
@@ -273,8 +293,8 @@ export default {
             res.data.data.day = this.getDayName(res.data.data.createtime);
             this.danmuDataList = [...this.danmuDataList, ...[res.data.data]];
             this.allLoaded = false;
-            this.listLoadend=false;
-            this.loading=false;
+            this.listLoadend = false;
+            this.loading = false;
           } else {
             Toast("发送失败");
           }
@@ -413,8 +433,8 @@ export default {
   .submit-wrap {
     position: fixed;
     width: 100%;
-    height: 9vh;
-    max-height: 40vh;
+    height: 60px;
+    max-height: 226px;
     left: 0;
     bottom: 0;
     z-index: 10;
@@ -423,7 +443,7 @@ export default {
     box-shadow: 0px -3px 6px rgba(0, 0, 0, 0.16);
     .field-wrap {
       position: relative;
-      height: 9vh;
+      height: 60px;
       .iconfont {
         font-size: 33px;
       }
@@ -439,7 +459,7 @@ export default {
       }
       .mint-field {
         width: 69%;
-        min-height: 48px;
+        height: 48px;
         padding-right: 9%;
         .text-input {
           width: 100%;
@@ -469,7 +489,7 @@ export default {
       }
     }
     &.act {
-      height: 40vh;
+      height: 226px;
       transition: all 0.3s;
     }
   }

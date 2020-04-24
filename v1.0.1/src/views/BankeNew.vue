@@ -16,7 +16,7 @@
         />
         <p class="fontsmall color0">云班课封面</p>
       </div>
-      <mt-field
+      <mt-field @blur.native.capture="$setInputScroll"
         label="班课名称"
         :placeholder="$t('common.Please_entry')+' '+$t('common.ClassName')"
         v-model="classitem.name"
@@ -32,7 +32,7 @@
         <ul class="history-list font18 color0">
           <li v-for="v in history" :key="v.id" @click="listSelect(v.name)">{{v.name}}</li>
         </ul>
-      </div> -->
+      </div>-->
     </div>
     <input
       ref="uploadPic"
@@ -76,26 +76,26 @@ export default {
       classitem: {
         name: "",
         avatar: "",
-        type:""
+        type: ""
       },
       popupMimgcrop: false,
       imgobj: {},
-      history:[
+      history: [
         {
-          id:1,
-          name:"物理",
+          id: 1,
+          name: "物理"
         },
-          {
-          id:2,
-          name:"化学",
+        {
+          id: 2,
+          name: "化学"
         },
-          {
-          id:3,
-          name:"英语",
-        },
+        {
+          id: 3,
+          name: "英语"
+        }
       ],
-      templist:[],
-      isOpen:false,
+      templist: [],
+      isOpen: false
     };
   },
   components: { mimgcrop },
@@ -108,26 +108,29 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/file_icon/file.svg");
+      srcstr += "/assets/file_icon/file.svg";
       srcstr += '"';
       return srcstr;
     }
   },
   created() {
-     this.templist = JSON.parse(JSON.stringify(this.history));
+    this.templist = JSON.parse(JSON.stringify(this.history));
   },
   methods: {
+    a(){
+      alert(0)
+    },
     onFocus() {
-     if(this.history.length){
-       this.isOpen=true;
-     }
+      if (this.history.length) {
+        this.isOpen = true;
+      }
     },
-    onInput(v){
-       this.history = this.templist.filter(item => item.name.indexOf(v)>-1);
+    onInput(v) {
+      this.history = this.templist.filter(item => item.name.indexOf(v) > -1);
     },
-    listSelect(v){
-      this.classitem.type=v;
-      this.isOpen=false;
+    listSelect(v) {
+      this.classitem.type = v;
+      this.isOpen = false;
     },
     onsave() {
       // if(!this.classitem.type){
@@ -230,7 +233,7 @@ export default {
     }
     &.act {
       height: auto;
-      transition: all .3s;
+      transition: all 0.3s;
     }
   }
 }

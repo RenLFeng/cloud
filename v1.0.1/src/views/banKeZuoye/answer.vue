@@ -2,7 +2,7 @@
   <div class="container">
     <div style="height:100%;">
       <div>
-        <mt-field placeholder="请输入答案" type="textarea" rows="8" v-model="zanswer.ztext" :disabled="answerdesc" ></mt-field>
+        <mt-field placeholder="请输入答案" type="textarea" rows="8" v-model="zanswer.ztext" :disabled="answerdesc" @blur.native.capture="$setInputScroll"></mt-field>
         <div class="attachdesc">{{answerdesc?'附件':'添加附件(300M以内)'}}</div>
         <div class="listc">
           <FileAttachList :urlinfo="urlinfo" :localfiles="zanswer.localfiles" :isupload="answerdesc?false:true"></FileAttachList>

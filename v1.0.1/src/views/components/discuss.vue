@@ -114,7 +114,7 @@
           accept="image/*"
         />
       </div>
-      <input class="msg" type="text" v-model="discussMsg" placeholder="在此发表评论" />
+      <input class="msg" type="text" v-model="discussMsg" placeholder="在此发表评论" @blur="$setInputScroll"/>
       <span class="color9 submit" style="color:#26a2ff" @click="submit()">发送</span>
     </div>
   </div>

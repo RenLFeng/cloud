@@ -5,28 +5,28 @@
       <div class="item-box">
         <p class="tit">资源得分占比：</p>
         <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
-          <input type="number" v-model="bankeInfo.scorerule1" :disabled="!caneditbanke" />
+          <input type="number" v-model="bankeInfo.scorerule1" :disabled="!caneditbanke" @blur="$setInputScroll"/>
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">签到得分占比：</p>
         <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
-          <input type="number" v-model="bankeInfo.scorerule2" :disabled="!caneditbanke" />
+          <input type="number" v-model="bankeInfo.scorerule2" :disabled="!caneditbanke" @blur="$setInputScroll"/>
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">作业得分占比：</p>
         <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
-          <input type="number" v-model="bankeInfo.scorerule3" :disabled="!caneditbanke" />
+          <input type="number" v-model="bankeInfo.scorerule3" :disabled="!caneditbanke" @blur="$setInputScroll"/>
           <span>%</span>
         </p>
       </div>
       <div class="item-box">
         <p class="tit">评测得分占比：</p>
         <p class="input" :class="!caneditbanke?'ncaneditbanke':''">
-          <input type="number" v-model="bankeInfo.scorerule4" :disabled="!caneditbanke" />
+          <input type="number" v-model="bankeInfo.scorerule4" :disabled="!caneditbanke" @blur="$setInputScroll"/>
           <span>%</span>
         </p>
       </div>
