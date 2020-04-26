@@ -290,8 +290,9 @@ export default {
       }
       let hostname = location.hostname;
       if (process.env.NODE_ENV !== "production") {
-        hostname = "192.168.40.104";
+        hostname = "www2.exsoft.com.cn";
         port = 9982;
+        proto  = "wss";
       }
 
       let serverpath = proto + "://" + hostname + ":" + (port + 1) + "/ws";
@@ -404,7 +405,7 @@ export default {
     wsonmessage(e) {
       try {
         let cmdobj = JSON.parse(e.data);
-        console.log("wsonmessage:" + e.data);
+        console.log("wsonmessage:接收消息" + e.data);
         let cmddealed = true;
         if (cmdobj.cmd == "loginresult") {
           if (cmdobj.code == 0) {
