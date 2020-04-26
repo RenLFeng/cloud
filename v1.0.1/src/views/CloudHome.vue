@@ -831,7 +831,7 @@ export default {
   margin-top: 94px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
-  min-height: 74vh;
+    /* min-height: calc(100vh - 175px); */
   /* padding-bottom: 30px; */
 }
 .cloudHome.banke .page-wrap .bankecontainer.bankeempty {
@@ -909,7 +909,8 @@ export default {
 }
 .banke-wrap {
   width: 100%;
-  height: 74vh;
+  height:calc(100vh - 175px);
+  min-height: calc(100vh - 175px);
   overflow: auto;
 }
 </style>
