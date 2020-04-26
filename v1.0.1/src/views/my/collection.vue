@@ -19,9 +19,9 @@
         @edit="onEdit"
         @click.native="filedetail(v)"
       />
-      <BottomLoadmore v-if="listLoadend" showType loadtext="已经加载全部了" type color />
+      <BottomLoadmore v-if="listLoadend && allLoaded" showType loadtext="已经加载全部了" type color />
       <BottomLoadmore
-        v-if="!listLoadend && loading"
+        v-if="!allLoaded && loading"
         showType="loading"
         loadtext="加载中..."
         type="triple-bounce"
@@ -105,6 +105,7 @@ export default {
               if (this.page) {
                 this.listLoadend = true;
               }
+               this.loading = true;
               this.allLoaded = true;
             }
             for (let v of ch) {

@@ -1,7 +1,7 @@
 <template>
   <div class="pingceing-warp">
     <mt-header v-if="hasnavbar" :title="pagetitle">
-      <mt-button icon="back" slot="left" @click="Backs">{{$t('common.Back')}}</mt-button>
+      <mt-button icon="back" slot="left" @click="onBack">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
     <div class="main">
@@ -76,7 +76,8 @@ export default {
     Duoxuan,
     Judge,
     ZhuGuan,
-    Vote
+    Vote,
+    MessageBox
   },
   props: {
     urlbankeid: {
@@ -360,6 +361,19 @@ export default {
       this.querycur();
     },
     Backs() {
+      this.$back();
+    },
+    onBack() {
+      if (this.isPingce) {
+        if (!this.submited) {
+          MessageBox.confirm("你未提交,确定要离开吗？")
+            .then(action => {
+              this.$back();
+            })
+            .catch(() => {});
+          return;
+        }
+      }
       this.$back();
     }
   }

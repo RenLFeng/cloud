@@ -8,14 +8,14 @@
         :class="type=='isdetail'?'act':''"
       >
         <p class="pic" @click="select(v,index)">
-          <img :src="`${v.file}_snap.jpg`" :onerror="defaultimg"  class="object-fit-img"/>
+          <img :src="`${v.file}_snap.jpg`" :onerror="defaultimg" class="object-fit-img" />
           <span class="mask" v-if="v.isAct && type==''">
             <i class="iconfont iconok- position-c"></i>
           </span>
         </p>
         <div class="user-info-wrap">
           <p class="user">
-            <img src="f" :onerror="$defaultImg('account')"  class="object-fit-img"/>
+            <img src="f" :onerror="$defaultImg('account')" class="object-fit-img" />
             <span class="name">{{v.name}}</span>
             <span
               v-if="type==''"
@@ -44,16 +44,23 @@ export default {
     },
     type: {
       default: ""
+    },
+    isSubmitEnd: {
+      default: false
     }
   },
-  watch: {},
+  watch: {
+    isSubmitEnd: function(newValue, oldValue) {
+      this.isSubmitEnd = newValue;
+    }
+  },
   data() {
     return {};
   },
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/100x100.png");
+      srcstr += "/assets/100x100.png";
       srcstr += '"';
       return srcstr;
     },
@@ -75,6 +82,9 @@ export default {
   watch: {},
   methods: {
     select(item, index) {
+      if (this.isSubmitEnd) {
+        return;
+      }
       if (item.isAct) {
         item.isAct = false;
       } else {
@@ -83,12 +93,12 @@ export default {
         }
         item.isAct = true;
       }
-      this.$emit("voteSelect",{obj:this.listData,index:index} );
+      this.$emit("voteSelect", { obj: this.listData, index: index });
     },
     view(i) {
       let tempImgs = [];
       for (let v of this.listData) {
-         tempImgs.push(nativecode.getUsedUrl(v.file));
+        tempImgs.push(nativecode.getUsedUrl(v.file));
       }
       nativecode.previewImage(this, {
         urls: tempImgs,

@@ -50,7 +50,7 @@
           </div>
         </div>
         <div v-else class="list-main">
-          <span class="position-c">无提交</span>
+          <span v-if="pingceItemfile.ptype!=10" class="position-c">无提交</span>
         </div>
       </div>
     </div>
@@ -316,6 +316,7 @@ export default {
       nativecode.previewImage(this, this.pingceItemfile.files);
     },
     querySubmitDetail() {
+      console.log("投票this.pingceItemfile", this.pingceItemfile);
       //! 清空当前数据
       this.memberData = [];
       this.$http
@@ -397,7 +398,7 @@ export default {
                   }
                 }
                 this.voteInfos.sort(sortFn("count", 1));
-                console.log("qqqqqq", this.voteInfos);
+                console.log("投票", this.voteInfos);
               }
               this.tempMemberData = members;
               this.Statistics(this.tempMemberData);

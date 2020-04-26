@@ -2,7 +2,7 @@
   <div class="vote-wrap footer-item footer-item-x">
     <div class="mian">
       <div class="answer-wrap">
-        <Filelist :listData="pingceData.info.opts" @voteSelect="onSelect" />
+        <Filelist  :listData="pingceData.info.opts" @voteSelect="onSelect" :isSubmitEnd="isSubmitEnd" />
       </div>
     </div>
     <div class="footer-wrap">
