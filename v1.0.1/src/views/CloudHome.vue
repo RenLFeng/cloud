@@ -200,11 +200,8 @@
 
 <script>
 import examhome from "../Exam/ExamHome";
-
 import BankeSimple from "./components/BankeSimple";
-
-import MineAbout from "./MineAbout";
-
+const MineAbout = ()=>import("@/views/MineAbout");
 import nativecode from "../nativecode";
 import Empty from "@/common/empty";
 import BottomLoadmore from "@/common/bottom-loadmore";

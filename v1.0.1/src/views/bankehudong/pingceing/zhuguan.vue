@@ -110,7 +110,6 @@
 </template>
 
 <script>
-import html2canvas from "html2canvas";
 import { Button, Indicator, Toast, MessageBox, Field } from "mint-ui";
 
 import { fixCaptureImage } from "@/util";

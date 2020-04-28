@@ -77,7 +77,8 @@ export default {
       page: 0,
       pagesize: 10,
       loading: false,
-
+      listLoadend: false,
+      allLoaded: false,
       editItemObj: {},
       actionShow: false,
       actions: [

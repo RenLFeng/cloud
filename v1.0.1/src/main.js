@@ -6,7 +6,6 @@ import './plugins/element.js'
 import axios from 'axios'
 import 'amfe-flexible';
 import './assets/iconfont/iconfont.css'
-import Viewer from 'v-viewer'
 import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'
@@ -31,11 +30,6 @@ Vue.prototype.$back = function () {
 // Vue.use(vConsole)
 Vue.prototype.$http = axios
 Vue.config.productionTip = false;
-Vue.use(Viewer, {
-    defaultOptions: {
-        navbar: false,
-    }
-})
 Vue.use(VueI18n);
 const i18n = new VueI18n({
     locale: localStorage.getItem('lang') || 'zh',

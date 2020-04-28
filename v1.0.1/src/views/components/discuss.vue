@@ -124,8 +124,6 @@
 import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
-//import dispic from "../../assets/dis.jpg";
-//import dispic2 from "../../assets/dis.jpg";
 import mimgcrop from "../../common/m-image-crop";
 import { constants } from "crypto";
 import { formateTime } from "../../util";
@@ -134,8 +132,6 @@ import ZuoyeDetailEdit from "../ZuoyeDetailEdit";
 import maintools from "../maintools";
 const _URL = window.URL || window.webkitURL;
 import commontools from "../../commontools";
-import Viewer from "v-viewer";
-import "viewerjs/dist/viewer.css";
 export default {
   name: "",
   props: {
