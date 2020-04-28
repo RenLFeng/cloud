@@ -3,12 +3,7 @@
     <div class="main">
       <div class="lists-wrap">
         <ul ref="cul">
-          <li
-            class="item"
-            v-for="(v,sindex) in members"
-            :key="sindex"
-            ref="cli"
-          >
+          <li class="item" v-for="(v,sindex) in members" :key="sindex" ref="cli">
             <img :class="!v.state?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
             <span class="name" :class="!v.state?'opctive':''">{{v.name}}</span>
           </li>
@@ -70,7 +65,7 @@ export default {
     group: {
       default: true
     },
-    isOpenSign:{
+    isOpenSign: {
       default: false
     }
   },
@@ -103,13 +98,11 @@ export default {
   created() {},
   mounted() {},
   watch: {
-     isOpenSign: function(newValue, oldValue) {
-      
-    }
+    isOpenSign: function(newValue, oldValue) {}
   },
   methods: {
     changeState(e, item, i) {
-      if(!this.isOpenSign) return;
+      if (!this.isOpenSign) return;
       this.editItem = item;
       let ev = e || e.window.event;
       let cul = this.$refs.cul;
@@ -145,11 +138,10 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             MessageBox("提示", "操作成功");
-            this.showChangeState = false;
           } else {
             MessageBox("提示", "操作失败");
-            this.showChangeState = false;
           }
+          this.showChangeState = false;
         })
         .catch(e => {
           MessageBox("提示", "操作失败");
