@@ -29,6 +29,7 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">
             {{zuoyeitem.name}}
+            <i v-if="pagemode=='submit'" class="iconfont iconpinglun eicotrigger color9" @click="sbmitSeepl"></i>
             <i
               class="iconfont iconcollect eicotrigger fr"
               :class="isShuoc?'colory':'color9'"
@@ -102,14 +103,17 @@
 
         <div v-if="pagemode=='submit'" style="padding:10px;" class="showemptydesc-submit">
           <div v-if="canEditzy" class="isZySbmitEdit">
-            <p class="text-tips position-c">{{isZySbmitEdit}}</p>
+            <div class="text-tips position-c">
+              <p>得分:&nbsp;{{this.results[0].score}}</p>
+              <p>{{isZySbmitEdit}}</p>
+            </div>
           </div>
           <P
             v-if="results.length"
             class="tr colord fontsmall"
             style="padding:10px;position:relative;"
           >
-            <span class="position-r" @click="onSeeAllSubmit(results[0])">编辑记录{{results.length}}</span>
+            <span class="position-r" @click="onSeeAllSubmit(results[0])">编辑记录({{results.length}})</span>
           </P>
           <zuoyedetailedit
             @textChange="ontextChange"
@@ -520,7 +524,7 @@ export default {
     },
     isZySbmitEdit() {
       if (this.canEditzy) {
-        return "作业已被评分，不能编辑，如需修改，请联系教师。";
+        return `作业已被评分，不能编辑.`;
       } else {
         return "";
       }
@@ -554,6 +558,11 @@ export default {
       this.studentInfo = ritem.info;
       this.popupZuoyePL = ritem.state;
       console.log("作业 info", ritem);
+    },
+    //提交中查看评论
+    sbmitSeepl() {
+      this.studentInfo = this.results[0];
+      this.popupZuoyePL = true;
     },
     onScoreClick(ritem) {
       let isteacher = this.caneditzuoye; // this.$store.getters.caneditbanke;
@@ -914,8 +923,8 @@ export default {
             // this.mimiMessage("submit");
           } else {
             //! Toast 不可见
-            if (res.data.msg.indexOf("over submit")>-1) {
-                MessageBox('已超时，无法再提交作业，请联系老师');
+            if (res.data.msg.indexOf("over submit") > -1) {
+              MessageBox("已超时，无法再提交作业，请联系老师");
             } else {
               MessageBox(res.data.msg);
             }
@@ -1129,7 +1138,14 @@ export default {
 }
 .zuoyetitle i {
   position: absolute;
-  right: 10px;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  font-size: 25px;
+}
+.zuoyetitle .iconpinglun {
+  position: absolute;
+  right: 40px;
   top: 50%;
   transform: translate(0, -50%);
   font-size: 25px;
@@ -1145,7 +1161,7 @@ export default {
 }
 
 .titlecontainer {
-  padding: 10px 20px;
+  padding: 10px 15px;
 
   background-color: #e7e7e7;
 }
@@ -1174,8 +1190,8 @@ export default {
 }
 .isZySbmitEdit {
   position: relative;
-  height: 71px;
-
+  height: 65px;
+  margin-bottom: 20px;
   background: rgba(255, 137, 0, 1);
 }
 .isZySbmitEdit .text-tips {

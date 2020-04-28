@@ -70,7 +70,7 @@
       <mt-header :title="pingceType(pingceItemfile.ptype)" class>
         <mt-button icon="back" slot="left" @click="goBacks">{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <Deatil :data="pingceItemfile" />
+      <Deatil :data="pingceItemfile" :showState="popupDeatil"/>
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
   </div>

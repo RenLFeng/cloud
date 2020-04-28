@@ -292,7 +292,7 @@ export default {
       if (process.env.NODE_ENV !== "production") {
         hostname = "www2.exsoft.com.cn";
         port = 9982;
-        proto  = "wss";
+        proto = "wss";
       }
 
       let serverpath = proto + "://" + hostname + ":" + (port + 1) + "/ws";

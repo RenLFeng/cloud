@@ -145,6 +145,9 @@ export default {
       default() {
         return {};
       }
+    },
+    showState: {
+      default: false
     }
   },
   components: {
@@ -154,10 +157,12 @@ export default {
   },
   watch: {
     data: function(newValue, oldValue) {
-      this.moveBar = 0;
       this.pingceItemfile = newValue;
       console.log("fsfs", this.pingceItemfile);
       this.querySubmitDetail();
+    },
+    showState: function(newValue, oldValue) {
+      this.inittabBar();
     }
   },
   data() {
@@ -270,6 +275,9 @@ export default {
           return item.answerdesc.textarea;
         } else {
           let opts = JSON.stringify(item.answerdesc.opts);
+          if (opts.includes("正确")) {
+            opts = "对";
+          }
           return opts.includes(type);
         }
       });
@@ -277,6 +285,7 @@ export default {
     },
     Statistics(arr) {
       if (Array.isArray(arr)) {
+        // let arr =JSON.parse(JSON.stringify(arr));
         this.initStatistics();
         this.tabBar[0].num = arr.length;
         for (let j = 1; j < this.tabBar.length; j++) {
@@ -301,6 +310,9 @@ export default {
               let and = arr[i].answerdesc;
               if (and && and.opts && typeof and.opts == "object") {
                 let opts = JSON.stringify(and.opts);
+                if (opts.includes("正确")) {
+                  opts = "对";
+                }
                 if (opts.includes(v.label)) {
                   v.num++;
                 }
@@ -319,6 +331,8 @@ export default {
       console.log("投票this.pingceItemfile", this.pingceItemfile);
       //! 清空当前数据
       this.memberData = [];
+      this.tempMemberData = [];
+      this.voteInfos = [];
       this.$http
         .post("api/pingce/querysubmit2", {
           //！ cjy： 使用新接口请求带有未提交的submit
@@ -377,6 +391,7 @@ export default {
                 for (let item of members) {
                   if (item.hassubmit) {
                     item.isResponder = "抢答成功";
+                    item.answerdesc.opts[0] = "已参与";
                   }
                 }
               }
@@ -401,11 +416,12 @@ export default {
                 console.log("投票", this.voteInfos);
               }
               this.tempMemberData = members;
+
               this.Statistics(this.tempMemberData);
               this.filterData(this.filterType);
               //! cjy: server 的 querysubmit 优化， 返回所有应提交的名单； 因为参与学生可能会变动
               //   this.bankememberquery(this.memberData);
-              //  console.log("提交详细", members);
+              console.log("提交详细", members);
             } else {
               this.memberData = [];
               this.tempMemberData = [];
@@ -476,8 +492,17 @@ export default {
       for (let v of this.tabBar) {
         v.num = 0;
       }
+    },
+    inittabBar() {
+      this.moveBar = 0;
+      this.filterType = "ALL";
+      for (let item of this.tabBar) {
+        item.isActive = false;
+      }
+      this.tabBar[0].isActive = true;
     }
-  }
+  },
+  destroyed() {}
 };
 </script>
 

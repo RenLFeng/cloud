@@ -2,12 +2,12 @@
   <div class="biggp-memberlist-wrap">
     <div class="main">
       <div class="lists-wrap">
-        <ul>
+        <ul ref="cul">
           <li
             class="item"
             v-for="(v,sindex) in members"
             :key="sindex"
-            @click="selectGroup($event,item,index,v,sindex)"
+            ref="cli"
           >
             <img :class="!v.state?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
             <span class="name" :class="!v.state?'opctive':''">{{v.name}}</span>
@@ -30,6 +30,18 @@
         </ul>-->
       </div>
     </div>
+    <div class="change-state-wrap" ref="setsign" v-if="showChangeState">
+      <p class="title tc">设置&nbsp;{{curName}}&nbsp;的签到状态：</p>
+      <div class="btn-wrap">
+        <span
+          class
+          :class="item.act?'act':''"
+          v-for="(item,index) in signTemp"
+          :key="index"
+          @click="setSignState(item,index)"
+        >{{item.text}}</span>
+      </div>
+    </div>
     <!-- <div class="popver-wrap" ref="popver" v-if="isShowPopver" @click="isShowPopver=false">
       <p class="tit">请选择分组</p>
       <ul class="group-list">
@@ -42,11 +54,12 @@
         >{{i+1}}组</li>
       </ul>
       <i class="iconfont iconsanjiaoxing"></i>
-    </div> -->
+    </div>-->
   </div>
 </template>
 
 <script>
+import { Indicator, Toast, MessageBox, Switch } from "mint-ui";
 export default {
   props: {
     members: {
@@ -56,19 +69,93 @@ export default {
     },
     group: {
       default: true
+    },
+    isOpenSign:{
+      default: false
     }
   },
   data() {
     return {
       isShowPopver: false,
-      actindex: 0
+      actindex: 0,
+      showChangeState: false,
+      signTemp: [
+        {
+          id: 1,
+          text: "已签到",
+          act: false
+        },
+        {
+          id: 2,
+          text: "迟到",
+          act: false
+        },
+        {
+          id: 0,
+          text: "未签到",
+          act: false
+        }
+      ],
+      curName: ""
     };
   },
   computed: {},
   created() {},
   mounted() {},
-  watch: {},
+  watch: {
+     isOpenSign: function(newValue, oldValue) {
+      
+    }
+  },
   methods: {
+    changeState(e, item, i) {
+      if(!this.isOpenSign) return;
+      this.editItem = item;
+      let ev = e || e.window.event;
+      let cul = this.$refs.cul;
+      let eli = this.$refs.cli[i];
+
+      let culoffsetLeft = cul.offsetLeft;
+      let lioffsetLeft = eli.offsetLeft;
+      if (culoffsetLeft != lioffsetLeft) {
+        lioffsetLeft = lioffsetLeft - 150;
+      }
+      this.curName = item.name;
+      this.showChangeState = true;
+      this.$nextTick(() => {
+        this.$refs.setsign.style.left = `${lioffsetLeft}px`;
+        this.$refs.setsign.style.top = `${eli.offsetTop + 150}px`;
+      });
+    },
+    setSignState(item, index) {
+      console.log(this.editItem);
+      for (let v of this.signTemp) {
+        v.act = false;
+      }
+      item.act = true;
+      this.studentChangestate(item.id);
+    },
+    studentChangestate(state) {
+      this.$http
+        .post("/api/sign/changestate", {
+          userid: this.editItem.memberuserid,
+          signid: this.editItem.id,
+          state: state
+        })
+        .then(res => {
+          if (res.data.code == 0) {
+            MessageBox("提示", "操作成功");
+            this.showChangeState = false;
+          } else {
+            MessageBox("提示", "操作失败");
+            this.showChangeState = false;
+          }
+        })
+        .catch(e => {
+          MessageBox("提示", "操作失败");
+          this.showChangeState = false;
+        });
+    },
     selectGroup(e, item, index, sitem, sindex) {
       if (!this.group) return;
       this.actindex = index;
@@ -130,7 +217,7 @@ export default {
           }
           .name {
             margin-top: 10px;
-             &.opctive {
+            &.opctive {
               opacity: 0.4;
             }
           }
@@ -211,6 +298,52 @@ export default {
       transform: translate(-50%, 0);
       color: #fff;
       font-size: 20px;
+    }
+  }
+  .change-state-wrap {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 396px;
+    height: 160px;
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(195, 195, 195, 1);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+    opacity: 1;
+    border-radius: 10px;
+    z-index: 9999999;
+    flex-direction: column;
+    .title {
+      padding: 20px;
+      background: #ececec;
+      color: #000;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      font-size: 26px;
+    }
+    .btn-wrap {
+      display: flex;
+      padding: 20px;
+      justify-content: space-between;
+      text-align: center;
+      span {
+        display: flex;
+        width: 30%;
+        height: 57px;
+        background: rgba(255, 255, 255, 1);
+        border: 1px solid rgba(0, 137, 255, 1);
+        opacity: 1;
+        border-radius: 10px;
+        align-items: center;
+        justify-content: center;
+        color: #0089ff;
+        font-size: 24px;
+        &.act {
+          color: #fff;
+          background: #0089ff;
+        }
+      }
     }
   }
 }

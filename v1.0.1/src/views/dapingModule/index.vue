@@ -6,7 +6,7 @@
     <div class="main">
       <div class="member-wrap" >
         <div class="MemberList">
-          <MemberList :members="signMemberList" />
+          <MemberList :members="signMemberList" :isOpenSign="isOpenSign"/>
           <p class="outer" v-if="[].length">旁听学生 6</p>
           <MemberList :members="[]" />
         </div>
@@ -146,6 +146,7 @@ export default {
 
                         for(let i=0; i<sm.length; i++){
                             sm[i].state = 1;  //! 均视为已签到状态
+                            sm[i].changewrap=false;
                         }
                         this.signMemberList = sm;
                         this.navInfo.total = sm.length;
