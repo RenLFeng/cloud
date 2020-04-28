@@ -8,8 +8,8 @@
         :class="{'liupload':isupload,'imgblocksmall':!isupload}"
       >
         <div class="imgcontainer blockborder" @click.stop="onImagePreview(localfiles,findex)">
-          <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
-          <img v-else :src="getimgico(fitem)" :onerror="getimgico(fitem)" class="iconclass" />
+          <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)"/>
+          <img v-else :src="getimgico(fitem)" :onerror="getimgico(fitem)" class="iconclass"/>
         </div>
 
         <div v-if="uploadstate(findex)" class="uploadbg">
@@ -113,7 +113,12 @@ export default {
   },
   mounted() {},
   methods: {
+    a(){
+      alert(1)
+    },
     onImagePreview(item, index) {
+      alert(0);
+      return;
       nativecode.fileviewZuoye(this, {
         items: item,
         index: index
