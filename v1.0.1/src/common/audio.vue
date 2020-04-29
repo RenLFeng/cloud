@@ -140,7 +140,9 @@ export default {
       this.$emit("Backs", {});
     }
   },
-  components: {},
+  components: {
+    [Progress.name]:Progress
+  },
   destroyed() {}
 };
 </script>

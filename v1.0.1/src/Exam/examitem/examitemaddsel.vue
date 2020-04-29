@@ -85,7 +85,7 @@
     import examitemfull from './components/examitemfull'
     import commontools from '../../commontools'
 
-    import { MessageBox,Indicator, Toast } from 'mint-ui';
+    import { MessageBox,Indicator, Toast,Actionsheet } from 'mint-ui';
 
 
     export default {
@@ -128,7 +128,8 @@
         },
         components:{
             examitemsellist,
-            examitemfull
+            examitemfull,
+            [Actionsheet.name]:Actionsheet
         },
         computed:{
             rightanswerstr:function(){

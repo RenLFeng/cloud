@@ -44,9 +44,6 @@ import {
   Indicator,
   Toast,
   MessageBox,
-  Cell,
-  Popup,
-  InfiniteScroll,
   Actionsheet
 } from "mint-ui";
 export default {
@@ -234,7 +231,8 @@ export default {
   components: {
     List,
     Empty,
-    BottomLoadmore
+    BottomLoadmore,
+    [Actionsheet.name]:Actionsheet
   }
 };
 </script>

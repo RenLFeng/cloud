@@ -34,7 +34,9 @@ export default {
   mounted() {},
   watch: {},
   methods: {},
-  components: {}
+  components: {
+    [Spinner.name]:Spinner
+  }
 };
 </script>
 

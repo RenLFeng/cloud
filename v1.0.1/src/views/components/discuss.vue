@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
+import {Badge, Toast, Indicator } from "mint-ui";
 import ImagePreview from "vant/lib/image-preview";
 import "vant/lib/image-preview/style";
 import mimgcrop from "../../common/m-image-crop";
@@ -148,6 +148,7 @@ export default {
   },
   components: {
     [ImagePreview.name]: ImagePreview,
+    [Badge.name]:Badge,
     FileAttachList,
     ZuoyeDetailEdit
   },

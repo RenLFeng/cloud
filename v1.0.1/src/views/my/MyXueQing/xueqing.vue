@@ -46,7 +46,7 @@
   </div>
 </template>
 <script>
-import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 import Empty from "@/common/empty";
 export default {
   props: {

@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Button, Field } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 export default {
   name: "",
   props: {

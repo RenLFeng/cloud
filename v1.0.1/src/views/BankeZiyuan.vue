@@ -156,8 +156,8 @@
       <div class="info-list-main">
         <div class="tit-table">
           <p class="clearfix tc">
-            <span :class="!seeState?'act fl':'fl'" @click="see(0)">未查看（{{editItemFile.noviewnum}} 人）</span>
-            <span :class="seeState?'act fr':'fr'" @click="see(1)">已查看（{{editItemFile.viewnum}}人）</span>
+            <span :class="!seeState?'act fl':'fl'" @click="see(0,editItemFile.noviewnum)">未查看（{{editItemFile.noviewnum}} 人）</span>
+            <span :class="seeState?'act fr':'fr'" @click="see(1,editItemFile.viewnum)">已查看（{{editItemFile.viewnum}}人）</span>
           </p>
         </div>
         <ul class="list-content overflow-scroll">
@@ -236,10 +236,11 @@ import {
   Indicator,
   Toast,
   MessageBox,
-  Cell,
-  Popup,
-  InfiniteScroll,
-  Actionsheet
+  TabContainer,
+  TabContainerItem,
+  Actionsheet,
+  Tabbar,
+  TabItem
 } from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
@@ -329,7 +330,7 @@ export default {
       listLoadend: false,
       topStatus: "",
       bottomStatus: "",
-      allLoaded: false,
+      allLoaded: false
       // dropType: 0
     };
   },
@@ -472,7 +473,12 @@ export default {
     Audio,
     AddSuperLink,
     UpLoadFile,
-    BottomLoadmore
+    BottomLoadmore,
+    [TabContainer.name]: TabContainer,
+    [TabContainerItem.name]: TabContainerItem,
+    [Actionsheet.name]: Actionsheet,
+    [TabItem.name]: TabItem,
+    [Tabbar.name]: Tabbar
   },
   methods: {
     //选择
@@ -634,7 +640,8 @@ export default {
       this.queryviews(this.editItemFile);
     },
     //学生查看or未查看
-    see(v) {
+    see(v,numb) {
+      if(!numb) return ;
       this.seeState = v;
       if (v == "0") {
         this.UserList = this.noViewUserList;

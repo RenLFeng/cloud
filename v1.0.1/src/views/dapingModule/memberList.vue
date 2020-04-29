@@ -170,7 +170,9 @@ export default {
       alert(i);
     }
   },
-  components: {}
+  components: {
+    [Switch.name]:Switch
+  }
 };
 </script>
 

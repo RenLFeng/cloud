@@ -365,7 +365,8 @@ export default {
   },
   components: {
     HeaderNav,
-    MemberList
+    MemberList,
+    [Switch.name]:Switch
   }
 };
 </script>

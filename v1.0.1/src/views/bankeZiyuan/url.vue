@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 import { mapState, mapMutations } from "vuex";
 import Mulu from "./mulu";
 export default {

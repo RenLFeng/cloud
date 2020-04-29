@@ -41,7 +41,7 @@ const F2chart = () => import("@/views/components/f2chart")
 //大屏
 const BigLogin = () => import("@/views/bankehudong/big/index")
 //签到
-const Sign = () => import("@/views/bankehudong/sign/teacherSignInfo")
+// const Sign = () => import("@/views/bankehudong/sign/teacherSignInfo")
 //评测记录
 const PingCe = () => import("@/views/bankehudong/pingce/index")
 //评测
@@ -161,11 +161,11 @@ let routers = new Router({
             name: 'BigLogin',
             component: BigLogin
         },
-        {
-            path: '/Sign',
-            name: 'Sign',
-            component: Sign
-        },
+        // {
+        //     path: '/Sign',
+        //     name: 'Sign',
+        //     component: Sign
+        // },
         {
             path: '/PingCe',
             name: 'PingCe',

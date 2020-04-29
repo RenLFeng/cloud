@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import store from './store'
-import './plugins/element.js'
+// import './plugins/element.js'
 import axios from 'axios'
 import Daping from './daping.vue'
 import './assets/iconfont/iconfont.css'

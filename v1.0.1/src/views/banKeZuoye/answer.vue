@@ -14,7 +14,6 @@
 </template>
 <script>
 import FileAttachList from "../components/FileAttachList";
-import {Field  } from "mint-ui";
 export default {
   name: "ZuoyeDetailEdit",
   data() {

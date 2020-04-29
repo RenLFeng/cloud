@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Actionsheet, Field } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 import Submitjoin from "./submitjoin";
 import nativecode from '@/nativecode'
 export default {

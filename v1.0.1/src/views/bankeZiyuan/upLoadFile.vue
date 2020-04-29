@@ -21,7 +21,7 @@
 <script>
 const _URL = window.URL || window.webkitURL;
 // _URL.createObjectURL(file),
-import { Indicator, Toast, Field, Cell } from "mint-ui";
+import { Indicator, Toast} from "mint-ui";
 import { getZYFileTypeIcon } from "@/util";
 import Mulu from "./mulu";
 export default {

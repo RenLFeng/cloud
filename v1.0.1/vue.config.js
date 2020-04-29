@@ -1,8 +1,4 @@
 const autoprefixer = require('autoprefixer');
-const pxtorem = require('postcss-pxtorem');
-
-
-
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 const productionGzipExtensions = ['js', 'css'];
@@ -34,6 +30,20 @@ module.exports = {
             chunks: ['chunk-vendors', 'chunk-common', 'index']
         },
         daping: 'src/daping.js'
+    },
+    chainWebpack: config => {
+        // 生产环境配置
+        if (isProduction) {
+            // 删除预加载
+            config.plugins.delete('preload');
+            config.plugins.delete('prefetch');
+            // 压缩代码
+            config.optimization.minimize(true);
+            // 分割代码
+            config.optimization.splitChunks({
+                chunks: 'all'
+            })
+        }
     },
     configureWebpack: config => {
         if (isProduction) {

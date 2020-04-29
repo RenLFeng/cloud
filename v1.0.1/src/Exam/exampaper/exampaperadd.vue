@@ -63,7 +63,7 @@
 
 <script>
 
-    import {Indicator, Toast,MessageBox } from 'mint-ui';
+    import {Indicator, Toast,MessageBox,Actionsheet } from 'mint-ui';
     import commontools from '../../commontools'
     import examtools from '../examtools'
     import examitemlistitem from '../examitem/components/examitemlistitem'
@@ -95,7 +95,8 @@
         }
         ,components:{
             exampaperfull,
-            examitemlistitem
+            examitemlistitem,
+            [Actionsheet.name]: Actionsheet
         }
         ,created:function(){
           //  console.log('exampaperadd created');

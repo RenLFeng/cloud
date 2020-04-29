@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 const indexNumber = [];
 export default {
   name: "",

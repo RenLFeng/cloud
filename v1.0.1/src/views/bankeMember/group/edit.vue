@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Popup, Button, Field } from "mint-ui";
+import { Indicator, Toast, MessageBox,} from "mint-ui";
 import GroupList from "./groupList";
 import MembersList from "./memberslist";
 export default {

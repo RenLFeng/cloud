@@ -149,7 +149,16 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox } from "mint-ui";
+import {
+  Indicator,
+  Toast,
+  MessageBox,
+  Tabbar,
+  TabItem,
+  TabContainer,
+  TabContainerItem,
+  Actionsheet
+} from "mint-ui";
 
 import { parseURL } from "@/util";
 
@@ -274,8 +283,8 @@ export default {
       return true;
     },
     footerbar() {
-        //！ cjyL 目前这个footerbar存在不稳定性问题，所以总是返回true； 例如：查看成员得分页面，然后点击浏览器的back键
-        return true;
+      //！ cjyL 目前这个footerbar存在不稳定性问题，所以总是返回true； 例如：查看成员得分页面，然后点击浏览器的back键
+      return true;
       //return this.$store.state.footerBarState;
     },
     Preview() {
@@ -424,20 +433,19 @@ export default {
     //console.log(this.$store.getters);
 
     //! 消除可能的wx缓存
-      if (!this.$store.getters.hasloginuser){
-          this.$http.post("/api/api/uservalidate").then(res => {
-              if (res.data.code == 0) {
-                  this.$store.commit("setLoginUser", res.data.data);
-              } else {
-                  this.$store.commit("setLoginUser", {});
-                  this.$store.commit("setRouterForward", true);
-                  this.$router.push("/login");
+    if (!this.$store.getters.hasloginuser) {
+      this.$http.post("/api/api/uservalidate").then(res => {
+        if (res.data.code == 0) {
+          this.$store.commit("setLoginUser", res.data.data);
+        } else {
+          this.$store.commit("setLoginUser", {});
+          this.$store.commit("setRouterForward", true);
+          this.$router.push("/login");
 
-                  nativecode.jsLogin(0, {});
-              }
-          });
-      }
-
+          nativecode.jsLogin(0, {});
+        }
+      });
+    }
 
     var u = this.$store.getters["banke/getBankeById"](this.id); //this.$store.getters.getBankeById(this.id);
     this.bankeid = this.id;
@@ -453,10 +461,10 @@ export default {
     if (ss) {
       this.selected = ss;
     }
-      const UrlParams = parseURL(window.location.href);
-      if (UrlParams.select) {
-          this.selected = UrlParams.select;
-      }
+    const UrlParams = parseURL(window.location.href);
+    if (UrlParams.select) {
+      this.selected = UrlParams.select;
+    }
     this.checkNeedShow();
     console.log("班可", this.curbanke);
     this.eventmsgsOnbanke();
@@ -469,13 +477,18 @@ export default {
     BankeChengyuan,
     BankeZuoye,
     bankeZouyeXq,
-    BankeHuDong
+    BankeHuDong,
+    [TabItem.name]: TabItem,
+    [Tabbar.name]: Tabbar,
+    [TabContainer.name]: TabContainer,
+    [TabContainerItem.name]: TabContainerItem,
+    [Actionsheet.name]: Actionsheet
   }
 };
 </script>
 
 <style scoped>
-.banke-home-wrap{
+.banke-home-wrap {
   overflow: hidden;
 }
 .chengyuan-head {

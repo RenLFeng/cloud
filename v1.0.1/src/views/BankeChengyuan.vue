@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
+import { Indicator, Toast, MessageBox,Actionsheet} from "mint-ui";
 import { filterItem } from "@/util";
 import BankeMemberSimple from "./components/BankeMemberSimple";
 import MemberDetail from "./bankeMember/detail";
@@ -134,7 +134,8 @@ export default {
   created() {},
   components: {
     BankeMemberSimple,
-    MemberDetail
+    MemberDetail,
+    [Actionsheet.name]: Actionsheet
   },
   methods: {
     seeMemberDetail(item) {

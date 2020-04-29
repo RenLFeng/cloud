@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { Cell, Field, Button, Toast, MessageBox } from "mint-ui";
+import { Toast, MessageBox } from "mint-ui";
 export default {
   name: "SetEdinfo",
   props: {

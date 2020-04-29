@@ -85,10 +85,6 @@ import {
   Indicator,
   Toast,
   MessageBox,
-  Cell,
-  Field,
-  loadmore,
-  InfiniteScroll
 } from "mint-ui";
 import Empty from "@/common/empty";
 import { parseURL, uniqueArr, sortFn } from "@/util";

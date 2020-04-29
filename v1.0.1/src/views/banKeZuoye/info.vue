@@ -45,7 +45,6 @@
   </div>
 </template>
 <script>
-import { Cell, InfiniteScroll } from "mint-ui";
 export default {
   name: "",
   props: {

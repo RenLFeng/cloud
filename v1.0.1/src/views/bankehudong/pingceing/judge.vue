@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { Button, Indicator, Toast, MessageBox, Field } from "mint-ui";
+import {Indicator, Toast, MessageBox } from "mint-ui";
 const indexNumber = [
   {
     v: "正确",

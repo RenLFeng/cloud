@@ -83,13 +83,9 @@ import Deatil from "./detail";
 import { pingceType, CollectionFn } from "@/util";
 import BottomLoadmore from "@/common/bottom-loadmore";
 import {
-  Button,
   Indicator,
   Toast,
-  Cell,
   MessageBox,
-  Loadmore,
-  InfiniteScroll,
   Actionsheet
 } from "mint-ui";
 export default {
@@ -101,7 +97,8 @@ export default {
     List,
     Deatil,
     Empty,
-    BottomLoadmore
+    BottomLoadmore,
+    [Actionsheet.name]:Actionsheet
   },
 
   data() {

@@ -67,8 +67,7 @@
   </div>
 </template>
 <script>
-import { Button, Indicator, Toast, Cell, MessageBox } from "mint-ui";
-import TeacherSignInfo from "./sign/teacherSignInfo";
+import {Indicator, Toast, MessageBox } from "mint-ui";
 
 import nativecode from "../../nativecode";
 
@@ -88,7 +87,6 @@ export default {
     }
   },
   components: {
-    TeacherSignInfo
   },
   data() {
     return {

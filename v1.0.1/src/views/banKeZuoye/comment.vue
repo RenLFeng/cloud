@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { Cell, Badge, Field, Toast, Indicator, InfiniteScroll } from "mint-ui";
+import {Badge, Toast, Indicator } from "mint-ui";
 // import dispic from "../../assets/dis.jpg";
 // import dispic2 from "../../assets/dis.jpg";
 // import mimgcrop from "../../common/m-image-crop";
@@ -169,6 +169,9 @@ export default {
   name: "",
   props: {
 
+  },
+  components:{
+    [Badge.name]:Badge
   },
   data() {
     return {

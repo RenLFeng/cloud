@@ -201,18 +201,19 @@
 <script>
 import examhome from "../Exam/ExamHome";
 import BankeSimple from "./components/BankeSimple";
-const MineAbout = ()=>import("@/views/MineAbout");
+const MineAbout = () => import("@/views/MineAbout");
 import nativecode from "../nativecode";
 import Empty from "@/common/empty";
 import BottomLoadmore from "@/common/bottom-loadmore";
 import SettedInfo from "@/views/my/settedinfo";
 import {
-  Indicator,
   Toast,
   MessageBox,
-  Actionsheet,
-  Spinner,
-  InfiniteScroll
+  Tabbar,
+  TabItem,
+  TabContainer,
+  TabContainerItem,
+  Actionsheet
 } from "mint-ui";
 import Search from "vant/lib/search";
 import "vant/lib/search/style";
@@ -710,10 +711,15 @@ export default {
     MineAbout,
     examhome,
     BankeSimple,
-    [Search.name]: Search,
     Empty,
     BottomLoadmore,
-    SettedInfo
+    SettedInfo,
+    [Search.name]: Search,
+    [TabItem.name]: TabItem,
+    [Tabbar.name]: Tabbar,
+    [TabContainer.name]: TabContainer,
+    [TabContainerItem.name]: TabContainerItem,
+    [Actionsheet.name]:Actionsheet
   }
 };
 </script>
@@ -828,7 +834,7 @@ export default {
   margin-top: 94px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
-    min-height: calc(100vh - 175px);
+  min-height: calc(100vh - 175px);
   /* padding-bottom: 30px; */
 }
 .cloudHome.banke .page-wrap .bankecontainer.bankeempty {
@@ -906,7 +912,7 @@ export default {
 }
 .banke-wrap {
   width: 100%;
-  height:calc(100vh - 175px);
+  height: calc(100vh - 175px);
   min-height: calc(100vh - 175px);
   overflow: auto;
 }

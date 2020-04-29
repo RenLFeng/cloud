@@ -268,7 +268,7 @@
 import Vue from "vue";
 import Discuss from "./components/discuss";
 import ZuoyeAnswerItem from "./components/ZuoyeAnswerItem";
-import { Indicator, Toast, MessageBox, Actionsheet, Loadmore } from "mint-ui";
+import { Indicator, Toast, MessageBox ,Actionsheet} from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
@@ -283,7 +283,6 @@ import zouYeInfo from "./banKeZuoye/info";
 import studentsMark from "./banKeZuoye/studentsMark";
 import Answer from "./banKeZuoye/answer";
 import { parseURL, CollectionFn, formateTime } from "@/util";
-Vue.component(Loadmore.name, Loadmore);
 export default {
   name: "ZuoyeResult",
   props: {
@@ -1008,7 +1007,8 @@ export default {
     Discuss,
     zouYeInfo,
     studentsMark,
-    Answer
+    Answer,
+    [Actionsheet.name]:Actionsheet
   }
 };
 </script>

@@ -10,7 +10,7 @@
 
 <script>
 import { parseURL } from "@/util";
-import { Indicator, Toast, MessageBox, Button } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import nativecode from "@/nativecode";
 

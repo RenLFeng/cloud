@@ -42,7 +42,7 @@
 
 <script>
 import BindSchoolInfo from "./bindSchool-info";
-import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
+import { Indicator, Toast, MessageBox} from "mint-ui";
 import Empty from "@/common/empty";
 import { parseURL } from "@/util";
 export default {

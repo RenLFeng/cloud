@@ -32,7 +32,7 @@
 <script>
 
     import exampaperlistitem from './components/exampaperlistitem'
-    import { MessageBox,Indicator, Toast } from 'mint-ui';
+    import { MessageBox,Indicator, Toast,Actionsheet } from 'mint-ui';
 
     export default {
         name: "exampaperhome"
@@ -72,7 +72,7 @@
             }
         }
         ,components:{
-            exampaperlistitem,
+            exampaperlistitem,[Actionsheet.name]: Actionsheet
         }
         ,data(){
             return {

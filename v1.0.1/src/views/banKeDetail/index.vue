@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { Cell, Button, MessageBox, Field, Indicator, Toast } from "mint-ui";
+import {MessageBox, Indicator, Toast } from "mint-ui";
 import edit from "./edit";
 import Notice from "./Notice";
 import Proportion from "./Proportion";

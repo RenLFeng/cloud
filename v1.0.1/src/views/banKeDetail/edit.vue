@@ -52,7 +52,7 @@
 </template>
 <script>
 
-import { Cell, Button, MessageBox, Field, Indicator } from "mint-ui";
+import { MessageBox, Indicator } from "mint-ui";
 import mimgcrop from "@/common/m-image-crop";
 export default {
   name: "",

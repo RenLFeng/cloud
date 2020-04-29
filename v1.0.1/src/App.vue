@@ -34,7 +34,6 @@ import nativecode from "./nativecode";
 import preview from "./common/preview";
 import "./styles/common.less";
 import "./styles/style.css";
-import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 import Audio from "@/common/audio";
 import FloatIcons from "@/components/s-icons";
 

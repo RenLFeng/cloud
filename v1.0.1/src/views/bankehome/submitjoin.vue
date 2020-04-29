@@ -15,7 +15,7 @@
 
 <script>
 
-    import { Indicator, Toast, MessageBox, Popup, Button, Field } from "mint-ui";
+    import { Indicator, Toast, MessageBox } from "mint-ui";
 
 export default {
   props: {

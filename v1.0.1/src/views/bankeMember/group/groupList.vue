@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox, Popup } from "mint-ui";
+import { Indicator, Toast, MessageBox} from "mint-ui";
 export default {
   name: "",
   props: {

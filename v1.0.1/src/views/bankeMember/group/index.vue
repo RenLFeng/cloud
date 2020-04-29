@@ -44,14 +44,15 @@
 import List from "@/common/list";
 import Edit from "./edit";
 import { parseURL, formateTime } from "@/util";
-import { Indicator, Toast, MessageBox, Popup, Actionsheet } from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 import Empty from "@/common/empty";
 export default {
   name: "Group",
   components: {
     List,
     Edit,
-    Empty
+    Empty,
+    [Actionsheet.name]:Actionsheet
   },
   watch: {
     EditSelect() {

@@ -76,8 +76,6 @@ import {
   Indicator,
   Toast,
   MessageBox,
-  Cell,
-  Popup,
 } from "mint-ui";
 import Empty from "@/common/empty";
 import Mulu from "./mulu";

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 import Filelist from "./filelist";
 export default {
   name: "Vote",

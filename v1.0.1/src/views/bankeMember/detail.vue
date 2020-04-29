@@ -47,8 +47,7 @@
   </div>
 </template>
 <script>
-import F2 from "@antv/f2/lib/index-all";
-import { Indicator, Toast, MessageBox, Cell } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 import BankeMemberSimple from "../components/BankeMemberSimple";
 import XueQing from "../my/MyXueQing/xueqing";
 import F2LineChart from "../../common/antv/f2/line";

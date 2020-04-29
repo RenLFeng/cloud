@@ -67,7 +67,7 @@ import Duoxuan from "./duoxuan";
 import Judge from "./judge";
 import ZhuGuan from "./zhuguan";
 import Vote from "./vote/vote";
-import { Button, Indicator, Toast, Cell, MessageBox, Loadmore } from "mint-ui";
+import {  Indicator, Toast, MessageBox } from "mint-ui";
 import { pingceType, parseURL } from "@/util";
 import nativecode from "@/nativecode";
 export default {

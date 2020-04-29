@@ -51,14 +51,10 @@ import { parseURL, CollectionFn, getZYFileType } from "@/util";
 import nativecode from "../../../nativecode";
 import BottomLoadmore from "@/common/bottom-loadmore";
 import {
-  Button,
   Indicator,
   Toast,
-  Cell,
   MessageBox,
-  Loadmore,
-  InfiniteScroll,
-  Actionsheet
+  Actionsheet,
 } from "mint-ui";
 import Empty from "@/common/empty";
 const arr = {
@@ -176,6 +172,7 @@ export default {
   components: {
     [ImagePreview.name]: ImagePreview,
     [Loading.name]: Loading,
+    [Actionsheet.name]:Actionsheet,
     Empty,
     BottomLoadmore
   }

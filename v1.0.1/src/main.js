@@ -2,13 +2,30 @@ import Vue from 'vue'
 import store from './store'
 import Home from './App.vue'
 import router from './router'
-import './plugins/element.js'
+import {
+    Cell,
+    Button,
+    Field,
+    Popup,
+    Header,
+    Loadmore,
+    InfiniteScroll,
+} from 'mint-ui';
+Vue.component(Cell.name, Cell);
+Vue.component(Button.name, Button);
+Vue.component(Popup.name, Popup);
+Vue.component(Header.name, Header);
+Vue.component(Loadmore.name, Loadmore);
+Vue.use(InfiniteScroll);
+Vue.component(Field.name, Field);
+// import './plugins/element.js'
 import axios from 'axios'
 import 'amfe-flexible';
 import './assets/iconfont/iconfont.css'
 import VueI18n from 'vue-i18n'
 import zh from '../src/langs/zh'
 import en from '../src/langs/en'
+// import '../assets/css/my-mint.scss'
 import {
     defaultImg,
     setInputScroll

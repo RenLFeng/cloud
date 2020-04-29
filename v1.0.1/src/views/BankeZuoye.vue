@@ -69,7 +69,7 @@
  <script>
 import BankeZuoyeSimple from "./components/BankeZuoyeSimple";
 
-import { Indicator, Toast, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox ,Actionsheet} from "mint-ui";
 
 import commontools from "../commontools";
 import { CollectionFn, getZYFileType } from "@/util";
@@ -479,7 +479,8 @@ export default {
   },
   components: {
     BankeZuoyeSimple,
-    BottomLoadmore
+    BottomLoadmore,
+    [Actionsheet.name]:Actionsheet
   }
 };
 </script>
