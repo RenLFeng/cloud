@@ -15,7 +15,7 @@
       <mt-cell :title="$t('bankeTask.Has_ended')"></mt-cell>
     </p>
     <div class="person-wrap overflow-scroll">
-      <!-- <p @click="selectTextFn" class="my-color border-c-bottom">切换为按({{selectText?'得分':'学号'}})显示</p> -->
+      <!-- <p @click="selectTextFn" class="colord border-c-bottom">切换为按({{selectText?'得分':'学号'}})显示</p> -->
       <lists :listsData="allInfo" />
     </div>
   </div>

@@ -113,12 +113,7 @@ export default {
   },
   mounted() {},
   methods: {
-    a(){
-      alert(1)
-    },
     onImagePreview(item, index) {
-      alert(0);
-      return;
       nativecode.fileviewZuoye(this, {
         items: item,
         index: index

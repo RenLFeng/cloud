@@ -195,6 +195,30 @@ textarea {
     border-bottom: 1px solid #e5e5e5;
 }
 
+.border-bottom {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.border-top {
+    border-top: 1px solid #f0f0f0;
+}
+
+.border-c-bottom {
+    border-bottom: 1px solid #ccc;
+}
+
+.border-c-top {
+    border-top: 1px solid #ccc;
+}
+
+.border-bottom-e5 {
+    border-bottom: 1px solid #dcdbdb;
+}
+
+.border-e5-bottom {
+    border-bottom: 1px solid #dcdbdb;
+}
+
 .hide {
     display: none;
 }
@@ -291,8 +315,14 @@ textarea {
     text-align: center;
 }
 
-.button-auto-96 {
+.button-auto-87 {
     width: 87%;
+}
+.botton-96 {
+    border: 1px solid #26a2ff !important;
+    width: 96%;
+    margin: 0 2%;
+    color: #26a2ff !important;
 }
 
 .popup-right {
@@ -678,3 +708,21 @@ textarea {
     overflow: scroll;
     -webkit-overflow-scrolling: touch
 }
+
+.popup-right {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+.submit-fixed {
+    position: fixed;
+    width: 100%;
+    bottom: 10px;
+    left: 0;
+}
+.no-more {
+    text-align: center;
+    color: #999;
+    padding: 10px 0 20px 0;
+  }

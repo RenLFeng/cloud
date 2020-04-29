@@ -8,15 +8,15 @@
         <mt-cell :title="$t('bankeTask.Last_start_time')" :value="itemInfo.starttime"></mt-cell>
       </div>
     </div>
-    <p class="submit-info text-center border-bottom border-top fontsmall">
+    <p class="submit-info tc border-bottom border-top fontsmall">
       <span
         class="border-right"
         @click="subMit(0)"
-        :class="isTrue?'':'my-color'"
+        :class="isTrue?'':'colord'"
       >{{$t('bankeTask.Not_yet')}}（{{noSubMit.length}}{{$t('common.Person')}}）</span>
       <span
         @click="subMit(1)"
-        :class="isTrue?'my-color':''"
+        :class="isTrue?'colord':''"
       >{{$t('bankeTask.Submitted')}}（{{isSubMit.length}}{{$t('common.Person')}}）</span>
     </p>
 

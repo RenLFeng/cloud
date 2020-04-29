@@ -18,7 +18,7 @@
       <Empty v-else :text="['暂无分组...']" />
     </div>
     <div class="button-worp">
-      <mt-button class="button-auto-96" @click="addGroupNew" v-if="isteacher">添加分组方案1</mt-button>
+      <mt-button class="button-auto-87" @click="addGroupNew" v-if="isteacher">添加分组方案1</mt-button>
     </div>
     <mt-popup
       v-model="popuoEdit"

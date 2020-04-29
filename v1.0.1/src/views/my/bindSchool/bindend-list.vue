@@ -26,7 +26,7 @@
       <Empty v-else :text="['暂无内容']" />
     </div>
     <div class="button-worp position-fb" v-if="!detail_go_school">
-      <mt-button class="button-auto-96" @click="onbindNewSchool">绑定新学校</mt-button>
+      <mt-button class="button-auto-87" @click="onbindNewSchool">绑定新学校</mt-button>
     </div>
     <mt-popup
       v-model="popupBindSchoolInfo"
@@ -180,7 +180,7 @@ export default {
     }
   }
   .button-worp {
-    .button-auto-96 {
+    .button-auto-87 {
       width: 96%;
     }
   }

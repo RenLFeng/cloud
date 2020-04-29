@@ -122,7 +122,7 @@
             </mt-loadmore>
           </div>
         </mt-tab-container-item>
-        <mt-tab-container-item id="3" class="text-center">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
+        <mt-tab-container-item id="3" class="tc">{{$t('common.PleaseAwait')}}</mt-tab-container-item>
         <mt-popup
           v-model="popupUploadLink"
           position="right"

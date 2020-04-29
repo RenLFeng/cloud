@@ -27,10 +27,10 @@
         </div>
         <p>下课后请及时退出大屏登录</p>
         <div class="button-worp">
-          <mt-button class="button-auto-96" @click="Backs">我知道了</mt-button>
+          <mt-button class="button-auto-87" @click="Backs">我知道了</mt-button>
           </div>
         <div class="button-worp2">
-          <mt-button class="button-auto-96" @click="sinOut">退出大屏</mt-button>
+          <mt-button class="button-auto-87" @click="sinOut">退出大屏</mt-button>
         </div>
 
       </div>

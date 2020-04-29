@@ -480,10 +480,6 @@ export default {
   top: 50px;
   text-align: center;
 }
-
-.noheadercontainer-bg {
-  background: #f1f1f1;
-}
 .slide-forward-enter {
   transform: translate(100%);
 }
@@ -505,73 +501,10 @@ export default {
   transform: translate(100%);
   transition: all 0.2s ease-in-out;
 }
-
-.color9 {
-  color: #999;
-}
-.border-bottom {
-  border-bottom: 1px solid #f0f0f0;
-}
-.border-top {
-  border-top: 1px solid #f0f0f0;
-}
-.border-c-bottom {
-  border-bottom: 1px solid #ccc;
-}
-.border-c-top {
-  border-top: 1px solid #ccc;
-}
-.border-bottom-e5 {
-  border-bottom: 1px solid #dcdbdb;
-}
-.border-e5-bottom {
-  border-bottom: 1px solid #dcdbdb;
-}
-.text-center {
-  text-align: center;
-}
-.float-l {
-  float: left;
-}
-.float-r {
-  float: right;
-}
-.clearIt:after {
-  content: ".";
-  display: block;
-  height: 0;
-  visibility: hidden;
-  clear: both;
-}
-.my-color {
-  color: #0089ff;
-}
-.popup-right {
-  width: 100%;
-  height: 100%;
-  background: #fff;
-}
-.submit-fixed {
-  position: fixed;
-  width: 100%;
-  bottom: 10px;
-  left: 0;
-}
-.botton-96 {
-  border: 1px solid #26a2ff !important;
-  width: 96%;
-  margin: 0 2%;
-  color: #26a2ff !important;
-}
 .iconfont-big {
   display: block;
   padding-bottom: 7px;
   font-size: 48px !important;
-}
-.no-more {
-  text-align: center;
-  color: #999;
-  padding: 10px 0 20px 0;
 }
 </style>
 <style lang="less" scoped>

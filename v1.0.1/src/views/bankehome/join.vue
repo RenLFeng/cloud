@@ -6,7 +6,7 @@
       </mt-header>
       <mt-field placeholder="请输入班课号" type="number" v-model="bankeNumber"></mt-field>
       <div class="button-worp">
-        <mt-button class="button-auto-96" @click="join">下一步</mt-button>
+        <mt-button class="button-auto-87" @click="join">下一步</mt-button>
       </div>
     </div>
     <mt-popup

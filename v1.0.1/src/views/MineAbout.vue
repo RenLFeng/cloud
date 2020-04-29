@@ -96,7 +96,7 @@
             <mt-field label="密码" placeholder="设置密码" type="password" v-model="inputpassword" @blur.native.capture="$setInputScroll"></mt-field>
           </div>
           <div class="button-worp">
-            <mt-button class="button-auto-96 b" @click="uibindsubmit">提交</mt-button>
+            <mt-button class="button-auto-87 b" @click="uibindsubmit">提交</mt-button>
           </div>
           <div>{{bindstatedesc}}</div>
         </div>

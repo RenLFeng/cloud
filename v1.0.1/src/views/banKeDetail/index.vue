@@ -2,9 +2,9 @@
   <div class="bk-zy-xq">
     <div class="curbanke-info">
       <ul>
-        <li class="clearIt">
+        <li class="clearfix">
           <img
-            class="float-l"
+            class="fl"
             :src="imgfilepath?imgfilepath:bankeInfo.avatar"
             :onerror="$defaultImg('banke')"
           />

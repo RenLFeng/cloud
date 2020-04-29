@@ -8,7 +8,7 @@
       <p class="name">教师&nbsp;{{bankeItem.username}}</p>
     </div>
     <div class="button-worp">
-      <mt-button class="button-auto-96" @click="submitJoin">加入</mt-button>
+      <mt-button class="button-auto-87" @click="submitJoin">加入</mt-button>
     </div>
   </div>
 </template>

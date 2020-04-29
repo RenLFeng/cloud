@@ -19,7 +19,7 @@
       <!-- <mt-cell title="目录" is-link :value="muluId" @click.native="queryMulu"></mt-cell> -->
     </div>
     <!-- <div class="button-worp">
-      <mt-button class="button-auto-96" type="primary" @click="submit">{{$t('common.Submit')}}</mt-button>
+      <mt-button class="button-auto-87" type="primary" @click="submit">{{$t('common.Submit')}}</mt-button>
     </div>-->
     <mt-popup
       v-model="popupmulu"

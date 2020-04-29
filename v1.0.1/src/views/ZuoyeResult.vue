@@ -179,20 +179,20 @@
     <!-- 评分 -->
     <mt-popup v-model="popupZuoyePF" position="bottom" class="pf-container-popup">
       <div class="pf-container">
-        <p class="tit border-bottom-e5 text-center">
-          <span class="close-mode float-l" @click="goBacks">{{$t('confirm.Cancel')}}</span>
+        <p class="tit border-bottom-e5 tc">
+          <span class="close-mode fl" @click="goBacks">{{$t('confirm.Cancel')}}</span>
           {{$t('bankeTask.To')}}&nbsp;{{studentName}} {{$t('bankeTask.Score')}}
           <span
-            class="close-mode float-r"
+            class="close-mode fr"
             @click="submiMark"
           >{{$t('bankeTask.Score')}}</span>
         </p>
         <p class="mark-input border-bottom-e5">
-          <input class="text-center" type="number" v-model.lazy="mark" v-on:change="changeMark()" />
+          <input class="tc" type="number" v-model.lazy="mark" v-on:change="changeMark()" />
           {{$t('bankeTask.Overall_score')}}({{zuoyeitem.score}})
         </p>
-        <ul class="clearIt">
-          <li class="float-l text-center" v-for="i in markArr" :key="i" @click="seleMarkFn(i)">
+        <ul class="clearfix">
+          <li class="fl tc" v-for="i in markArr" :key="i" @click="seleMarkFn(i)">
             {{i>9?$t('bankeTask.Full_marks'):i}}
             <!-- {{i>90?$t('bankeTask.Full_marks'):i}} -->
           </li>

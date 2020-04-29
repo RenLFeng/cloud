@@ -25,7 +25,7 @@
       </div>
       <div class="buttonkey" v-if="hascode">
         <div class="button-worp">
-          <mt-button class="button-auto-96" @click="submitLogin">大屏登录</mt-button>
+          <mt-button class="button-auto-87" @click="submitLogin">大屏登录</mt-button>
         </div>
       </div>
       <div class="key" v-else>

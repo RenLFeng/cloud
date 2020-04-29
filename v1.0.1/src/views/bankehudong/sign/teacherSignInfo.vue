@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <mt-button class="button-auto-96 btn" @click="studentSee">签到历史记录</mt-button>
+        <mt-button class="button-auto-87 btn" @click="studentSee">签到历史记录</mt-button>
       </div>
     </mt-loadmore>
     <mt-popup

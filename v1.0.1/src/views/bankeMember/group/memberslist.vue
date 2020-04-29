@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="button-worp">
-      <mt-button class="button-auto-96" @click="addMember">完成</mt-button>
+      <mt-button class="button-auto-87" @click="addMember">完成</mt-button>
     </div>
   </div>
 </template>

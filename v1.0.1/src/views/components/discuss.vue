@@ -12,7 +12,7 @@
         infinite-scroll-disabled="loading"
         infinite-scroll-distance="50"
       >
-        <div class="item clearIt" v-for="(lists ,tindex) in teacherInfo" :key="tindex">
+        <div class="item clearfix" v-for="(lists ,tindex) in teacherInfo" :key="tindex">
           <img class="tit-pic" :src="lists.useravatar" alt :onerror="$defaultImg('account')"/>
           <ul class="teacher-content">
             <li class="teacher-name color9">
@@ -37,7 +37,7 @@
             <li
               v-for="(item ,index) in lists.lastreplydata"
               :key="index"
-              class="student-content clearIt"
+              class="student-content clearfix"
               :class="index!=lists.lastreplydata.length-1?'border-bottom':''"
             >
               <ul>
@@ -101,7 +101,7 @@
         </div>
       </div>
     </mt-popup>
-    <div class="submit-msg clearIt">
+    <div class="submit-msg clearfix">
       <div class="upload-content">
         <img src="/assets/zuoye_add.png" alt @click="unloadFn" />
         <input

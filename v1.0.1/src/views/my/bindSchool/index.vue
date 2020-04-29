@@ -8,7 +8,7 @@
       <mt-field label="工号/学号" placeholder="请输入工号或学号" v-model="sno" class="border-b"></mt-field>
       <mt-field label="校验码" placeholder="请输入校验码，没有则不填" v-model="schoolpwd"></mt-field>
       <div class="button-worp">
-        <mt-button class="button-auto-96" @click="onbindSchool">绑定</mt-button>
+        <mt-button class="button-auto-87" @click="onbindSchool">绑定</mt-button>
       </div>
     </div>
 
@@ -282,7 +282,7 @@ export default {
     margin-top: 60px;
     .button-worp {
       margin: 60px auto;
-      .button-auto-96 {
+      .button-auto-87 {
         background: #0089ff;
         color: #fff;
       }

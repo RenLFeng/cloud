@@ -30,7 +30,7 @@
     </div>
     <div class="button-worp" v-if="canedit">
       <mt-button
-        class="button-auto-96"
+        class="button-auto-87"
         @click="addGroup"
       >添加新组 ({{allMemBers.length-count}} 名成员未分配小组)</mt-button>
     </div>
