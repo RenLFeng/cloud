@@ -19,7 +19,7 @@
 
     <div class="noheaderscroll main main-f scrollingtouch" id="main">
       <mt-loadmore
-        :top-method="zuoyeitem.state != 100?loadTop:false"
+        :top-method="pagemode!='submit'?loadTop:false"
         @top-status-change="handleTopChange"
         :top-distance="80"
         ref="loadmore"
@@ -1022,7 +1022,7 @@ export default {
     padding-bottom: 0;
     .showemptydesc-submit {
       .zdetail {
-        height: 20vh;
+        // height: 20vh;
       }
       .attachdesc {
         text-align: left;

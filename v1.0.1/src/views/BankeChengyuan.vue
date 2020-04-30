@@ -14,26 +14,37 @@
     </div>
 
     <div class="listcontainer Member scrollingtouch">
-      <div
-        v-infinite-scroll="loadMoreMember"
-        infinite-scroll-disabled="loadingState"
-        infinite-scroll-distance="10"
+      <mt-loadmore
+        :top-method="loadTop"
+        @top-status-change="handleTopChange"
+        :top-distance="80"
+        ref="loadmore"
+        class
+        :auto-fill="autofill"
       >
-        <div
-          v-for="(mitem,selindex) in members"
-          v-bind:key="selindex"
-          @click="seeMemberDetail(mitem)"
-        >
-          <BankeMemberSimple
-            :indexShow="1"
-            :icon="1"
-            :memberuser="members[selindex]"
-            :index="selindex"
-            @editclick="onEditclick"
-          ></BankeMemberSimple>
+        <div class="list-wrap">
+          <div
+            v-infinite-scroll="loadMoreMember"
+            infinite-scroll-disabled="loadingState"
+            infinite-scroll-distance="10"
+          >
+            <div
+              v-for="(mitem,selindex) in members"
+              v-bind:key="selindex"
+              @click="seeMemberDetail(mitem)"
+            >
+              <BankeMemberSimple
+                :indexShow="1"
+                :icon="1"
+                :memberuser="members[selindex]"
+                :index="selindex"
+                @editclick="onEditclick"
+              ></BankeMemberSimple>
+            </div>
+          </div>
+          <div v-if="membersempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
         </div>
-      </div>
-      <div v-if="membersempty" class="tc emptydesc">{{$t(liststatedesc)}}</div>
+      </mt-loadmore>
     </div>
     <mt-popup
       v-model="popupMemberDetail"
@@ -54,7 +65,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox,Actionsheet} from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 import { filterItem } from "@/util";
 import BankeMemberSimple from "./components/BankeMemberSimple";
 import MemberDetail from "./bankeMember/detail";
@@ -84,7 +95,10 @@ export default {
       DetailItem: {},
       chartData: {},
 
-      actionShow: false
+      actionShow: false,
+
+      autofill: false,
+      topStatus: false
     };
   },
   computed: {
@@ -138,6 +152,12 @@ export default {
     [Actionsheet.name]: Actionsheet
   },
   methods: {
+    loadTop() {
+      this.loadMoreMember();
+    },
+    handleTopChange(status) {
+      this.topStatus = status;
+    },
     seeMemberDetail(item) {
       this.DetailItem = item;
       this.popupMemberDetail = true;
@@ -215,6 +235,9 @@ export default {
               if (!v.name) {
                 v.name = "未知名";
               }
+              if(!v.avatar){
+                v.avatar='';
+              }
               this.membersid.push(v.memberuserid);
             }
             let curbanke = this.$store.state.curbanke;
@@ -240,11 +263,13 @@ export default {
           }
           this.liststatedesc = "";
           Indicator.close();
+          this.$refs.loadmore.onTopLoaded();
         })
         .catch(() => {
           this.isloading = false;
           this.loadingState = false;
           Indicator.close();
+          this.$refs.loadmore.onTopLoaded();
         });
     },
     //查询是否有绑定
@@ -340,6 +365,9 @@ export default {
   height: 71vh;
   min-height: 71vh;
   overflow: scroll;
+}
+.listcontainer.Member .list-wrap{
+  min-height: 71vh;
 }
 .popup-scroll-MemberDetail {
   height: 100vh;

@@ -130,28 +130,28 @@ export default {
         this.$refs.setsign.style.top = `${eli.offsetTop + 150}px`;
       });
     },
-    setSignState(item, index) {
-      console.log(this.editItem);
+    setSignState(v, index) {
+      console.log('mgk',this.editItem);
       for (let v of this.signTemp) {
         v.act = false;
       }
-      item.act = true;
-      this.studentChangestate(item.id);
+      v.act = true;
+      this.studentChangestate(v.id);
     },
     studentChangestate(state) {
       this.$http
         .post("/api/sign/changestate", {
-          userid: this.editItem.memberuserid,
+          userid: this.editItem.userid,
           signid: this.signid,
           state: state
         })
         .then(res => {
           if (res.data.code == 0) {
-            Toast("操作成功");
+            Toast("设置成功");
             this.hidewrap();
             this.$emit('setSign',true);
           } else {
-            Toast("操作失败");
+            Toast(res.data.msg);
           }
         })
         .catch(e => {

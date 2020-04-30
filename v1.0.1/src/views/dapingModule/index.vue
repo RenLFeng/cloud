@@ -140,6 +140,12 @@ export default {
             for (let i = 0; i < sm.length; i++) {
               sm[i].state = 1; //! 均视为已签到状态
               sm[i].changewrap = false;
+              if(sm[i].avatar==null){
+                sm[i].avatar=''
+              }
+               if(sm[i].name==null){
+                sm[i].name='未知名'
+              }
             }
             this.signMemberList = sm;
             this.navInfo.total = sm.length;

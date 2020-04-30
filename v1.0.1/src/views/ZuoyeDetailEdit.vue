@@ -24,6 +24,7 @@
       <textarea
         v-model="zdetail.ztext"
         placeholder="请输入作业详情（选填）"
+        rows="8"
         class="zdetail"
         :disabled="canEditzy"
         @input="textChange($event.target.value)"
