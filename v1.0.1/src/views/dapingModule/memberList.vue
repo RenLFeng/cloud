@@ -74,6 +74,9 @@ export default {
     },
     isOpenSign: {
       default: false
+    },
+    signid:{
+      default:0
     }
   },
   data() {
@@ -139,7 +142,7 @@ export default {
       this.$http
         .post("/api/sign/changestate", {
           userid: this.editItem.memberuserid,
-          signid: this.editItem.id,
+          signid: this.signid,
           state: state
         })
         .then(res => {

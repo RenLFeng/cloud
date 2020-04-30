@@ -1,6 +1,6 @@
 <template>
   <div class="new-zuoye-wrap">
-    <mt-header :title="pageTitle" class="mint-header-f"> 
+    <mt-header :title="pageTitle" class="mint-header-f">
       <mt-button slot="left" @click="$back">取消</mt-button>
 
       <mt-button slot="right" :disabled="savedisable" @click="doSave">{{savebtntext}}</mt-button>
@@ -61,7 +61,7 @@
 import commontools from "../commontools";
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 import Answer from "./banKeZuoye/answer";
-import { Indicator, Toast, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox, Switch, DatetimePicker } from "mint-ui";
 import maintools from "./maintools";
 import { formateTime } from "@/util.js";
 
@@ -133,7 +133,9 @@ export default {
       if (!this.zuoyeitem.hassubmittime) {
         return "";
       }
-      return commontools.timeToHummanRead(this.zuoyeitem.submittime.replace(/-/g,'/'));
+      return commontools.timeToHummanRead(
+        this.zuoyeitem.submittime.replace(/-/g, "/")
+      );
     },
     savedisable() {
       if (this.zuoyeitem.name) {
@@ -312,7 +314,7 @@ export default {
     },
     //  发送作业消息
     mimiMessage() {
-        //! cjy: 发送消息接口不再提供给客户端，防止伪造的客户端越权
+      //! cjy: 发送消息接口不再提供给客户端，防止伪造的客户端越权
       // let date = formateTime(new Date(), "-");
       // this.$http
       //   .post("/api/weixin/pushnotify", {
@@ -361,7 +363,9 @@ export default {
   },
   components: {
     zuoyedetailedit,
-    Answer
+    Answer,
+    [Switch.name]: Switch,
+    [DatetimePicker.name]: DatetimePicker
   },
   created() {
     // console.log(this.bankeid);
@@ -422,7 +426,7 @@ export default {
 .mint-cell-value {
   color: #33a0ff;
 }
-.mint-header-f{
+.mint-header-f {
   border-bottom: 1px solid #f0f0f0;
 }
 </style>
@@ -432,7 +436,7 @@ export default {
   .main {
     height: 94vh;
     min-height: 94vh;
-    overflow:auto;
+    overflow: auto;
     .zuoye-info-wrap {
       background: #fff;
       .mint-field {

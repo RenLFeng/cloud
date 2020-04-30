@@ -29,7 +29,7 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">
             {{zuoyeitem.name}}
-            <i v-if="pagemode=='submit'" class="iconfont iconpinglun eicotrigger color9" @click="sbmitSeepl"></i>
+            <i v-if="pagemode=='submit' && results.length" class="iconfont iconpinglun eicotrigger color9" @click="sbmitSeepl"></i>
             <i
               class="iconfont iconcollect eicotrigger fr"
               :class="isShuoc?'colory':'color9'"

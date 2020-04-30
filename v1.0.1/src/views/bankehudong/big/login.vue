@@ -1,20 +1,19 @@
 <template>
-
-  <div  class="big-main-login">
+  <div class="big-main-login">
     <div class="container bg-d">
       <div class="top tc">
-        <div v-if="!hascode">
+        <div v-if="!hascode" class="code-wrap">
           <p class="icon">
             <i class="iconfont icondapingmu eicotrigger"></i>
           </p>
           <p>请输入大屏上的连接码进行登录</p>
-          <p class="code clearfix">
+          <p class="code clearfix position-b">
             <span :class="v.isact?'act':''" v-for="(v,index) in codes" :key="index">{{v.i}}</span>
           </p>
         </div>
         <div v-else>
           <div class="info">
-            <img :src="bankeItem.avatar" alt :onerror="$defaultImg('banke')"/>
+            <img :src="bankeItem.avatar" alt :onerror="$defaultImg('banke')" />
             <p class="colorf">{{bankeItem.name}}</p>
           </div>
         </div>
@@ -42,7 +41,7 @@
   </div>
 </template>
 <script>
-import {Indicator, Toast, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 import Vue from "vue";
 import NumberKeyboard from "vant/lib/number-keyboard";
 import "vant/lib/number-keyboard/style";
@@ -53,22 +52,22 @@ export default {
     bankeid: {
       default: 0
     },
-      bankeItem:{
-        default(){
-            return {
-                name:'test'
-            }
-        }
-      },
-      ecode:{
-        default:0
+    bankeItem: {
+      default() {
+        return {
+          name: "test"
+        };
       }
+    },
+    ecode: {
+      default: 0
+    }
   },
   components: {},
   data() {
     return {
       show: true,
-        hascode:false,
+      hascode: false,
       codes: [
         {
           i: "",
@@ -94,8 +93,8 @@ export default {
     };
   },
   mounted() {
-    if (this.bankeItem.id){
-        this.hascode = true;
+    if (this.bankeItem.id) {
+      this.hascode = true;
     }
   },
   methods: {
@@ -129,17 +128,16 @@ export default {
       this.tempCode.splice(this.tempCode.length - 1, 1);
       //   console.log(this.tempCode);
     },
-      submitLogin(){
-
-        this.code = this.ecode;
-        this.dapinglogin(this.bankeItem.id);
-      },
+    submitLogin() {
+      this.code = this.ecode;
+      this.dapinglogin(this.bankeItem.id);
+    },
     dapinglogin(v) {
       //! cjy: 检测当前bankeid的有效性
-        let bid = v;
-        if (!v){
-            bid = this.bankeid;
-        }
+      let bid = v;
+      if (!v) {
+        bid = this.bankeid;
+      }
       if (bid == 0) {
         Toast("当前班课无效， 请返回重试");
         return;
@@ -148,27 +146,27 @@ export default {
         .post("/api/banke/dapinglogin", {
           code: this.code,
           bankeid: bid,
-            logininfo:{
-              sign:this.isAuto
-            }
+          logininfo: {
+            sign: this.isAuto
+          }
         })
         .then(res => {
           if (res.data.code == "0") {
             this.$emit("login", res.data.data.daping);
             Toast("登录成功");
             // console.log("dapinglogin", res);
-           // if (this.isAuto) {
-             // this.postdapingmsg();
-          //  }
+            // if (this.isAuto) {
+            // this.postdapingmsg();
+            //  }
           } else {
             Toast("登录错误：" + res.data.msg);
           }
         })
         .catch(err => {
-          Toast("异常"+err);
+          Toast("异常" + err);
         });
     },
-      //! cjy: 因为大屏登录流程限制，这里立即发送的dapingmsg可能来不及处理
+    //! cjy: 因为大屏登录流程限制，这里立即发送的dapingmsg可能来不及处理
     // postdapingmsg() {
     //   this.$http
     //     .post("/api/banke/postdapingmsg", {
@@ -192,32 +190,30 @@ export default {
 </script>
 
 <style lang='less' scoped>
-
-  .submit-join-wrap {
-    position: relative;
-    height: 100vh;
-    min-height: 100vh;
-    width: 100%;
-    .main {
-      background: #fff;
-      .info {
-        background: #0089ff;
-        text-align: center;
-        padding: 20px;
-        img {
-          width: 100px;
-          height: 100px;
-        }
-        p {
-          padding: 15px 0;
-        }
+.submit-join-wrap {
+  position: relative;
+  height: 100vh;
+  min-height: 100vh;
+  width: 100%;
+  .main {
+    background: #fff;
+    .info {
+      background: #0089ff;
+      text-align: center;
+      padding: 20px;
+      img {
+        width: 100px;
+        height: 100px;
       }
-      .name {
-        padding: 10px;
+      p {
+        padding: 15px 0;
       }
     }
-
+    .name {
+      padding: 10px;
+    }
   }
+}
 
 .big-main-login {
   max-height: 100vh;
@@ -225,18 +221,21 @@ export default {
   .top {
     height: 55vh;
     position: relative;
+    .code-wrap {
+      position: relative;
+      height: 43vh;
+    }
     .info {
-
       text-align: center;
       padding: 10vh;
       img {
         width: 20vh;
         height: 20vh;
-        border-radius:10px;
+        border-radius: 10px;
       }
       p {
         padding: 5vh 0;
-        font-size:30px;
+        font-size: 30px;
         color: #000000;
       }
     }
@@ -253,11 +252,9 @@ export default {
       }
     }
     .code {
-      margin-top: 2.66667rem;
       width: 75%;
-      margin: 80px auto;
-      height: 36px;
-      line-height: 36px;
+      left: 50%;
+      transform: translate(-50%, 0);
       span {
         width: 15%;
         height: 100%;
@@ -275,17 +272,14 @@ export default {
     }
   }
   .key {
-    height: 38vh;
     background: #f0f0f0;
   }
-  .buttonkey{
-    height:38vh;
-
+  .buttonkey {
+    height: 38vh;
   }
   .button-worp {
     width: 100%;
     position: absolute;
-    bottom: 15vh;
     button {
       background: #0089ff;
       color: #fff;
@@ -313,5 +307,13 @@ export default {
       }
     }
   }
+  .van-number-keyboard{
+    height: 38vh;
+  }
+}
+</style>
+<style >
+.key .van-number-keyboard .van-key{
+  height: 48px;
 }
 </style>

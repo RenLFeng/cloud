@@ -6,7 +6,7 @@
     <div class="main">
       <div class="member-wrap">
         <div class="MemberList">
-          <MemberList :members="signMemberList" :isOpenSign="isOpenSign" @setSign="onsetSign" />
+          <MemberList :members="signMemberList" :isOpenSign="isOpenSign" @setSign="onsetSign" :signid="signid" />
           <p class="outer" v-if="[].length">旁听学生 6</p>
           <MemberList :members="[]" />
         </div>
