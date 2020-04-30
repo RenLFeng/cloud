@@ -5,9 +5,10 @@ const productionGzipExtensions = ['js', 'css'];
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// 代码压缩
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 module.exports = {
     publicPath: '',
-
     css: {
         loaderOptions: {
             postcss: {
@@ -32,7 +33,6 @@ module.exports = {
         daping: 'src/daping.js'
     },
     chainWebpack: config => {
-        // 生产环境配置
         if (isProduction) {
             // 删除预加载
             config.plugins.delete('preload');
@@ -40,12 +40,30 @@ module.exports = {
             // 压缩代码
             config.optimization.minimize(true);
             // 分割代码
-            config.optimization.splitChunks({
-                chunks: 'all'
-            })
-        }
+            // config.optimization.splitChunks({
+            //     chunks: 'all'
+            // })
+        };
     },
     configureWebpack: config => {
+        if (isProduction) {
+            // 代码压缩
+            config.plugins.push(
+                new UglifyJsPlugin({
+                    uglifyOptions: {
+                        //生产环境自动删除console
+                        compress: {
+                            // warnings: false, // 若打包错误，则注释这行
+                            drop_debugger: true,
+                            drop_console: true,
+                            pure_funcs: ['console.log']
+                        }
+                    },
+                    sourceMap: false,
+                    parallel: true
+                })
+            )
+        };
         if (isProduction) {
 
             config.plugins.push(new CompressionWebpackPlugin({
@@ -60,8 +78,7 @@ module.exports = {
 
             }))
 
-        }
-
+        };
     },
     productionSourceMap: false,
     lintOnSave: false,

@@ -3,7 +3,13 @@
     <div class="main">
       <div class="lists-wrap">
         <ul ref="cul">
-          <li class="item" v-for="(v,sindex) in members" :key="sindex" ref="cli">
+          <li
+            class="item"
+            v-for="(v,sindex) in members"
+            :key="sindex"
+            ref="cli"
+            @click="changeState($event,v,sindex)"
+          >
             <img :class="!v.state?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
             <span class="name" :class="!v.state?'opctive':''">{{v.name}}</span>
           </li>
@@ -26,7 +32,7 @@
       </div>
     </div>
     <div class="change-state-wrap" ref="setsign" v-if="showChangeState">
-      <p class="title tc">设置&nbsp;{{curName}}&nbsp;的签到状态：</p>
+      <p class="title tc">设置&nbsp;{{curName}}&nbsp;的签到状态</p>
       <div class="btn-wrap">
         <span
           class
@@ -36,6 +42,7 @@
           @click="setSignState(item,index)"
         >{{item.text}}</span>
       </div>
+      <i class="iconfont iconshanchu2 eicotrigger" @click="hidewrap"></i>
     </div>
     <!-- <div class="popver-wrap" ref="popver" v-if="isShowPopver" @click="isShowPopver=false">
       <p class="tit">请选择分组</p>
@@ -137,16 +144,23 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
-            MessageBox("提示", "操作成功");
+            Toast("操作成功");
+            this.hidewrap();
+            this.$emit('setSign',true);
           } else {
-            MessageBox("提示", "操作失败");
+            Toast("操作失败");
           }
-          this.showChangeState = false;
         })
         .catch(e => {
-          MessageBox("提示", "操作失败");
-          this.showChangeState = false;
+          Toast("操作失败");
+          this.hidewrap();
         });
+    },
+    hidewrap() {
+      this.showChangeState = false;
+      for (let v of this.signTemp) {
+        v.act = false;
+      }
     },
     selectGroup(e, item, index, sitem, sindex) {
       if (!this.group) return;
@@ -171,7 +185,7 @@ export default {
     }
   },
   components: {
-    [Switch.name]:Switch
+    [Switch.name]: Switch
   }
 };
 </script>
@@ -315,6 +329,8 @@ export default {
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
       font-size: 26px;
+      margin: 0;
+      text-align: center;
     }
     .btn-wrap {
       display: flex;
@@ -338,6 +354,12 @@ export default {
           background: #0089ff;
         }
       }
+    }
+    .iconfont {
+      right: 3px;
+      top: 2px;
+      color: #999;
+      font-size: 23px;
     }
   }
 }

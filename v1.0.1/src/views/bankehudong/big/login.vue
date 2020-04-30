@@ -223,7 +223,7 @@ export default {
   max-height: 100vh;
   overflow: hidden;
   .top {
-    height: 60vh;
+    height: 55vh;
     position: relative;
     .info {
 
@@ -275,11 +275,11 @@ export default {
     }
   }
   .key {
-    height: 32vh;
+    height: 38vh;
     background: #f0f0f0;
   }
   .buttonkey{
-    height:32vh;
+    height:38vh;
 
   }
   .button-worp {

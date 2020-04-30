@@ -4,15 +4,15 @@
       <HeaderNav :navInfo="navInfo" />
     </div>
     <div class="main">
-      <div class="member-wrap" >
+      <div class="member-wrap">
         <div class="MemberList">
-          <MemberList :members="signMemberList" :isOpenSign="isOpenSign"/>
+          <MemberList :members="signMemberList" :isOpenSign="isOpenSign" @setSign="onsetSign" />
           <p class="outer" v-if="[].length">旁听学生 6</p>
           <MemberList :members="[]" />
         </div>
       </div>
     </div>
-    <div class="qrcode-info-wrap" >
+    <div class="qrcode-info-wrap">
       <div class="code-wrap" v-if="isOpenSign">
         <img class="qrcode-img" :src="base64" alt />
         <!-- <canvas id="canvas"></canvas> -->
@@ -23,13 +23,12 @@
         <p class="tips">请使用微信扫码签到</p>
       </div>
       <div v-else>
-        <p class="open-sign-wrap" >
+        <p class="open-sign-wrap">
           <a class="open-sign-btn" @click="openSign">
             <span class="text position-c colorf">开启签到</span>
           </a>
         </p>
       </div>
-
     </div>
 
     <div class="scroll-wrap" v-if="isShow">
@@ -40,7 +39,6 @@
         @click="onScrollFn(1)"
       ></i>
     </div>
-
   </div>
 </template>
 
@@ -59,7 +57,7 @@ export default {
         bankeName: "",
         signTotal: 0,
         total: 0,
-          issign:false,
+        issign: false
       },
       tempList: [],
       signMemberList: [],
@@ -72,13 +70,12 @@ export default {
       toB: true,
       toT: false,
       isShow: false,
-        bankeinfo:{},
-
+      bankeinfo: {},
 
       isOpenSign: false,
       bankeid: "",
       signdata: {},
-        signid:0,
+      signid: 0,
       base64: "",
       timer: null,
       isLoad: false
@@ -101,79 +98,75 @@ export default {
     this.deviseH = this.deviseH - 370;
   },
   watch: {},
-    destroyed() {
-        clearInterval(this.timer);
-    },
+  destroyed() {
+    clearInterval(this.timer);
+  },
   methods: {
     // cjy:查询是否开启签到
-      querybanke(){
-          this.$http.post("/api/banke/search",
-              {id:this.bankeid})
-              .then(res=>{
-                  if (res.data.code == 0){
-                      if (res.data.data.length > 0){
-                          this.bankeinfo = res.data.data[0];
-                          this.navInfo.bankeName = this.bankeinfo.name;
-                      }
-                  }
-              })
-      },
-      // cjy: 更新内容； 定时调用
-      updatecontent(){
-          if (!this.isLoad){
-              return;
+    querybanke() {
+      this.$http.post("/api/banke/search", { id: this.bankeid }).then(res => {
+        if (res.data.code == 0) {
+          if (res.data.data.length > 0) {
+            this.bankeinfo = res.data.data[0];
+            this.navInfo.bankeName = this.bankeinfo.name;
           }
-          console.log('updatecontent');
-          if (this.isOpenSign){
-              this.Signquerymember(this.signid);
-          }
-          else{
-              this.querystulist();
-          }
-      },
-      querystulist(){
-        let url = "/api/api/bankememberquery?bankeid=" + this.bankeid;
-        this.$http.post(url, {})
-            .then(res=>{
-                if (res.data.code == 0){
-                    if (res.data.data.members){
-                        let sm  = res.data.data.members;
+        }
+      });
+    },
+    // cjy: 更新内容； 定时调用
+    updatecontent() {
+      if (!this.isLoad) {
+        return;
+      }
+      console.log("updatecontent");
+      if (this.isOpenSign) {
+        this.Signquerymember(this.signid);
+      } else {
+        this.querystulist();
+      }
+    },
+    querystulist() {
+      let url = "/api/api/bankememberquery?bankeid=" + this.bankeid;
+      this.$http.post(url, {}).then(res => {
+        if (res.data.code == 0) {
+          if (res.data.data.members) {
+            let sm = res.data.data.members;
 
-                        //! cjy: 测试多名学生
-                        // for(let i=0; i<3; i++){
-                        //     sm = [...sm, ...sm];
-                        // }
+            //! cjy: 测试多名学生
+            // for(let i=0; i<3; i++){
+            //     sm = [...sm, ...sm];
+            // }
 
-                        for(let i=0; i<sm.length; i++){
-                            sm[i].state = 1;  //! 均视为已签到状态
-                            sm[i].changewrap=false;
-                        }
-                        this.signMemberList = sm;
-                        this.navInfo.total = sm.length;
-                        this.onlistchanged();
-                    }
-                }
-            })
-      },
-      onlistchanged(){
-          this.$nextTick(() => {
-              this.DOCH = this.$refs.doch.offsetHeight;
-              if (this.DOCH - this.deviseH >= 370) {
-                  this.isShow = true;
-              }
-          });
-      },
+            for (let i = 0; i < sm.length; i++) {
+              sm[i].state = 1; //! 均视为已签到状态
+              sm[i].changewrap = false;
+            }
+            this.signMemberList = sm;
+            this.navInfo.total = sm.length;
+            this.onlistchanged();
+          }
+        }
+      });
+    },
+    onlistchanged() {
+      this.$nextTick(() => {
+        this.DOCH = this.$refs.doch.offsetHeight;
+        if (this.DOCH - this.deviseH >= 370) {
+          this.isShow = true;
+        }
+      });
+    },
     oninit() {
-          //! cjy： 开启定时更新
-        this.timer = setInterval(() => {
-            this.updatecontent()
-        }, 2000);
+      //! cjy： 开启定时更新
+      this.timer = setInterval(() => {
+        this.updatecontent();
+      }, 2000);
 
       Indicator.open("加载中");
       this.$http
         .post("/api/sign/signqueryself", { bankeid: this.bankeid })
         .then(res => {
-            this.isLoad = true;
+          this.isLoad = true;
           if (res.data.code == 0) {
             console.log("resresres", res);
             if (res.data.data && res.data.data.signdata) {
@@ -184,14 +177,13 @@ export default {
 
               this.getSignCode();
             } else {
-
             }
           } else {
-          //  Toast("未开启签到");
+            //  Toast("未开启签到");
             Indicator.close();
             this.isLoad = true;
           }
-            this.updatecontent();
+          this.updatecontent();
         })
         .catch(() => {
           this.isLoad = true;
@@ -239,7 +231,7 @@ export default {
               this.navInfo.signTotal = signnum;
               this.tempList = [...isSign, ...noSign];
               this.signMemberList = [...isSign, ...noSign];
-            //  console.log("学生打卡记录", this.signMemberList);
+              //  console.log("学生打卡记录", this.signMemberList);
               this.onlistchanged();
             }
             this.isOpenSign = true;
@@ -254,9 +246,14 @@ export default {
           this.isLoad = true;
         });
     },
+    onsetSign(v) {
+      if (v) {
+        this.Signquerymember();
+      }
+    },
     getSignCode() {
       //! cjy: 由客户端生成scene场景， 方便后续维护
-      let scene = "sign;id=" + this.signid
+      let scene = "sign;id=" + this.signid;
       this.$http
         .post(
           //"/api/weixin/qrcodesign",
@@ -276,14 +273,13 @@ export default {
         .catch(() => {});
     },
 
-
     openSign() {
       Indicator.open("加载中...");
       this.$http
         .post("/api/sign/signadd", {
           bankeid: this.bankeid,
           info: "",
-            usedaping:1,  //! 使用大屏的info
+          usedaping: 1 //! 使用大屏的info
         })
         .then(res => {
           if (res.data.code == 0) {
@@ -293,9 +289,9 @@ export default {
             this.signid = signData.id;
             this.isOpenSign = true;
             this.updatecontent();
-              this.getSignCode();
+            this.getSignCode();
           } else {
-            Toast("开启失败："+res.data.msg);
+            Toast("开启失败：" + res.data.msg);
           }
           Indicator.close();
         })
@@ -366,7 +362,7 @@ export default {
   components: {
     HeaderNav,
     MemberList,
-    [Switch.name]:Switch
+    [Switch.name]: Switch
   }
 };
 </script>
@@ -480,6 +476,7 @@ export default {
       opacity: 1;
       .text {
         font-size: 30px;
+        color: #fff;
       }
     }
   }

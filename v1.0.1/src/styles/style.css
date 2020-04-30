@@ -726,3 +726,6 @@ textarea {
     color: #999;
     padding: 10px 0 20px 0;
   }
+  .van-tab--active .van-tab__text{
+      color: #fff;
+  }
