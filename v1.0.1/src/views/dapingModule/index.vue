@@ -6,7 +6,12 @@
     <div class="main">
       <div class="member-wrap">
         <div class="MemberList">
-          <MemberList :members="signMemberList" :isOpenSign="isOpenSign" @setSign="onsetSign" :signid="signid" />
+          <MemberList
+            :members="signMemberList"
+            :isOpenSign="isOpenSign"
+            :signid="signid"
+            @setSign="onsetSign"
+          />
           <p class="outer" v-if="[].length">旁听学生 6</p>
           <MemberList :members="[]" />
         </div>
@@ -140,11 +145,11 @@ export default {
             for (let i = 0; i < sm.length; i++) {
               sm[i].state = 1; //! 均视为已签到状态
               sm[i].changewrap = false;
-              if(sm[i].avatar==null){
-                sm[i].avatar=''
+              if (sm[i].avatar == null) {
+                sm[i].avatar = "";
               }
-               if(sm[i].name==null){
-                sm[i].name='未知名'
+              if (sm[i].name == null) {
+                sm[i].name = "未知名";
               }
             }
             this.signMemberList = sm;
@@ -167,7 +172,6 @@ export default {
       this.timer = setInterval(() => {
         this.updatecontent();
       }, 2000);
-
       Indicator.open("加载中");
       this.$http
         .post("/api/sign/signqueryself", { bankeid: this.bankeid })
@@ -235,8 +239,10 @@ export default {
               }
               this.navInfo.total = totalnum;
               this.navInfo.signTotal = signnum;
-              this.tempList = [...isSign, ...noSign];
-              this.signMemberList = [...isSign, ...noSign];
+              this.tempList = Data.signmembers;
+              this.signMemberList = Data.signmembers;
+              // this.tempList = [...isSign, ...noSign];
+              // this.signMemberList = [...isSign, ...noSign];
               //  console.log("学生打卡记录", this.signMemberList);
               this.onlistchanged();
             }
@@ -252,10 +258,19 @@ export default {
           this.isLoad = true;
         });
     },
-    onsetSign(v) {
-      if (v) {
-        this.Signquerymember();
+    onsetSign(ob) {
+      if (ob.state) {
+        this.navInfo.signTotal++;
+      } else {
+        this.navInfo.signTotal--;
       }
+      let members = this.signMemberList;
+      for (let v of members) {
+        if (v.id == ob.id) {
+          v.state = ob.state;
+        }
+      }
+      this.signMemberList = members;
     },
     getSignCode() {
       //! cjy: 由客户端生成scene场景， 方便后续维护

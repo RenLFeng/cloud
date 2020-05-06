@@ -90,11 +90,11 @@ export default {
           text: "已签到",
           act: false
         },
-        {
-          id: 2,
-          text: "迟到",
-          act: false
-        },
+        // {
+        //   id: 2,
+        //   text: "迟到",
+        //   act: false
+        // },
         {
           id: 0,
           text: "未签到",
@@ -127,11 +127,12 @@ export default {
       this.showChangeState = true;
       this.$nextTick(() => {
         this.$refs.setsign.style.left = `${lioffsetLeft}px`;
-        this.$refs.setsign.style.top = `${eli.offsetTop + 150}px`;
+        this.$refs.setsign.style.top = `${eli.offsetTop + 160}px`;
       });
     },
     setSignState(v, index) {
-      console.log('mgk',this.editItem);
+      // console.log('mgk',this.editItem);
+      if(v.id==this.editItem.state) return;
       for (let v of this.signTemp) {
         v.act = false;
       }
@@ -149,7 +150,7 @@ export default {
           if (res.data.code == 0) {
             Toast("设置成功");
             this.hidewrap();
-            this.$emit('setSign',true);
+            this.$emit('setSign',{id:this.editItem.id,state:state});
           } else {
             Toast(res.data.msg);
           }
@@ -338,7 +339,7 @@ export default {
     .btn-wrap {
       display: flex;
       padding: 20px;
-      justify-content: space-between;
+      justify-content: space-evenly;
       text-align: center;
       span {
         display: flex;

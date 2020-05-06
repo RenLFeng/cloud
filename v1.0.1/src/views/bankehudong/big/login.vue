@@ -29,12 +29,13 @@
       </div>
       <div class="key" v-else>
         <van-number-keyboard
+          v-model="inv"
           :show="show"
           :hide-on-click-outside="false"
           extra-key="."
           @blur="show = false"
-          @input="onInput"
           @delete="onDelete"
+          @input.self="onInput"
         />
       </div>
     </div>
@@ -66,6 +67,7 @@ export default {
   components: {},
   data() {
     return {
+      inv: "",
       show: true,
       hascode: false,
       codes: [
@@ -92,6 +94,10 @@ export default {
       isAuto: true
     };
   },
+  watch: {
+
+  },
+  computed: {},
   mounted() {
     if (this.bankeItem.id) {
       this.hascode = true;
@@ -105,7 +111,7 @@ export default {
         isact: true
       });
       this.tempCode.push(value);
-      //   console.log("tempCode", this.tempCode);
+      // console.log("tempCode", this.tempCode);
       this.count++;
 
       if (this.count > 3) {
@@ -307,13 +313,13 @@ export default {
       }
     }
   }
-  .van-number-keyboard{
+  .van-number-keyboard {
     height: 38vh;
   }
 }
 </style>
 <style >
-.key .van-number-keyboard .van-key{
+.key .van-number-keyboard .van-key {
   height: 48px;
 }
 </style>
