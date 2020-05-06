@@ -81,12 +81,18 @@ let routers = new Router({
         {
             path: '/',
             name: 'cloudmain',
-            component: cloudmain
+            component: cloudmain,
+            meta: {
+                keepAlive: true
+            }
         },
         {
             path: '*',
             name: 'cloudmain',
-            component: cloudmain
+            component: cloudmain,
+            meta: {
+                keepAlive: true
+            }
         },
         {
             path: '/navother',
@@ -135,7 +141,8 @@ let routers = new Router({
         {
             path: "/bankehome/:id",
             component: bankehome,
-            props: true
+            props: true,
+
         },
         {
             path: '/zuoyedetailedit',

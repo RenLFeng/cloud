@@ -318,6 +318,7 @@ textarea {
 .button-auto-87 {
     width: 87%;
 }
+
 .botton-96 {
     border: 1px solid #26a2ff !important;
     width: 96%;
@@ -721,11 +722,17 @@ textarea {
     bottom: 10px;
     left: 0;
 }
+
 .no-more {
     text-align: center;
     color: #999;
     padding: 10px 0 20px 0;
-  }
-  .van-tab--active .van-tab__text{
-      color: #fff;
-  }
+}
+
+.van-tab--active .van-tab__text {
+    color: #fff;
+}
+
+.word-wrap {
+    word-wrap: break-word;
+}

@@ -28,7 +28,7 @@
             <span class="fontnormal name ellipse">{{item.username}}</span>
             <span class="font14 color9 tr position-r">{{item.submittime}}</span>
           </p>
-          <p class="ztext font16">{{item.ztext}}</p>
+          <p class="ztext font16 word-wrap">{{item.ztext}}</p>
         </div>
       </li>
     </ul>

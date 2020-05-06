@@ -47,11 +47,13 @@
               :bottom-all-loaded="allLoaded"
               bottomPullText
         bottomDropText="上拉加载更多"-->
+
         <div
+          ref="bankewrap"
           class="banke-wrap scrollingtouch"
           v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
-          infinite-scroll-distance="10"
+          infinite-scroll-distance="0"
           infinite-scroll-immediate-check="false"
         >
           <mt-tab-container-item id="banke">
@@ -359,10 +361,12 @@ export default {
       // this.initbanke();
     }
     this.initmine();
-    this.initbanke();
+    // this.initbanke();
+    this.loadMore();
     this.eventmsgsOnmain();
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     loadTop() {
       this.filterCurbankes = [];
@@ -370,7 +374,8 @@ export default {
       this.loading = false;
       this.listLoadend = false;
       this.allLoaded = false;
-      this.initbanke();
+      // this.initbanke();
+      this.loadMore();
     },
     loadMore() {
       this.loading = true;
@@ -603,8 +608,8 @@ export default {
       //! cjy: 防止出错， 总是重新拉取
       this.$http
         .post(url, {
-          page: this.page,
-          pagesize: this.pagesize
+          // page: this.page,
+          // pagesize: this.pagesize
         })
         .then(res => {
           if (res.data.code == 0) {
@@ -613,16 +618,22 @@ export default {
               arrId.push(v.id);
               // v.schoolid=1001
             }
-            if (res.data.data.length == this.pagesize) {
-              this.loading = false;
-              this.page++;
-            } else {
-              if (this.page) {
-                this.listLoadend = true;
-              }
-              this.loading = true;
-              this.allLoaded = true;
+
+            // if (res.data.data.length == this.pagesize) {
+            //   this.loading = false;
+            //   this.page++;
+            // } else {
+            //   if (this.page) {
+            //     this.listLoadend = true;
+            //   }
+            //   this.loading = true;
+            //   this.allLoaded = true;
+            // }
+            if (this.page) {
+              this.listLoadend = true;
             }
+            this.loading = true;
+            this.allLoaded = true;
             this.eventmsgsOnbankes(res.data.data, arrId);
           }
           if (!this.bankeempty) {
@@ -703,6 +714,10 @@ export default {
       }
     }
   },
+  beforeDestroy() {
+    let bankewrapEl = this.$refs.bankewrap;
+    sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
+  },
   destroyed: function() {
     //! 记忆当前的选择
     this.$store.commit("setHomeSelected", this.selected);
@@ -719,7 +734,24 @@ export default {
     [Tabbar.name]: Tabbar,
     [TabContainer.name]: TabContainer,
     [TabContainerItem.name]: TabContainerItem,
-    [Actionsheet.name]:Actionsheet
+    [Actionsheet.name]: Actionsheet
+  },
+  //在页面离开时记录滚动位置
+  // beforeRouteLeave(to, from, next) {
+  //   next();
+  // },
+  //进入该页面时，用之前保存的滚动位置赋值
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.$nextTick(() => {
+        if (from.path == "/") {
+          sessionStorage.setItem("scrolltop", 0);
+        }
+        let bankewrapEl = vm.$refs.bankewrap;
+        let scrolltop = JSON.parse(sessionStorage.getItem("scrolltop"));
+        bankewrapEl.scrollTop = scrolltop ? scrolltop + 20 : scrolltop;
+      });
+    });
   }
 };
 </script>

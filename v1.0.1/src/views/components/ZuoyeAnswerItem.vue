@@ -13,11 +13,11 @@
         :text="resultitem.ztext"
         :height="50"
         :isLimitHeight="isLimitHeight"
-        class="zatextmain"
+        class="zatextmain word-wrap"
       >
         <!-- <span slot="before" class="h-tag h-tag-red">new</span> -->
         <template slot="more">
-          <span>...</span>
+          <span class="">...</span>
           <span class="zatextviewmore" @click="isLimitHeight=false">查看更多</span>
         </template>
         <span slot="after" v-if="!isLimitHeight" @click="isLimitHeight=true">
