@@ -156,8 +156,14 @@
       <div class="info-list-main">
         <div class="tit-table">
           <p class="clearfix tc">
-            <span :class="!seeState?'act fl':'fl'" @click="see(0,editItemFile.noviewnum)">未查看（{{editItemFile.noviewnum}} 人）</span>
-            <span :class="seeState?'act fr':'fr'" @click="see(1,editItemFile.viewnum)">已查看（{{editItemFile.viewnum}}人）</span>
+            <span
+              :class="!seeState?'act fl':'fl'"
+              @click="see(0,editItemFile.noviewnum)"
+            >未查看（{{editItemFile.noviewnum}} 人）</span>
+            <span
+              :class="seeState?'act fr':'fr'"
+              @click="see(1,editItemFile.viewnum)"
+            >已查看（{{editItemFile.viewnum}}人）</span>
           </p>
         </div>
         <ul class="list-content overflow-scroll">
@@ -587,7 +593,7 @@ export default {
       this.actionShow = true;
       this.editItemFile = fileitem;
       this.dlid = this.editItemFile.id;
-      this.setSeeResources(fileitem);
+      // this.setSeeResources(fileitem);
     },
     queryviews(fileitem) {
       this.$http
@@ -637,11 +643,11 @@ export default {
     },
     showInfo() {
       this.popupEditInfo = true;
-      this.queryviews(this.editItemFile);
+      this.setSeeResources(this.editItemFile);
     },
     //学生查看or未查看
-    see(v,numb) {
-      if(!numb) return ;
+    see(v, numb) {
+      if (!numb) return;
       this.seeState = v;
       if (v == "0") {
         this.UserList = this.noViewUserList;
@@ -661,8 +667,15 @@ export default {
             fileitem.viewnum++;
             fileitem.eventmsgs = false;
           }
+          if (this.popupEditInfo) {
+            this.queryviews(fileitem);
+          }
         })
-        .catch(res => {});
+        .catch(res => {
+          if (this.popupEditInfo) {
+            this.queryviews(fileitem);
+          }
+        });
     },
     deletezy() {
       if (!this.$store.getters.caneditbanke) {
@@ -911,9 +924,7 @@ export default {
       if (event.target.files.length > 0) {
         var file = event.target.files;
         //! cjy: 大小限制？
-        // console.log("00000000", file);
-        console.log("upload files:");
-        console.log(file);
+        console.log("原文件", file);
         for (let i = 0; i < file.length; i++) {
           let _filesize = file[i].size;
           if (_filesize / (1024 * 1024) > 300) {
@@ -930,11 +941,11 @@ export default {
       }
     },
     douploadonefile(onefile) {
-      console.log("douploadonefile:");
-      console.log(onefile);
+      console.log('选择手机照片',onefile);
       //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
       fixCaptureImage(onefile, true)
         .then(res => {
+         console.log('选择手机照片 resres',res);
           this.douploadonefiledirect(res);
           // this.tempUploadFile = {
           //   file: res,
@@ -943,8 +954,9 @@ export default {
           // console.log("是的撒", this.tempUploadFile);
           // this.popupUploadFile = true;
         })
-        .catch(res => {
-          this.douploadonefiledirect(res);
+        .catch(err => {
+           console.log('选择手机照片 error',err);
+          this.douploadonefiledirect(err);
           // this.tempUploadFile = {
           //   file: res,
           //   tempImg: _URL.createObjectURL(res)
@@ -952,14 +964,10 @@ export default {
           // this.popupUploadFile = true;
         });
     },
-    submitUpload() {
-      this.douploadonefiledirect(this.tempUploadFile.file);
-    },
     douploadonefiledirect(onefile) {
-      console.log("douploadfile direct:");
-      console.log(onefile);
+      console.log('上传照片',onefile);
       if (!onefile) {
-        console.log("err file");
+        console.log("上传照片 失败");
         return;
       }
       var formdata = new FormData();
@@ -1009,12 +1017,17 @@ export default {
 
             this.tempUploadFile = {};
             this.popupUploadFile = false;
+          }else{
+            Toast('上传失败');
           }
         })
         .catch(err => {
           Indicator.close();
           console.log(err);
         });
+    },
+    submitUpload() {
+      this.douploadonefiledirect(this.tempUploadFile.file);
     },
     goBack() {
       if (this.popupAudio) {

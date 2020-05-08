@@ -16,7 +16,8 @@
         />
         <p class="fontsmall color0">云班课封面</p>
       </div>
-      <mt-field @blur.native.capture="$setInputScroll"
+      <mt-field
+        @blur.native.capture="$setInputScroll"
         label="班课名称"
         :placeholder="$t('common.Please_entry')+' '+$t('common.ClassName')"
         v-model="classitem.name"
@@ -69,6 +70,7 @@
 <script>
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import mimgcrop from "@/common/m-image-crop";
+import commontools from "@/commontools.js";
 export default {
   name: "BankeNew",
   data() {
@@ -76,7 +78,8 @@ export default {
       classitem: {
         name: "",
         avatar: "",
-        type: ""
+        type: "",
+        ordernum: null
       },
       popupMimgcrop: false,
       imgobj: {},
@@ -117,8 +120,8 @@ export default {
     this.templist = JSON.parse(JSON.stringify(this.history));
   },
   methods: {
-    a(){
-      alert(0)
+    a() {
+      alert(0);
     },
     onFocus() {
       if (this.history.length) {
@@ -137,6 +140,7 @@ export default {
       //   Toast('请输入课程名称');
       //   return;
       // }
+      let BankeData = this.$store.state.banke.curbankes;
       Indicator.open(this.$t("common.Saving"));
       var url = "/api/api/bankenew";
       this.$http
@@ -144,8 +148,9 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
-            this.classitem.id = res.data.data.id;
-            this.$store.commit("banke/appendBankes", this.classitem);
+            Object.assign(this.classitem, res.data.data);
+            this.$store.commit("banke/setBankes", []);
+            sessionStorage.setItem("homelocalstate", "");
             this.$router.push("/");
           } else {
             let tipmsg = res.data.msg;

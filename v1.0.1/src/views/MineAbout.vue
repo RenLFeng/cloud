@@ -90,10 +90,21 @@
         <div v-show="showbindpanel">
           <div class="tit">{{bindtitle}}</div>
           <div v-show="bindaction != 'changepassword'" class="input-item-wrap">
-            <mt-field label="账户：" placeholder="请输入账户名" v-model="inputaccount" @blur.native.capture="$setInputScroll"></mt-field>
+            <mt-field
+              label="账户："
+              placeholder="请输入账户名"
+              v-model="inputaccount"
+              @blur.native.capture="$setInputScroll"
+            ></mt-field>
           </div>
           <div class="input-item-wrap">
-            <mt-field label="密码" placeholder="设置密码" type="password" v-model="inputpassword" @blur.native.capture="$setInputScroll"></mt-field>
+            <mt-field
+              label="密码"
+              placeholder="设置密码"
+              type="password"
+              v-model="inputpassword"
+              @blur.native.capture="$setInputScroll"
+            ></mt-field>
           </div>
           <div class="button-worp">
             <mt-button class="button-auto-87 b" @click="uibindsubmit">提交</mt-button>
@@ -107,7 +118,7 @@
         <mt-button slot="left" icon="back" @click="Backs">{{$t('common.Back')}}</mt-button>
       </mt-header>
       <BankeEnd :curbankes="curbankes"></BankeEnd>
-    </mt-popup> -->
+    </mt-popup>-->
     <mt-popup v-model="popupAbout" position="right" class="mint-popup-3" :modal="false" style>
       <mt-header title="关于" class>
         <mt-button slot="left" icon="back" @click="Backs">我的</mt-button>
@@ -118,7 +129,7 @@
 </template>
 
 <script>
-import { Indicator, Toast, MessageBox,  } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import nativecode from "../nativecode";
 import BankeEnd from "./my/bankeEnd";
@@ -326,6 +337,7 @@ export default {
         this.$store.commit("setLoginUser", {});
         this.$store.commit("setRouterForward", true);
         this.$store.commit("banke/REMOV_BANKES", []);
+        sessionStorage.setItem("homelocalstate",'');
         this.$router.push("/login");
         nativecode.jsLogin(0, {});
       });
@@ -388,7 +400,7 @@ export default {
     },
     //查询已结束班课
     queryfinished() {
-       this.$store.commit("setRouterForward", true);
+      this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "EndClass",
         params: {}

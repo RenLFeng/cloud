@@ -19,7 +19,7 @@
       </ul>
     </div>
     <div class="cell-wrap">
-      <ul class="">
+      <ul class>
         <li class="school" @click="showSchoo">
           <mt-cell title="所属学校" is-link></mt-cell>
         </li>
@@ -47,7 +47,6 @@
             <li @click="edBk">
               <mt-cell title="结束班课" is-link></mt-cell>
             </li>
-            
           </ul>
         </li>
         <li v-else>
@@ -143,7 +142,7 @@
 </template>
 
 <script>
-import {MessageBox, Indicator, Toast } from "mint-ui";
+import { MessageBox, Indicator, Toast } from "mint-ui";
 import edit from "./edit";
 import Notice from "./Notice";
 import Proportion from "./Proportion";
@@ -268,9 +267,8 @@ export default {
     },
     //学情统计
     situation() {
-      let url = `https://www2.exsoft.com.cn/#/ClassStatistics?id=${this.bankeInfo.id}`;
-      url =
-        "http://localhost:9982/backend/#/ClassStatistics?id=" +
+     let url =
+        "http://localhost:8088/#/ClassStatistics?id=" +
         this.bankeInfo.id;
       if (process.env.NODE_ENV !== "development") {
         url = document.location.origin;
@@ -327,7 +325,9 @@ export default {
                   item.states = 0;
                 }
               }
+              // Object.assign()
               this.$store.commit("banke/appendBankes", BankeData);
+               this.remocurbanke(res.data.data.id);
             });
           } else {
             MessageBox.alert(res.data.msg).then(() => {});
@@ -357,6 +357,7 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 MessageBox.alert("退出成功").then(() => {
+                  this.remocurbanke(this.bankeInfo.id);
                   this.$store.commit("setRouterForward", true);
                   this.$router.push("/");
                 });
@@ -367,6 +368,13 @@ export default {
         });
       });
       return;
+    },
+    remocurbanke(id) {
+      let BankeData = this.$store.state.banke.curbankes;
+      let newBankeData = BankeData.filter(
+        item => item.id !== id
+      );
+      this.$store.commit("banke/setBankes", newBankeData);
     },
     closeBk() {
       let BankeData = this.$store.state.banke.curbankes;

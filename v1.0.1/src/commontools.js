@@ -53,7 +53,7 @@ commontools.timeGetHourDesc = function (timems) {
 
 }
 
-commontools.timeToHummanRead = function (timedate) {
+commontools.timeToHummanRead = function (timedate, fullYear) {
     if (!commontools.timeIsValidTimedate(timedate)) {
         return '';
     }
@@ -62,6 +62,9 @@ commontools.timeToHummanRead = function (timedate) {
     var yearstrc = '';
     var curt = new Date();
     if (t.getFullYear() != curt.getFullYear()) {
+        yearstrc = t.getFullYear() + '年';
+    }
+    if (fullYear) {
         yearstrc = t.getFullYear() + '年';
     }
     var szfmt = '%s%i月%i日 %s %02i:%02i';
@@ -284,14 +287,14 @@ commontools.maxLength = function (v) {
 //         return r;
 //     },
 
-    commontools.fileSnapPath = function (fitem) {
-        if (fitem && fitem.metainfo && fitem.metainfo.snapsuffix) {
-            if (fitem.filepath) {
-                return fitem.filepath + fitem.metainfo.snapsuffix;
-            }
+commontools.fileSnapPath = function (fitem) {
+    if (fitem && fitem.metainfo && fitem.metainfo.snapsuffix) {
+        if (fitem.filepath) {
+            return fitem.filepath + fitem.metainfo.snapsuffix;
         }
-        return commontools.fileType;
     }
+    return commontools.fileType;
+}
 
 commontools.fmtDates = function (obj) {
     var date = new Date(obj);

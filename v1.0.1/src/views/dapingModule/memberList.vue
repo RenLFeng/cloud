@@ -75,8 +75,8 @@ export default {
     isOpenSign: {
       default: false
     },
-    signid:{
-      default:0
+    signid: {
+      default: 0
     }
   },
   data() {
@@ -132,7 +132,7 @@ export default {
     },
     setSignState(v, index) {
       // console.log('mgk',this.editItem);
-      if(v.id==this.editItem.state) return;
+      if (v.id == this.editItem.state) return;
       for (let v of this.signTemp) {
         v.act = false;
       }
@@ -150,7 +150,7 @@ export default {
           if (res.data.code == 0) {
             Toast("设置成功");
             this.hidewrap();
-            this.$emit('setSign',{id:this.editItem.id,state:state});
+            this.$emit("setSign", { id: this.editItem.id, state: state });
           } else {
             Toast(res.data.msg);
           }
@@ -337,22 +337,20 @@ export default {
       text-align: center;
     }
     .btn-wrap {
-      display: flex;
-      padding: 20px;
-      justify-content: space-evenly;
+      padding: 15px;
       text-align: center;
       span {
-        display: flex;
         width: 30%;
         height: 57px;
-        background: rgba(255, 255, 255, 1);
-        border: 1px solid rgba(0, 137, 255, 1);
+        background: #ffffff;
+        border: 1px solid #0089ff;
         opacity: 1;
         border-radius: 10px;
-        align-items: center;
-        justify-content: center;
         color: #0089ff;
         font-size: 24px;
+        display: inline-block;
+        line-height: 57px;
+        margin: 0 5%;
         &.act {
           color: #fff;
           background: #0089ff;

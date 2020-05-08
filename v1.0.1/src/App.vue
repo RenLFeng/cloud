@@ -18,7 +18,7 @@
     <!--
       <div class="dp-hd-wrap"  v-if="hudong" @click="hudongFn">多屏互动</div>
     -->
-    <float-icons padding="10 10 60 10" class="icons-warp" v-if="haswifiroom">
+    <float-icons padding="10 10 60 10" class="icons-warp" v-if="haswifiroom && isCloudmain">
       <div class="float-icon-item" @click="gotowifiroom()">
         <span>
           多屏
@@ -130,7 +130,9 @@ export default {
       websock: null,
       websockstate: "", //! 登陆状态：  connecting logining  logined  reject
       websockcount: 0, //! 计数
-      websockinterval: null
+      websockinterval: null,
+
+      isCloudmain: true
     };
   },
   destroyed: function() {
@@ -183,7 +185,6 @@ export default {
     },
     $route(to, from) {
       //console.log('route');
-      //   console.log(to);
       //console.log(from);
       if (
         //to.meta && to.meta.newtab
@@ -194,7 +195,11 @@ export default {
       } else {
         this.transitionName = "slide-back";
       }
-
+      if (to.name == "cloudmain") {
+        this.isCloudmain = true;
+      } else {
+        this.isCloudmain = false;
+      }
       //to.path = '/';
       // if (!this.map[to.path]) {
       //     this.map[to.path] = +new Date() + 1;

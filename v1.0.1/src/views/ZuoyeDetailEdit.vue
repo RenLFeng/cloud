@@ -1,15 +1,5 @@
 <template>
   <div class="container">
-    <!--
-        <mt-header title="作业详情">
-
-            <mt-button icon="back"  slot="left" @click="$back">返回</mt-button>
-
-            <mt-button slot="right" :disabled="savedisable">确定</mt-button>
-
-        </mt-header>
-    -->
-
     <div v-if="readonly">
       <p class="zdetailrl">{{zdetail.ztext}}</p>
       <div v-if="hasattach">
@@ -26,7 +16,7 @@
         placeholder="请输入作业详情（选填）"
         rows="8"
         class="zdetail"
-        :disabled="canEditzy"
+        :disabled="isScore"
         @input="textChange($event.target.value)"
         @blur="$setInputScroll"
       ></textarea>
@@ -36,7 +26,7 @@
         <FileAttachList
           :urlinfo="urlinfo"
           :localfiles="zdetail.localfiles"
-          :isupload="!canEditzy"
+          :isupload="!isScore"
           @fileChange="onfileChange"
         ></FileAttachList>
       </div>
@@ -76,13 +66,11 @@ export default {
     showZdetail: {
       default: false
     },
-    canEditzy: {
+    isScore: {
       default: false
-    },
+    }
   },
-     watch: {
-
-  },
+  watch: {},
   computed: {
     savedisable() {
       if (this.zdetail.ztext.length) {
@@ -97,14 +85,14 @@ export default {
       return false;
     }
   },
-    methods: {
-        textChange(e){
-           this.$emit('textChange',true)
-        },
-        onfileChange(v){
-            this.$emit('textChange',true);
-        },
+  methods: {
+    textChange(e) {
+      this.$emit("textChange", true);
     },
+    onfileChange(v) {
+      this.$emit("textChange", true);
+    }
+  },
   components: {
     FileAttachList
   }

@@ -10,12 +10,12 @@
         ></i>
       </li>
       -->
-      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher">
+      <li class="fontlarge dp" @click="BigLogin" v-if="isTeacher && !exsoftwindows">
         <span>大屏登录</span>
         <i
-                class="iconfont icondapingmu eicotrigger bigfont fr"
-                :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''"
-                style="color:#0055FF"
+          class="iconfont icondapingmu eicotrigger bigfont fr"
+          :class="eventmsgs.hdTips.bigLogin?'reddot-Tips':''"
+          style="color:#0055FF"
         ></i>
       </li>
       <!-- cjy：因为红点的原因，这里暂不隐藏---综合考虑app的行为，仍然隐藏 -->
@@ -34,7 +34,7 @@
           :class="eventmsgs.hdTips.sign?'reddot-Tips2':''"
           style="color:#E46100"
         ></i>
-      </li> -->
+      </li>-->
       <li class="fontlarge" @click="gopingce" v-if="showpingce">
         <span>评测</span>
         <i
@@ -56,18 +56,15 @@
           style="color:#38AD5A"
         ></i>
       </li>
-        <li class="fontlarge bs" @click="Danmu">
+      <li class="fontlarge bs" @click="Danmu">
         <span>弹幕互动</span>
-        <i
-          class="iconfont icondanmu eicotrigger bigfont fr"
-          style="color:#F04545"
-        ></i>
+        <i class="iconfont icondanmu eicotrigger bigfont fr" style="color:#F04545"></i>
       </li>
     </ul>
   </div>
 </template>
 <script>
-import {Indicator, Toast, MessageBox } from "mint-ui";
+import { Indicator, Toast, MessageBox } from "mint-ui";
 
 import nativecode from "../../nativecode";
 
@@ -77,7 +74,7 @@ export default {
     bankeid: {
       default: 0
     },
-     bnakeuserid: {
+    bnakeuserid: {
       default: 0
     },
     eventmsgs: {
@@ -86,8 +83,7 @@ export default {
       }
     }
   },
-  components: {
-  },
+  components: {},
   data() {
     return {
       global: false,
@@ -98,43 +94,48 @@ export default {
     isTeacher() {
       return this.$store.getters.caneditbanke;
     },
-      haswifiroom(){
-          return nativecode.haswifiroom();
-      },
-      hassign(){
-        return nativecode.hassign();
-      },
+    haswifiroom() {
+      return nativecode.haswifiroom();
+    },
+    hassign() {
+      return nativecode.hassign();
+    },
     haswxsign() {
-        return nativecode.hassign();
+      return nativecode.hassign();
       // if (nativecode.platform == "miniprogram") {
       //   return true;
       // }
       // return false;
-    }
-    ,showstuc(){
-        if (nativecode.platform == 'exsoftdaping'){
-            return false;
-        }
+    },
+    exsoftwindows() {
+      if (nativecode.platform == "exsoftwindows") {
         return true;
       }
-      ,showpingce(){
-        if (!this.isTeacher){
-            return this.showstuc;
-        }
+      return false;
+    },
+    showstuc() {
+      if (nativecode.platform == "exsoftdaping") {
         return false;
       }
+      return true;
+    },
+    showpingce() {
+      if (!this.isTeacher) {
+        return this.showstuc;
+      }
+      return false;
+    }
   },
-  created() {
-  },
+  created() {},
   methods: {
     //签到
     onwxsign() {
-      if(this.haswxsign){
-          let curbanke = this.$store.state.curbanke;
-        nativecode.navigateToSign(this.bankeid,this.isTeacher, curbanke);
-      }else{
+      if (this.haswxsign) {
+        let curbanke = this.$store.state.curbanke;
+        nativecode.navigateToSign(this.bankeid, this.isTeacher, curbanke);
+      } else {
         // this.teacherFn();
-          Toast('请在云班课小程序中查看');
+        Toast("请在云班课小程序中查看");
       }
     },
     teacherFn() {
@@ -168,22 +169,22 @@ export default {
         params: { bankeid: this.bankeid }
       });
     },
-      gotowifiroom(){
-          let curbanke = this.$store.state.curbanke;
-          let argobj={
-              page:'wifiroom',
-              bankeid:this.bankeid,
-              bankename:curbanke.name,
-              isTeacher:this.isTeacher
-          }
-          nativecode.ncall('toNativePage', argobj);
-      },
-     //弹幕
+    gotowifiroom() {
+      let curbanke = this.$store.state.curbanke;
+      let argobj = {
+        page: "wifiroom",
+        bankeid: this.bankeid,
+        bankename: curbanke.name,
+        isTeacher: this.isTeacher
+      };
+      nativecode.ncall("toNativePage", argobj);
+    },
+    //弹幕
     Danmu() {
       this.$store.commit("setRouterForward", true);
       this.$router.push({
         name: "Danmu",
-        params: { bankeid: this.bankeid,userid:this.bnakeuserid }
+        params: { bankeid: this.bankeid, userid: this.bnakeuserid }
       });
     },
     //板书
@@ -225,8 +226,8 @@ export default {
   .list-main {
     width: 95%;
     margin: 10px auto;
-    height:80vh;
-    min-height:80vh;
+    height: 80vh;
+    min-height: 80vh;
     padding-bottom: 30px;
     overflow: scroll;
     li {

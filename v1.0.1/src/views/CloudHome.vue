@@ -53,7 +53,7 @@
           class="banke-wrap scrollingtouch"
           v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
-          infinite-scroll-distance="0"
+          infinite-scroll-distance="10"
           infinite-scroll-immediate-check="false"
         >
           <mt-tab-container-item id="banke">
@@ -82,15 +82,15 @@
                 :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
               >
                 <BankeSimple
-                  v-for="(item,selindex) in curbankes"
+                  v-for="(item,selindex) in filterCurbankes"
                   :key="selindex"
-                  :classitem="curbankes[selindex]"
+                  :classitem="filterCurbankes[selindex]"
                   @click.native="bankeclick(item)"
                   @showMenu="onShowMenu"
                   :homeEventmsgs="homeEventmsgs"
                 ></BankeSimple>
                 <BottomLoadmore
-                  v-if="allLoaded && listLoadend"
+                  v-if="allLoaded && listLoadend && bankeempty"
                   showType
                   loadtext="已经加载全部了"
                   type
@@ -224,6 +224,7 @@ export default {
   name: "CloudHome",
   data() {
     return {
+      allbankes: [],
       filterCurbankes: [],
       // isCreate: 1,
       order: false,
@@ -329,7 +330,7 @@ export default {
       return this.$store.state.banke.curbankes;
     },
     bankeempty() {
-      if (this.curbankes.length) {
+      if (this.filterCurbankes.length) {
         return true;
       }
       return false;
@@ -340,15 +341,10 @@ export default {
   },
   watch: {
     selected() {
-      // console.log(this.selected);
       if (this.selected == "banke") {
         // this.initbanke();
       } else if (this.selected == "mine") {
         this.initmine();
-      }
-    },
-    seachvalue: function(newvs, oldvs) {
-      if (!newvs) {
       }
     }
   },
@@ -360,24 +356,34 @@ export default {
     if (this.selected == "banke") {
       // this.initbanke();
     }
-    this.initmine();
+    if (this.curbankes.length) {
+      this.allbankes = this.curbankes;
+      this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
+    } else {
+      this.initbanke();
+    }
     // this.initbanke();
-    this.loadMore();
+    this.initmine();
     this.eventmsgsOnmain();
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     loadTop() {
+      this.sethomelocalstate(0);
+      this.allbankes = [];
       this.filterCurbankes = [];
       this.page = 0;
       this.loading = false;
       this.listLoadend = false;
       this.allLoaded = false;
-      // this.initbanke();
-      this.loadMore();
+      this.initbanke();
     },
     loadMore() {
+      let homelocalstate = this.gethomelocalstate();
+      if (homelocalstate) {
+        this.page = homelocalstate.page;
+        if (homelocalstate.allLoaded) return;
+      }
       this.loading = true;
       this.initbanke();
     },
@@ -389,9 +395,8 @@ export default {
     },
     selectClass(type) {
       if (this.isCreate == type) return;
-      // this.isCreate = type;
       this.$store.commit("SET_ISCREATE", type);
-      this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 0);
+      this.filterCurbankeFn(this.curbankes, this.isCreate, 0);
     },
     orderFn() {
       this.order = true;
@@ -422,6 +427,9 @@ export default {
         if (!nativecode.navigateTo(tourl)) {
           this.$store.commit("setRouterForward", true);
           this.$router.push(tourl);
+          let bankewrapEl = this.$refs.bankewrap;
+          sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
+          this.sethomelocalstate(1);
         }
       }
     },
@@ -503,7 +511,7 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             // Toast("成功");
-            this.filterCurbankes = [];
+            this.allbankes = [];
             this.page = 0;
             this.initbanke();
           } else {
@@ -542,7 +550,7 @@ export default {
       }
 
       this.tempCurbankes = [];
-      Object.assign(this.tempCurbankes, this.curbankes);
+      Object.assign(this.tempCurbankes, this.filterCurbankes);
       this.popupSearchHiosty = true;
       for (let v of this.tempCurbankes) {
         v.searchKey = v.id + v.name;
@@ -608,8 +616,8 @@ export default {
       //! cjy: 防止出错， 总是重新拉取
       this.$http
         .post(url, {
-          // page: this.page,
-          // pagesize: this.pagesize
+          page: this.page,
+          pagesize: this.pagesize
         })
         .then(res => {
           if (res.data.code == 0) {
@@ -619,21 +627,17 @@ export default {
               // v.schoolid=1001
             }
 
-            // if (res.data.data.length == this.pagesize) {
-            //   this.loading = false;
-            //   this.page++;
-            // } else {
-            //   if (this.page) {
-            //     this.listLoadend = true;
-            //   }
-            //   this.loading = true;
-            //   this.allLoaded = true;
-            // }
-            if (this.page) {
-              this.listLoadend = true;
+            if (res.data.data.length == this.pagesize) {
+              this.loading = false;
+              this.page++;
+              this.sethomelocalstate(1);
+            } else {
+              if (this.page) {
+                this.listLoadend = true;
+              }
+              this.loading = true;
+              this.allLoaded = true;
             }
-            this.loading = true;
-            this.allLoaded = true;
             this.eventmsgsOnbankes(res.data.data, arrId);
           }
           if (!this.bankeempty) {
@@ -664,25 +668,13 @@ export default {
               }
             }
           }
-          this.filterCurbankes = [...this.filterCurbankes, ...datas];
-          this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 1);
+          this.allbankes = [...this.allbankes, ...datas];
+          this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
         })
         .catch(err => {
-          this.filterCurbankes = [...this.filterCurbankes, ...datas];
-          this.filterCurbankeFn(this.filterCurbankes, this.isCreate, 1);
+          this.allbankes = [...this.allbankes, ...datas];
+          this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
         });
-    },
-    //红点班课主页
-    eventmsgsOnmain() {
-      this.$http
-        .post("/api/eventmsgs/onmain", {})
-        .then(res => {
-          if (res.data.code == "0" && res.data.data.banke) {
-            this.homeEventmsgs = true;
-          } else {
-          }
-        })
-        .catch(err => {});
     },
     filterCurbankeFn(bankes, type, first) {
       let temp = [];
@@ -699,10 +691,23 @@ export default {
       }
       if (!temp.length && !first) {
         this.bankestatedesc = "当前无班课";
-        console.log("bankeempty", this.bankeempty);
-        console.log("bankestatedesc", this.bankestatedesc);
+        // console.log("bankeempty", this.bankeempty);
+        // console.log("bankestatedesc", this.bankestatedesc);
       }
-      this.$store.commit("banke/setBankes", temp);
+      this.filterCurbankes = temp;
+      this.$store.commit("banke/setBankes", bankes);
+    },
+    //红点班课主页
+    eventmsgsOnmain() {
+      this.$http
+        .post("/api/eventmsgs/onmain", {})
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.banke) {
+            this.homeEventmsgs = true;
+          } else {
+          }
+        })
+        .catch(err => {});
     },
     onUpdateName(v) {
       this.popupSettedinfo = v;
@@ -712,11 +717,39 @@ export default {
       if (v) {
         this.homeEventmsgs = false;
       }
+    },
+    gethomelocalstate() {
+      let homelocalstate = sessionStorage.getItem("homelocalstate") || "";
+      if (homelocalstate) {
+        homelocalstate = JSON.parse(homelocalstate);
+      }
+      return homelocalstate;
+    },
+    sethomelocalstate(type) {
+      let homelocalstate = this.gethomelocalstate();
+      let allLoaded = false;
+      let localstate = {};
+      if (type) {
+        if (homelocalstate.allLoaded || this.allLoaded) {
+          allLoaded = true;
+        }
+        localstate = {
+          allLoaded: allLoaded,
+          page: this.page
+        };
+      } else {
+        localstate = {
+          allLoaded: allLoaded,
+          page: 0
+        };
+      }
+      sessionStorage.setItem("homelocalstate", JSON.stringify(localstate));
     }
   },
   beforeDestroy() {
-    let bankewrapEl = this.$refs.bankewrap;
-    sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
+    // let bankewrapEl = this.$refs.bankewrap;
+    // sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
+    // this.sethomelocalstate(1);
   },
   destroyed: function() {
     //! 记忆当前的选择
@@ -746,10 +779,19 @@ export default {
       vm.$nextTick(() => {
         if (from.path == "/") {
           sessionStorage.setItem("scrolltop", 0);
+          vm.sethomelocalstate(0);
         }
         let bankewrapEl = vm.$refs.bankewrap;
         let scrolltop = JSON.parse(sessionStorage.getItem("scrolltop"));
-        bankewrapEl.scrollTop = scrolltop ? scrolltop + 20 : scrolltop;
+        bankewrapEl.scrollTop = scrolltop;
+        let homelocalstate = vm.gethomelocalstate();
+        if (homelocalstate) {
+          vm.page = homelocalstate.page;
+          if (homelocalstate.allLoaded && homelocalstate.page) {
+            // vm.allLoaded = true;
+            // vm.listLoadend = true;
+          }
+        }
       });
     });
   }

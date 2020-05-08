@@ -29,7 +29,11 @@
         <div class="titlecontainer">
           <div class="zuoyetitle">
             {{zuoyeitem.name}}
-            <i v-if="pagemode=='submit' && results.length" class="iconfont iconpinglun eicotrigger color9" @click="sbmitSeepl"></i>
+            <i
+              v-if="pagemode=='submit' && results.length"
+              class="iconfont iconpinglun eicotrigger color9"
+              @click="sbmitSeepl"
+            ></i>
             <i
               class="iconfont iconcollect eicotrigger fr"
               :class="isShuoc?'colory':'color9'"
@@ -102,7 +106,7 @@
         </div>
 
         <div v-if="pagemode=='submit'" style="padding:10px;" class="showemptydesc-submit">
-          <div v-if="canEditzy" class="isZySbmitEdit">
+          <div v-if="isScore" class="isZySbmitEdit">
             <div class="text-tips position-c">
               <p>得分:&nbsp;{{this.results[0].score}}</p>
               <p>{{isZySbmitEdit}}</p>
@@ -118,7 +122,7 @@
           <zuoyedetailedit
             @textChange="ontextChange"
             :zdetail="zdetailsubmit"
-            :canEditzy="canEditzy"
+            :isScore="isScore"
           ></zuoyedetailedit>
         </div>
         <div v-else>
@@ -268,7 +272,7 @@
 import Vue from "vue";
 import Discuss from "./components/discuss";
 import ZuoyeAnswerItem from "./components/ZuoyeAnswerItem";
-import { Indicator, Toast, MessageBox ,Actionsheet} from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 
 import zuoyedetailedit from "./ZuoyeDetailEdit";
 
@@ -352,7 +356,7 @@ export default {
 
       isShuoc: false,
       prohibit: true,
-      canEditzy: false,
+      isScore: false,
       seeMySbmit: false,
 
       page: 0,
@@ -366,7 +370,7 @@ export default {
   },
   watch: {
     zanswerTextChange() {
-      //  this.canEditzy=true;
+      //  this.isScore=true;
       // console.log('监听zdetailsubmit变化',this.zdetailsubmit);
     }
   },
@@ -522,7 +526,7 @@ export default {
       return commontools.sprintf(tfmt, ni);
     },
     isZySbmitEdit() {
-      if (this.canEditzy) {
+      if (this.isScore) {
         return `作业已被评分，不能编辑.`;
       } else {
         return "";
@@ -844,7 +848,7 @@ export default {
         this.zdetailsubmit.ztext = this.results[0].ztext;
         this.zdetailsubmit.localfiles = this.results[0].localfiles;
         if (dresults[0].score > -1) {
-          this.canEditzy = true;
+          this.isScore = true;
         }
       }
     },
@@ -1008,7 +1012,7 @@ export default {
     zouYeInfo,
     studentsMark,
     Answer,
-    [Actionsheet.name]:Actionsheet
+    [Actionsheet.name]: Actionsheet
   }
 };
 </script>

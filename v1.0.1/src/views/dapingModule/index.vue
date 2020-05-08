@@ -2,6 +2,10 @@
   <div class="biggp-group-wrap" ref="doch" v-if="isLoad">
     <div class="fixed-header">
       <HeaderNav :navInfo="navInfo" />
+      <p class="starttimedesc-wrap" v-if="starttimedesc">
+        <span class="tit">签到时间:</span>
+        <span>{{starttimedesc}}</span>
+      </p>
     </div>
     <div class="main">
       <div class="member-wrap">
@@ -50,6 +54,7 @@
 <script>
 import { Indicator, Toast, MessageBox, Switch } from "mint-ui";
 import { parseURL } from "@/util";
+import commontools from "@/commontools";
 import HeaderNav from "./headerNav";
 import MemberList from "./memberList";
 
@@ -86,9 +91,18 @@ export default {
       isLoad: false
     };
   },
-  computed: {},
+  computed: {
+    starttimedesc() {
+      if (!this.signdata.starttime) {
+        return "";
+      }
+      return commontools.timeToHummanRead(
+        this.signdata.starttime.replace(/-/g, "/"),1
+      );
+    }
+  },
   created() {
-    //http://192.168.0.237:8080/daping.html?bankeid=1040
+    //http://192.168.0.239:8080/daping.html?bankeid=1040
     const UrlParams = parseURL(window.location.href);
     let id = UrlParams.bankeid;
     if (id.includes("#")) {
@@ -461,6 +475,15 @@ export default {
     z-index: 9;
     background: #fff;
     transform: translate(-50%, 0);
+  }
+  .fixed-header .starttimedesc-wrap {
+    position: absolute;
+    right: 0;
+    bottom: -25px;
+    margin: 0;
+  }
+  .fixed-header .starttimedesc-wrap .tit {
+    font-weight: bold;
   }
   .scroll-wrap {
     position: fixed;

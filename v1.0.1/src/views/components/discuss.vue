@@ -1,7 +1,22 @@
 <template>
   <div class="discuss-container">
     <div class="tit-info">
-      <mt-cell :title="ItemInfo.username+'的作业'" :label="ItemInfo.ztext"></mt-cell>
+      <!-- <mt-cell class="word-wrap" :title="ItemInfo.username+'的作业'" :label="ItemInfo.ztext"></mt-cell> -->
+      <p class="font16">{{ItemInfo.username}}的作业</p>
+       <TextEllipsis
+        :text="ItemInfo.ztext"
+        :height="50"
+        :isLimitHeight="isLimitHeight"
+        class="zatextmain word-wrap "
+      >
+        <template slot="more">
+          <span class="">...</span>
+          <span class="zatextviewmore" @click="isLimitHeight=false">查看更多</span>
+        </template>
+        <span slot="after" v-if="!isLimitHeight" @click="isLimitHeight=true">
+          <span class="zatextviewmore">收起</span>
+        </span>
+      </TextEllipsis>
     </div>
     <div class="discuss-list-content">
       <p class="discuss-number color9 fontnormal">评论（{{ItemInfo.commentnum}}）</p>
@@ -132,6 +147,7 @@ import ZuoyeDetailEdit from "../ZuoyeDetailEdit";
 import maintools from "../maintools";
 const _URL = window.URL || window.webkitURL;
 import commontools from "../../commontools";
+import TextEllipsis from "./TextEllipsis";
 export default {
   name: "",
   props: {
@@ -150,7 +166,8 @@ export default {
     [ImagePreview.name]: ImagePreview,
     [Badge.name]:Badge,
     FileAttachList,
-    ZuoyeDetailEdit
+    ZuoyeDetailEdit,
+    TextEllipsis
   },
   data() {
     return {
@@ -172,7 +189,8 @@ export default {
       noComment: false,
       commentPic: [],
       commentPicSrc: [],
-      longTime: commontools.longTime
+      longTime: commontools.longTime,
+      isLimitHeight:true
     };
   },
   watch: {
@@ -533,6 +551,14 @@ export default {
   font-size: 14px;
   // margin-top: 50px;
   .tit-info {
+    padding: 15px 10px;
+    .zatextmain{
+        color: #888888;
+        .zatextviewmore{
+          color: #509f7a;
+          padding-left: 5px;
+        }
+    }
     .mint-cell-wrapper {
       font-size: 18px;
       padding: 15px 10px;
