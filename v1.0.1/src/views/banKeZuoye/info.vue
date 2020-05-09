@@ -63,6 +63,8 @@ export default {
     allZuoyeitem: function(newValue, oldValue) {
       this.allInfo = newValue;
       // console.log("vcvcvcv", this.allInfo);
+       this.isSubMit=[];
+       this.noSubMit=[];
       for (let item of this.allInfo) {
         if (item.submitid) {
           this.isSubMit.push(item);

@@ -643,7 +643,7 @@ export default {
     },
     showInfo() {
       this.popupEditInfo = true;
-      this.setSeeResources(this.editItemFile);
+      this.queryviews(this.editItemFile);
     },
     //学生查看or未查看
     see(v, numb) {
@@ -667,14 +667,8 @@ export default {
             fileitem.viewnum++;
             fileitem.eventmsgs = false;
           }
-          if (this.popupEditInfo) {
-            this.queryviews(fileitem);
-          }
         })
         .catch(res => {
-          if (this.popupEditInfo) {
-            this.queryviews(fileitem);
-          }
         });
     },
     deletezy() {

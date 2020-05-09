@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <div @click="syudentsMark">
+        <div @click="studentsMarkfn">
           <mt-cell
             :title="$t('bankeTask.Score_of_the_operation_owner')"
             is-link
@@ -942,7 +942,7 @@ export default {
       this.allInitData = this.allZuoyeitem;
       this.popuPzouyeInfo = true;
     },
-    syudentsMark() {
+    studentsMarkfn() {
       this.allInitData = this.allZuoyeitem;
       this.popuPzouyeAllMark = true;
     },

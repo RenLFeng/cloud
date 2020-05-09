@@ -267,14 +267,14 @@ export default {
     },
     //学情统计
     situation() {
-     let url =
-        "http://localhost:8088/#/ClassStatistics?id=" +
-        this.bankeInfo.id;
+      let url =
+        "http://localhost:8088/#/ClassStatistics?id=" + this.bankeInfo.id;
       if (process.env.NODE_ENV !== "development") {
         url = document.location.origin;
         url += "/backend/#/ClassStatistics?id=" + this.bankeInfo.id;
       }
       window.location.href = url;
+      sessionStorage.setItem("homelocalstate", "");
     },
     editBkFn() {
       if (!this.caneditbanke) return;
@@ -327,7 +327,7 @@ export default {
               }
               // Object.assign()
               this.$store.commit("banke/appendBankes", BankeData);
-               this.remocurbanke(res.data.data.id);
+              this.remocurbanke(res.data.data.id);
             });
           } else {
             MessageBox.alert(res.data.msg).then(() => {});
@@ -371,9 +371,7 @@ export default {
     },
     remocurbanke(id) {
       let BankeData = this.$store.state.banke.curbankes;
-      let newBankeData = BankeData.filter(
-        item => item.id !== id
-      );
+      let newBankeData = BankeData.filter(item => item.id !== id);
       this.$store.commit("banke/setBankes", newBankeData);
     },
     closeBk() {

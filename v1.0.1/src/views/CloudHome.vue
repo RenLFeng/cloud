@@ -357,18 +357,24 @@ export default {
     if (this.selected == "banke") {
       // this.initbanke();
     }
-    if (this.curbankes.length) {
+    let localCurbankes = sessionStorage.getItem("curbankes") || "[]";
+    localCurbankes = JSON.parse(localCurbankes);
+    if (
+      this.curbankes.length &&
+      this.curbankes.length >= localCurbankes.length
+    ) {
       this.allbankes = this.curbankes;
       this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
     } else {
+      sessionStorage.setItem("scrolltop", 0);
+      sessionStorage.setItem("homelocalstate", "");
       this.initbanke();
     }
     // this.initbanke();
     this.initmine();
     this.eventmsgsOnmain();
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     loadTop() {
       this.isloadtop = true;
@@ -433,6 +439,8 @@ export default {
           let bankewrapEl = this.$refs.bankewrap;
           sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
           this.sethomelocalstate(1);
+          let curbankes = this.curbankes;
+          sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
         }
       }
     },
@@ -775,9 +783,13 @@ export default {
     [Actionsheet.name]: Actionsheet
   },
   //在页面离开时记录滚动位置
-  // beforeRouteLeave(to, from, next) {
-  //   next();
-  // },
+  beforeRouteLeave(to, from, next) {
+    if (to.path == "/login") {
+      sessionStorage.setItem("homelocalstate", "");
+      sessionStorage.removeItem("curbankes");
+    }
+    next();
+  },
   //进入该页面时，用之前保存的滚动位置赋值
   beforeRouteEnter(to, from, next) {
     next(vm => {

@@ -337,7 +337,6 @@ export default {
         this.$store.commit("setLoginUser", {});
         this.$store.commit("setRouterForward", true);
         this.$store.commit("banke/REMOV_BANKES", []);
-        sessionStorage.setItem("homelocalstate",'');
         this.$router.push("/login");
         nativecode.jsLogin(0, {});
       });
