@@ -88,7 +88,7 @@ export default {
       signid: 0,
       base64: "",
       timer: null,
-      isLoad: false
+      isLoad: false,
     };
   },
   computed: {
@@ -97,7 +97,8 @@ export default {
         return "";
       }
       return commontools.timeToHummanRead(
-        this.signdata.starttime.replace(/-/g, "/"),1
+        this.signdata.starttime.replace(/-/g, "/"),
+        1
       );
     }
   },
@@ -389,7 +390,7 @@ export default {
       this.navInfo.total = 0;
 
       this.navInfo.signTotal = 0;
-    }
+    },
   },
   destroyed() {
     clearInterval(this.timer);

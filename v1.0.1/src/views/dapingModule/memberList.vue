@@ -8,7 +8,7 @@
             v-for="(v,sindex) in members"
             :key="sindex"
             ref="cli"
-            @click="changeState($event,v,sindex)"
+            @click.stop="changeState($event,v,sindex)"
           >
             <img :class="!v.state?'opctive':''" :src="v.avatar" alt :onerror="$defaultImg('img')" />
             <span class="name" :class="!v.state?'opctive':''">{{v.name}}</span>
@@ -36,13 +36,13 @@
       <div class="btn-wrap">
         <span
           class
-          :class="item.act?'act':''"
+          :class="{'act':item.act,'isclick':item.isclick}"
           v-for="(item,index) in signTemp"
           :key="index"
-          @click="setSignState(item,index)"
+          @click.stop="setSignState(item,index)"
         >{{item.text}}</span>
       </div>
-      <i class="iconfont iconshanchu2 eicotrigger" @click="hidewrap"></i>
+      <i class="iconfont iconshanchu2 eicotrigger" @click.stop="hidewrap"></i>
     </div>
     <!-- <div class="popver-wrap" ref="popver" v-if="isShowPopver" @click="isShowPopver=false">
       <p class="tit">请选择分组</p>
@@ -57,6 +57,7 @@
       </ul>
       <i class="iconfont iconsanjiaoxing"></i>
     </div>-->
+    <div class="mark" v-if="showChangeState" @click="hidewrap"></div>
   </div>
 </template>
 
@@ -77,7 +78,7 @@ export default {
     },
     signid: {
       default: 0
-    }
+    },
   },
   data() {
     return {
@@ -88,7 +89,8 @@ export default {
         {
           id: 1,
           text: "已签到",
-          act: false
+          act: false,
+          isclick: false
         },
         // {
         //   id: 2,
@@ -98,17 +100,18 @@ export default {
         {
           id: 0,
           text: "未签到",
-          act: false
+          act: false,
+          isclick: false
         }
       ],
       curName: ""
     };
   },
-  computed: {},
+  computed: {
+  },
   created() {},
   mounted() {},
   watch: {
-    isOpenSign: function(newValue, oldValue) {}
   },
   methods: {
     changeState(e, item, i) {
@@ -125,14 +128,22 @@ export default {
       }
       this.curName = item.name;
       this.showChangeState = true;
+      for (let v of this.signTemp) {
+        v.isclick = false;
+        if (v.id == this.editItem.state) {
+          v.isclick = true;
+        }
+      }
+
       this.$nextTick(() => {
         this.$refs.setsign.style.left = `${lioffsetLeft}px`;
         this.$refs.setsign.style.top = `${eli.offsetTop + 160}px`;
       });
+      this.$emit("showChangeState", true);
     },
     setSignState(v, index) {
       // console.log('mgk',this.editItem);
-      if (v.id == this.editItem.state) return;
+      if (v.isclick) return;
       for (let v of this.signTemp) {
         v.act = false;
       }
@@ -165,6 +176,7 @@ export default {
       for (let v of this.signTemp) {
         v.act = false;
       }
+      this.$emit("showChangeState", false);
     },
     selectGroup(e, item, index, sitem, sindex) {
       if (!this.group) return;
@@ -355,6 +367,11 @@ export default {
           color: #fff;
           background: #0089ff;
         }
+        &.isclick {
+          color: #999;
+          border: 1px solid #999;
+          opacity: 0.5;
+        }
       }
     }
     .iconfont {
@@ -363,6 +380,14 @@ export default {
       color: #999;
       font-size: 23px;
     }
+  }
+  .mark{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 99;
   }
 }
 </style>

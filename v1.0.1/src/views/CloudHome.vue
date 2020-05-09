@@ -105,7 +105,7 @@
                 />
               </div>
               <div
-                v-if="!bankeempty&&bankestatedesc=='当前无班课'"
+                v-if="!bankeempty&&bankestatedesc=='当前无班课'&&!isloadtop"
                 class="tc no-class empty bankeempty-icon"
               >
                 <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
@@ -113,7 +113,7 @@
                 <p v-else>暂无班课，点击加入班课</p>
               </div>
               <div
-                v-if="!bankeempty &&bankestatedesc!='当前无班课' "
+                v-if="!bankeempty &&bankestatedesc!='当前无班课'&&!isloadtop "
                 class="tc bankeempty-icon"
               >{{bankestatedesc}}</div>
             </mt-loadmore>
@@ -277,7 +277,8 @@ export default {
       listLoadend: false,
       allLoaded: false,
       // dropType: 0,
-      popupSettedinfo: false
+      popupSettedinfo: false,
+      isloadtop: false
     };
   },
   computed: {
@@ -366,9 +367,11 @@ export default {
     this.initmine();
     this.eventmsgsOnmain();
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     loadTop() {
+      this.isloadtop = true;
       this.sethomelocalstate(0);
       this.allbankes = [];
       this.filterCurbankes = [];
@@ -670,10 +673,12 @@ export default {
           }
           this.allbankes = [...this.allbankes, ...datas];
           this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
+          this.isloadtop = false;
         })
         .catch(err => {
           this.allbankes = [...this.allbankes, ...datas];
           this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
+          this.isloadtop = false;
         });
     },
     filterCurbankeFn(bankes, type, first) {
@@ -788,8 +793,8 @@ export default {
         if (homelocalstate) {
           vm.page = homelocalstate.page;
           if (homelocalstate.allLoaded && homelocalstate.page) {
-            // vm.allLoaded = true;
-            // vm.listLoadend = true;
+            vm.allLoaded = homelocalstate.allLoaded;
+            vm.listLoadend = homelocalstate.allLoaded;
           }
         }
       });

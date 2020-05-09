@@ -42,9 +42,9 @@ Vue.prototype.$back = function () {
         Vm.$router.push('/');
     }
 }
-import Vconsole from 'vconsole'
-const vConsole = new Vconsole()
-Vue.use(vConsole)
+// import Vconsole from 'vconsole'
+// const vConsole = new Vconsole()
+// Vue.use(vConsole)
 Vue.prototype.$http = axios
 Vue.config.productionTip = false;
 Vue.use(VueI18n);
