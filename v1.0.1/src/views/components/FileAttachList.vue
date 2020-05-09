@@ -8,7 +8,7 @@
         :class="{'liupload':isupload,'imgblocksmall':!isupload}"
         @click.stop="onImagePreview(localfiles,findex)"
       >
-        <div class="imgcontainer blockborder" >
+        <div class="imgcontainer blockborder">
           <img v-if="fitem.imgsrc" :src="fitem.imgsrc" :class="getimgclass(fitem)" />
           <img v-else :src="getimgico(fitem)" :onerror="getimgico(fitem)" class="iconclass" />
         </div>
@@ -316,15 +316,18 @@ export default {
               this.finishUpload(fitem, false);
             });
         };
-
-        //! cjy: 处理照片相关： 旋转， 压缩（10M+）
-        fixCaptureImage(fitem.file, true)
-          .then(res => {
-            funupload(res);
-          })
-          .catch(res => {
-            funupload(res);
-          });
+        if (fitem.file.type.indexOf("image") > -1) {
+          //! cjy: 处理照片相关： 旋转， 压缩（10M+）
+          fixCaptureImage(fitem.file, true)
+            .then(res => {
+              funupload(res);
+            })
+            .catch(res => {
+              funupload(res);
+            });
+        } else {
+          funupload(fitem.file);
+        }
       }
     },
     finishUpload(fitem, bok) {

@@ -149,8 +149,8 @@ export default {
           Indicator.close();
           if (res.data.code == 0) {
             Object.assign(this.classitem, res.data.data);
+            // this.$store.commit("banke/appendBankes", this.classitem);
             this.$store.commit("banke/setBankes", []);
-            sessionStorage.setItem("homelocalstate", "");
             this.$router.push("/");
           } else {
             let tipmsg = res.data.msg;

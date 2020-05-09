@@ -668,8 +668,7 @@ export default {
             fileitem.eventmsgs = false;
           }
         })
-        .catch(res => {
-        });
+        .catch(res => {});
     },
     deletezy() {
       if (!this.$store.getters.caneditbanke) {
@@ -935,31 +934,36 @@ export default {
       }
     },
     douploadonefile(onefile) {
-      console.log('选择手机照片',onefile);
-      //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
-      fixCaptureImage(onefile, true)
-        .then(res => {
-         console.log('选择手机照片 resres',res);
-          this.douploadonefiledirect(res);
-          // this.tempUploadFile = {
-          //   file: res,
-          //   tempImg: _URL.createObjectURL(res)
-          // };
-          // console.log("是的撒", this.tempUploadFile);
-          // this.popupUploadFile = true;
-        })
-        .catch(err => {
-           console.log('选择手机照片 error',err);
-          this.douploadonefiledirect(err);
-          // this.tempUploadFile = {
-          //   file: res,
-          //   tempImg: _URL.createObjectURL(res)
-          // };
-          // this.popupUploadFile = true;
-        });
+      let type = onefile.type;
+      if (type.indexOf("image") > -1) {
+        console.log("选择手机照片", onefile);
+        //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
+        fixCaptureImage(onefile, true)
+          .then(res => {
+            console.log("选择手机照片 resres", res);
+            this.douploadonefiledirect(res);
+            // this.tempUploadFile = {
+            //   file: res,
+            //   tempImg: _URL.createObjectURL(res)
+            // };
+            // console.log("是的撒", this.tempUploadFile);
+            // this.popupUploadFile = true;
+          })
+          .catch(err => {
+            console.log("选择手机照片 error", err);
+            this.douploadonefiledirect(err);
+            // this.tempUploadFile = {
+            //   file: res,
+            //   tempImg: _URL.createObjectURL(res)
+            // };
+            // this.popupUploadFile = true;
+          });
+      } else {
+        this.douploadonefiledirect(onefile);
+      }
     },
     douploadonefiledirect(onefile) {
-      console.log('上传照片',onefile);
+      console.log("上传照片", onefile);
       if (!onefile) {
         console.log("上传照片 失败");
         return;
@@ -1011,8 +1015,8 @@ export default {
 
             this.tempUploadFile = {};
             this.popupUploadFile = false;
-          }else{
-            Toast('上传失败');
+          } else {
+            Toast("上传失败");
           }
         })
         .catch(err => {

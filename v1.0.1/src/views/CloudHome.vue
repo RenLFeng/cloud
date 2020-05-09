@@ -138,7 +138,7 @@
           <span class="fonttiny">云班课</span>
         </div>
       </mt-tab-item>
-      <mt-tab-item id="mine">
+      <mt-tab-item id="mine" @click.native="mineclick">
         <div class="bankehome">
           <i class="iconfont iconfont-big iconwode-xuanzhong"></i>
           <span class="fonttiny">{{$t('common.My')}}</span>
@@ -269,7 +269,7 @@ export default {
         ordernum: 0
       },
       page: 0,
-      pagesize: 10,
+      pagesize: 20,
       topStatus: "",
       bottomStatus: "",
       autofill: false,
@@ -278,7 +278,8 @@ export default {
       allLoaded: false,
       // dropType: 0,
       popupSettedinfo: false,
-      isloadtop: false
+      isloadtop: false,
+      distance: 0
     };
   },
   computed: {
@@ -344,10 +345,18 @@ export default {
     selected() {
       if (this.selected == "banke") {
         // this.initbanke();
+        this.$nextTick(() => {
+          if (this.distance) {
+            let bankewrapEl = this.$refs.bankewrap;
+            bankewrapEl.scrollTop = this.distance;
+          }
+        });
       } else if (this.selected == "mine") {
+        sessionStorage.setItem("");
         this.initmine();
       }
-    }
+    },
+    isCreate() {}
   },
   created() {
     var osel = this.$store.state.homeselected;
@@ -374,7 +383,10 @@ export default {
     this.initmine();
     this.eventmsgsOnmain();
   },
-  mounted() {},
+  mounted() {
+    let scrollWrap = this.$refs.bankewrap;
+    scrollWrap.addEventListener("scroll", this.onscrollfn, false);
+  },
   methods: {
     loadTop() {
       this.isloadtop = true;
@@ -436,8 +448,8 @@ export default {
         if (!nativecode.navigateTo(tourl)) {
           this.$store.commit("setRouterForward", true);
           this.$router.push(tourl);
-          let bankewrapEl = this.$refs.bankewrap;
-          sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
+          // let bankewrapEl = this.$refs.bankewrap;
+          // sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
           this.sethomelocalstate(1);
           let curbankes = this.curbankes;
           sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
@@ -757,13 +769,21 @@ export default {
         };
       }
       sessionStorage.setItem("homelocalstate", JSON.stringify(localstate));
+    },
+    mineclick() {
+      let topdistance = sessionStorage.getItem("scrolltop") || 0;
+      this.distance = topdistance;
+    },
+    onscrollfn() {
+      sessionStorage.setItem("scrolltop", this.$refs.bankewrap.scrollTop);
+      //  console.log(this.$refs.bankewrap.scrollHeight);
+      //  console.log(this.$refs.bankewrap.offsetHeight);
+      //   console.log(document.documentElement.clientHeight+'-----------'+window.innerHeight); // 可视区域高度
+      //   console.log(document.body.scrollTop); // 滚动高度
+      //   console.log(document.body.offsetHeight); // 文档高度
     }
   },
-  beforeDestroy() {
-    // let bankewrapEl = this.$refs.bankewrap;
-    // sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
-    // this.sethomelocalstate(1);
-  },
+  beforeDestroy() {},
   destroyed: function() {
     //! 记忆当前的选择
     this.$store.commit("setHomeSelected", this.selected);

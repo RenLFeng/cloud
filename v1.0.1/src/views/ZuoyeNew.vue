@@ -25,7 +25,7 @@
         v-if="hassubmittime"
       >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>
       <mt-cell title="答案设置" is-link @click.native="onZAnaswer">{{zanswerdesc}}</mt-cell>
-      <p class="tips font-xxs">学生可在互评中或作业结束后查看参考答案，你可以随时对参考答案进行编辑。</p>
+      <p class="tips font-xxs">作业结束后查看参考答案，你可以随时对参考答案进行编辑。</p>
     </div>
 
     <mt-datetime-picker

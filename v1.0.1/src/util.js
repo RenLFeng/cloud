@@ -375,6 +375,9 @@ export const getFileTypeImg = (typein) => {
     case 'mp4':
       srcstr += ("/assets/file_icon/MP4.png");
       return srcstr;
+    case 'mov':
+      srcstr += ("/assets/file_icon/MP4.png");
+      return srcstr;
     case 'mp3':
       srcstr += ("/assets/file_icon/MP3.png");
       return srcstr;
@@ -448,6 +451,8 @@ export const getZYFileType = (namein) => {
   } else if (name.includes('.txt')) {
     r = 'txt';
   } else if (name.includes('.mp4')) {
+    r = 'mp4';
+  }else if (name.includes('.mov')) {
     r = 'mp4';
   } else if (name.includes('.mp3')) {
     r = 'mp3';
