@@ -1,15 +1,5 @@
 <template>
   <div class="fontsmall cloudHome" :class="selected=='banke'?'banke':''">
-    <!-- <mt-header v-if="hasnavbar" :title="$t('common.HomeTite')">
-      <mt-button
-        v-if="hasmainback"
-        icon="back"
-        slot="left"
-        @click="onbackmain"
-      >{{$t('common.Back')}}</mt-button>
-    </mt-header>-->
-    <!-- <i class="iconfont iconjia position-r fontmaintitle" @click="addBankeIcon"></i> -->
-
     <div class="mint-header-f mycreate-header" v-if="selected=='banke' && !order">
       <div class="lable tc position-c color1">
         <p :class="isCreate?'act navbar colord':''" @click="selectClass(1)">
@@ -21,25 +11,11 @@
       </div>
       <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
     </div>
-
-    <!-- My Tabel Header-->
-    <!-- <mt-header
-      v-if="selected=='mine' &&　!CliudBar"
-      title="我的"
-      class="mint-header-f mine-header fontnormal color1"
-    ></mt-header>-->
-
-    <!--Order  Header-->
-    <!-- <mt-header title="班课调序" v-if="order &&　CliudBar" class="order-header">
-      <mt-button slot="left" @click="orderCancel" class="fontnormal">取消</mt-button>
-      <mt-button slot="right" @click="orderOnsave" class="fontnormal">确定</mt-button>
-    </mt-header>-->
-
     <!-- main -->
     <div :class="hasnavbar?'noheadercontainer page-wrap cloud':'page-wrap cloud'">
       <mt-tab-container
         class="page-tabbar-container"
-        :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
+        :class="!bankeempty?'bankeempty':''"
         v-model="selected"
       >
         <!-- :bottom-method="loadMore"
@@ -64,31 +40,40 @@
               ref="loadmore"
               class
               :auto-fill="autofill"
-              :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
+              :class="!bankeempty?'bankeempty':''"
             >
-              <!-- <div class="seach-wrap" style="padding:0 10px;margin-top: 2px;" v-if="!order">
-            <div class="div_sech" @click="onFocus">
-              <div class="box">
-                <span class="color9">搜索</span>
-                <i class="iconfont iconsoushuo fr fontlarge" style="color:#AAAAAA"></i>
-              </div>
-            </div>
-            <i class="iconfont iconjiahao position-r fontmaintitle colord" @click="addBankeIcon"></i>
-              </div>-->
-              <!-- <span class="fontnormal position-r colord" @click="orderFn">调序</span> -->
-              <!-- <p class="v"></p> -->
-              <div
-                class="bankecontainer"
-                :class="!bankeempty&&bankestatedesc=='当前无班课'?'bankeempty':''"
-              >
-                <BankeSimple
-                  v-for="(item,selindex) in filterCurbankes"
+              <div class="bankecontainer" :class="!bankeempty?'bankeempty':''">
+                <div
+                  class="paret-class-wrap"
+                  v-for="(item,selindex) in filterCourses"
                   :key="selindex"
-                  :classitem="filterCurbankes[selindex]"
-                  @click.native="bankeclick(item)"
-                  @showMenu="onShowMenu"
-                  :homeEventmsgs="homeEventmsgs"
-                ></BankeSimple>
+                >
+                  <BankeSimple
+                    :classitem="item"
+                    @click.native="courseclick(item)"
+                    @showMenu="onShowMenu"
+                    :homeEventmsgs="homeEventmsgs"
+                    :joinClass="!isCreate?joinClass:[]"
+                  ></BankeSimple>
+                  <div class="subclass-wrap" v-if="isCreate">
+                    <div
+                      class="subclass"
+                      v-for="(v,i) in filterCourseBanke(item.id)"
+                      :key="i"
+                      @click="bankeclick(v)"
+                    >
+                      <p class="stit color0 font18 ellipse">{{v.name}}</p>
+                      <p
+                        class="ggao position-c colory font-xxs ellipse tc"
+                        v-if="v.info"
+                      >公告:&nbsp;{{v.info}}</p>
+                      <div class="sinfo-r">
+                        <span class="colora font-xxs ellipse membernum">{{v.membernum}}人</span>
+                        <span class="iconfont iconjiantou colora font18 position-r"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <BottomLoadmore
                   v-if="allLoaded && listLoadend && bankeempty"
                   showType
@@ -104,18 +89,12 @@
                   color
                 />
               </div>
-              <div
-                v-if="!bankeempty&&bankestatedesc=='当前无班课'&&!isloadtop"
-                class="tc no-class empty bankeempty-icon"
-              >
+              <div v-if="!bankeempty&&!isloadtop" class="tc no-class empty bankeempty-icon">
                 <i class="iconfont icontianjia fontmaintitle" @click="addBankeIcon"></i>
-                <p v-if="isteacher">暂无班课，点击创建或加入班课</p>
-                <p v-else>暂无班课，点击加入班课</p>
+                <p v-if="isteacher">暂无课程，点击创建课程或加入班级</p>
+                <p v-else>暂无课程，点击加入班级</p>
               </div>
-              <div
-                v-if="!bankeempty &&bankestatedesc!='当前无班课'&&!isloadtop "
-                class="tc bankeempty-icon"
-              >{{bankestatedesc}}</div>
+              <div v-if="!bankeempty&&!isloadtop " class="tc bankeempty-icon">{{bankestatedesc}}</div>
             </mt-loadmore>
           </mt-tab-container-item>
         </div>
@@ -173,7 +152,7 @@
         </div>
         <div class="main" :class="SearchHistoryLen?'act':''">
           <div v-for="(item,selindex) in searchData" :key="selindex">
-            <BankeSimple :classitem="item" @click.native="bankeclick(item)" @showMenu="onShowMenu"></BankeSimple>
+            <BankeSimple :classitem="item" @click.native="courseclick(item)" @showMenu="onShowMenu"></BankeSimple>
           </div>
           <div v-if="SearchHistoryLen">
             <ul class="SearchHistoryLen">
@@ -201,6 +180,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import examhome from "../Exam/ExamHome";
 import BankeSimple from "./components/BankeSimple";
 const MineAbout = () => import("@/views/MineAbout");
@@ -224,8 +204,8 @@ export default {
   name: "CloudHome",
   data() {
     return {
-      allbankes: [],
       filterCurbankes: [],
+      filterCourses: [],
       // isCreate: 1,
       order: false,
 
@@ -243,17 +223,17 @@ export default {
       actionShowStu: false,
       actions2: [
         {
-          name: "创建班课",
+          name: "创建课程",
           method: this.onadd
         },
         {
-          name: "使用班课号加入班课",
+          name: "加入班级",
           method: this.jion
         }
       ],
       actionsstu: [
         {
-          name: "使用班课号加入班课",
+          name: "加入班级",
           method: this.jion
         }
       ],
@@ -265,9 +245,10 @@ export default {
       searchData: [],
 
       homeEventmsgs: false,
-      bankeitem: {
+      courseitem: {
         ordernum: 0
       },
+      bankeitem: {},
       page: 0,
       pagesize: 20,
       topStatus: "",
@@ -276,10 +257,15 @@ export default {
       loading: false,
       listLoadend: false,
       allLoaded: false,
-      // dropType: 0,
       popupSettedinfo: false,
       isloadtop: false,
-      distance: 0
+      distance: 0,
+
+      loadcourses: [],
+      loadbankes: [],
+      joinClass: [],
+
+      joincourse: []
     };
   },
   computed: {
@@ -306,8 +292,8 @@ export default {
           method: this.bankeShare
         });
       }
-      let oname = "置顶班课";
-      if (this.bankeitem && this.bankeitem.ordernum) {
+      let oname = "置顶课程";
+      if (this.courseitem && this.courseitem.ordernum) {
         oname = "取消置顶";
       }
       ret.push({
@@ -331,8 +317,11 @@ export default {
     curbankes() {
       return this.$store.state.banke.curbankes;
     },
+    curcourses() {
+      return this.$store.state.banke.curcourses;
+    },
     bankeempty() {
-      if (this.filterCurbankes.length) {
+      if (this.filterCourses.length) {
         return true;
       }
       return false;
@@ -352,7 +341,6 @@ export default {
           }
         });
       } else if (this.selected == "mine") {
-        sessionStorage.setItem("");
         this.initmine();
       }
     },
@@ -372,8 +360,9 @@ export default {
       this.curbankes.length &&
       this.curbankes.length >= localCurbankes.length
     ) {
-      this.allbankes = this.curbankes;
-      this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
+      this.loadcourses = this.curcourses;
+      this.loadbankes = this.curbankes;
+      this.filterCurbankeFn(this.loadbankes, this.isCreate, 1);
     } else {
       sessionStorage.setItem("scrolltop", 0);
       sessionStorage.setItem("homelocalstate", "");
@@ -388,15 +377,14 @@ export default {
     scrollWrap.addEventListener("scroll", this.onscrollfn, false);
   },
   methods: {
+    filterCourseBanke: function(cid) {
+      return this.filterCurbankes.filter(function(item) {
+        return item.courseid == cid;
+      });
+    },
     loadTop() {
+      this.loadTopInit();
       this.isloadtop = true;
-      this.sethomelocalstate(0);
-      this.allbankes = [];
-      this.filterCurbankes = [];
-      this.page = 0;
-      this.loading = false;
-      this.listLoadend = false;
-      this.allLoaded = false;
       this.initbanke();
     },
     loadMore() {
@@ -437,6 +425,24 @@ export default {
     onbackmain() {
       nativecode.ncall("jsBackMain", {});
     },
+    courseclick(courseitem) {
+      this.courseitem = courseitem;
+      this.courseDedail();
+    },
+    //进入课程主页
+    courseDedail() {
+      if (this.courseitem.id) {
+        let tourl = "/coursehome/" + this.courseitem.id;
+        if (!nativecode.navigateTo(tourl)) {
+          this.$store.commit("setRouterForward", true);
+          this.$router.push(tourl);
+          this.sethomelocalstate(1);
+          let curbankes = this.curbankes;
+          sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
+          sessionStorage.setItem("curcourse", JSON.stringify(this.courseitem));
+        }
+      }
+    },
     bankeclick(bankeitem) {
       this.bankeitem = bankeitem;
       this.bankeDedail();
@@ -448,8 +454,6 @@ export default {
         if (!nativecode.navigateTo(tourl)) {
           this.$store.commit("setRouterForward", true);
           this.$router.push(tourl);
-          // let bankewrapEl = this.$refs.bankewrap;
-          // sessionStorage.setItem("scrolltop", bankewrapEl.scrollTop);
           this.sethomelocalstate(1);
           let curbankes = this.curbankes;
           sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
@@ -458,7 +462,7 @@ export default {
     },
     onShowMenu(v) {
       console.log(v);
-      this.bankeitem = v;
+      this.courseitem = v;
       this.actionShow = true;
     },
     //创建or加入
@@ -472,8 +476,8 @@ export default {
       }
     },
     bankeShare() {
-      if (this.bankeitem.id) {
-        nativecode.dosharebanke(this.bankeitem);
+      if (this.courseitem.id) {
+        nativecode.dosharebanke(this.courseitem);
       }
     },
     islogined() {
@@ -509,7 +513,8 @@ export default {
       if (isteacher) {
         //! 跳转新增课堂
         this.$store.commit("setRouterForward", true);
-        this.$router.push("/bankenew");
+        // this.$router.push("/bankenew");
+        this.$router.push("/CouresNew");
       } else {
         //! 跳转搜索课堂
         Toast("加入课堂， 暂未实现");
@@ -528,13 +533,13 @@ export default {
     Roof() {
       this.$http
         .post("/api/banke/settop", {
-          bankeid: this.bankeitem.id,
-          dotop: this.bankeitem.ordernum ? 0 : 1
+          bankeid: this.courseitem.id,
+          dotop: this.courseitem.ordernum ? 0 : 1
         })
         .then(res => {
           if (res.data.code == 0) {
             // Toast("成功");
-            this.allbankes = [];
+            this.loadbankes = [];
             this.page = 0;
             this.initbanke();
           } else {
@@ -632,7 +637,7 @@ export default {
       );
     },
     initbanke() {
-      var url = "/api/api/bankequery";
+      var url = "/api/api/bankequery2 ";
       if (!this.bankeempty) {
         this.bankestatedesc = "加载中";
       }
@@ -644,13 +649,32 @@ export default {
         })
         .then(res => {
           if (res.data.code == 0) {
+            let loadbankes = res.data.data.bankes;
+            this.loadcourses = [...this.loadcourses, ...res.data.data.courses];
+            //  loadbankes[2].userid = 232;
+            //  loadbankes[3].userid = 232;
+            // this.loadcourses[0].userid = 2000;
+            for (let citem of this.loadcourses) {
+              citem.bankes = [];
+              for (let bitem of loadbankes) {
+                if (bitem.courseid == citem.id) {
+                  if (!citem.username) {
+                    if (citem.userid == bitem.userid) {
+                      citem.username = bitem.username;
+                    }
+                  }
+                  citem.bankes.push(bitem);
+                }
+              }
+            }
+            // console.log('城市来得快',this.loadcourses);
             let arrId = [];
-            for (let v of res.data.data) {
+            for (let v of loadbankes) {
               arrId.push(v.id);
               // v.schoolid=1001
             }
 
-            if (res.data.data.length == this.pagesize) {
+            if (loadbankes.length >= this.pagesize) {
               this.loading = false;
               this.page++;
               this.sethomelocalstate(1);
@@ -661,7 +685,7 @@ export default {
               this.loading = true;
               this.allLoaded = true;
             }
-            this.eventmsgsOnbankes(res.data.data, arrId);
+            this.eventmsgsOnbankes(loadbankes, arrId);
           }
           if (!this.bankeempty) {
             this.bankestatedesc = "当前无班课";
@@ -675,7 +699,7 @@ export default {
         });
     },
     //红点班课列表
-    eventmsgsOnbankes(datas, bankeids) {
+    eventmsgsOnbankes(allbankes, bankeids) {
       this.$http
         .post("/api/eventmsgs/onbankes", {
           bankes: [...bankeids]
@@ -684,44 +708,106 @@ export default {
           if (res.data.code == "0" && res.data.data.length) {
             let serveData = res.data.data;
             for (let v of serveData) {
-              for (let item of datas) {
+              for (let item of allbankes) {
                 if (v.bankeid == item.id && v.count) {
                   item.eventmsgs = v.count;
                 }
               }
             }
           }
-          this.allbankes = [...this.allbankes, ...datas];
-          this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
+          this.loadbankes = [...this.loadbankes, ...allbankes];
+          this.filterCurbankeFn(this.loadbankes, this.isCreate, 1);
           this.isloadtop = false;
         })
         .catch(err => {
-          this.allbankes = [...this.allbankes, ...datas];
-          this.filterCurbankeFn(this.allbankes, this.isCreate, 1);
+          this.loadbankes = [...this.loadbankes, ...allbankes];
+          this.filterCurbankeFn(this.loadbankes, this.isCreate, 1);
           this.isloadtop = false;
         });
     },
-    filterCurbankeFn(bankes, type, first) {
+    filterCurbankeFn(loadbankes, type, first) {
       let temp = [];
+      let temp2 = [];
       if (type) {
-        temp = bankes.filter(item => item.userid == this.curuser.id);
+        temp = loadbankes.filter(item => item.userid == this.curuser.id);
+        temp2 = this.loadcourses.filter(item => item.userid == this.curuser.id);
       } else {
-        temp = bankes.filter(item => item.userid != this.curuser.id);
+        temp = loadbankes.filter(item => item.userid != this.curuser.id);
+        temp2 = this.loadcourses.filter(item => item.userid != this.curuser.id);
+        if (temp.length && !temp2.length) {
+          this.coursequery(temp);
+          console.log("发送到发送到", this.joincourse);
+        }
+        for (let v of temp) {
+          this.joinClass.push(v.name);
+        }
       }
       //首次加载
       if (temp.length == 0 && first) {
         // this.isCreate = 0;
         this.$store.commit("SET_ISCREATE", 0);
-        temp = bankes.filter(item => item.userid != this.curuser.id);
+        temp = loadbankes.filter(item => item.userid != this.curuser.id);
+        temp2 = this.loadcourses.filter(item => item.userid != this.curuser.id);
       }
-      if (!temp.length && !first) {
+      if (!temp2.length && !first) {
         this.bankestatedesc = "当前无班课";
-        // console.log("bankeempty", this.bankeempty);
-        // console.log("bankestatedesc", this.bankestatedesc);
       }
+      console.log("班级", temp);
+      console.log("课程", temp2);
       this.filterCurbankes = temp;
-      this.$store.commit("banke/setBankes", bankes);
+      this.filterCourses = temp2;
+      // console.log("bankeempty", this.bankeempty);
+      // console.log("bankestatedesc", this.bankestatedesc);
+      this.$store.commit("banke/setBankes", loadbankes);
+      this.$store.commit("banke/setCourse", this.loadcourses);
     },
+    coursequery(joindata) {
+      return new Promise((resolve, reject) => {
+        for (let i = 0; i < joindata.length; i++) {
+          let item = joindata[i];
+          this.$http
+            .post("/api/course/query", {
+              where: {
+                id: item.courseid
+              }
+            })
+            .then(res => {
+              if (res.data.code == "0") {
+                if (res.data.data.length) {
+                  let serveData = res.data.data;
+                  console.log("考虑什么", this.joincourse);
+                  this.joincourse.push(serveData[0]);
+                }
+                resolve(res);
+              }
+            })
+            .catch(err => {
+              reject();
+            });
+        }
+      });
+    },
+    // coursequery(joindata) {
+    //   for (let i = 0; i < joindata.length; i++) {
+    //     let item = joindata[i];
+    //     this.$http
+    //       .post("/api/course/query", {
+    //         where: {
+    //           id: item.courseid
+    //         }
+    //       })
+    //       .then(res => {
+    //         if (res.data.code == "0") {
+    //           if (res.data.data.length) {
+    //             let serveData = res.data.data;
+    //             console.log("考虑什么", this.joincourse);
+    //             this.joincourse.push(serveData[0]);
+    //           }
+    //         }
+    //       })
+    //       .catch(err => {});
+    //   }
+    // },
     //红点班课主页
     eventmsgsOnmain() {
       this.$http
@@ -781,6 +867,19 @@ export default {
       //   console.log(document.documentElement.clientHeight+'-----------'+window.innerHeight); // 可视区域高度
       //   console.log(document.body.scrollTop); // 滚动高度
       //   console.log(document.body.offsetHeight); // 文档高度
+    },
+    onhidepage(v) {},
+    loadTopInit() {
+      this.sethomelocalstate(0);
+      this.loadcourses = [];
+      this.loadbankes = [];
+      this.filterCurbankes = [];
+      this.filterCourses = [];
+      this.joinClass = [];
+      this.page = 0;
+      this.loading = false;
+      this.listLoadend = false;
+      this.allLoaded = false;
     }
   },
   beforeDestroy() {},
@@ -801,6 +900,7 @@ export default {
     [TabContainer.name]: TabContainer,
     [TabContainerItem.name]: TabContainerItem,
     [Actionsheet.name]: Actionsheet
+    // CourseHome
   },
   //在页面离开时记录滚动位置
   beforeRouteLeave(to, from, next) {
@@ -942,7 +1042,7 @@ export default {
 }
 .cloudHome.banke .page-wrap {
   height: 100%;
-  margin-top: 94px;
+  margin-top: 104px;
 }
 .cloudHome.banke .page-wrap .bankecontainer {
   min-height: calc(100vh - 175px);
@@ -954,6 +1054,46 @@ export default {
 </style>
 
 <style lang="less" scoped>
+.paret-class-wrap {
+  width: 95%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+  border-radius: 10px;
+  background: #fff;
+  .subclass-wrap {
+    padding: 0 10px;
+    .subclass {
+      position: relative;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 0.02667rem solid #f0f0f0;
+      padding-right: 24px;
+      .stit {
+        width: 84%;
+      }
+      .ggao {
+        width: 50%;
+      }
+      .sinfo-r {
+        width: 16%;
+        text-align: right;
+        .membernum {
+          display: block;
+          width: 100%;
+        }
+        .iconfont {
+          font-size: 26px;
+          right: 0;
+          top: 32px;
+        }
+      }
+    }
+  }
+}
 .search-popup {
   background: #f0f0f0;
   .main {

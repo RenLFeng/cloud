@@ -463,6 +463,12 @@ export default {
     },
     bankeZhiYuanLinkItem() {
       return this.$store.state.bankeZhiYuanLinkItem;
+    },
+    miniprogram() {
+      if (nativecode.platform == "miniprogram") {
+        return true;
+      }
+      return false;
     }
     // ...mapState(["bankeZhiYuanLinkItem"])
   },
@@ -1044,7 +1050,11 @@ export default {
       }
     },
     backHome() {
-      this.$router.replace("/");
+      if (this.miniprogram) {
+        this.$router.replace("/");
+      } else {
+        this.$router.go(-1);
+      }
     }
 
     // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])

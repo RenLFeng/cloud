@@ -5,7 +5,8 @@ import commontools from '../../commontools'
 
 const state = {
 
-    curbankes: []
+    curbankes: [],
+    curcourses: [],
 
 }
 
@@ -50,8 +51,11 @@ const mutations = {
 
     REMOV_BANKES(state, v) {
         state.curbankes = v;
-    }
+    },
 
+    setCourse(state, course) {
+        state.curcourses = course;
+    },
 
 
 

@@ -7,24 +7,27 @@
       <div class="itempart">
         <div class="wrap">
           <div class="itemtitle ellipse">
-            <span class="maxlong maxlong8">
+            <span class="maxlong maxlong8 color0">
               <span v-if="classitem.inclass" class="inclass">正在上课</span>
               {{classitem.name}}
+              <span v-if="!end" class="settop font-xxs tc colora" @click.stop="showMenu(classitem)">{{classitem.ordernum?'取消置顶':'置顶'}}</span>
             </span>
-            <span class="membernum fonttiny fr color9">{{classitem.membernum}}人</span>
+            <span class="membernum fonttiny fr color9" v-if="end">{{classitem.membernum}}人</span>
           </div>
           <div class="font-xs ellipse">
-            <span class="maxlong">教师：{{classitem.username}}</span>
-            <span class="class-nmuber font-xs fr">班课号:{{classitem.id}}</span>
+            <span class="maxlong color0 font-xxs">教师：{{classitem.username}}</span>
+            <span class="font-xxs" v-if="!end">{{joinname}}</span>
+            <span class="class-nmuber font-xs fr" v-if="end">班课号:{{classitem.id}}</span>
           </div>
-          <div
+
+          <div v-if="end"
             class="font-xs ellipse"
             :class="{'Notice':classitem.info}"
           >公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
         </div>
       </div>
       <span class="go" v-if="!end">
-        <i class="iconfont iconjiantou1" @click.stop="showMenu(classitem)"></i>
+        <i class="iconfont iconjiantou"></i>
       </span>
     </div>
   </div>
@@ -48,12 +51,24 @@ export default {
     },
     homeEventmsgs: {
       default: false
-    }
+    },
+    joinClass:{
+      default(){
+        return []
+      },
+    },
   },
   data() {
     return {};
   },
   computed: {
+    joinname(){
+      let str='';
+      for(let v of this.joinClass){
+         str+=v+'\n';
+      }
+      return str;
+    },
     defaultimg() {
       var srcstr = 'this.src="';
       srcstr += "/assets/banke_default.png";
@@ -73,12 +88,12 @@ export default {
 </script>
 <style lang="less" scoped>
 .class-banke-list {
-  // padding: 5px 0;
   .item {
     position: relative;
     border-top: 1px solid #f0f0f0;
-    padding: 13px 13px 13px 80px;
+    padding: 25px 31px 25px 80px;
     background: #fff;
+    border-radius: 0.26667rem;
     .reddot-Tips-wrap {
       position: absolute;
       width: 55px;
@@ -94,7 +109,7 @@ export default {
     }
 
     .itempart {
-      width: 85%;
+      width: 100%;
       .wrap {
         > div {
           .class-nmuber {
@@ -103,6 +118,15 @@ export default {
         }
         .itemtitle {
           font-size: 18px;
+          .settop {
+            display: inline-block;
+            width: 34px;
+            height: 18px;
+            background: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(170, 170, 170, 1);
+            border-radius: 4px;
+            line-height: 18px;
+          }
           .membernum {
           }
         }

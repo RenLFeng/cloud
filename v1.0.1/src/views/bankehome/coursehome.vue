@@ -1,0 +1,481 @@
+<template>
+  <div class="course-wrap">
+    <mt-header :title="courseName" class="mint-header-f my-height gl" @click.native="guanlikec">
+      <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
+    </mt-header>
+    <div class="main main-f-2">
+      <ul class="tit-wrap">
+        <li class="item" v-for="(v,i) of tititems" :key="i" @click="selectClick(v)">
+          <span class="icon" :class="`iconfont ${v.iconfont}`"></span>
+          <span class="text font16">{{v.text}}</span>
+        </li>
+      </ul>
+      <div class="banji-wrap">
+        <p class="add-tit">
+          <span class="font18 colora">班级</span>
+          <span class="iconfont iconicon191 fr colora fontlarge24" @click="newBanke"></span>
+        </p>
+        <div
+          class="list-wrap overflow-scroll"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-disabled="loading"
+          infinite-scroll-distance="10"
+          infinite-scroll-immediate-check="false"
+        >
+          <div v-if="allBankes.length" class="all-ankes">
+            <div class="item" v-for="(v,i) of allBankes" :key="i" @click="bankeDedail(v)">
+              <div class="info">
+                <div class="content">
+                  <p class="tit position-l font18 ellipse color0">
+                    {{v.name}}
+                    <span v-if="v.inclass" class="inclass">正在上课</span>
+                  </p>
+                  <div class="right-info font-xxs position-r">
+                    <p class="colora position-t ellipse t">{{v.membernum}}人</p>
+                    <p class="position-b ellipse b">班级号: {{v.id}}</p>
+                  </div>
+                </div>
+                <p class="ggao position-b font-xxs colory ellipse">{{v.info}}</p>
+              </div>
+              <i class="iconfont iconcellyoucejiantou position-r fontnormal colora"></i>
+            </div>
+            <BottomLoadmore v-if="allLoaded && listLoadend" showType loadtext="已经加载全部了" type color />
+            <BottomLoadmore
+              v-if="!allLoaded && loading"
+              showType="loading"
+              loadtext="加载中..."
+              type="triple-bounce"
+              color
+            />
+          </div>
+          <Empty v-else />
+        </div>
+      </div>
+    </div>
+    <mt-popup
+      v-model="popupGuanlikc"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <div class="kc-gl-wrap">
+        <mt-header title="课程管理" class="my-height mint-header-f">
+          <mt-button icon="back" slot="left" @click="popupGuanlikc=false">{{$t('common.Back')}}</mt-button>
+        </mt-header>
+        <div class="main main-f-2">
+          <div class="tit-wrap-g">
+            <div class="left-info">
+              <img :src="curcourse.avatar" class="avatar" :onerror="$defaultImg('account')" />
+              <div class="text-wrap color0">
+                <p class="ellipse fontnormal">{{curcourse.name}}</p>
+                <p class="ellipse font16">教师: {{curcourse.username}}</p>
+              </div>
+            </div>
+            <i class="iconfont position-r iconbianji colord"></i>
+          </div>
+          <div class="margin">
+            <mt-cell title="发布为示范课程模板" is-link></mt-cell>
+          </div>
+          <div class="margin">
+            <mt-cell title="归档课程" class="f00"></mt-cell>
+          </div>
+          <p class="colora">课程归档后无法发布资源、创建作业等，但仍可以查看已发布的资源、已结束的作业等。</p>
+        </div>
+      </div>
+    </mt-popup>
+    <mt-popup
+      v-model="popupNewbanke"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <div class="new-banke-wrap">
+        <mt-header title="创建班级" class="my-height">
+          <mt-button icon="back" slot="left" @click="popupNewbanke=false">{{$t('common.Back')}}</mt-button>
+          <mt-button slot="right" @click="onsave" :disabled="savedisable">创建</mt-button>
+        </mt-header>
+        <div class="main" style="margin-top:10px">
+          <mt-field
+            @blur.native.capture="$setInputScroll"
+            placeholder="请输入班级名称"
+            v-model="classitem.name"
+          ></mt-field>
+        </div>
+      </div>
+    </mt-popup>
+  </div>
+</template>
+<script>
+import Empty from "@/common/empty";
+import { Indicator } from "mint-ui";
+import { parseURL } from "@/util";
+import nativecode from "@/nativecode";
+const tititems = [
+  {
+    id: 1,
+    text: "教案",
+    iconfont: "iconwangyelianjie"
+  },
+  {
+    id: 2,
+    text: "课程资源",
+    iconfont: "iconwangyelianjie"
+  },
+  {
+    id: 2,
+    text: "作业",
+    iconfont: "iconwangyelianjie"
+  },
+  {
+    id: 3,
+    text: "统计",
+    iconfont: "iconwangyelianjie"
+  }
+];
+export default {
+  name: "coursehome",
+  props: {
+    courseid: {
+      default: 0
+    },
+    coures: {
+      default() {
+        return {};
+      }
+    }
+  },
+  data() {
+    return {
+      allBankes: [],
+      tititems,
+      popupGuanlikc: false,
+      popupNewbanke: false,
+      classitem: {
+        name: "",
+        avatar: "",
+        type: "",
+        ordernum: null,
+        courseid: this.courseid
+      },
+      pagesize: 20,
+      page: 0,
+      loading: false,
+      listLoadend: false,
+      allLoaded: false,
+      autofill: false,
+      curcourse: null
+    };
+  },
+  computed: {
+    courseName() {
+      if (this.curcourse) {
+        return this.curcourse.name;
+      }
+      return "课程ID" + this.courseid;
+    },
+    savedisable() {
+      if (this.classitem.name.length > 0) {
+        return false;
+      }
+      return true;
+    },
+    curcourses() {
+      return this.$store.state.banke.curbankes;
+    }
+  },
+  created() {
+    let curcourse = sessionStorage.getItem("curcourse") || "";
+    if (curcourse) {
+      this.curcourse = JSON.parse(curcourse);
+    }
+    this.bankequery();
+  },
+  mounted() {
+    // this.coursequery();
+  },
+  watch: {},
+  methods: {
+    loadMore() {
+      this.loading = true;
+      this.bankequery();
+    },
+    bankequery() {
+      Indicator.open("加载中...");
+      this.$http
+        .post("/api/banke/bankequery", {
+          where: {
+            courseid: this.courseid
+          },
+          page: {
+            pagesize: this.pagesize,
+            page: this.page
+          }
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            if (res.data.data.length >= this.pagesize) {
+              this.loading = false;
+              this.page++;
+            } else {
+              if (this.page) {
+                this.listLoadend = true;
+              }
+              this.loading = true;
+              this.allLoaded = true;
+            }
+            let loadData = res.data.data.filter(item => {
+              return item.states > 0;
+            });
+            this.allBankes = [...loadData, ...this.allBankes];
+          }
+          Indicator.close();
+        })
+        .catch(err => {
+          Indicator.close();
+        });
+    },
+    newBanke() {
+      this.popupNewbanke = true;
+    },
+    onsave() {
+      Indicator.open("创建中...");
+      var url = "/api/api/bankenew";
+      this.$http
+        .post(url, this.classitem)
+        .then(res => {
+          Indicator.close();
+          if (res.data.code == 0) {
+            this.allBankes = [...[res.data.data], ...this.allBankes];
+            let localcourses = sessionStorage.getItem("curbankes") || "";
+            if (localcourses) {
+              localcourses = JSON.parse(localcourses);
+              for (let v of localcourses) {
+                if (v.id == this.courseid) {
+                  v.bankes = [...[res.data.data], ...v.bankes];
+                }
+              }
+              this.$store.commit("banke/appendBankes", res.data.data);
+            } else {
+              this.$store.commit("banke/setBankes", []);
+            }
+            this.popupNewbanke = false;
+          } else {
+            let tipmsg = res.data.msg;
+            if (tipmsg == "no privilige") {
+              tipmsg = "无权限";
+            } else if (tipmsg == "over num limit") {
+              tipmsg = "超出数量限制";
+            } else if (tipmsg == "disabled") {
+              tipmsg = "功能已被禁用";
+            } else if (tipmsg == "over num limit in school total") {
+              tipmsg = "学校班课数已达上限";
+            } else if (tipmsg == "over num limit in user") {
+              tipmsg = "您创建的班课数已达上限。\r\n请先结束部分班课";
+            }
+            Toast(tipmsg);
+          }
+        })
+        .catch(() => {
+          Indicator.close();
+          Toast(this.$t("common.Exception_occurred"));
+        });
+    },
+    //进入班课
+    bankeDedail(item) {
+      let tourl = "/bankehome/" + item.id;
+      if (!nativecode.navigateTo(tourl)) {
+        this.$store.commit("setRouterForward", true);
+        this.$router.push(tourl);
+      }
+    },
+    selectClick(v) {
+      switch (v.id) {
+        case 1:
+          break;
+        case 2:
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        default:
+          break;
+      }
+    },
+    guanlikec() {
+      this.popupGuanlikc = true;
+    }
+  },
+  components: {
+    Empty
+  }
+};
+</script>
+
+<style scoped lang="less">
+.course-wrap {
+  .main {
+    .tit-wrap {
+      display: flex;
+      background: #fff;
+      padding-bottom: 15px;
+      .item {
+        display: flex;
+        width: 25%;
+        flex-direction: column;
+        align-items: center;
+        .text {
+          color: #5d5d5d;
+        }
+        .icon {
+          font-size: 48px;
+        }
+      }
+    }
+    .banji-wrap {
+      margin-top: 10px;
+      .add-tit {
+        width: 100%;
+        height: 48px;
+        background: rgba(249, 249, 249, 1);
+        line-height: 48px;
+        padding: 0 10px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .list-wrap {
+        height: 69vh;
+        min-height: 69vh;
+        .all-ankes {
+          background: #fff;
+          padding: 0 10px;
+          .item {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            border-bottom: 1px solid #f0f0f0;
+            .info {
+              width: 100%;
+              height: 100%;
+              padding: 10px 0;
+              padding-right: 28px;
+              .content {
+                position: relative;
+                width: 100%;
+                height: 90%;
+                .tit {
+                  width: calc(100% - 100px);
+                  top: 50%;
+                  left: 0;
+                  transform: translate(0, -50%);
+                  .inclass {
+                    display: inline-block;
+                    width: 70px;
+                    height: 24px;
+                    background: rgba(0, 137, 255, 1);
+                    border-radius: 4px;
+                    color: #fff;
+                    font-size: 14px;
+                    line-height: 24px;
+                    text-align: center;
+                  }
+                }
+                .right-info {
+                  width: 100px;
+                  height: 100%;
+                  text-align: right;
+                  right: 0;
+                  .t {
+                    top: 0;
+                  }
+                  .b {
+                    bottom: 5px;
+                  }
+                  * {
+                    width: 100%;
+                  }
+                }
+              }
+              .ggao {
+                width: 100%;
+                bottom: 5px;
+              }
+            }
+            .iconfont {
+              right: 0;
+              height: 100%;
+              display: flex;
+              align-items: center;
+            }
+          }
+        }
+      }
+    }
+  }
+  .guanli-btn {
+    position: absolute;
+  }
+}
+.kc-gl-wrap {
+  .main {
+    .tit-wrap-g {
+      position: relative;
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      background: #fff;
+      margin-bottom: 150px;
+      img {
+        width: 55px;
+        height: 55px;
+      }
+      .left-info {
+        display: flex;
+        width: 100%;
+        padding-right: 27px;
+        align-items: center;
+        .text-wrap {
+          margin-left: 10px;
+        }
+      }
+      .iconfont {
+        // top: 0;
+        font-size: 26px;
+      }
+    }
+    .margin {
+      margin-bottom: 15px;
+    }
+  }
+}
+</style>
+<style >
+.course-wrap .gl .mint-header-title {
+  position: relative;
+}
+.course-wrap .gl .mint-header-title::after {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  content: "i";
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  border-radius: 50%;
+  border: 1px solid #0089ff;
+  color: #0089ff;
+  font-size: 12px;
+}
+.course-wrap .mint-cell-wrapper {
+  background-image: none;
+}
+.course-wrap .mint-cell:last-child {
+  background-image: none;
+}
+.course-wrap .f00 .mint-cell-text {
+  color: #f00;
+}
+</style>

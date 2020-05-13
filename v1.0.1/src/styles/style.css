@@ -359,6 +359,14 @@ textarea {
     margin-top: 45px;
 }
 
+.my-height {
+    height: 60px !important;
+}
+
+.main-f-2 {
+    margin-top: 59px;
+}
+
 .popup-scroll {
     overflow: auto !important;
     height: 100% !important;

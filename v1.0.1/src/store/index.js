@@ -66,6 +66,7 @@ const state = {
     Settedinfo:false,
     schoolname:{},
 
+    curcourse:{},
 
 }
 

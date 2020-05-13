@@ -202,11 +202,6 @@ export default {
         }
       ],
       selected: "ziyuan",
-      //curbanke: "common.Curbanke",
-      //    Curbanke: {
-      //   name: '未知班课',
-      //   avatar: ""
-      // }
       curbanke: {
         //! cjy： 预设字段， 方便触发vue的监听
         name: "",
@@ -282,6 +277,12 @@ export default {
       }
       return true;
     },
+    miniprogram() {
+      if (nativecode.platform == "miniprogram") {
+        return true;
+      }
+      return false;
+    },
     footerbar() {
       //！ cjyL 目前这个footerbar存在不稳定性问题，所以总是返回true； 例如：查看成员得分页面，然后点击浏览器的back键
       return true;
@@ -334,7 +335,11 @@ export default {
       // alert(window.history.length);
       //  window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
       //! cjy: 微信小程序， 这里不准确， 这里直接返回主页
-      this.$router.replace("/");
+      if (this.miniprogram) {
+        this.$router.replace("/");
+      } else {
+        this.$router.go(-1);
+      }
     },
     ontabshowmenu(bshow) {
       this.tabbarhide = bshow;

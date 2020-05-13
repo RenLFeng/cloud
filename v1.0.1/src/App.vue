@@ -200,19 +200,6 @@ export default {
       } else {
         this.isCloudmain = false;
       }
-      //to.path = '/';
-      // if (!this.map[to.path]) {
-      //     this.map[to.path] = +new Date() + 1;
-      // }
-      // if (!this.map[from.path]) {
-      //     this.map[from.path] = +new Date();
-      // }
-      //
-      // if (this.map[to.path] > this.map[from.path]) {
-      //     this.transitionName = 'slide-forward';
-      // } else {
-      //     this.transitionName = 'slide-back'
-      // }
     }
   },
   methods: {
@@ -488,22 +475,22 @@ export default {
   transform: translate(100%);
 }
 .slide-forward-enter-active {
-  transition: all 0.2s ease-in-out;
+  transition: all .2s ease-in-out;
 }
 .slide-forward-leave-active {
   transform: translate(-100%);
-  transition: all 0.2s ease-in-out;
+  transition: all .2s ease-in-out;
 }
 
 .slide-back-enter {
   transform: translate(-100%);
 }
 .slide-back-enter-active {
-  transition: all 0.2s ease-in-out;
+  transition: all .2s ease-in-out;
 }
 .slide-back-leave-active {
   transform: translate(100%);
-  transition: all 0.2s ease-in-out;
+  transition: all .2s ease-in-out;
 }
 .iconfont-big {
   display: block;

@@ -1,6 +1,6 @@
 <template>
-  <div class="newbanke-wrap">
-    <mt-header title="创建云班课">
+  <div class="coures-new-wrap">
+    <mt-header title="创建课程">
       <mt-button slot="left" @click="$back">取消</mt-button>
 
       <mt-button slot="right" @click="onsave" :disabled="savedisable">创建</mt-button>
@@ -22,19 +22,6 @@
         placeholder="请输入课程名称"
         v-model="classitem.name"
       ></mt-field>
-      <!-- <div class="bankename-wrap" :class="isOpen?'act':''">
-    
-        <mt-field
-          label="课程名称"
-          @focus.native.capture="onFocus"
-            @input.native.capture="onInput($event.target.value)"
-            :placeholder="$t('common.Please_entry')+' '+$t('common.ClassName')"
-          v-model="classitem.type"
-        ></mt-field>
-        <ul class="history-list font18 color0">
-          <li v-for="v in history" :key="v.id" @click="listSelect(v.name)">{{v.name}}</li>
-        </ul>
-      </div>-->
     </div>
     <input
       ref="uploadPic"
@@ -73,14 +60,12 @@ import { Indicator, Toast, MessageBox } from "mint-ui";
 import mimgcrop from "@/common/m-image-crop";
 import commontools from "@/commontools.js";
 export default {
-  name: "BankeNew",
+  name: "CouresNew",
   data() {
     return {
       classitem: {
         name: "",
         avatar: "",
-        type: "",
-        ordernum: null
       },
       popupMimgcrop: false,
       imgobj: {},
@@ -134,8 +119,9 @@ export default {
       this.isOpen = false;
     },
     onsave() {
+      let BankeData = this.$store.state.banke.curbankes;
       Indicator.open(this.$t("common.Saving"));
-      var url = "/api/api/bankenew";
+      var url = "/api/course/add";
       this.$http
         .post(url, this.classitem)
         .then(res => {
@@ -154,9 +140,9 @@ export default {
             } else if (tipmsg == "disabled") {
               tipmsg = "功能已被禁用";
             } else if (tipmsg == "over num limit in school total") {
-              tipmsg = "学校班课数已达上限";
+              tipmsg = "学校课程数已达上限";
             } else if (tipmsg == "over num limit in user") {
-              tipmsg = "您创建的班课数已达上限。\r\n请先结束部分班课";
+              tipmsg = "您创建的课程数已达上限。\r\n请先结束部分课程";
             }
             Toast(tipmsg);
           }
@@ -201,8 +187,9 @@ export default {
   }
 };
 </script>
+
 <style lang="less" scoped>
-.newbanke-wrap {
+.coures-new-wrap{
   .pic-wrap {
     margin: 30px auto;
     text-align: center;
@@ -236,10 +223,11 @@ export default {
   }
 }
 </style>
-<style scoped>
-.avatarimgpart {
-  /* width: 55px;
-  height: 55px;
-  border-radius: 3px; */
+<style>
+.coures-new-wrap .mint-cell-wrapper {
+  background-image: none;
+}
+.coures-new-wrap .mint-cell:last-child {
+  background-image: none;
 }
 </style>
