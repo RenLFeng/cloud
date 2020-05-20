@@ -1029,7 +1029,7 @@ export default {
 }
 .cloudHome.banke .page-wrap .bankecontainer {
   min-height: calc(100vh - 175px);
-  /* padding-bottom: 30px; */
+  padding-bottom: 10px;
 }
 .cloudHome.banke .page-wrap .bankecontainer.bankeempty {
   min-height: 78vh;
