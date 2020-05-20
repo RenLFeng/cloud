@@ -9,18 +9,23 @@
           <div class="itemtitle ellipse">
             <span class="maxlong maxlong8 color0">
               <span v-if="classitem.inclass" class="inclass">正在上课</span>
-              {{classitem.name}}
-              <span v-if="!end" class="settop font-xxs tc colora" @click.stop="showMenu(classitem)">{{classitem.ordernum?'取消置顶':'置顶'}}</span>
+              {{titname}}
+              <!-- <span
+                v-if="!end"
+                class="settop font-xxs tc colora"
+                @click.stop="showMenu(classitem)"
+              >{{classitem.ordernum?'取消置顶':'置顶'}}</span>-->
             </span>
             <span class="membernum fonttiny fr color9" v-if="end">{{classitem.membernum}}人</span>
           </div>
           <div class="font-xs ellipse">
             <span class="maxlong color0 font-xxs">教师：{{classitem.username}}</span>
-            <span class="font-xxs" v-if="!end">{{joinname}}</span>
+            <span class="font-xxs" v-if="showJoinClass">{{classitem.name}}</span>
             <span class="class-nmuber font-xs fr" v-if="end">班课号:{{classitem.id}}</span>
           </div>
 
-          <div v-if="end"
+          <div
+            v-if="end"
             class="font-xs ellipse"
             :class="{'Notice':classitem.info}"
           >公告: {{classitem.info?classitem.info:'暂无公告'}}</div>
@@ -42,7 +47,8 @@ export default {
       default() {
         return {
           name: "",
-          avatar: ""
+          avatar: "",
+          coursename: ""
         };
       }
     },
@@ -52,22 +58,31 @@ export default {
     homeEventmsgs: {
       default: false
     },
-    joinClass:{
-      default(){
-        return []
-      },
-    },
+    isCreate: {
+      default: true
+    }
   },
   data() {
     return {};
   },
   computed: {
-    joinname(){
-      let str='';
-      for(let v of this.joinClass){
-         str+=v+'\n';
+    showJoinClass() {
+      if (!this.end && !this.isCreate && this.classitem.courseid) {
+        return true;
+      } else {
+        return false;
       }
-      return str;
+    },
+    titname() {
+      if (this.isCreate) {
+        return this.classitem.name;
+      } else {
+        if (!this.classitem.courseid) {
+          return this.classitem.name;
+        } else {
+          return this.classitem.coursename;
+        }
+      }
     },
     defaultimg() {
       var srcstr = 'this.src="';

@@ -45,7 +45,7 @@
               <div class="bankecontainer" :class="!bankeempty?'bankeempty':''">
                 <div
                   class="paret-class-wrap"
-                  v-for="(item,selindex) in filterCourses"
+                  v-for="(item,selindex) in !isCreate?filterCurbankes:filterCourses"
                   :key="selindex"
                 >
                   <BankeSimple
@@ -53,12 +53,12 @@
                     @click.native="courseclick(item)"
                     @showMenu="onShowMenu"
                     :homeEventmsgs="homeEventmsgs"
-                    :joinClass="!isCreate?joinClass:[]"
+                    :isCreate="isCreate"
                   ></BankeSimple>
                   <div class="subclass-wrap" v-if="isCreate">
                     <div
                       class="subclass"
-                      v-for="(v,i) in filterCourseBanke(item.id)"
+                      v-for="(v,i) in filterCourseBanke (item.id)"
                       :key="i"
                       @click="bankeclick(v)"
                     >
@@ -74,6 +74,18 @@
                     </div>
                   </div>
                 </div>
+                <div class="" v-if="isCreate">
+                  <BankeSimple
+                    v-for="(citem,i) in NoCourseidBanke()"
+                    :key="i+'_index'"
+                    :classitem="citem"
+                    @click.native="bankeclick(citem)"
+                    @showMenu="onShowMenu"
+                    :homeEventmsgs="homeEventmsgs"
+                    :isCreate="isCreate"
+                  ></BankeSimple>
+                </div>
+
                 <BottomLoadmore
                   v-if="allLoaded && listLoadend && bankeempty"
                   showType
@@ -263,7 +275,6 @@ export default {
 
       loadcourses: [],
       loadbankes: [],
-      joinClass: [],
 
       joincourse: []
     };
@@ -321,7 +332,7 @@ export default {
       return this.$store.state.banke.curcourses;
     },
     bankeempty() {
-      if (this.filterCourses.length) {
+      if (this.filterCourses.length || this.filterCurbankes.length) {
         return true;
       }
       return false;
@@ -366,9 +377,9 @@ export default {
     } else {
       sessionStorage.setItem("scrolltop", 0);
       sessionStorage.setItem("homelocalstate", "");
-      this.initbanke();
+      // this.initbanke();
+      this.loadMore();
     }
-    // this.initbanke();
     this.initmine();
     this.eventmsgsOnmain();
   },
@@ -377,9 +388,17 @@ export default {
     scrollWrap.addEventListener("scroll", this.onscrollfn, false);
   },
   methods: {
-    filterCourseBanke: function(cid) {
+    showitem(item) {
+      return item.courseid == 0;
+    },
+    filterCourseBanke(cid) {
       return this.filterCurbankes.filter(function(item) {
         return item.courseid == cid;
+      });
+    },
+    NoCourseidBanke() {
+      return this.filterCurbankes.filter(function(item) {
+        return !item.courseid;
       });
     },
     loadTop() {
@@ -432,14 +451,21 @@ export default {
     //进入课程主页
     courseDedail() {
       if (this.courseitem.id) {
-        let tourl = "/coursehome/" + this.courseitem.id;
-        if (!nativecode.navigateTo(tourl)) {
-          this.$store.commit("setRouterForward", true);
-          this.$router.push(tourl);
-          this.sethomelocalstate(1);
-          let curbankes = this.curbankes;
-          sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
-          sessionStorage.setItem("curcourse", JSON.stringify(this.courseitem));
+        if (this.isCreate) {
+          let tourl = "/coursehome/" + this.courseitem.id;
+          if (!nativecode.navigateTo(tourl)) {
+            this.$store.commit("setRouterForward", true);
+            this.$router.push(tourl);
+            this.sethomelocalstate(1);
+            let curbankes = this.curbankes;
+            sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
+            sessionStorage.setItem(
+              "curcourse",
+              JSON.stringify(this.courseitem)
+            );
+          }
+        } else {
+          this.bankeclick(this.courseitem);
         }
       }
     },
@@ -637,7 +663,7 @@ export default {
       );
     },
     initbanke() {
-      var url = "/api/api/bankequery2 ";
+      var url = "/api/api/bankequery2";
       if (!this.bankeempty) {
         this.bankestatedesc = "加载中";
       }
@@ -650,24 +676,12 @@ export default {
         .then(res => {
           if (res.data.code == 0) {
             let loadbankes = res.data.data.bankes;
+            this.coursequery(loadbankes);
             this.loadcourses = [...this.loadcourses, ...res.data.data.courses];
-            //  loadbankes[2].userid = 232;
-            //  loadbankes[3].userid = 232;
-            // this.loadcourses[0].userid = 2000;
             for (let citem of this.loadcourses) {
-              citem.bankes = [];
-              for (let bitem of loadbankes) {
-                if (bitem.courseid == citem.id) {
-                  if (!citem.username) {
-                    if (citem.userid == bitem.userid) {
-                      citem.username = bitem.username;
-                    }
-                  }
-                  citem.bankes.push(bitem);
-                }
-              }
+              citem.username = this.curuser.name;
             }
-            // console.log('城市来得快',this.loadcourses);
+            console.log("城市来得快loadbankes", loadbankes);
             let arrId = [];
             for (let v of loadbankes) {
               arrId.push(v.id);
@@ -734,17 +748,9 @@ export default {
       } else {
         temp = loadbankes.filter(item => item.userid != this.curuser.id);
         temp2 = this.loadcourses.filter(item => item.userid != this.curuser.id);
-        if (temp.length && !temp2.length) {
-          this.coursequery(temp);
-          console.log("发送到发送到", this.joincourse);
-        }
-        for (let v of temp) {
-          this.joinClass.push(v.name);
-        }
       }
       //首次加载
       if (temp.length == 0 && first) {
-        // this.isCreate = 0;
         this.$store.commit("SET_ISCREATE", 0);
         temp = loadbankes.filter(item => item.userid != this.curuser.id);
         temp2 = this.loadcourses.filter(item => item.userid != this.curuser.id);
@@ -752,62 +758,40 @@ export default {
       if (!temp2.length && !first) {
         this.bankestatedesc = "当前无班课";
       }
-      console.log("班级", temp);
-      console.log("课程", temp2);
       this.filterCurbankes = temp;
       this.filterCourses = temp2;
-      // console.log("bankeempty", this.bankeempty);
+      console.log("班级", temp);
+      console.log("课程", temp2);
+      console.log("bankeempty", this.bankeempty);
       // console.log("bankestatedesc", this.bankestatedesc);
       this.$store.commit("banke/setBankes", loadbankes);
       this.$store.commit("banke/setCourse", this.loadcourses);
     },
     coursequery(joindata) {
-      return new Promise((resolve, reject) => {
-        for (let i = 0; i < joindata.length; i++) {
-          let item = joindata[i];
-          this.$http
-            .post("/api/course/query", {
-              where: {
-                id: item.courseid
+      for (let i = 0; i < joindata.length; i++) {
+        let item = joindata[i];
+        if (!item.courseid) continue;
+        this.$http
+          .post("/api/course/query", {
+            where: {
+              id: item.courseid
+            }
+          })
+          .then(res => {
+            if (res.data.code == "0") {
+              if (res.data.data.length) {
+                let serveData = res.data.data;
+                item.coursename = serveData[0].name;
+                item.avatar = serveData[0].avatar;
               }
-            })
-            .then(res => {
-              if (res.data.code == "0") {
-                if (res.data.data.length) {
-                  let serveData = res.data.data;
-                  console.log("考虑什么", this.joincourse);
-                  this.joincourse.push(serveData[0]);
-                }
-                resolve(res);
-              }
-            })
-            .catch(err => {
-              reject();
-            });
-        }
-      });
+            } else {
+            }
+          })
+          .catch(err => {
+            reject("连接服务失败");
+          });
+      }
     },
-    // coursequery(joindata) {
-    //   for (let i = 0; i < joindata.length; i++) {
-    //     let item = joindata[i];
-    //     this.$http
-    //       .post("/api/course/query", {
-    //         where: {
-    //           id: item.courseid
-    //         }
-    //       })
-    //       .then(res => {
-    //         if (res.data.code == "0") {
-    //           if (res.data.data.length) {
-    //             let serveData = res.data.data;
-    //             console.log("考虑什么", this.joincourse);
-    //             this.joincourse.push(serveData[0]);
-    //           }
-    //         }
-    //       })
-    //       .catch(err => {});
-    //   }
-    // },
     //红点班课主页
     eventmsgsOnmain() {
       this.$http
@@ -875,7 +859,6 @@ export default {
       this.loadbankes = [];
       this.filterCurbankes = [];
       this.filterCourses = [];
-      this.joinClass = [];
       this.page = 0;
       this.loading = false;
       this.listLoadend = false;

@@ -39,7 +39,7 @@ const state = {
     }, //! 当前登录用户
     curbanke: {}, //! cjy： 当前使用的班课
     usercookiereaded: false,
-    bankeZhiYuanLinkItem: [],
+    arrZhiyuan: [],
     lang: localStorage.getItem('lang') || 'zh',
     Preview: {
         isPreview: true, //是否开启了预览
@@ -63,10 +63,10 @@ const state = {
         },
         isShow: false
     },
-    Settedinfo:false,
-    schoolname:{},
+    Settedinfo: false,
+    schoolname: {},
 
-    curcourse:{},
+    curcourse: {},
 
 }
 
@@ -83,9 +83,9 @@ const getters = {
 
         return lm;
     },
-    hasloginuser:(state, getters)=>{
+    hasloginuser: (state, getters) => {
         let lm = getters.curuser;
-        if (lm && lm.id){
+        if (lm && lm.id) {
             return true;
         }
         return false;
@@ -210,24 +210,20 @@ const mutations = {
     setBHomeSelected(state, strsel) {
         state.bhomeselected = strsel;
     },
-    SET_BANKEZHIYUANLINKITEM(state, obj) {
+    SET_ZHIYUANS(state, obj) {
         let item = obj.item;
-        if (item.length) {
-            if (obj.type == 1) {
-                state.bankeZhiYuanLinkItem = [...item, ...state.bankeZhiYuanLinkItem];
-            } else if (obj.type == 2) {
-                state.bankeZhiYuanLinkItem = [...state.bankeZhiYuanLinkItem, ...item];
-            } else if (obj.type == 3) {
-                state.bankeZhiYuanLinkItem = item;
-            }
-        } else {
-            state.bankeZhiYuanLinkItem = []
+        if (obj.type == 1) {
+            state.arrZhiyuan = [...item, ...state.arrZhiyuan];
+        } else if (obj.type == 2) {
+            state.arrZhiyuan = [...state.arrZhiyuan, ...item];
+        } else if (obj.type == 3) {
+            state.arrZhiyuan = item;
         }
     },
-    DELECT_BANKEZHIYUANLINKITEM(state, id) {
-        for (let i = 0; i < state.bankeZhiYuanLinkItem.length; i++) {
-            if (state.bankeZhiYuanLinkItem[i].id == id) {
-                state.bankeZhiYuanLinkItem.splice(i, 1);
+    DEL_ZHIYUAN_ITEM(state, id) {
+        for (let i = 0; i < state.arrZhiyuan.length; i++) {
+            if (state.arrZhiyuan[i].id == id) {
+                state.arrZhiyuan.splice(i, 1);
             }
         }
     },

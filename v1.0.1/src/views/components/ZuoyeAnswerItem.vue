@@ -2,11 +2,15 @@
   <div>
     <div class="zacontainer">
       <div class="zaavatar" v-if="!seeMySbmit && pagemode=='result'">
-        <img :src="resultitem.useravatar" class="zaavatarimg avatar" :onerror="$defaultImg('account')" />
-        <div class="zabtnmore zatopmargin" v-if="showsubmitnum">
-          <div @click="onseeAllSubmit(resultitem)" class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
+        <img
+          :src="resultitem.useravatar"
+          class="zaavatarimg avatar"
+          :onerror="$defaultImg('account')"
+        />
+        <div class="zaavatartext zatopmargin">
+          {{itemName}}
+          <i class="iconfont iconjiantou1 position-r fontlarge colora" @click="edi" v-if="caneditzuoye&&state>=100"></i>
         </div>
-        <div class="zaavatartext zatopmargin">{{itemName}}</div>
       </div>
 
       <TextEllipsis
@@ -17,7 +21,7 @@
       >
         <!-- <span slot="before" class="h-tag h-tag-red">new</span> -->
         <template slot="more">
-          <span class="">...</span>
+          <span class>...</span>
           <span class="zatextviewmore" @click="isLimitHeight=false">查看更多</span>
         </template>
         <span slot="after" v-if="!isLimitHeight" @click="isLimitHeight=true">
@@ -25,12 +29,11 @@
         </span>
       </TextEllipsis>
 
-      <FileAttachList
-        :isupload="isupload"
-        :localfiles="resultitem.localfiles"
-        class="falist"
-      ></FileAttachList>
+      <FileAttachList :isupload="isupload" :localfiles="resultitem.localfiles" class="falist"></FileAttachList>
       <div class="zasubmittime">{{submittimedesc}}</div>
+      <div class="zabtnmore zatopmargin" v-if="showsubmitnum">
+        <div @click="onseeAllSubmit(resultitem)" class="zatopnumbtn">{{resultitem.submitnum}}次提交</div>
+      </div>
     </div>
     <div class="zabottom tc">
       <div class="zabottompart zabottompartdevide" @click="onclickscore">
@@ -57,13 +60,16 @@ export default {
   data() {
     return {
       isupload: false,
-      localfiles: [{ imgsrc: ("/assets/zuoye_icon.png") }],
+      localfiles: [{ imgsrc: "/assets/zuoye_icon.png" }],
       text: "",
-      isLimitHeight: true,
+      isLimitHeight: true
     };
   },
   mounted() {},
   methods: {
+    edi() {
+      this.$emit("setScore", this.resultitem);
+    },
     onseeAllSubmit(item) {
       this.$emit("seeAllSubmit", item);
     },
@@ -83,14 +89,21 @@ export default {
     }
   },
   computed: {
-         user() {
+    caneditzuoye() {
+      let isteacher = this.$store.getters.caneditbanke;
+      if (!isteacher) {
+        return false;
+      }
+      return true;
+    },
+    user() {
       return this.$store.getters.curuser;
     },
-    itemName(){
-      if(this.user.id==this.resultitem.userid){
-        return '我的作业'
-      }else{
-        return this.resultitem.username +'作业';
+    itemName() {
+      if (this.user.id == this.resultitem.userid) {
+        return "我的作业";
+      } else {
+        return this.resultitem.username + "作业";
       }
     },
     commentnumdesc() {
@@ -104,7 +117,7 @@ export default {
     },
     defaultImage() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/account_default.png");
+      srcstr += "/assets/account_default.png";
       srcstr += '"';
       return srcstr;
     },
@@ -116,7 +129,7 @@ export default {
       return commontools.sprintf(nfmt, this.resultitem.score);
     },
     submittimedesc() {
-       var szt = commontools.longTime(this.resultitem.submittime);
+      var szt = commontools.longTime(this.resultitem.submittime);
       // var szt = commontools.timeToHummanRead(this.resultitem.submittime);
       var szfmt = "%s 提交";
       return commontools.sprintf(szfmt, szt);
@@ -138,15 +151,18 @@ export default {
         };
       }
     },
-    seeMySbmit:{
-      default(){
-        return false
+    seeMySbmit: {
+      default() {
+        return false;
       }
     },
-      pagemode:{
-      default(){
-        return 'result'
+    pagemode: {
+      default() {
+        return "result";
       }
+    },
+    state:{
+      default:0
     }
   },
   components: {
@@ -205,10 +221,12 @@ export default {
 }
 
 .zacontainer {
+  position: relative;
   background-color: white;
   padding: 10px;
 }
 .zaavatartext {
+  position: relative;
   margin-left: 35px;
 }
 
@@ -231,6 +249,9 @@ export default {
   height: 30px;
 }
 .zabtnmore {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
   color: #0089ff;
   float: right;
 }

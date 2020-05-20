@@ -1,13 +1,30 @@
 <template>
-  <div>
+  <div class="bankezy-wrap">
+    <mt-header v-show="hasnavbar" :title="bankename" class="mint-header-f">
+      <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
+    </mt-header>
     <div class="controlpart tc">
-      <div
-        class="controlbtn"
-        v-for="(bitem, sindex) in $t(btnlist)"
-        :key="sindex"
-        :class="{controlbtnactive:curbtnindex==sindex, 'controlbtnthree':!hasedit,isEn:isEN=='en'}"
-        @click="onbtnclick(sindex)"
-      >{{bitem.name}}</div>
+      <div class="temp-wrap">
+        <ul class="controlbtn-wrap">
+          <li
+            class="font16"
+            :class="showZYType==v.id?'act colorf':''"
+            v-for="(v, sindex) in SelectTypelist"
+            :key="sindex"
+            @click="onSelectType(v)"
+          >{{v.name}}</li>
+        </ul>
+        <span v-if="hasedit" class="iconfont iconicon191 colora position-r" @click="onAddZuoye"></span>
+      </div>
+
+      <p class="filter-wrap font18" v-if="showZYType">
+        <span
+          :class="showTypeID==v.id?'colord':''"
+          v-for="(v, i) in filterZuoyelist"
+          :key="i"
+          @click="filterZuoye(v)"
+        >{{v.name}}</span>
+      </p>
     </div>
 
     <!-- :bottom-method="loadMore"
@@ -16,7 +33,8 @@
         bottomPullText
     bottomDropText="上拉加载更多"-->
     <div
-      class="zy-list-box scrollingtouch"
+      class="zy-list-box scrollingtouch bankezy-wrap-main"
+      :class="{'ku':!showZYType,'cfrom':cfrom,'showZYType':!showZYType}"
       v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="10"
@@ -30,6 +48,7 @@
         class="zyloadmore"
         :auto-fill="autofill"
       >
+        <div class="devide"></div>
         <div class="list-wrap">
           <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
             <BankeZuoyeSimple
@@ -38,6 +57,7 @@
               v-if="showitem(zitem)"
               @editclick="onitemedit"
               @normalclick="onnormalclick"
+              @fabuzy="onfabuzy"
             ></BankeZuoyeSimple>
           </div>
           <div v-if="zuoyelist.length==0" class="tc position-c">{{$t('bankeTask.No_task')}}</div>
@@ -61,21 +81,38 @@
         />
       </mt-loadmore>
     </div>
-
     <mt-actionsheet :actions="editmenudata" v-model="editmenuvisible" class="sheetdialog"></mt-actionsheet>
+    <mt-popup
+      v-model="popupFabu"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <Fabu v-if="popupFabu" :curzuoye="curzuoye" @calce="oncalce" :bankeid="bankeid" />
+    </mt-popup>
   </div>
 </template>
 
  <script>
+let SelectTypelist = [
+  { id: 110, name: "已发布", act: true },
+  { id: 0, name: "作业库", act: false }
+];
+let filterZuoyelist = [
+  { id: 100, name: "进行中", act: true },
+  { id: 10, name: "已结束", act: false }
+];
 import BankeZuoyeSimple from "./components/BankeZuoyeSimple";
 
-import { Indicator, Toast, MessageBox ,Actionsheet} from "mint-ui";
+import { Indicator, Toast, MessageBox, Actionsheet } from "mint-ui";
 
 import commontools from "../commontools";
 import { CollectionFn, getZYFileType } from "@/util";
 
 import nativecode from "@/nativecode";
 import BottomLoadmore from "@/common/bottom-loadmore";
+const Fabu = () => import("@/views/banKeZuoye/fabu");
 export default {
   name: "BankeZuoye",
   props: {
@@ -83,15 +120,67 @@ export default {
       default() {
         return 0;
       }
+    },
+    courseid: {
+      default() {
+        return 0;
+      }
+    },
+    bankename: {
+      default: ""
+    },
+    cfrom: {
+      default: false
     }
   },
+  data() {
+    return {
+      SelectTypelist,
+      filterZuoyelist,
+      // btnlist: !this.$store.getters.caneditbanke ? "btnlist" : "btnlist2",
+      showTypeID: 100,
+      zuoyelist: [],
+      curzuoye: null,
+      editmenuvisible: false,
+      topStatus: "",
+      bottomStatus: "",
+      autofill: false,
+      hasedit: this.$store.getters.caneditbanke,
+      page: 0,
+      pagesize: 10,
+      allLoaded: false,
+      loading: false,
+
+      showZYType: 110,
+      popupFabu: false
+    };
+  },
   computed: {
+    caneditbanke() {
+      let caneditbanke = this.$store.getters.caneditbanke;
+      return caneditbanke;
+    },
+    hasnavbar() {
+      return nativecode.hasnavbar();
+    },
+    hasbackbtn() {
+      if (nativecode.platform == "exsoftdaping") {
+        return false;
+      }
+      return true;
+    },
+    miniprogram() {
+      if (nativecode.platform == "miniprogram") {
+        return true;
+      }
+      return false;
+    },
     isEN() {
       return this.$store.state.lang;
     },
     editmenudata() {
       var odatas = [];
-      console.log(this.curzuoye);
+      // console.log(this.curzuoye);
       if (this.curzuoye) {
         if (nativecode.hassharecommon() && this.curzuoye.state > 0) {
           odatas.push({
@@ -103,19 +192,19 @@ export default {
         if (this.curzuoye.state == 100) {
           //!
           odatas.push({
-            name: this.$t("common.End"),
+            name: "结束",
             method: this.menustop
           });
         } else if (this.curzuoye.state == 10) {
           odatas.push({
-            name: this.$t("common.Delete"),
+            name: "删除",
             method: this.menudel
           });
         } else {
-          odatas.push({
-            name: this.$t("common.Strat"),
-            method: this.menustart
-          });
+          // odatas.push({
+          //   name: this.$t("common.Strat"),
+          //   method: this.menustart
+          // });
           odatas.push({
             name: this.$t("common.Edit"),
             method: this.menuedit
@@ -134,12 +223,22 @@ export default {
         }
       }
       return odatas;
+    },
+    unpublish() {
+      if (this.showZYType) {
+        return false;
+      }
+      return true;
     }
   },
   created() {
-    //   console.log('国际化',this.$i18n.messages)
+    var d = this.$store.getters.getBankeData("zuoyelist", this.bankeid);
+    if (d && d.zuoyelist && d.zuoyelist.length) {
+      this.zuoyelist = commontools.clone(d.zuoyelist);
+    }
+    //! 总是去尝试刷新；
+    this.doQueryZuoye(true);
   },
-
   methods: {
     Collection() {
       // console.log(this.curzuoye)
@@ -155,10 +254,87 @@ export default {
         title
       );
     },
-    onbtnclick(sindex) {
-      this.curbtnindex = sindex;
-    },
+    onfabuzy(zitem) {
+      this.curzuoye = zitem;
+      this.popupFabu = true;
+      if (this.curzuoye) {
+        this.$store.commit("setBankeData", {
+          modulename: "zuoyelist",
+          bankeid: this.bankeid,
+          fn: fobj => {
+            fobj.editingZuoye = this.curzuoye;
+          }
+        });
+      }
 
+      this.$store.commit("setBankeData", {
+        modulename: "zuoyelist",
+        bankeid: this.bankeid,
+        fn: fobj => {
+          fobj.editingZuoye = this.curzuoye;
+        }
+      });
+    },
+    onSelectType(v) {
+      if (this.showZYType == v.id) return;
+      if (!this.hasedit && !this.cfrom) {
+        Toast("你无权限");
+        return;
+      }
+      this.zuoyelist = [];
+      this.showZYType = v.id;
+      this.doQueryZuoye(true);
+    },
+    filterZuoye(v) {
+      if (this.showTypeID == v.id) return;
+      this.showTypeID = v.id;
+    },
+    showitem(zitem) {
+      if (this.showZYType == 110) {
+        return zitem.state == this.showTypeID;
+      }
+      if (this.showZYType == 0) {
+        return zitem.state == 0;
+      }
+      return;
+      if (!this.$store.getters.caneditbanke) {
+        //! 学生
+        if (useindex > 0) {
+          useindex += 1;
+        }
+      }
+      if (useindex == 0) {
+        return true;
+      }
+      if (useindex == 1) {
+        //! 未开始
+        if (zitem.state == 0) {
+          return true;
+        }
+      }
+      if (useindex == 2) {
+        //! 进行中
+        if (zitem.state == 100) {
+          return true;
+        }
+      }
+      if (useindex == 3) {
+        //! 已结束
+        if (zitem.state == 10) {
+          return true;
+        }
+      }
+      return false;
+    },
+    onAddZuoye() {
+      let bankeid = this.bankeid;
+      if (this.courseid) {
+        bankeid = this.courseid;
+      }
+      this.$store.commit("setRouterForward", true);
+      var url = "/zuoyenew/" + bankeid;
+      this.$router.push(url);
+    },
     menustop() {
       this.domenuopt(10);
     },
@@ -240,7 +416,9 @@ export default {
     onnormalclick(zitem) {
       this.curzuoye = zitem;
       if (!this.curzuoye.state) {
-        this.menuedit();
+        this.editmenuvisible = true;
+        this.$store.commit("SET_FOOTER_BAR_STATE", false);
+        // this.menuedit();
       } else {
         this.menuresult();
       }
@@ -290,37 +468,7 @@ export default {
     onitemedit(zitem) {
       this.curzuoye = zitem;
       this.editmenuvisible = true;
-    },
-    showitem(zitem) {
-      var useindex = this.curbtnindex;
-      if (!this.$store.getters.caneditbanke) {
-        //! 学生
-        if (useindex > 0) {
-          useindex += 1;
-        }
-      }
-      if (useindex == 0) {
-        return true;
-      }
-      if (useindex == 1) {
-        //! 未开始
-        if (zitem.state == 0) {
-          return true;
-        }
-      }
-      if (useindex == 2) {
-        //! 进行中
-        if (zitem.state == 100) {
-          return true;
-        }
-      }
-      if (useindex == 3) {
-        //! 已结束
-        if (zitem.state == 10) {
-          return true;
-        }
-      }
-      return false;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
     loadTop() {
       this.allLoaded = false;
@@ -339,7 +487,12 @@ export default {
       console.log(status);
     },
     doQueryZuoye(ball) {
-      var url = "/api/api/bankezuoyequery?bankeid=" + this.bankeid;
+      let bankeid = this.bankeid;
+      var url = "/api/api/bankezuoyequery?bankeid=" + bankeid;
+      if (this.cfrom) {
+        bankeid = 0;
+        url = "/api/api/bankezuoyequery?bankeid=" + bankeid + "&courseid=" + this.courseid;
+      }
       if (!ball) {
         if (this.zuoyelist.length) {
           var lasti = this.zuoyelist[this.zuoyelist.length - 1];
@@ -347,7 +500,9 @@ export default {
         }
       }
       this.$http
-        .post(url)
+        .post(url, {
+          unpublish: this.unpublish
+        })
         .then(res => {
           if (ball) {
             this.$refs.loadmore.onTopLoaded();
@@ -357,12 +512,15 @@ export default {
           if (res.data.code == 0) {
             if (!res.data.data.length) {
               this.allLoaded = true;
-               this.loading = true;
-            }else{
-                this.loading = false;
+              this.loading = true;
+            } else {
+              this.loading = false;
             }
             let zlist = res.data.data;
             for (let v of zlist) {
+              if (v.publishdesc) {
+                v.publishdesc = JSON.parse(v.publishdesc);
+              }
               v.eventmsgs = false; //! 预创建member
             }
             if (ball) {
@@ -382,13 +540,6 @@ export default {
           }
         })
         .catch(() => {});
-    },
-    appendzlist(serverData, ball) {
-      if (ball) {
-        this.zuoyelist = serverData;
-      } else {
-        commontools.arrayMergeAsIds(this.zuoyelist, serverData);
-      }
     },
     //红点查询
     eventmsgsOnactivity(serverData, eventids, ball) {
@@ -420,48 +571,33 @@ export default {
           //  commontools.arrayMergeAsIds(this.zuoyelist, serverData);
           this.appendzlist(serverData, ball);
         });
+    },
+    appendzlist(serverData, ball) {
+      if (ball) {
+        this.zuoyelist = serverData;
+      } else {
+        commontools.arrayMergeAsIds(this.zuoyelist, serverData);
+      }
+    },
+    oncalce(v) {
+      this.popupFabu = false;
+      if (v == "success") {
+        this.showZYType = 110;
+        this.showTypeID = 100;
+        this.doQueryZuoye(true);
+      }
+    },
+    goback() {
+      if (this.cfrom) {
+        this.$emit("calce", true);
+      } else {
+        if (this.miniprogram) {
+          this.$router.replace("/");
+        } else {
+          this.$router.go(-1);
+        }
+      }
     }
-  },
-  data() {
-    return {
-      btnlist: !this.$store.getters.caneditbanke ? "btnlist" : "btnlist2",
-      //   btnlist: (() => {
-      //     if (!this.$store.getters.isteacher) {
-      //       return [
-      //         { name: "全部" },
-      //         { name: "进行中" },
-      //         { name: "已结束" }
-      //       ];
-      //     }
-      //     return [
-      //       { name: "全部" },
-      //       { name: "未开始" },
-      //       { name: "进行中" },
-      //       { name: "已结束" }
-      //     ];
-      //   })(),
-      curbtnindex: 0,
-      zuoyelist: [],
-      curzuoye: null,
-      editmenuvisible: false,
-      topStatus: "",
-      bottomStatus: "",
-      autofill: false,
-      hasedit: this.$store.getters.caneditbanke,
-      page: 0,
-      pagesize: 10,
-      allLoaded: false,
-      loading:false
-    };
-  },
-  created() {
-    //   this.doQueryZuoye(true);
-    var d = this.$store.getters.getBankeData("zuoyelist", this.bankeid);
-    if (d && d.zuoyelist && d.zuoyelist.length) {
-      this.zuoyelist = commontools.clone(d.zuoyelist);
-    }
-    //! 总是去尝试刷新；
-    this.doQueryZuoye(true);
   },
   destroyed() {
     this.$store.commit("setBankeData", {
@@ -473,18 +609,20 @@ export default {
     });
   },
   watch: {
-    editmenuvisible() {
-      this.$emit("showmenu", this.editmenuvisible);
+    editmenuvisible(nv, olv) {
+      if (nv) {
+        this.$store.commit("SET_FOOTER_BAR_STATE", true);
+      }
     }
   },
   components: {
     BankeZuoyeSimple,
     BottomLoadmore,
-    [Actionsheet.name]:Actionsheet
+    [Actionsheet.name]: Actionsheet,
+    Fabu
   }
 };
 </script>
-
  <style scoped>
 .sheetdialog {
   z-index: 99999;
@@ -494,11 +632,7 @@ export default {
   min-height: calc(100vh - 198px);
 }
 .controlpart {
-  margin: 10px 10px;
-  border: 1px solid #0089ff;
-  border-radius: 15px;
-
-  background-color: white;
+  /* background-color: white; */
 }
 
 .controlbtn {
@@ -530,11 +664,86 @@ export default {
 
   border-radius: 13px;
 }
-.mint-actionsheet {
-  bottom: 68px;
-}
 .zy-list-box {
-  height: 71vh;
-  overflow: auto;
+  /* height: 71vh;
+  overflow: auto; */
+}
+</style>
+<style lang="less" scoped>
+.bankezy-wrap {
+  .controlpart {
+    position: fixed;
+    left: 0;
+    top: 48px;
+    // z-index: 999;
+    width: 100%;
+    height: 126px;
+    .temp-wrap {
+      position: relative;
+      display: flex;
+      height: 66px;
+      background: #fff;
+      align-items: center;
+      justify-content: center;
+      .iconfont {
+        font-size: 30px;
+        font-weight: bold;
+      }
+      .controlbtn-wrap {
+        width: 192px;
+        height: 40px;
+        display: flex;
+        border: 1px solid rgba(0, 137, 255, 1);
+        border-radius: 20px;
+        li {
+          display: flex;
+          width: 50%;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          border-radius: 20px;
+          &.act {
+            background: #0089ff;
+          }
+        }
+      }
+    }
+    .filter-wrap {
+      display: flex;
+      height: 60px;
+      background: #f9f9f9;
+      span {
+        width: 50%;
+        height: 100%;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        border-bottom: 3px solid #fff;
+        &.colord {
+          border-bottom: 3px solid #0089ff;
+        }
+      }
+    }
+  }
+  .bankezy-wrap-main {
+    .devide {
+      height: 6px;
+    }
+    padding-top: 125px;
+    &.ku {
+      padding-top: 65px;
+    }
+    &.cfrom{
+      padding-top: 171px;
+    }
+    &.cfrom.showZYType{
+       padding-top: 111px;
+    }
+    .list-wrap {
+      .zuoye {
+        background: #fff;
+      }
+    }
+  }
 }
 </style>

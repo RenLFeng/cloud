@@ -29,6 +29,9 @@
             <li @click="setNotice">
               <mt-cell title="发布公告" is-link></mt-cell>
             </li>
+            <!-- <li @click="classConfig">
+              <mt-cell title="班级设置" is-link></mt-cell>
+            </li> -->
             <li @click="setProportion">
               <mt-cell title="得分占比设置" is-link></mt-cell>
             </li>
@@ -138,12 +141,29 @@
         </div>
       </div>
     </mt-popup>
+    <!-- <mt-popup
+      v-model="popupClassConfig"
+      position="right"
+      class="popup-right info-popup"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <mt-header :title="bankeInfo.name">
+        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      </mt-header>
+      <ClassConfig
+        :bankeInfo="bankeInfo"
+        @disablequit="ondisablequit"
+        @disablejoin="ondisablejoin"
+      />
+    </mt-popup> -->
   </div>
 </template>
 
 <script>
 import { MessageBox, Indicator, Toast } from "mint-ui";
 import edit from "./edit";
+// import ClassConfig from "./classConfig";
 import Notice from "./Notice";
 import Proportion from "./Proportion";
 import nativecode from "@/nativecode";
@@ -157,6 +177,7 @@ export default {
           avatar: "",
           id: 0,
           info: "",
+          funcdesc: { disablejoin: "", disablequit: "" },
           scorerule1: "",
           scorerule2: "",
           scorerule3: "",
@@ -175,7 +196,8 @@ export default {
   components: {
     edit,
     Notice,
-    Proportion
+    Proportion,
+    // ClassConfig
   },
   data() {
     return {
@@ -186,7 +208,9 @@ export default {
       editBkState: false,
       titData: {},
       popupSchool: false,
-      schoolInfo: []
+      schoolInfo: [],
+
+      popupClassConfig: false
     };
   },
 
@@ -219,6 +243,9 @@ export default {
   },
   created() {},
   methods: {
+    ondisablequit(v) {
+    },
+    ondisablejoin(v) {},
     showSchoo() {
       // console.log("vv", this.bankeInfo);
       console.log(this.bankeInfo);
@@ -245,6 +272,10 @@ export default {
         .catch(err => {
           Indicator.close();
         });
+    },
+    //班级设置
+    classConfig() {
+      this.popupClassConfig = true;
     },
     //发布公告
     setNotice() {
@@ -409,6 +440,9 @@ export default {
       this.$store.commit("SET_FOOTER_BAR_STATE", true);
     },
     goBack() {
+      if (this.popupClassConfig) {
+        this.popupClassConfig = false;
+      }
       if (this.popupNotice) {
         this.popupNotice = false;
       }

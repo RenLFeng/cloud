@@ -128,7 +128,7 @@ export default {
     index: {
       default: 0
     },
-    bankeZhiYuanLinkItem: {
+    arrZhiyuan: {
       default() {
         return [];
       }

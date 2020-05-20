@@ -1,6 +1,6 @@
 <template>
-  <div class="url-wrap fontsmall zhiyan-wrap" :class="Previd?'prev':''">
-    <mt-header :title="!selection?bankename:`已选择${selectnmb}文件`" class="mint-header-f">
+  <div class="url-wrap fontsmall zhiyan-wrap">
+    <mt-header :title="menuName?menuName:bankename" class="mint-header-f">
       <mt-button
         v-if="hasbackbtn && !selection"
         icon="back"
@@ -15,12 +15,7 @@
         <mt-button slot="right" class="iconfont iconjia icons" @click="onaddFile"></mt-button>
       </div>-->
     </mt-header>
-    <!-- <p class="Prev-btn" v-if="Previd" @click="onprev">
-      <i class="iconfont iconwithdraw-fill colord position-l"></i>
-      <span style="color:#a5a5a5">返回上一层...</span>
-    </p>-->
-
-    <div v-if="showupload" class="uploadpart">
+    <!-- <div v-if="showupload" class="uploadpart">
       <mt-tabbar v-model="selected" class="uploadtabbar">
         <mt-tab-item id="1" @click.native="onUploadLocal">
           <div>
@@ -32,18 +27,36 @@
         <mt-tab-item id="2" @click.native="onUploadLink">
           <div>
             <i class="iconfont iconfont-big iconwangyelianjie"></i>
-            <div class="fonttiny">{{$t('bankeZiYuan.WebLink')}} {{bankeZhiYuanLinkItem.id}}</div>
+            <div class="fonttiny">{{$t('bankeZiYuan.WebLink')}} {{arrZhiyuan.id}}</div>
           </div>
         </mt-tab-item>
       </mt-tabbar>
+    </div>-->
+    <div class="btn-wrap" v-if="showupload && !selection || cfrom">
+      <!-- <p class="jiaoan position-l" v-if="!cfrom && showJiaoAn" @click="jiaoan">
+        <mt-button class="font16 btn">教案</mt-button>
+        <i class="iconfont iconjiantou position-r colora"></i>
+      </p> -->
+
+      <div class="right-wrap position-r colora" :class="cfrom?'cfrom':''">
+        <span class="iconfont iconpaixu icons" :class="cfrom?'position-l':''" @click="onSort "></span>
+        <span
+          class="iconfont iconiconfontadd icons"
+          :class="cfrom?'position-r':''"
+          @click="onaddFile"
+        ></span>
+      </div>
     </div>
-    <div class="items-container">
-      <p v-if="bankeZhiYuanLinkItem.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p>
+    <p class="Prev-btn" v-if="tempmenuData.length" @click="onPrev">
+      <i class="iconfont iconwithdraw-fill colord position-l"></i>
+      <span style="color:#a5a5a5">返回上一层...</span>
+    </p>
+    <div class="items-container" :class="showupload?'showupload':''">
+      <!-- <p v-if="arrZhiyuan.length" class="Resources-total fonttiny">资源总数:{{filetotal}}</p> -->
       <mt-tab-container v-model="selected">
         <mt-tab-container-item
           id="1"
-          class="listcontainer-wrap scrollingtouch"
-          :class="showupload?'showupload':''"
+          :class="{'listcontainer-wrap':true,'cfrom':cfrom,'cfrom':!showJiaoAn,'showupload':showupload}"
         >
           <!-- 
              :bottom-method="loadMore"
@@ -51,8 +64,10 @@
               :bottom-all-loaded="allLoaded"
               bottomPullText
           bottomDropText="上拉加载更多"-->
+
           <div
-            class="listcontainer"
+            ref="listcontainer"
+            class="listcontainer scrollingtouch"
             v-infinite-scroll="loadMore"
             infinite-scroll-disabled="loading"
             infinite-scroll-distance="10"
@@ -67,14 +82,10 @@
               :class="filesempty?'filesempty':''"
               :auto-fill="autofill"
             >
-              <div class="wrap">
-                <div
-                  v-for="(fitem,selindex) in bankeZhiYuanLinkItem"
-                  v-bind:key="selindex"
-                  class="item-wrap"
-                >
+              <div class="wrap" :class="prevStyle?'prev':''">
+                <div v-for="(fitem,selindex) in arrZhiyuan" v-bind:key="selindex" class="item-wrap">
                   <div
-                    v-if="fitem.ftype=='folder'"
+                    v-if="fitem.ftype=='menu'"
                     class="folder-wrap-item"
                     @click="onFolderClick(fitem)"
                   >
@@ -84,7 +95,13 @@
                       :onerror="$defaultImg('')"
                     />
                     <div class="info-wrap position-r">
-                      <p class="name ellipse position-t">{{fitem.name}}</p>
+                      <p class="name ellipse position-t">
+                        {{fitem.name}}
+                        <i
+                          class="iconfont iconjiantou1 eicotrigger colord position-r"
+                          @click.stop="oneditclick(fitem)"
+                        ></i>
+                      </p>
                       <p class="time font-xxs colora5 position-b">
                         {{fitem.createtime}}&nbsp;更新
                         <span class="fr">文件夹</span>
@@ -93,9 +110,9 @@
                   </div>
                   <BankeFileSimple
                     v-else
-                    :fileitem="bankeZhiYuanLinkItem[selindex]"
+                    :fileitem="arrZhiyuan[selindex]"
                     :index="selindex"
-                    :bankeZhiYuanLinkItem="bankeZhiYuanLinkItem"
+                    :arrZhiyuan="arrZhiyuan"
                     :fileInfo="fileInfo"
                     :selection="selection"
                     @editclick="oneditclick"
@@ -130,7 +147,13 @@
           :modal="false"
           style="background:#f0f0f0"
         >
-          <URL :bankeid="bankeid" @addLinkState="onAddLinkState" />
+          <URL
+            :bankeid="cfrom?courseid:bankeid"
+            @addLinkState="onAddLinkState"
+            :cfrom="cfrom"
+            :parentid="parentid"
+            :headerName="menuName?menuName:bankename"
+          />
         </mt-popup>
       </mt-tab-container>
     </div>
@@ -141,7 +164,6 @@
       class="upload__input"
       @change="uploadChange"
       style="display:none"
-      multiple
     />
     <mt-popup
       v-model="popupEditInfo"
@@ -188,7 +210,11 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <AddSuperLink v-if="popupSuperLink" :bankeid="bankeid" @watchBack="onWatchBack" />
+      <AddSuperLink
+        v-if="popupSuperLink"
+        :bankeid="cfrom?courseid:bankeid"
+        @watchBack="onWatchBack"
+      />
     </mt-popup>
     <mt-popup
       v-model="popupUploadFile"
@@ -197,19 +223,36 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header title="上传资源">
-        <mt-button slot="left" @click="goBack()">取消</mt-button>
-        <mt-button slot="right" @click="submitUpload">确定</mt-button>
-      </mt-header>
       <UpLoadFile
         v-if="popupUploadFile"
-        :bankeid="bankeid"
+        :cfrom="cfrom"
+        :bankeid="cfrom?courseid:bankeid"
         :tempUploadFile="tempUploadFile"
+        :parentid="parentid"
+        :headerName="menuName?menuName:bankename"
         @uploadfile="onUploadLocal"
+        @canlce="goBack()"
+      />
+    </mt-popup>
+    <mt-popup
+      v-model="popupmulu"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <Menu
+        :bankeid="cfrom?courseid:bankeid"
+        :cfrom="cfrom"
+        @Cancel="onCancel"
+        @menuSelectEnd="onMenuSelectEnd"
+        v-if="popupmulu"
+        :parentid="parentid"
+        :headerName="menuName?menuName:bankename"
       />
     </mt-popup>
     <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
-    <div class="selection-wrap position-fb" v-if="selection">
+    <!-- <div class="selection-wrap position-fb" v-if="selection">
       <ul class="clearfix">
         <li class="colord fl">
           <span class="iconfont iconbianji1"></span>
@@ -228,7 +271,7 @@
           <span class="font-xs">删除</span>
         </li>
       </ul>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -250,6 +293,8 @@ import {
 } from "mint-ui";
 
 import BankeFileSimple from "./components/BankeFileSimple";
+const Menu = () => import("@/views/bankeZiyuan/menu");
+// import Menu from "./bankeZiyuan/menu";
 import URL from "./bankeZiyuan/url";
 import UpLoadFile from "./bankeZiyuan/upLoadFile";
 import AddSuperLink from "./bankeZiyuan/addSuperLink";
@@ -277,16 +322,17 @@ export default {
     },
     bankename: {
       default: ""
-    }
-  },
-  watch: {
-    bankename: function(newv, oldv) {
-      //  alert(0)
-      //   this.headerName=newv;
+    },
+    courseid: {
+      default: 0
+    },
+    cfrom: {
+      default: false
     }
   },
   data() {
     return {
+      curbanke: {},
       selected: "1",
       files: [],
       liststatedesc: "common.Loading",
@@ -310,21 +356,18 @@ export default {
 
       filetotal: 0,
 
-      loading: false,
-
       popupAudio: false,
       viewfileItem: {},
 
       headerName: "",
       rootid: 0,
-      Previd: 0,
       headerAddBtn: false,
       headerSortBtn: false,
       popupSuperLink: false,
       popupUploadFile: false,
       tempUploadFile: {},
       tempUploadImg: [],
-      newFile: "",
+      newFileName: "",
 
       selection: false,
       selectnmb: 0,
@@ -333,11 +376,24 @@ export default {
       page: 0,
       pagesize: 10,
       autofill: false,
-      listLoadend: false,
       topStatus: "",
       bottomStatus: "",
-      allLoaded: false
-      // dropType: 0
+
+      allLoaded: false,
+      loading: false,
+      listLoadend: false,
+
+      popupmulu: false,
+      mypageState: 0,
+      bankeCourseid: 0,
+
+      cMenuItem: {},
+      tempmenuData: [],
+      sortFile: false,
+      sortTime: false,
+      showJiaoAn: true,
+      menuSelectEndData: null,
+      tempScorllTop: []
     };
   },
   watch: {
@@ -367,15 +423,16 @@ export default {
       // headerSortBtn
       let objret = [];
       let isteacher = this.$store.getters.caneditbanke;
-      if (isteacher) {
+
+      if (isteacher || this.cfrom) {
         if (this.headerSortBtn) {
           objret.push({
             name: "按文件名称排序",
-            method: this.sortFile
+            method: this.sortfileFn
           });
           objret.push({
             name: "按时间倒序排序",
-            method: this.sortTime
+            method: this.sorttimeFn
           });
         } else if (this.headerAddBtn) {
           objret.push({
@@ -386,10 +443,10 @@ export default {
             name: "添加网页链接",
             method: this.addLink
           });
-          objret.push({
-            name: "添加精选网站",
-            method: this.superLink
-          });
+          // objret.push({
+          //   name: "添加精选网站",
+          //   method: this.superLink
+          // });
           objret.push({
             name: "新建文件夹",
             method: this.newFolder
@@ -404,10 +461,10 @@ export default {
           //   name: "编辑",
           //   method: ""
           // });
-          // objret.push({
-          //   name: "移动",
-          //   method: ""
-          // });
+          objret.push({
+            name: "移动",
+            method: this.updateItemBtn
+          });
         }
       }
       if (!this.headerSortBtn && !this.headerAddBtn) {
@@ -426,10 +483,11 @@ export default {
         //   });
         // }
       }
+      console.log("更多反馈了过来", objret);
       return objret;
     },
     fileInfo() {
-      for (let v of this.bankeZhiYuanLinkItem) {
+      for (let v of this.arrZhiyuan) {
         let localfiles = [];
         if (v.info) {
           let arr = [];
@@ -454,30 +512,59 @@ export default {
       if (this.files.length) {
         return false;
       } else {
-        if (this.bankeZhiYuanLinkItem.length) {
+        if (this.arrZhiyuan.length) {
           return false;
         } else {
           return true;
         }
       }
     },
-    bankeZhiYuanLinkItem() {
-      return this.$store.state.bankeZhiYuanLinkItem;
+    arrZhiyuan() {
+      return this.$store.state.arrZhiyuan;
     },
     miniprogram() {
       if (nativecode.platform == "miniprogram") {
         return true;
       }
       return false;
+    },
+
+    menuName() {
+      if (this.tempmenuData.length) {
+        return this.tempmenuData[this.tempmenuData.length - 1].name;
+      }
+      return this.bankename;
+    },
+    parentid() {
+      if (this.tempmenuData.length) {
+        return this.tempmenuData[this.tempmenuData.length - 1].id;
+      }
+      return 0;
+    },
+    prevStyle() {
+      if (this.allLoaded && this.listLoadend && this.tempmenuData.length) {
+        return true;
+      }
+      return false;
     }
-    // ...mapState(["bankeZhiYuanLinkItem"])
+
+    // ...mapState(["arrZhiyuan"])
   },
   created() {
-    this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+    this.$store.commit("SET_ZHIYUANS", {
       item: [],
-      type: 0
+      type: 3
     });
-    this.loadMoreFile();
+    let curbanke = sessionStorage.getItem("curbanke");
+    if (curbanke) {
+      this.curbanke = JSON.parse(curbanke);
+      this.bankeCourseid = this.curbanke.courseid;
+    }
+    this.loadMoreFile(this.parentid);
+    // this.loadMore(this.parentid);
+    console.log("cfrom 课程ID", this.courseid);
+    console.log("班课的课程ID", this.bankeCourseid);
+    console.log("班课ID", this.bankeid);
   },
   components: {
     BankeFileSimple,
@@ -486,6 +573,7 @@ export default {
     AddSuperLink,
     UpLoadFile,
     BottomLoadmore,
+    Menu,
     [TabContainer.name]: TabContainer,
     [TabContainerItem.name]: TabContainerItem,
     [Actionsheet.name]: Actionsheet,
@@ -499,11 +587,11 @@ export default {
     },
     //全选
     selectAll() {
-      let temp = JSON.parse(JSON.stringify(this.bankeZhiYuanLinkItem));
+      let temp = JSON.parse(JSON.stringify(this.arrZhiyuan));
       for (let v of temp) {
         v.isAct = true;
       }
-      this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+      this.$store.commit("SET_ZHIYUANS", {
         item: temp,
         type: 3
       });
@@ -511,41 +599,51 @@ export default {
     //取消多选
     cancelSelect() {
       this.selection = false;
-      let temp = JSON.parse(JSON.stringify(this.bankeZhiYuanLinkItem));
+      let temp = JSON.parse(JSON.stringify(this.arrZhiyuan));
       for (let v of temp) {
         v.isAct = false;
       }
-      this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+      this.$store.commit("SET_ZHIYUANS", {
         item: temp,
         type: 3
       });
     },
     onSelectionClick(fileitem) {
-      let temp = JSON.parse(JSON.stringify(this.bankeZhiYuanLinkItem));
+      let temp = JSON.parse(JSON.stringify(this.arrZhiyuan));
       for (let v of temp) {
         if (v.id == fileitem.id) {
           v.isAct = !v.isAct;
         }
       }
-      this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+      this.$store.commit("SET_ZHIYUANS", {
         item: temp,
         type: 3
       });
-      // let temp = JSON.parse(JSON.stringify(this.bankeZhiYuanLinkItem));
-      // temp[i].isAct = !temp[i].isAct;
-      // this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
-      //   item: temp,
-      //   type: 3
-      // });
     },
-    //点击文件夹
     onFolderClick(fitem) {
-      this.Previd = testData2[0].id;
-      this.headerName = testData2[0].name;
+      let listcontainer = this.$refs.listcontainer;
+      let prevTop = listcontainer.scrollTop;
+      this.tempScorllTop.push(prevTop);
+      let localarrZhiyuan = this.$store.state.arrZhiyuan;
+      localarrZhiyuan = JSON.parse(JSON.stringify(localarrZhiyuan));
+      this.cMenuItem = fitem;
+      this.tempmenuData.push({
+        id: fitem.id,
+        name: fitem.name,
+        page: this.page,
+        allLoaded: this.allLoaded,
+        loading: this.loading,
+        listLoadend: this.listLoadend,
+        datas: localarrZhiyuan
+      });
+      this.loadTop();
     },
-    //返回上一级
-    onprev() {
-      this.Previd = 0;
+    onPrev() {
+      this.$store.commit("SET_ZHIYUANS", {
+        item: this.tempmenuData[this.tempmenuData.length - 1].datas,
+        type: 3
+      });
+      this.onprevInitData();
     },
     //收藏
     Collection() {
@@ -677,7 +775,7 @@ export default {
         .catch(res => {});
     },
     deletezy() {
-      if (!this.$store.getters.caneditbanke) {
+      if (!this.$store.getters.caneditbanke && !this.cfrom) {
         Toast("你无权限");
         return;
       }
@@ -688,7 +786,7 @@ export default {
             .then(res => {
               if (res.data.code == 0) {
                 MessageBox.alert("删除成功").then(() => {
-                  this.$store.commit("DELECT_BANKEZHIYUANLINKITEM", this.dlid);
+                  this.$store.commit("DEL_ZHIYUAN_ITEM", this.dlid);
                 });
               } else {
                 MessageBox.alert(res.data.msg);
@@ -708,29 +806,6 @@ export default {
       } else if (fileitem.ftype == "link") {
         nativecode.fileviewUrl(this, fileitem);
       }
-
-      // fileitem.downurl = nativecode.getDownUrl(fileitem.url);
-      // if (nativecode.ncall("jsFileLink", fileitem)) {
-      //   return;
-      // }
-      // if (fileitem.ftype == "file") {
-      //   MessageBox.confirm("您可以下载当前文件!").then(res => {
-      //     let down = document.createElement("a");
-      //     down.href = fileitem.downurl;
-      //     down.download = fileitem.name;
-      //     document.body.appendChild(down);
-      //     down.click();
-      //     down.remove();
-      //     return;
-      //   });
-      // }
-      //
-      // var desc = "请在正式环境查看";
-      // Toast(desc);
-      //
-      // if (window.exsoftTest) {
-      //   window.exsoftTest(fileitem.filepath, fileitem.filename1);
-      // }
     },
     parseOneItem(item) {
       if (item.info) {
@@ -740,20 +815,28 @@ export default {
         }
       }
     },
-    loadTop() {
-      this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+    loadTopInit() {
+      this.$store.commit("SET_ZHIYUANS", {
         item: [],
-        type: 1
+        type: 3
       });
+      this.files = [];
       this.page = 0;
       this.loading = false;
       this.listLoadend = false;
       this.allLoaded = false;
-      this.loadMoreFile();
+      let listcontainer = this.$refs.listcontainer;
+      this.$nextTick(() => {
+        listcontainer.scrollTop = 0;
+      });
+    },
+    loadTop() {
+      this.loadTopInit();
+      this.loadMore(this.parentid);
     },
     loadMore() {
       this.loading = true;
-      this.loadMoreFile();
+      this.loadMoreFile(this.parentid);
     },
     handleTopChange(status) {
       this.topStatus = status;
@@ -761,15 +844,33 @@ export default {
     handleBottomChange(status) {
       this.bottomStatus = status;
     },
-    loadMoreFile() {
+    loadMoreFile(parentid) {
+      let postData = {
+        bankeid: this.bankeid,
+        page: this.page,
+        pagesize: this.pagesize,
+        parentid: this.parentid
+      };
+      if (this.cfrom) {
+        (postData.bankeid = this.courseid), (postData.banketype = 1);
+      } else {
+        if (this.bankeCourseid) {
+          postData.bankeid = this.bankeCourseid;
+          postData.banketype = 1;
+        }
+      }
+      if (this.sortTime) {
+        postData.ordername = "id";
+        postData.order = "asc";
+      }
+      if (this.sortFile) {
+        postData.ordername = "name";
+      }
       this.$http
-        .post("/api/bankefile/querypage", {
-          bankeid: this.bankeid,
-          page: this.page,
-          pagesize: this.pagesize
-        })
+        .post("/api/bankefile/querypage", postData)
         .then(res => {
           if (res.data.code == 0) {
+            // res.data.data.files[0].ftype = "folder";
             this.filetotal = res.data.data.total;
             if (res.data.data.files.length >= this.pagesize) {
               this.loading = false;
@@ -806,7 +907,7 @@ export default {
                 } else {
                   item.imgsrc = getZYFileTypeIcon(item.info.filepath); //commontools.fileType(item.info);
                 }
-              } else if (item.ftype == "folder") {
+              } else if (item.ftype == "menu") {
                 item.imgsrc = "/assets/file_icon/folder.svg";
               }
             }
@@ -850,15 +951,15 @@ export default {
               }
             }
           }
-          commontools.arrayMergeAsIds(this.files, serverData);
-          this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+          // commontools.arrayMergeAsIds(this.files, serverData);
+          this.$store.commit("SET_ZHIYUANS", {
             item: serverData,
             type: 2
           });
         })
         .catch(err => {
-          commontools.arrayMergeAsIds(this.files, serverData);
-          this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
+          // commontools.arrayMergeAsIds(this.files, serverData);
+          this.$store.commit("SET_ZHIYUANS", {
             item: serverData,
             type: 2
           });
@@ -873,11 +974,20 @@ export default {
       this.actionShow = true;
     },
     //文件排序
-    sortFile() {},
-    //时间排序
-    sortTime() {
-      let temp = this.bankeZhiYuanLinkItem;
+    sortfileFn() {
+      this.sortFile = !this.sortFile;
+      this.sortTime = false;
+    },
+    //时间倒序排序
+    sorttimeFn() {
+      this.sortTime = !this.sortTime;
+      this.sortFile = false;
+      let temp = JSON.parse(JSON.stringify(this.arrZhiyuan));
       temp = temp.reverse(temp);
+      this.$store.commit("SET_ZHIYUANS", {
+        item: temp,
+        type: 3
+      });
     },
     //添加网站
     addLink() {
@@ -900,9 +1010,38 @@ export default {
     },
     //新建文件夹
     newFolder() {
+      var url = "/api/bankefile/menuadd?parentid=" + this.parentid;
+      if (this.cfrom) {
+        url += "&bankeid=" + this.courseid + "&banketype=" + 1;
+      } else {
+        url += "&bankeid=" + this.bankeid;
+      }
       MessageBox.prompt("请输入文件名").then(({ value, action }) => {
-        this.newFile = value;
-        alert(this.newFile);
+        this.newFileName = value;
+        Indicator.open("创建中...");
+        this.$http
+          .post(url, {
+            name: this.newFileName
+          })
+          .then(res => {
+            if (res.data.code == "0") {
+              let item = res.data.data;
+              item.imgsrc = "/assets/file_icon/folder.svg";
+              let arr = [];
+              arr[0] = res.data.data;
+              this.$store.commit("SET_ZHIYUANS", {
+                item: arr,
+                type: 1
+              });
+            } else {
+              Toast("创建失败");
+            }
+            Indicator.close();
+          })
+          .catch(err => {
+            Toast("服务连接失败");
+            Indicator.close();
+          });
       });
     },
     onWatchBack() {
@@ -916,10 +1055,10 @@ export default {
     },
     //上传文件
     uploadChange(event) {
-      if (event.target.files.length >= 6) {
-        MessageBox.alert("最多同时上传5个文件");
-        return;
-      }
+      // if (event.target.files.length >= 6) {
+      //   MessageBox.alert("最多同时上传5个文件");
+      //   return;
+      // }
       if (event.target.files.length > 0) {
         var file = event.target.files;
         //! cjy: 大小限制？
@@ -942,96 +1081,26 @@ export default {
     douploadonefile(onefile) {
       let type = onefile.type;
       if (type.indexOf("image") > -1) {
-        console.log("选择手机照片", onefile);
         //! cjy: 因为可能选择手机照片； 而手机照片可能很大（10M-30M），且带旋转， 因此这里需要处理
         fixCaptureImage(onefile, true)
           .then(res => {
-            console.log("选择手机照片 resres", res);
-            this.douploadonefiledirect(res);
-            // this.tempUploadFile = {
-            //   file: res,
-            //   tempImg: _URL.createObjectURL(res)
-            // };
-            // console.log("是的撒", this.tempUploadFile);
-            // this.popupUploadFile = true;
+            this.goUploadInitpage(res);
           })
           .catch(err => {
-            console.log("选择手机照片 error", err);
-            this.douploadonefiledirect(err);
-            // this.tempUploadFile = {
-            //   file: res,
-            //   tempImg: _URL.createObjectURL(res)
-            // };
-            // this.popupUploadFile = true;
+            this.goUploadInitpage(res);
           });
       } else {
-        this.douploadonefiledirect(onefile);
+        this.goUploadInitpage(onefile);
       }
     },
-    douploadonefiledirect(onefile) {
-      console.log("上传照片", onefile);
-      if (!onefile) {
-        console.log("上传照片 失败");
-        return;
+    goUploadInitpage(file) {
+      this.tempUploadFile = {
+        file: file,
+        tempImg: _URL.createObjectURL(file)
+      };
+      if (!this.popupUploadFile) {
+        this.popupUploadFile = true;
       }
-      var formdata = new FormData();
-      formdata.append("file", onefile);
-
-      var url = "/api/bankefile/fileupload?";
-      url += "bankeid=" + this.bankeid;
-
-      Indicator.open(this.$t("Indicator.Uploading"));
-
-      this.$http({
-        url: url,
-        method: "post",
-        data: formdata,
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      })
-        .then(res => {
-          Indicator.close();
-          if (res.data.code == 0) {
-            console.log("54", res.data.data);
-            this.parseOneItem(res.data.data);
-            let item = res.data.data;
-            if (item.ftype == "link") {
-              item.imgsrc = "/assets/file_icon/IT.svg";
-            } else if (item.ftype == "file") {
-              if (item.finttype == "1") {
-                if (
-                  item.info &&
-                  item.info.metainfo &&
-                  item.info.metainfo.snapsuffix
-                ) {
-                  item.imgsrc =
-                    item.info.filepath + item.info.metainfo.snapsuffix;
-                }
-              } else {
-                item.imgsrc = getZYFileTypeIcon(item.info.filepath);
-              }
-            }
-            commontools.arrayMergeAsIds(this.files, res.data.data);
-            //  res.data.data.info = JSON.parse(res.data.data.info);
-            let arr = [];
-            arr[0] = res.data.data;
-            this.$store.commit("SET_BANKEZHIYUANLINKITEM", {
-              item: arr,
-              type: 1
-            });
-
-            this.tempUploadFile = {};
-            this.popupUploadFile = false;
-          } else {
-            Toast("上传失败");
-          }
-        })
-        .catch(err => {
-          Indicator.close();
-          console.log(err);
-        });
-    },
-    submitUpload() {
-      this.douploadonefiledirect(this.tempUploadFile.file);
     },
     goBack() {
       if (this.popupAudio) {
@@ -1044,20 +1113,169 @@ export default {
       }
       if (this.popupUploadFile) {
         this.popupUploadFile = false;
+        this.tempUploadFile = {};
       }
       if (this.popupEditInfo) {
         this.popupEditInfo = false;
       }
     },
     backHome() {
-      if (this.miniprogram) {
-        this.$router.replace("/");
+      if (this.cfrom) {
+        this.$emit("calce", true);
       } else {
-        this.$router.go(-1);
+        if (this.miniprogram) {
+          this.$router.replace("/");
+        } else {
+          this.$router.go(-1);
+        }
       }
+    },
+    //教案
+    jiaoan() {
+      this.showJiaoAn = false;
+      this.$store.commit("SET_FOOTER_BAR_STATE", false);
+    },
+    updateItemBtn() {
+      this.popupmulu = true;
+    },
+    updateItem() {
+      let parentid = this.parentid;
+      if (this.menuSelectEndData) {
+        parentid = this.menuSelectEndData.parentid;
+      }
+      Indicator.open("正全速移动...");
+      this.$http
+        .post("/api/bankefile/updatefile", {
+          id: this.editItemFile.id,
+          parentid: parentid
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            let curzhiyuans = this.arrZhiyuan;
+            curzhiyuans = curzhiyuans.filter(item => {
+              return item.id != this.editItemFile.id;
+            });
+            this.$store.commit("SET_ZHIYUANS", {
+              item: curzhiyuans,
+              type: 3
+            });
+            Toast("移动成功");
+          } else {
+            Toast("移动失败");
+          }
+          Indicator.close();
+          this.popupmulu = false;
+        })
+        .catch(err => {
+          Toast("连接服务失败");
+          Indicator.close();
+          this.popupmulu = false;
+        });
+    },
+    onMenuSelectEnd(v) {
+      this.menuSelectEndData = v;
+      this.updateItem();
+    },
+    onCancel(v) {
+      this.popupmulu = false;
+      this.menuSelectEndData = null;
+    },
+    onprevInitData() {
+      let listcontainer = this.$refs.listcontainer;
+      this.page = this.tempmenuData[this.tempmenuData.length - 1].page;
+      this.allLoaded = this.tempmenuData[
+        this.tempmenuData.length - 1
+      ].allLoaded;
+      this.loading = this.tempmenuData[this.tempmenuData.length - 1].loading;
+      this.listLoadend = this.tempmenuData[
+        this.tempmenuData.length - 1
+      ].listLoadend;
+      this.tempmenuData.splice(this.tempmenuData.length - 1, 1);
+      this.$nextTick(() => {
+        listcontainer.scrollTop = this.tempScorllTop[
+          this.tempScorllTop.length - 1
+        ];
+        this.tempScorllTop.splice(this.tempScorllTop.length - 1, 1);
+      });
     }
 
-    // ...mapMutations(["SET_BANKEZHIYUANLINKITEM"])
+    // onsubmitUpload() {
+    //   this.douploadonefiledirect(this.tempUploadFile.file);
+    // },
+    // douploadonefiledirect(onefile) {
+    //   console.log("上传照片", onefile);
+    //   if (!onefile) {
+    //     console.log("上传照片 失败");
+    //     return;
+    //   }
+    //   var formdata = new FormData();
+    //   formdata.append("file", onefile);
+    //   let parentid = this.parentid;
+    //   if (this.selectMenuItem) {
+    //     parentid = this.selectMenuItem.id;
+    //   }
+    //   var url = "/api/bankefile/fileupload?parentid=" + parentid;
+    //   if (this.cfrom) {
+    //     url += "&bankeid=" + this.courseid + "&banketype=" + 1;
+    //   } else {
+    //     url += "&bankeid=" + this.bankeid;
+    //   }
+
+    //   Indicator.open(this.$t("Indicator.Uploading"));
+
+    //   this.$http({
+    //     url: url,
+    //     method: "post",
+    //     data: formdata,
+    //     headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    //   })
+    //     .then(res => {
+    //       Indicator.close();
+    //       if (res.data.code == 0) {
+    //         console.log("54", res.data.data);
+    //         this.parseOneItem(res.data.data);
+    //         let item = res.data.data;
+    //         if (item.ftype == "link") {
+    //           item.imgsrc = "/assets/file_icon/IT.svg";
+    //         } else if (item.ftype == "file") {
+    //           if (item.finttype == "1") {
+    //             if (
+    //               item.info &&
+    //               item.info.metainfo &&
+    //               item.info.metainfo.snapsuffix
+    //             ) {
+    //               item.imgsrc =
+    //                 item.info.filepath + item.info.metainfo.snapsuffix;
+    //             }
+    //           } else {
+    //             item.imgsrc = getZYFileTypeIcon(item.info.filepath);
+    //           }
+    //         }
+    //         commontools.arrayMergeAsIds(this.files, res.data.data);
+    //         //  res.data.data.info = JSON.parse(res.data.data.info);
+    //         let arr = [];
+    //         arr[0] = res.data.data;
+    //         this.$store.commit("SET_ZHIYUANS", {
+    //           item: arr,
+    //           type: 1
+    //         });
+
+    //         this.tempUploadFile = {};
+    //         this.popupUploadFile = false;
+    //       } else {
+    //         Toast("上传失败");
+    //       }
+    //     })
+    //     .catch(err => {
+    //       Indicator.close();
+    //       console.log(err);
+    //     });
+    // },
+
+    // ...mapMutations(["SET_ZHIYUANS"])
+  },
+  destroyed: function() {
+    sessionStorage.removeItem("curbanke");
   }
 };
 </script>
@@ -1093,21 +1311,34 @@ export default {
   border-top: 1px solid #eaeaea;
 }
 .listcontainer-wrap {
-  height: calc(100vh - 180px);
-  min-height: calc(100vh - 180px);
+  height: calc(100vh - 143px);
+  min-height: calc(100vh - 143px);
   position: relative;
 }
 .listcontainer-wrap .listcontainer .wrap {
-  min-height: calc(100vh - 180px);
+  min-height: calc(100vh - 143px);
 }
 
 .listcontainer-wrap.showupload {
-  height: calc(100vh - 260px);
-  min-height: calc(100vh - 260px);
+  height: calc(100vh - 190px);
+  min-height: calc(100vh - 190px);
   position: relative;
 }
 .listcontainer-wrap.showupload .listcontainer .wrap {
-  min-height: calc(100vh - 260px);
+  min-height: calc(100vh - 190px);
+}
+
+.listcontainer-wrap.cfrom {
+  height: calc(100vh - 114px);
+  min-height: calc(100vh - 114px);
+  position: relative;
+}
+.listcontainer-wrap.cfrom .listcontainer .wrap {
+  min-height: calc(100vh - 114px);
+}
+
+.listcontainer-wrap .listcontainer .wrap.prev {
+  padding-bottom: 64px;
 }
 .listcontainer-wrap .listcontainer {
   overflow: scroll;
@@ -1115,12 +1346,44 @@ export default {
 </style>
 <style lang="less" scoped>
 .url-wrap {
+  .btn-wrap {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    background: #fff;
+    .jiaoan {
+      width: 64px;
+      height: 32px;
+      background: rgba(255, 255, 255, 1);
+      border: 1px solid rgba(170, 170, 170, 1);
+      border-radius: 4px;
+      .btn {
+        height: 100%;
+        color: #aaaaaa;
+        background: #fff;
+      }
+      .iconfont {
+        right: 0;
+      }
+    }
+    .right-wrap {
+      &.cfrom {
+        width: 100%;
+      }
+      .iconfont {
+        font-size: 28px;
+      }
+    }
+  }
   .items-container {
-    margin-top: 10px;
+    margin-top: 4px;
     .Resources-total {
       text-align: right;
       background: #fff;
       padding: 8px;
+    }
+    &.showupload {
+      margin-top: 0;
     }
   }
   .edit-container {
@@ -1201,15 +1464,13 @@ export default {
     font-size: 20px;
   }
   .Prev-btn {
-    position: fixed;
+    position: relative;
+    width: 100%;
     height: 63px;
     background: rgba(255, 255, 255, 1);
     border: 1px solid rgba(234, 234, 234, 1);
     line-height: 63px;
     padding-left: 50px;
-    z-index: 100;
-    top: 49px;
-    width: 100%;
     .iconfont {
       font-size: 30px;
     }
@@ -1229,8 +1490,13 @@ export default {
         height: 100%;
         > p {
           width: 100%;
+          .iconfont {
+            font-size: 22px;
+            right: 4px;
+          }
         }
         .name {
+          padding-right: 30px;
         }
         .time {
         }

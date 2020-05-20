@@ -1,11 +1,14 @@
 <template>
   <div class="mainpart" @click="onclick">
-    <div class="reddot-Tips-wrap" :class="zuoyeitem.eventmsgs?'reddot-Tips':''" >
+    <div class="reddot-Tips-wrap" :class="zuoyeitem.eventmsgs?'reddot-Tips':''">
       <img :src="userimg" :onerror="defaultimg" class="mainimg mainleft" />
     </div>
     <div class="mainright">
-      <div class="rightcontrol" @click="icoclick">
+      <div class="rightcontrol" @click.stop="icoclick" v-if="zuoyeitem.state !=0">
         <img src="/assets/zuoye_edit.png" class="rightcontrolimg" v-if="hasedit" />
+      </div>
+      <div class="rightcontrol ku position-r" @click.stop="fabu" v-else>
+        <span class="font16 colord position-c">发布</span>
       </div>
       <div class="rightstate" :class="{'rightstatemid':!hasedit}">
         <div v-if="zuoyeitem.state == 100">
@@ -16,15 +19,18 @@
           <div class="rightststopico"></div>
           <span class="rightststop">{{$t('bankeTask.Has_ended')}}</span>
         </div>
-        <div v-else class="rightsttext">
+        <!-- <div v-else class="rightsttext">
           <div class="rightstnormalico"></div>
-          <span class="rightstnormal">{{$t('bankeTask.Not_yet_begun')}}</span>
-        </div>
+          <span class="rightstnormal">未开始</span>
+        </div>-->
       </div>
     </div>
-    <div class="maincontent">
+    <div :class="{'maincontent':true,'position-l ku':zuoyeitem.state==0}">
       <div class="mainctitle ellipse">{{zuoyeitem.name}}</div>
-      <div class="maincsubtitle" v-html="memberdesc"></div>
+      <div class="maincsubtitle ellipse" v-if="zuoyeitem.state!=0">
+        <i class="iconfont iconzu font18"></i>
+        {{bankes}}
+      </div>
     </div>
   </div>
 </template>
@@ -39,19 +45,36 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/zuoye_icon.png");
+      srcstr += "/assets/zuoye_icon.png";
       srcstr += '"';
       return srcstr;
     },
     userimg() {
-      var url = ("/assets/zuoye_icon.png");
+      var url = "/assets/zuoye_icon.png";
       return url;
+    },
+    bankes() {
+      if (this.hasedit) {
+        let str = "";
+        if (this.zuoyeitem.publishdesc.bankeitems.length) {
+          let len = this.zuoyeitem.publishdesc.bankeitems.length;
+          for (let i = 0; i < len; i++) {
+            let v = this.zuoyeitem.publishdesc.bankeitems[i];
+            if (i == len - 1) {
+              str += v.name;
+            } else {
+              str += v.name + "," + "\xa0\xa0";
+            }
+          }
+          return str;
+        }
+        return "";
+      }
     },
     memberdesc() {
       if (!this.zuoyeitem.state) {
         return this.$t("bankeTask.Not_yet_begun");
       }
-
       if (!this.hasedit) {
         //! . html
         if (this.zuoyeitem.submitnum) {
@@ -65,6 +88,7 @@ export default {
           if (this.zuoyeitem.state == 10) {
             return this.$t("bankeTask.Not_participate");
           }
+
           return (
             '<span class="clrdanger">' +
             this.$t("bankeTask.Not_participate") +
@@ -93,6 +117,10 @@ export default {
       // console.log('bankefilesimple icoclick');
       this.pendclick = true;
       this.$emit("editclick", this.zuoyeitem);
+    },
+    fabuedi() {},
+    fabu() {
+      this.$emit("fabuzy", this.zuoyeitem);
     },
     onclick() {
       //  console.log('bankefilesimple');
@@ -147,6 +175,10 @@ export default {
   margin-left: 72px;
   margin-right: 40px;
 }
+.maincontent.ku {
+  padding-left: 70px;
+  margin: 0;
+}
 
 .mainctitle {
   font-size: 20px;
@@ -163,6 +195,9 @@ export default {
   font-size: 12px;
   color: #a5a5a5;
 }
+.maincsubtitle .iconfont {
+  color: #68b9ff;
+}
 
 .mainright {
   float: right;
@@ -170,6 +205,17 @@ export default {
 }
 .rightcontrol {
   text-align: right;
+}
+.rightcontrol.ku {
+  width: 62px;
+  height: 39px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(0, 137, 255, 1);
+  border-radius: 10px;
+}
+.rightcontrol.ku span {
+  width: 100%;
+  text-align: center;
 }
 .rightcontrolimg {
   width: 36px;

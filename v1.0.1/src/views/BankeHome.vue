@@ -1,6 +1,6 @@
 <template>
   <div class="banke-home-wrap">
-    <mt-header v-show="hasnavbar && selected!='ziyuan'" :title="bankename" class="mint-header-f">
+    <mt-header v-show="hasnavbar && showheader" :title="bankename" class="mint-header-f">
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
 
@@ -10,9 +10,9 @@
           <BankeZiyuan
             :bankeid="id"
             :hasbackbtn="hasbackbtn"
+            :curbanke="curbanke"
             :bankename="bankename"
             v-if="showziyuan"
-            @UploadLinkSelectEd="onUploadLinkSelectEd"
             @popupZiyuanEdit="onPopupZiyuanEdit"
           ></BankeZiyuan>
         </mt-tab-container-item>
@@ -25,7 +25,7 @@
         </mt-tab-container-item>
 
         <mt-tab-container-item id="zuoye">
-          <BankeZuoye :bankeid="id" v-if="showzuoye" @showmenu="ontabshowmenu"></BankeZuoye>
+          <BankeZuoye :bankeid="id" v-if="showzuoye"   :bankename="bankename"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
           <BankeHuDong
@@ -40,7 +40,7 @@
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
-    <div class="my-foot-bar" v-if="Preview && !zyEditState && footerbar && isAndroid">
+    <!-- <div class="my-foot-bar" v-if="Preview && !zyEditState && footerbar && isAndroid">
       <ul class="items clearfix">
         <li
           class="item fl reddot-Tips-wrap"
@@ -56,12 +56,12 @@
           <span class="fontnormal text" v-if="!v.isOpen">{{v.text}}</span>
         </li>
       </ul>
-    </div>
+    </div>-->
     <mt-tabbar
       v-model="selected"
       fixed
       :class="{hide:tabbarhide}"
-      v-if="Preview && !zyEditState && footerbar && !isAndroid"
+      v-if="Preview && footerbar"
       style="background:#fff"
     >
       <mt-tab-item id="ziyuan">
@@ -97,6 +97,11 @@
       <mt-tab-item id="zuoye">
         <div class="bankehome">
           <i
+            class="iconfont iconkehou-xuanzhong reddot-Tips-wrap"
+            :class="eventmsgs.zouyeTips?'reddot-Tips':''"
+          ></i>
+          <span :class="{fonttiny:isEN=='en',fontnormal:isEN!='en'}">课后</span>
+          <!-- <i
             v-if="itemzuoyenormal"
             class="iconfont iconkehou-xuanzhong reddot-Tips-wrap"
             :class="eventmsgs.zouyeTips?'reddot-Tips':''"
@@ -108,7 +113,7 @@
             src="/assets/zuoye_add.png"
             class="tabitemmid"
             @click="onclickzuoye"
-          />
+          />-->
         </div>
       </mt-tab-item>
       <mt-tab-item id="chengyuan">
@@ -271,6 +276,12 @@ export default {
     hasnavbar() {
       return nativecode.hasnavbar();
     },
+   showheader(){
+      if(this.selected=='ziyuan' || this.selected=='zuoye'){
+        return false;
+      }
+      return true;
+    },
     hasbackbtn() {
       if (nativecode.platform == "exsoftdaping") {
         return false;
@@ -285,8 +296,8 @@ export default {
     },
     footerbar() {
       //！ cjyL 目前这个footerbar存在不稳定性问题，所以总是返回true； 例如：查看成员得分页面，然后点击浏览器的back键
-      return true;
-      //return this.$store.state.footerBarState;
+      // return true;
+      return this.$store.state.footerBarState;
     },
     Preview() {
       return this.$store.state.Preview.isPreview;
@@ -341,11 +352,7 @@ export default {
         this.$router.go(-1);
       }
     },
-    ontabshowmenu(bshow) {
-      this.tabbarhide = bshow;
-    },
     onAddZuoye() {
-      //Toast('暂未实现');
       this.$store.commit("setRouterForward", true);
       var url = "/zuoyenew/" + this.id;
       this.$router.push(url);
@@ -361,10 +368,6 @@ export default {
     },
     tongzhiOpenState(data) {
       // this.tongzhiState = data;
-    },
-    onUploadLinkSelectEd(data) {
-      //  this.tongzhiState=true;
-      // this.zYLinkSelectEd = data;
     },
     groupFn() {
       this.$store.commit("setRouterForward", true);
@@ -391,6 +394,7 @@ export default {
     },
     onBankeChange() {
       this.$store.commit("setCurBanke", this.curbanke);
+      sessionStorage.setItem("curbanke", JSON.stringify(this.curbanke));
       if (!this.hasnavbar) {
         document.title = this.bankename;
       }
@@ -475,6 +479,7 @@ export default {
     this.eventmsgsOnbanke();
   },
   destroyed() {
+    this.$store.commit("SET_FOOTER_BAR_STATE", true);
     this.$store.commit("setBHomeSelected", this.selected);
   },
   components: {

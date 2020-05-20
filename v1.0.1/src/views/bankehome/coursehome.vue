@@ -1,6 +1,6 @@
 <template>
   <div class="course-wrap">
-    <mt-header :title="courseName" class="mint-header-f my-height gl" @click.native="guanlikec">
+    <mt-header :title="courseName" class="mint-header-f my-height gl">
       <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="main main-f-2">
@@ -105,19 +105,54 @@
         </div>
       </div>
     </mt-popup>
+    <mt-popup
+      v-model="popupCoursezy"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <div class="zy-main">
+        <BankeZiyuan
+          v-if="popupCoursezy"
+          :courseid="courseid"
+          :hasbackbtn="hasbackbtn"
+          bankename="课程资源"
+          :cfrom="true"
+          @calce="oncalce"
+        ></BankeZiyuan>
+      </div>
+    </mt-popup>
+    <mt-popup
+      v-model="popupCoursezuoye"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <BankeZuoye
+        :courseid="courseid"
+        v-if="popupCoursezuoye"
+        bankename="作业"
+        @calce="oncalce"
+        :cfrom="true"
+      ></BankeZuoye>
+    </mt-popup>
   </div>
 </template>
 <script>
-import Empty from "@/common/empty";
+const BankeZiyuan = () => import("@/views/BankeZiyuan");
+const Empty = () => import("@/common/empty");
+const BankeZuoye = () => import("@/views/BankeZuoye");
 import { Indicator } from "mint-ui";
 import { parseURL } from "@/util";
 import nativecode from "@/nativecode";
 const tititems = [
-  {
-    id: 1,
-    text: "教案",
-    iconfont: "iconwangyelianjie"
-  },
+  // {
+  //   id: 1,
+  //   text: "教案",
+  //   iconfont: "iconwangyelianjie"
+  // },
   {
     id: 2,
     text: "课程资源",
@@ -152,6 +187,7 @@ export default {
       tititems,
       popupGuanlikc: false,
       popupNewbanke: false,
+      popupCoursezy: false,
       classitem: {
         name: "",
         avatar: "",
@@ -165,10 +201,18 @@ export default {
       listLoadend: false,
       allLoaded: false,
       autofill: false,
-      curcourse: null
+      curcourse: null,
+
+      popupCoursezuoye: false
     };
   },
   computed: {
+    hasbackbtn() {
+      if (nativecode.platform == "exsoftdaping") {
+        return false;
+      }
+      return true;
+    },
     courseName() {
       if (this.curcourse) {
         return this.curcourse.name;
@@ -206,7 +250,8 @@ export default {
       this.$http
         .post("/api/banke/bankequery", {
           where: {
-            courseid: this.courseid
+            courseid: this.courseid,
+            states: 10
           },
           page: {
             pagesize: this.pagesize,
@@ -225,9 +270,10 @@ export default {
               this.loading = true;
               this.allLoaded = true;
             }
-            let loadData = res.data.data.filter(item => {
-              return item.states > 0;
-            });
+            let loadData = res.data.data;
+            // loadData = res.data.data.filter(item => {
+            //   return item.states > 0;
+            // });
             this.allBankes = [...loadData, ...this.allBankes];
           }
           Indicator.close();
@@ -291,14 +337,24 @@ export default {
       }
     },
     selectClick(v) {
-      switch (v.id) {
-        case 1:
+      switch (v.text) {
+        case "教案":
           break;
-        case 2:
+        case "课程资源":
+          this.popupCoursezy = true;
           break;
-        case 3:
+        case "作业":
+          this.popupCoursezuoye = true;
           break;
-        case 4:
+        case "统计":
+          // let url =
+          //   "http://localhost:8088/#/ClassStatistics?id=" + this.courseid;
+          // if (process.env.NODE_ENV !== "development") {
+          //   url = document.location.origin;
+          //   url += "/backend/#/ClassStatistics?id=" + this.courseid;
+          // }
+          window.location.href = 'https://www2.exsoft.com.cn/backend/#/ClassStatistics?id='+ this.courseid;
+          sessionStorage.setItem("homelocalstate", "");
           break;
         default:
           break;
@@ -306,10 +362,16 @@ export default {
     },
     guanlikec() {
       this.popupGuanlikc = true;
+    },
+    oncalce(v) {
+      this.popupCoursezy = false;
+      this.popupCoursezuoye = false;
     }
   },
   components: {
-    Empty
+    Empty,
+    BankeZiyuan,
+    BankeZuoye
   }
 };
 </script>
@@ -321,6 +383,7 @@ export default {
       display: flex;
       background: #fff;
       padding-bottom: 15px;
+      justify-content: center;
       .item {
         display: flex;
         width: 25%;
@@ -416,6 +479,9 @@ export default {
   .guanli-btn {
     position: absolute;
   }
+  .zy-main {
+    margin-top: 50px;
+  }
 }
 .kc-gl-wrap {
   .main {
@@ -455,7 +521,7 @@ export default {
   position: relative;
 }
 .course-wrap .gl .mint-header-title::after {
-  display: block;
+  /* display: block;
   position: absolute;
   right: 0;
   top: 50%;
@@ -467,7 +533,7 @@ export default {
   border-radius: 50%;
   border: 1px solid #0089ff;
   color: #0089ff;
-  font-size: 12px;
+  font-size: 12px; */
 }
 .course-wrap .mint-cell-wrapper {
   background-image: none;

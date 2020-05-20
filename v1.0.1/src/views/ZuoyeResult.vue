@@ -119,20 +119,18 @@
           >
             <span class="position-r" @click="onSeeAllSubmit(results[0])">编辑记录({{results.length}})</span>
           </P>
-          <zuoyedetailedit
-            @textChange="ontextChange"
-            :zdetail="zdetailsubmit"
-            :isScore="isScore"
-          ></zuoyedetailedit>
+          <zuoyedetailedit @textChange="ontextChange" :zdetail="zdetailsubmit" :isScore="isScore"></zuoyedetailedit>
         </div>
         <div v-else>
           <div v-for="(ritem,selindex) in results" v-bind:key="selindex">
             <div v-if="showitem(ritem)">
               <ZuoyeAnswerItem
                 :resultitem="ritem"
+                :state="zuoyeitem.state"
                 @commentClicked="onCommentClick"
                 @scoreClicked="onScoreClick"
                 @seeAllSubmit="onSeeAllSubmit"
+                @setScore="onsetScore"
               ></ZuoyeAnswerItem>
               <div class="devide"></div>
             </div>
@@ -256,6 +254,8 @@
             :resultitem="ritem"
             :seeMySbmit="seeMySbmit"
             :pagemode="pagemode"
+            :state="zuoyeitem.state"
+            @setScore="onsetScore"
             @commentClicked="onCommentClick"
             @scoreClicked="onScoreClick"
           ></ZuoyeAnswerItem>
@@ -365,7 +365,10 @@ export default {
       listLoadend: false,
       topStatus: "",
       bottomStatus: "",
-      allLoaded: false
+      allLoaded: false,
+
+      setScoreRepeat: false,
+      repeatSubmit: false
     };
   },
   watch: {
@@ -386,22 +389,30 @@ export default {
     },
     mzuoyemenu() {
       let objret = [];
-      if (nativecode.hassharecommon()) {
+      if (this.setScoreRepeat) {
         objret.push({
-          name: "分享作业",
-          method: this.doshare
+          name: "打回重做",
+          method: this.repeat
         });
-      }
-      objret.push({
-        name: "编辑作业",
-        method: this.doedit
-      });
-      if (this.zuoyeitem.state == 100) {
+      } else {
+        if (nativecode.hassharecommon()) {
+          objret.push({
+            name: "分享作业",
+            method: this.doshare
+          });
+        }
         objret.push({
-          name: "结束作业",
-          method: this.dostop
+          name: "编辑作业",
+          method: this.doedit
         });
+        if (this.zuoyeitem.state == 100) {
+          objret.push({
+            name: "结束作业",
+            method: this.dostop
+          });
+        }
       }
+
       return objret;
     },
     answerdesc() {
@@ -567,6 +578,15 @@ export default {
       this.studentInfo = this.results[0];
       this.popupZuoyePL = true;
     },
+    onsetScore(item) {
+      this.setScoreRepeat = true;
+      this.ScoreItemInfo = item;
+      this.showmzuoyemenu = true;
+    },
+    repeat() {
+      this.mark = "-2";
+      this.submiMark();
+    },
     onScoreClick(ritem) {
       let isteacher = this.caneditzuoye; // this.$store.getters.caneditbanke;
       this.ScoreItemInfo = ritem.info;
@@ -587,6 +607,37 @@ export default {
         //   this.studentName = ritem.info.username;
         // }
       }
+    },
+    seleMarkFn(val) {
+      this.mark = val;
+    },
+    submiMark() {
+      if (this.mark == "") return;
+      this.$http
+        .post("/api/Azuoye/setScore", {
+          submitid: this.ScoreItemInfo.submitid,
+          score: this.mark,
+          zuoyeid: this.zuoyeid
+        })
+        .then(res => {
+          this.popupZuoyePF = false;
+          //   this.loadAll();
+          console.log("评分结果:" + res);
+          if (res.data.code == 0) {
+            this.ScoreItemInfo.score = res.data.data.score;
+          } else {
+          }
+          this.mark = "";
+          this.setScoreRepeat = false;
+          this.showmzuoyemenu = false;
+        })
+        .catch(() => {
+          this.popupZuoyePF = false;
+          this.showmzuoyemenu = false;
+          this.mark = "";
+          this.setScoreRepeat = false;
+          console.log("评分失败");
+        });
     },
     AnswerFn() {
       if (this.zuoyeitem.answerdesc) {
@@ -632,36 +683,6 @@ export default {
             // this.$refs.loadmore.onTopLoaded();
           });
       }
-    },
-    seleMarkFn(val) {
-      this.mark = val;
-    },
-    submiMark() {
-      if (this.mark == "") return;
-      this.$http
-        .post("/api/Azuoye/setScore", {
-          submitid: this.ScoreItemInfo.submitid,
-          score: this.mark,
-          zuoyeid: this.zuoyeid
-        })
-        .then(res => {
-          this.popupZuoyePF = false;
-          //   this.loadAll();
-          console.log("评分结果:" + res);
-          if (res.data.code == 0) {
-            //  console.log("评分成功");
-            this.ScoreItemInfo.score = res.data.data.score;
-            // this.mimiMessage("pf");
-          } else {
-            // console.log("评分错误", res);
-          }
-          this.mark = "";
-        })
-        .catch(() => {
-          this.popupZuoyePF = false;
-          this.mark = "";
-          console.log("评分失败");
-        });
     },
     onplMessage(v) {
       // this.mimiMessage(v);
@@ -735,11 +756,13 @@ export default {
     },
     doback() {
       if (this.zuoyeitem && this.zuoyeitem.ownerid) {
-        let tourl = "/bankehome/" + this.zuoyeitem.ownerid;
-        {
-          this.$router.replace(tourl);
-          return;
-        }
+        this.$router.go(-1);
+        return;
+        // let tourl = "/bankehome/" + this.zuoyeitem.ownerid;
+        // {
+        //   this.$router.replace(tourl);
+        //   return;
+        // }
       }
       this.$router.replace("/");
     },
@@ -849,6 +872,13 @@ export default {
         this.zdetailsubmit.localfiles = this.results[0].localfiles;
         if (dresults[0].score > -1) {
           this.isScore = true;
+        } else if (dresults[0].score == -2) {
+          this.repeatSubmit = true;
+          let localrepeatSubmit = sessionStorage.getItem("repeatSubmit") || "";
+          if (!localrepeatSubmit && !this.showstopbtn) {
+            MessageBox("提示", "作业已被打回,请重做");
+          }
+          sessionStorage.setItem("repeatSubmit", this.repeatSubmit);
         }
       }
     },

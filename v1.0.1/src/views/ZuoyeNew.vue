@@ -13,17 +13,17 @@
       </div>
       <!-- <mt-cell title="作业详情" is-link @click.native="onZDetail">{{zdetaildesc}}</mt-cell> -->
       <div class="devide"></div>
-      <mt-cell title="设置最晚提交时间">
+      <!-- <mt-cell title="设置最晚提交时间">
         <mt-switch v-model="hassubmittime"></mt-switch>
-      </mt-cell>
-      <mt-cell v-if="hassubmittime" title="最晚提交时间" @click.native="onTimePicker">{{submittimedesc}}</mt-cell>
+      </mt-cell> -->
+      <!-- <mt-cell v-if="hassubmittime" title="最晚提交时间" @click.native="onTimePicker">{{submittimedesc}}</mt-cell>
       <mt-cell v-if="hassubmittime" title="允许超时提交作业">
         <mt-switch v-model="allowpasstime"></mt-switch>
-      </mt-cell>
-      <p
+      </mt-cell> -->
+      <!-- <p
         class="tips font-xxs"
         v-if="hassubmittime"
-      >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>
+      >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p> -->
       <mt-cell title="答案设置" is-link @click.native="onZAnaswer">{{zanswerdesc}}</mt-cell>
       <p class="tips font-xxs">作业结束后查看参考答案，你可以随时对参考答案进行编辑。</p>
     </div>
@@ -207,6 +207,7 @@ export default {
       this.zuoyeitem.submittime = commontools.timeJsDateToTimedate(
         this.pickervalue
       );
+      console.log("发顺丰", this.zuoyeitem.submittime);
     },
     AnswerSubmit() {},
     defaultzuoyename() {
@@ -230,21 +231,22 @@ export default {
         this.doSaveUpload();
         return;
       }
-      MessageBox({
-        message: "是否现在开始作业？",
-        showCancelButton: true,
-        confirmButtonText: "立即开始",
-        cancelButtonText: "暂不开始"
-      })
-        .then(res2 => {
-          if (res2 == "confirm") {
-            this.zuoyeitem.state = 100;
-          }
-          this.doSaveUpload();
-        })
-        .catch(() => {
-          this.doSaveUpload();
-        });
+        this.doSaveUpload();
+      // MessageBox({
+      //   message: "是否现在开始作业？",
+      //   showCancelButton: true,
+      //   confirmButtonText: "立即开始",
+      //   cancelButtonText: "暂不开始"
+      // })
+      //   .then(res2 => {
+      //     if (res2 == "confirm") {
+      //       this.zuoyeitem.state = 100;
+      //     }
+      //     this.doSaveUpload();
+      //   })
+      //   .catch(() => {
+      //     this.doSaveUpload();
+      //   });
       // var ttip = "已完成创建？";
       // if (this.isEditMode) {
       //   ttip = "已完成编辑？";
@@ -274,9 +276,7 @@ export default {
       // });
     },
     doSaveUpload() {
-      //! serverData
       var url = "/api/api/bankezuoyeadd?bankeid=" + this.bankeid;
-
       Indicator.open(
         this.isEditMode
           ? this.$t("Indicator.Saving")
@@ -300,9 +300,9 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
-            Toast(this.isEditMode ? "保存成功" : "创建成功");
+            let msg=this.isEditMode ? "保存成功" : "创建成功";
+            Toast(msg+'\xa0'+'请在作业库中发布作业');
             this.$router.back();
-            // this.mimiMessage();
           } else {
             Toast(res.data.msg);
           }

@@ -40,7 +40,7 @@
       :modal="false"
       style="background:#f0f0f0"
     >
-      <Mulu :bankeid="bankeid" @Cancel="onCancel" />
+      <Menu :bankeid="bankeid" @Cancel="onCancel" />
     </mt-popup>
   </div>
 </template>
@@ -78,7 +78,7 @@ import {
   MessageBox,
 } from "mint-ui";
 import Empty from "@/common/empty";
-import Mulu from "./mulu";
+import Menu from "./menu";
 export default {
   props: {
     bankeid: {
@@ -135,7 +135,7 @@ export default {
       this.$emit("watchBack", true);
     }
   },
-  components: { Empty, Mulu }
+  components: { Empty, Menu }
 };
 </script>
 
