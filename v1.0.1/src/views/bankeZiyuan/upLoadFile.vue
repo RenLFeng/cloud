@@ -29,6 +29,8 @@
         @Cancel="onCancel"
         @menuSelectEnd="onMenuSelectEnd"
         v-if="popupmulu"
+        :parentTempmenuData="parentTempmenuData"
+        :curRootPrevid="curRootPrevid"
         :parentid="parentid"
         :headerName="headerName"
       />
@@ -54,6 +56,14 @@ export default {
           tempImg: ""
         };
       }
+    },
+    parentTempmenuData: {
+      default() {
+        return [];
+      }
+    },
+    curRootPrevid: {
+      default: null
     },
     parentid: {
       default: 0

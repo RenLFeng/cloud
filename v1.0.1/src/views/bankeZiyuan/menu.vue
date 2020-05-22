@@ -3,7 +3,7 @@
     <mt-header :title="myMenuname?myMenuname:headerName">
       <mt-button slot="left" @click="canlce()">取消</mt-button>
     </mt-header>
-    <p class="Prev-btn" v-if="tempmenuData.length" @click="onprev">
+    <p class="Prev-btn" @click="onprev" v-if="showPrve">
       <i class="iconfont iconwithdraw-fill colord position-l"></i>
       <span style="color:#a5a5a5">返回上一层...</span>
     </p>
@@ -50,7 +50,7 @@
         <mt-button @click="newFolder">新建文件夹</mt-button>
       </p>
       <p class="fr keep">
-        <mt-button @click="submit">确定</mt-button>
+        <mt-button @click="submit" :disabled="canSubmit">确定</mt-button>
       </p>
     </div>
   </div>
@@ -62,17 +62,30 @@ const Empty = () => import("@/common/empty");
 const BottomLoadmore = () => import("@/common/bottom-loadmore");
 export default {
   props: {
+    parentTempmenuData: {
+      default() {
+        return [];
+      }
+    },
     bankeid: {
       default: 0
     },
     parentid: {
       default: 0
     },
+    curRootPrevid: {
+      default: null
+    },
     headerName: {
       default: ""
     },
     cfrom: {
       default: false
+    },
+    moveItemFile: {
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -85,28 +98,59 @@ export default {
       loading: false,
       listLoadend: false,
       allLoaded: false,
-      newFileName: ""
+      newFileName: "",
+      prevMenuHader: "",
+      prevMenuid: null,
+      curRoots: [],
+      isSubmit: true
     };
   },
   watch: {},
   computed: {
+    canSubmit() {
+      if (this.moveItemFile.parentid == this.myParentid && this.isSubmit) {
+        return true;
+      }
+      return false;
+    },
+    showPrve() {
+      if (this.curRoots.length || this.tempmenuData.length) {
+        return true;
+      }
+      return false;
+    },
     myMenuname() {
       if (this.tempmenuData.length) {
         return this.tempmenuData[this.tempmenuData.length - 1].name;
+      } else {
+        if (this.prevMenuHader) {
+          return this.prevMenuHader;
+        } else {
+          return this.headerName;
+        }
       }
-      return this.headerName;
     },
     myParentid() {
       if (this.tempmenuData.length) {
         return this.tempmenuData[this.tempmenuData.length - 1].id;
+      } else {
+        if (this.curRoots.length) {
+          return this.curRoots[this.curRoots.length - 1].id;
+        } else {
+          return this.parentid;
+        }
       }
-      return this.parentid;
     }
   },
   created() {
+    this.prevMenuid = JSON.parse(JSON.stringify(this.curRootPrevid));
+    this.curRoots = JSON.parse(JSON.stringify(this.parentTempmenuData));
     this.loadMoreFile(this.myParentid);
   },
-  mounted() {},
+  mounted() {
+    // alert(this.curRoots.length);
+    // alert(this.prevMenuid);
+  },
 
   methods: {
     loadMore() {
@@ -127,7 +171,8 @@ export default {
         .post("/api/bankefile/querypage", postData)
         .then(res => {
           if (res.data.code == 0) {
-            if (res.data.data.files.length >= this.pagesize) {
+            let loadData = res.data.data.files;
+            if (loadData.length >= this.pagesize) {
               this.loading = false;
               this.page++;
             } else {
@@ -137,8 +182,13 @@ export default {
               this.loading = true;
               this.allLoaded = true;
             }
-
-            for (let item of res.data.data.files) {
+            loadData = loadData.filter(v => {
+              if (v.id == this.moveItemFile.id) {
+                this.isSubmit = true;
+              }
+              return v.id != this.moveItemFile.id;
+            });
+            for (let item of loadData) {
               // this.menulist = [...this.menulist, ...[item]];
               if (item.ftype == "menu") {
                 this.menulist = [...this.menulist, ...[item]];
@@ -163,9 +213,26 @@ export default {
     },
     //返回上一级
     onprev() {
-      this.menulist = this.tempmenuData[this.tempmenuData.length - 1].datas;
-      this.tempmenuData.splice(this.tempmenuData.length - 1, 1);
-      console.log("返回后", this.tempmenuData);
+      if (this.tempmenuData.length) {
+        this.menulist = this.tempmenuData[this.tempmenuData.length - 1].datas;
+        this.tempmenuData.splice(this.tempmenuData.length - 1, 1);
+      } else {
+        if (this.prevMenuid != null) {
+          console.log("快递发了吗", this.curRoots);
+          this.prevMenuHader = this.curRoots[
+            this.curRoots.length - 1
+          ].curRootPrevname;
+          this.prevMenuid = this.curRoots[
+            this.curRoots.length - 1
+          ].curRootPrevid;
+          this.curRoots.splice(this.curRoots.length - 1, 1);
+          if (!this.curRoots.length) {
+            this.isSubmit=false
+          }
+          this.loadinit();
+          this.loadMoreFile(this.prevMenuid);
+        }
+      }
     },
     loadinit() {
       this.menulist = [];
@@ -208,8 +275,9 @@ export default {
       });
     },
     submit() {
+      let moveParentid = this.myParentid;
       this.$emit("menuSelectEnd", {
-        parentid: this.myParentid,
+        parentid: moveParentid,
         menuName: this.myMenuname
       });
     },

@@ -756,13 +756,16 @@ export default {
     },
     doback() {
       if (this.zuoyeitem && this.zuoyeitem.ownerid) {
-        this.$router.go(-1);
-        return;
-        // let tourl = "/bankehome/" + this.zuoyeitem.ownerid;
-        // {
-        //   this.$router.replace(tourl);
-        //   return;
-        // }
+        let bankehomeId = this.zuoyeitem.ownerid;
+        if (this.zuoyeitem.publishdesc != null) {
+          let publishdesc = JSON.parse(this.zuoyeitem.publishdesc);
+           bankehomeId = publishdesc.bankeitems[0].id;
+        }
+        let tourl = "/bankehome/" + bankehomeId;
+        {
+          this.$router.replace(tourl);
+          return;
+        }
       }
       this.$router.replace("/");
     },

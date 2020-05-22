@@ -35,7 +35,7 @@
                     <p class="position-b ellipse b">班级号: {{v.id}}</p>
                   </div>
                 </div>
-                <p class="ggao position-b font-xxs colory ellipse">{{v.info}}</p>
+                <p class="ggao position-b font-xxs colory ellipse" v-if="v.info">公告:&nbsp;{{v.info}}</p>
               </div>
               <i class="iconfont iconcellyoucejiantou position-r fontnormal colora"></i>
             </div>
@@ -337,6 +337,10 @@ export default {
       }
     },
     selectClick(v) {
+      if (!this.allBankes.length) {
+        Toast("未创建班级");
+        return;
+      }
       switch (v.text) {
         case "教案":
           break;
@@ -347,13 +351,25 @@ export default {
           this.popupCoursezuoye = true;
           break;
         case "统计":
-          // let url =
-          //   "http://localhost:8088/#/ClassStatistics?id=" + this.courseid;
-          // if (process.env.NODE_ENV !== "development") {
-          //   url = document.location.origin;
-          //   url += "/backend/#/ClassStatistics?id=" + this.courseid;
-          // }
-          window.location.href = 'https://www2.exsoft.com.cn/backend/#/ClassStatistics?id='+ this.courseid;
+          let bankes = [];
+          for (let v of this.allBankes) {
+            bankes.push({
+              id: v.id,
+              name: v.name,
+              username: v.username
+            });
+          }
+          let url =
+            "http://192.168.0.237:8088/#/ClassStatistics?bankes=" +
+            encodeURIComponent(JSON.stringify(bankes));
+
+          if (process.env.NODE_ENV !== "development") {
+            url = document.location.origin;
+            url +=
+              "/backend/#/ClassStatistics?bankes=" +
+              encodeURIComponent(JSON.stringify(bankes));
+          }
+          window.location.href = url;
           sessionStorage.setItem("homelocalstate", "");
           break;
         default:

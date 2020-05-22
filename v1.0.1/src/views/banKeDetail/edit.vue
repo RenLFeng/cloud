@@ -10,7 +10,7 @@
           <mt-field label="班级" placeholder v-model="banji"></mt-field>
         </li>-->
         <li>
-          <mt-field :label="$t('common.Curriculum')" placeholder v-model="bankeNmae"></mt-field>
+          <mt-field label="班级名" placeholder v-model="bankeNmae"></mt-field>
         </li>
       </ul>
     </div>
@@ -51,7 +51,6 @@
   </div>
 </template>
 <script>
-
 import { MessageBox, Indicator } from "mint-ui";
 import mimgcrop from "@/common/m-image-crop";
 export default {
@@ -86,7 +85,7 @@ export default {
       imgobj: {},
 
       pic: "",
-      defaultPic: '/assets/account_default.png',
+      defaultPic: "/assets/account_default.png",
       banji: "",
       bankeNmae: "",
       bankeInfoData: {},
@@ -102,7 +101,7 @@ export default {
   computed: {
     defaultimg() {
       var srcstr = 'this.src="';
-      srcstr += ("/assets/100x100.png");
+      srcstr += "/assets/100x100.png";
       srcstr += '"';
       return srcstr;
     }
@@ -128,7 +127,6 @@ export default {
           if (res.data.code == 0) {
             MessageBox.alert(this.$t("confirm.Success")).then(() => {
               this.imgSrc = res.data.data.avatar;
-              this.$emit("imgSrcLoad", this.imgSrc);
               this.pic = res.data.data.avatar;
               for (let item of BankeData) {
                 if (item.id == res.data.data.id) {
@@ -136,12 +134,11 @@ export default {
                   item.avatar = this.imgSrc;
                 }
               }
-              this.$store.commit("banke/appendBankes", BankeData);
+              this.$store.commit("banke/setBankes", BankeData);
+              this.$emit("imgSrcLoad", this.imgSrc);
             });
           } else {
-            MessageBox.alert(res.data.msg).then(() => {
-
-            });
+            MessageBox.alert(res.data.msg).then(() => {});
           }
         })
         .catch(() => {});

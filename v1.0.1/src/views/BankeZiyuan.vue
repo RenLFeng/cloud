@@ -151,6 +151,8 @@
             :bankeid="cfrom?courseid:bankeid"
             @addLinkState="onAddLinkState"
             :cfrom="cfrom"
+            :parentTempmenuData="tempmenuData"
+            :curRootPrevid="curRootPrevid"
             :parentid="parentid"
             :headerName="menuName?menuName:bankename"
           />
@@ -229,6 +231,8 @@
         :bankeid="cfrom?courseid:bankeid"
         :tempUploadFile="tempUploadFile"
         :parentid="parentid"
+        :parentTempmenuData="tempmenuData"
+        :curRootPrevid="curRootPrevid"
         :headerName="menuName?menuName:bankename"
         @uploadfile="onUploadLocal"
         @canlce="goBack()"
@@ -244,16 +248,37 @@
       <Menu
         :bankeid="cfrom?courseid:bankeid"
         :cfrom="cfrom"
-        @Cancel="onCancel"
-        @menuSelectEnd="onMenuSelectEnd"
+        :moveItemFile="editItemFile"
+        :parentTempmenuData="tempmenuData"
+        :curRootPrevid="curRootPrevid"
         v-if="popupmulu"
         :parentid="parentid"
         :headerName="menuName?menuName:bankename"
+        @Cancel="onCancel"
+        @menuSelectEnd="onMenuSelectEnd"
       />
     </mt-popup>
-    <mt-actionsheet :actions="actions" v-model="actionShow"></mt-actionsheet>
+    <mt-actionsheet :actions="actions" v-model="actionShow" ref="Actionsheet" id="Actionsheet"></mt-actionsheet>
+    <mt-popup v-model="popupSort" position="bottom" style="height:140px">
+      <div data-v-1fca5e37 class="mint-actionsheet" id="Actionsheet" style>
+        <ul class="mint-actionsheet-list" style="margin-bottom: 5px;">
+          <li
+            class="mint-actionsheet-listitem"
+            :style="`color:${sortFile?'#0089ff':''}`"
+            @click="sortfileFn(arrZhiyuan)"
+          >按文件名称排序</li>
+          <li
+            class="mint-actionsheet-listitem"
+            :style="`color:${sortTime?'#0089ff':''}`"
+            @click="sorttimeFn(arrZhiyuan)"
+          >按时间倒序排序</li>
+        </ul>
+        <a class="mint-actionsheet-button" @click="popupSort=false">取消</a>
+      </div>
+    </mt-popup>
     <!-- <div class="selection-wrap position-fb" v-if="selection">
       <ul class="clearfix">
+
         <li class="colord fl">
           <span class="iconfont iconbianji1"></span>
           <span class="font-xs">重命名</span>
@@ -308,7 +333,8 @@ import {
   preview,
   defaultImg,
   getZYFileTypeIcon,
-  filterItem
+  filterItem,
+  sortLikeWin
 } from "@/util";
 import nativecode from "../nativecode";
 export default {
@@ -393,7 +419,11 @@ export default {
       sortTime: false,
       showJiaoAn: true,
       menuSelectEndData: null,
-      tempScorllTop: []
+      tempScorllTop: [],
+
+      moveId: null,
+
+      popupSort: false
     };
   },
   watch: {
@@ -426,14 +456,14 @@ export default {
 
       if (isteacher || this.cfrom) {
         if (this.headerSortBtn) {
-          objret.push({
-            name: "按文件名称排序",
-            method: this.sortfileFn
-          });
-          objret.push({
-            name: "按时间倒序排序",
-            method: this.sorttimeFn
-          });
+          // objret.push({
+          //   name: "按文件名称排序",
+          //   method: this.sortfileFn
+          // });
+          // objret.push({
+          //   name: "按时间倒序排序",
+          //   method: this.sorttimeFn
+          // });
         } else if (this.headerAddBtn) {
           objret.push({
             name: "上传本地文件",
@@ -546,6 +576,12 @@ export default {
         return true;
       }
       return false;
+    },
+    curRootPrevid() {
+      if (this.tempmenuData.length) {
+        return this.tempmenuData[this.tempmenuData.length - 1].curRootPrevid;
+      }
+      return null;
     }
 
     // ...mapState(["arrZhiyuan"])
@@ -629,6 +665,8 @@ export default {
       this.cMenuItem = fitem;
       this.tempmenuData.push({
         id: fitem.id,
+        curRootPrevid: fitem.parentid,
+        curRootPrevname: this.menuName,
         name: fitem.name,
         page: this.page,
         allLoaded: this.allLoaded,
@@ -694,6 +732,7 @@ export default {
       CollectionFn(cobj, 1, imgIcon, this.editItemFile.id, this.bankeid, title);
     },
     oneditclick(fileitem) {
+      this.moveId = fileitem.id;
       this.actionShow = true;
       this.editItemFile = fileitem;
       this.dlid = this.editItemFile.id;
@@ -865,6 +904,7 @@ export default {
       }
       if (this.sortFile) {
         postData.ordername = "name";
+        postData.order = "asc";
       }
       this.$http
         .post("/api/bankefile/querypage", postData)
@@ -966,28 +1006,46 @@ export default {
         });
     },
     onSort() {
+      this.popupSort = true;
+      return;
       this.headerSortBtn = true;
       this.actionShow = true;
+      this.$nextTick(() => {
+        let Actionsheet = document.querySelector(".mint-actionsheet-list");
+        console.log("Actionsheet点击", Actionsheet);
+      });
     },
     onaddFile() {
       this.headerAddBtn = true;
       this.actionShow = true;
     },
     //文件排序
-    sortfileFn() {
-      this.sortFile = !this.sortFile;
+    sortfileFn(data) {
+      if (this.sortFile) return;
+      this.sortFile = true;
       this.sortTime = false;
+      let temp = JSON.parse(JSON.stringify(data));
+      let finalList = temp.sort((a, b) => sortLikeWin(a.name, b.name));
+      this.$store.commit("SET_ZHIYUANS", {
+        item: finalList,
+        type: 3
+      });
+      this.popupSort = false;
     },
     //时间倒序排序
-    sorttimeFn() {
-      this.sortTime = !this.sortTime;
+    sorttimeFn(data) {
+      if (this.sortTime) return;
+      this.sortTime = true;
       this.sortFile = false;
-      let temp = JSON.parse(JSON.stringify(this.arrZhiyuan));
-      temp = temp.reverse(temp);
+      let temp = JSON.parse(JSON.stringify(data));
+      temp.sort(function(a, b) {
+        return a.createtime > b.createtime ? 1 : -1;
+      });
       this.$store.commit("SET_ZHIYUANS", {
         item: temp,
         type: 3
       });
+      this.popupSort = false;
     },
     //添加网站
     addLink() {

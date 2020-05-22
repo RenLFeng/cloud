@@ -65,7 +65,7 @@ export default {
     return {
       classitem: {
         name: "",
-        avatar: "",
+        avatar: ""
       },
       popupMimgcrop: false,
       imgobj: {},
@@ -127,6 +127,7 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
+            this.defaultNewBanke(res.data.data.id);
             Object.assign(this.classitem, res.data.data);
             // this.$store.commit("banke/appendBankes", this.classitem);
             this.$store.commit("banke/setBankes", []);
@@ -183,13 +184,31 @@ export default {
         .catch(res => {
           Indicator.close();
         });
+    },
+    defaultNewBanke(courseid) {
+      let postdata = {
+        name: "默认班级",
+        avatar: "",
+        type: "",
+        ordernum: null,
+        courseid: courseid
+      };
+      let url = "/api/api/bankenew";
+      this.$http
+        .post(url, postdata)
+        .then(res => {
+          Indicator.close();
+          if (res.data.code == 0) {
+          }
+        })
+        .catch(() => {});
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.coures-new-wrap{
+.coures-new-wrap {
   .pic-wrap {
     margin: 30px auto;
     text-align: center;

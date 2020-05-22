@@ -36,7 +36,7 @@
           />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
-          <bankeZouyeXq :bankeInfo="$t(curbanke)" @editBkFn="tongzhiOpenState" />
+          <bankeZouyeXq :bankeInfo="$t(curbanke)"/>
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
@@ -365,9 +365,6 @@ export default {
       } else if (!this.showzuoye && this.selected == "zuoye") {
         this.showzuoye = true;
       }
-    },
-    tongzhiOpenState(data) {
-      // this.tongzhiState = data;
     },
     groupFn() {
       this.$store.commit("setRouterForward", true);

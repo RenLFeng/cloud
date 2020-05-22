@@ -33,6 +33,8 @@
         v-if="popupmulu"
         @Cancel="onCancel"
         @menuSelectEnd="onMenuSelectEnd"
+        :parentTempmenuData="parentTempmenuData"
+        :curRootPrevid="curRootPrevid"
         :parentid="parentid"
         :headerName="headerName"
         :cfrom="cfrom"
@@ -53,6 +55,14 @@ export default {
     },
     cfrom: {
       default: false
+    },
+    parentTempmenuData: {
+      default() {
+        return [];
+      }
+    },
+    curRootPrevid: {
+      default: null
     },
     parentid: {
       default: 0
@@ -146,7 +156,7 @@ export default {
       console.log("你看了多少呢", this.menuSelectEndData);
     },
     goBack() {
-      this.menuSelectEndData=null;
+      this.menuSelectEndData = null;
       this.$emit("addLinkState", true);
       this.$store.commit("SET_FOOTER_BAR_STATE", true);
     },

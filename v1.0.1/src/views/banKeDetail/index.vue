@@ -17,6 +17,7 @@
           </div>
         </li>
       </ul>
+      <i class="iconfont iconbianji11 position-r colord" @click="editBkFn" v-if="caneditbanke"></i>
     </div>
     <div class="cell-wrap">
       <ul class>
@@ -31,7 +32,7 @@
             </li>
             <!-- <li @click="classConfig">
               <mt-cell title="班级设置" is-link></mt-cell>
-            </li> -->
+            </li>-->
             <li @click="setProportion">
               <mt-cell title="得分占比设置" is-link></mt-cell>
             </li>
@@ -156,7 +157,7 @@
         @disablequit="ondisablequit"
         @disablejoin="ondisablejoin"
       />
-    </mt-popup> -->
+    </mt-popup>-->
   </div>
 </template>
 
@@ -182,7 +183,8 @@ export default {
           scorerule2: "",
           scorerule3: "",
           scorerule4: "",
-          scorerule5: ""
+          scorerule5: "",
+          username: ""
         };
       }
     }
@@ -196,7 +198,7 @@ export default {
   components: {
     edit,
     Notice,
-    Proportion,
+    Proportion
     // ClassConfig
   },
   data() {
@@ -243,8 +245,7 @@ export default {
   },
   created() {},
   methods: {
-    ondisablequit(v) {
-    },
+    ondisablequit(v) {},
     ondisablejoin(v) {},
     showSchoo() {
       // console.log("vv", this.bankeInfo);
@@ -298,11 +299,21 @@ export default {
     },
     //学情统计
     situation() {
+      let bankes = [];
+      bankes.push({
+        id: this.bankeInfo.id,
+        name: this.bankeInfo.name,
+        username: this.bankeInfo.username
+      });
       let url =
-        "http://localhost:8088/#/ClassStatistics?id=" + this.bankeInfo.id;
+        "http://192.168.0.237:8088/#/ClassStatistics?bankes=" +
+        encodeURIComponent(JSON.stringify(bankes));
+
       if (process.env.NODE_ENV !== "development") {
         url = document.location.origin;
-        url += "/backend/#/ClassStatistics?id=" + this.bankeInfo.id;
+        url +=
+          "/backend/#/ClassStatistics?bankes=" +
+          encodeURIComponent(JSON.stringify(bankes));
       }
       window.location.href = url;
       sessionStorage.setItem("homelocalstate", "");
@@ -310,7 +321,6 @@ export default {
     editBkFn() {
       if (!this.caneditbanke) return;
       this.editBkState = true;
-      this.$emit("editBkFn", this.editBkState);
       this.$store.commit("SET_FOOTER_BAR_STATE", false);
     },
     sharebanke() {
@@ -470,6 +480,11 @@ export default {
     margin-top: 56px;
   }
   .curbanke-info {
+    .iconbianji11 {
+      font-size: 30px;
+    }
+    width: 100%;
+    position: relative;
     background: #fff;
     ul {
       padding: 10px;
