@@ -4,7 +4,7 @@
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="controlpart tc">
-      <div class="temp-wrap">
+      <div class="temp-wrap" v-if="hasedit">
         <ul class="controlbtn-wrap">
           <li
             class="font16"
@@ -14,7 +14,7 @@
             @click="onSelectType(v)"
           >{{v.name}}</li>
         </ul>
-        <span v-if="hasedit" class="iconfont iconicon191 colora position-r" @click="onAddZuoye"></span>
+        <span class="iconfont iconicon191 colora position-r" @click="onAddZuoye"></span>
       </div>
 
       <p class="filter-wrap font18" v-if="showZYType">
@@ -34,7 +34,7 @@
     bottomDropText="上拉加载更多"-->
     <div
       class="zy-list-box scrollingtouch bankezy-wrap-main"
-      :class="{'ku':!showZYType,'cfrom':cfrom,'showZYType':!showZYType}"
+      :class="{'ku showZYType':!showZYType,'cfrom':cfrom,'nohasedit':!hasedit}"
       v-infinite-scroll="loadMore"
       infinite-scroll-disabled="loading"
       infinite-scroll-distance="10"
@@ -45,11 +45,11 @@
         :top-distance="80"
         @top-status-change="handleTopChange"
         ref="loadmore"
-        class="zyloadmore"
         :auto-fill="autofill"
+        class="zyloadmore"
       >
         <div class="devide"></div>
-        <div class="list-wrap">
+        <div class="list-wrap overflow-scroll" :class="{'cfrom':courseid}">
           <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
             <BankeZuoyeSimple
               :zuoyeitem="zuoyelist[sindex]"
@@ -91,6 +91,15 @@
     >
       <Fabu v-if="popupFabu" :curzuoye="curzuoye" @calce="oncalce" :bankeid="bankeid" />
     </mt-popup>
+    <mt-popup
+      v-model="popupZuoye"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <ZuoyeNew v-if="popupZuoye" @calce="oncalce" :bankeid="courseid" :cfrom="cfrom" />
+    </mt-popup>
   </div>
 </template>
 
@@ -113,6 +122,7 @@ import { CollectionFn, getZYFileType } from "@/util";
 import nativecode from "@/nativecode";
 import BottomLoadmore from "@/common/bottom-loadmore";
 const Fabu = () => import("@/views/banKeZuoye/fabu");
+const ZuoyeNew = () => import("@/views/ZuoyeNew");
 export default {
   name: "BankeZuoye",
   props: {
@@ -145,17 +155,25 @@ export default {
       topStatus: "",
       bottomStatus: "",
       autofill: false,
-      hasedit: this.$store.getters.caneditbanke,
+      // hasedit: this.$store.getters.caneditbanke,
       page: 0,
       pagesize: 10,
       allLoaded: false,
       loading: false,
 
       showZYType: 110,
-      popupFabu: false
+      popupFabu: false,
+      popupZuoye: false
     };
   },
   computed: {
+    hasedit() {
+      let caneditbanke = this.$store.getters.caneditbanke;
+      if (caneditbanke || this.cfrom) {
+        return true;
+      }
+      return false;
+    },
     caneditbanke() {
       let caneditbanke = this.$store.getters.caneditbanke;
       return caneditbanke;
@@ -330,6 +348,7 @@ export default {
       let bankeid = this.bankeid;
       if (this.courseid) {
         bankeid = this.courseid;
+        this.$store.commit("SET_ZUOYE_CFROM", "course");
       }
       this.$store.commit("setRouterForward", true);
       var url = "/zuoyenew/" + bankeid;
@@ -376,6 +395,9 @@ export default {
             fobj.editingZuoye = this.curzuoye;
           }
         });
+        if (this.courseid) {
+          this.$store.commit("SET_ZUOYE_CFROM", "course");
+        }
         this.$store.commit("setRouterForward", true);
         this.$router.push("/zuoyenew/" + this.bankeid);
       }
@@ -491,7 +513,11 @@ export default {
       var url = "/api/api/bankezuoyequery?bankeid=" + bankeid;
       if (this.cfrom) {
         bankeid = 0;
-        url = "/api/api/bankezuoyequery?bankeid=" + bankeid + "&courseid=" + this.courseid;
+        url =
+          "/api/api/bankezuoyequery?bankeid=" +
+          bankeid +
+          "&courseid=" +
+          this.courseid;
       }
       if (!ball) {
         if (this.zuoyelist.length) {
@@ -581,6 +607,11 @@ export default {
     },
     oncalce(v) {
       this.popupFabu = false;
+      this.popupZuoye = false;
+      if (v == "zuoyeCreate") {
+        this.showZYType = 0;
+        this.doQueryZuoye(true);
+      }
       if (v == "success") {
         this.showZYType = 110;
         this.showTypeID = 100;
@@ -619,7 +650,8 @@ export default {
     BankeZuoyeSimple,
     BottomLoadmore,
     [Actionsheet.name]: Actionsheet,
-    Fabu
+    Fabu,
+    ZuoyeNew
   }
 };
 </script>
@@ -629,12 +661,13 @@ export default {
 }
 
 .zyloadmore .list-wrap {
-  min-height: calc(100vh - 198px);
+  height: calc(100vh - 265px);
+  min-height: calc(100vh - 265px);
 }
-.controlpart {
-  /* background-color: white; */
+.zyloadmore .list-wrap.cfrom {
+  height: calc(100vh - 177px);
+  min-height: calc(100vh - 177px);
 }
-
 .controlbtn {
   width: 25%;
   border: none;
@@ -733,11 +766,14 @@ export default {
     &.ku {
       padding-top: 65px;
     }
-    &.cfrom{
+    &.cfrom {
       padding-top: 171px;
     }
-    &.cfrom.showZYType{
-       padding-top: 111px;
+    &.cfrom.showZYType {
+      padding-top: 111px;
+    }
+    &.nohasedit {
+      padding-top: 58px;
     }
     .list-wrap {
       .zuoye {

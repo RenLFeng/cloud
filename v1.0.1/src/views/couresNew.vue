@@ -1,9 +1,9 @@
 <template>
   <div class="coures-new-wrap">
-    <mt-header title="创建课程">
-      <mt-button slot="left" @click="$back">取消</mt-button>
+    <mt-header :title="cfrom?'编辑课程':'创建课程'">
+      <mt-button slot="left" @click="back">取消</mt-button>
 
-      <mt-button slot="right" @click="onsave" :disabled="savedisable">创建</mt-button>
+      <mt-button slot="right" @click="onsave" :disabled="savedisable">{{cfrom?'保存':'创建'}}</mt-button>
     </mt-header>
 
     <div>
@@ -61,6 +61,20 @@ import mimgcrop from "@/common/m-image-crop";
 import commontools from "@/commontools.js";
 export default {
   name: "CouresNew",
+  props: {
+    curcourse: {
+      default() {
+        return {
+          id: "",
+          name: "",
+          avatar: ""
+        };
+      }
+    },
+    cfrom: {
+      default: false
+    }
+  },
   data() {
     return {
       classitem: {
@@ -103,6 +117,12 @@ export default {
     }
   },
   created() {
+    if (this.cfrom) {
+      this.classitem.id = this.curcourse.id;
+      this.classitem.name = this.curcourse.name;
+      this.classitem.avatar = this.curcourse.avatar;
+    }
+    console.log("lgkd", this.classitem);
     this.templist = JSON.parse(JSON.stringify(this.history));
   },
   methods: {
@@ -127,11 +147,25 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
-            this.defaultNewBanke(res.data.data.id);
             Object.assign(this.classitem, res.data.data);
             // this.$store.commit("banke/appendBankes", this.classitem);
-            this.$store.commit("banke/setBankes", []);
-            this.$router.push("/");
+            if (this.cfrom) {
+              let coursers = JSON.parse(
+                JSON.stringify(this.$store.state.banke.curcourses)
+              );
+              for (let v of coursers) {
+                if (v.id == this.classitem.id) {
+                  v.avatar = this.classitem.avatar;
+                  v.name = this.classitem.name;
+                }
+              }
+              this.$store.commit("banke/setCourse", coursers);
+              this.$emit("ediend", this.classitem);
+            } else {
+              this.defaultNewBanke(res.data.data);
+              this.$store.commit("banke/setBankes", []);
+              this.$router.push("/");
+            }
           } else {
             let tipmsg = res.data.msg;
             if (tipmsg == "no privilige") {
@@ -185,13 +219,13 @@ export default {
           Indicator.close();
         });
     },
-    defaultNewBanke(courseid) {
+    defaultNewBanke(course) {
       let postdata = {
         name: "默认班级",
         avatar: "",
         type: "",
         ordernum: null,
-        courseid: courseid
+        courseid: course.id
       };
       let url = "/api/api/bankenew";
       this.$http
@@ -199,9 +233,29 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
+            this.updateinfo(res.data.data.id,course)
           }
         })
         .catch(() => {});
+    },
+    updateinfo(id, course) {
+      this.$http
+        .post("api/banke/updateinfo", {
+          id: id,
+          coursename: course.name
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+          }
+        })
+        .catch(err => {});
+    },
+    back() {
+      if (this.cfrom) {
+        this.$emit("calce", true);
+      } else {
+        this.$router.go(-1);
+      }
     }
   }
 };

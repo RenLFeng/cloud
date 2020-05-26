@@ -1,11 +1,15 @@
 <template>
   <div class="class-config-wrap">
+    <mt-header :title="bankeInfo.name">
+      <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
+      <mt-button slot="right" @click="submit" :disabled="calce">确定</mt-button>
+    </mt-header>
     <div class="main">
       <mt-cell title="允许学生加入">
-        <mt-switch v-model="disablejoin"></mt-switch>
+        <mt-switch v-model="funcdesc.disablejoin"></mt-switch>
       </mt-cell>
       <mt-cell title="允许学生退课">
-        <mt-switch v-model="disablequit"></mt-switch>
+        <mt-switch v-model="funcdesc.disablequit"></mt-switch>
       </mt-cell>
     </div>
   </div>
@@ -23,44 +27,58 @@ export default {
   },
   data() {
     return {
-      disablejoin: "",
-      disablequit: ""
+      funcdesc: {}
     };
   },
-  computed: {},
-  created() {},
-  mounted() {},
-  watch: {
-    disablejoin: function(n, v) {
-      if (!n) {
-        this.$emit("setdisablejoin", "disablejoin");
+  computed: {
+    calce() {
+      if (
+        this.funcdesc.disablejoin == this.bankeInfo.funcdesc.disablejoin &&
+        this.funcdesc.disablequit == this.bankeInfo.funcdesc.disablequit
+      ) {
+        return true;
       }
-    },
-    disablequit: function(n, v) {
-      if (!n) {
-        this.$emit("setdisablequit", "disablequit");
-      }
+      return false;
     }
   },
+  created() {
+    this.funcdesc = JSON.parse(JSON.stringify(this.bankeInfo.funcdesc));
+  },
+  mounted() {},
+  watch: {},
   methods: {
-    // submit() {
-    //   if (!this.bankeInfo.info) {
-    //     Toast("请输入公告");
-    //     return;
-    //   }
-    //   this.$http
-    //     .post("api/banke/updateinfo", {
-    //       id: this.bankeInfo.id,
-    //       info: this.bankeInfo.info
-    //     })
-    //     .then(res => {
-    //       if (res.data.code == "0") {
-    //         Toast("发布成功");
-    //         // this.$emit('submitSuccess',false)
-    //       }
-    //     })
-    //     .catch(err => {});
-    // }
+    goBack() {
+      if (this.calce) {
+        this.$emit("back", true);
+      } else {
+        MessageBox.confirm("你有未保存的修改,是否退出?").then(action => {
+          this.$emit("back", true);
+        });
+      }
+    },
+    submit() {
+      MessageBox.confirm("你确定要修改吗").then(action => {
+        let funcdesc = JSON.stringify(this.funcdesc);
+        let BankeData = this.$store.state.banke.curbankes;
+        this.$http
+          .post("api/banke/updateinfo", {
+            id: this.bankeInfo.id,
+            funcdesc: funcdesc
+          })
+          .then(res => {
+            if (res.data.code == "0") {
+              Toast("设置成功");
+              for (let item of BankeData) {
+                if (item.id == res.data.data.id) {
+                  item.funcdesc = this.funcdesc;
+                }
+              }
+              this.$store.commit("banke/setBankes", BankeData);
+            }
+          })
+          .catch(err => {});
+      });
+    }
   },
   components: { [Switch.name]: Switch }
 };

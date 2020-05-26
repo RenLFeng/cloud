@@ -74,7 +74,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="" v-if="isCreate">
+                <div class v-if="isCreate">
                   <BankeSimple
                     v-for="(citem,i) in NoCourseidBanke()"
                     :key="i+'_index'"
@@ -686,6 +686,14 @@ export default {
             for (let v of loadbankes) {
               arrId.push(v.id);
               // v.schoolid=1001
+              if (v.funcdesc) {
+                v.funcdesc = JSON.parse(v.funcdesc);
+              } else {
+                v.funcdesc = {
+                  disablejoin: true,
+                  disablequit: true
+                };
+              }
             }
 
             if (loadbankes.length >= this.pagesize) {
@@ -771,25 +779,25 @@ export default {
       for (let i = 0; i < joindata.length; i++) {
         let item = joindata[i];
         if (!item.courseid) continue;
-        this.$http
-          .post("/api/course/query", {
-            where: {
-              id: item.courseid
-            }
-          })
-          .then(res => {
-            if (res.data.code == "0") {
-              if (res.data.data.length) {
-                let serveData = res.data.data;
-                item.coursename = serveData[0].name;
-                item.avatar = serveData[0].avatar;
+        if (item.courseid && !item.coursename) {
+          this.$http
+            .post("/api/course/query", {
+              where: {
+                id: item.courseid
               }
-            } else {
-            }
-          })
-          .catch(err => {
-            reject("连接服务失败");
-          });
+            })
+            .then(res => {
+              if (res.data.code == "0") {
+                if (res.data.data.length) {
+                  let serveData = res.data.data;
+                  item.coursename = serveData[0].name;
+                  item.avatar = serveData[0].avatar;
+                }
+              } else {
+              }
+            })
+            .catch(err => {});
+        }
       }
     },
     //红点班课主页
@@ -869,6 +877,7 @@ export default {
   destroyed: function() {
     //! 记忆当前的选择
     this.$store.commit("setHomeSelected", this.selected);
+    window.removeEventListener("scroll", this.onscrollfn);
   },
   components: {
     MineAbout,

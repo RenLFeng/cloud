@@ -1,16 +1,16 @@
 <template>
   <div class="bk-edit-container">
-    <div class="pic-container" @click="unloadFn">
+    <!-- <div class="pic-container" @click="unloadFn">
       <img :src="imgSrc?imgSrc:bankeInfo.avatar" alt :onerror="$defaultImg('banke')" />
       <p>{{$t('common.CoverClass')}}</p>
-    </div>
+    </div> -->
     <div class="bk-info-lists">
       <ul class="border-bottom-e5">
         <!-- <li>
           <mt-field label="班级" placeholder v-model="banji"></mt-field>
         </li>-->
         <li>
-          <mt-field label="班级名" placeholder v-model="bankeNmae"></mt-field>
+          <mt-field label="班级名" placeholder v-model="bankeInfo.name"></mt-field>
         </li>
       </ul>
     </div>
@@ -119,7 +119,7 @@ export default {
       this.$http
         .post("/api/banke/updateinfo", {
           id: this.bankeInfo.id,
-          name: this.bankeNmae,
+          name: this.bankeInfo.name,
           states: this.bankeInfo.states,
           avatar: this.imgSrc ? this.imgSrc : this.bankeInfo.avatar
         })

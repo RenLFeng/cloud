@@ -43,7 +43,7 @@
           color
         />
       </div>
-      <Empty v-else :text="['没有文夹']" />
+      <Empty v-else :text="['没有文件夹']" />
     </div>
     <div class="foot-btn position-fb clearfix">
       <p class="fl new">
@@ -51,6 +51,7 @@
       </p>
       <p class="fr keep">
         <mt-button @click="submit" :disabled="canSubmit">确定</mt-button>
+        <!-- :disabled="canSubmit" -->
       </p>
     </div>
   </div>
@@ -100,15 +101,17 @@ export default {
       allLoaded: false,
       newFileName: "",
       prevMenuHader: "",
-      prevMenuid: null,
+      // prevMenuid: null,
       curRoots: [],
-      isSubmit: true
+      changParentid: false,
+
+      curRootid: 0,
     };
   },
   watch: {},
   computed: {
     canSubmit() {
-      if (this.moveItemFile.parentid == this.myParentid && this.isSubmit) {
+      if (this.moveItemFile.parentid == this.curRootid) {
         return true;
       }
       return false;
@@ -129,33 +132,22 @@ export default {
           return this.headerName;
         }
       }
-    },
-    myParentid() {
-      if (this.tempmenuData.length) {
-        return this.tempmenuData[this.tempmenuData.length - 1].id;
-      } else {
-        if (this.curRoots.length) {
-          return this.curRoots[this.curRoots.length - 1].id;
-        } else {
-          return this.parentid;
-        }
-      }
     }
   },
   created() {
-    this.prevMenuid = JSON.parse(JSON.stringify(this.curRootPrevid));
+    this.curRootid = JSON.parse(JSON.stringify(this.parentid));
+    // this.prevMenuid = JSON.parse(JSON.stringify(this.curRootPrevid));
     this.curRoots = JSON.parse(JSON.stringify(this.parentTempmenuData));
-    this.loadMoreFile(this.myParentid);
+    // console.log("移动", this.curRoots);
+    // console.log("移动parentid", this.parentid);
+    this.loadMoreFile(this.curRootid);
   },
-  mounted() {
-    // alert(this.curRoots.length);
-    // alert(this.prevMenuid);
-  },
+  mounted() {},
 
   methods: {
     loadMore() {
       this.loading = true;
-      this.loadMoreFile(this.myParentid);
+      this.loadMoreFile(this.curRootid);
     },
     loadMoreFile(parentid) {
       let postData = {
@@ -183,9 +175,6 @@ export default {
               this.allLoaded = true;
             }
             loadData = loadData.filter(v => {
-              if (v.id == this.moveItemFile.id) {
-                this.isSubmit = true;
-              }
               return v.id != this.moveItemFile.id;
             });
             for (let item of loadData) {
@@ -202,9 +191,12 @@ export default {
     },
     //点击文件夹
     onFolderClick(fitem) {
+      console.log('里面都是',fitem)
+      this.changParentid = false;
       this.cMenuItem = fitem;
+      this.curRootid = fitem.id;
       this.tempmenuData.push({
-        id: fitem.id,
+        curRootid: fitem.parentid,
         name: fitem.name,
         datas: this.menulist
       });
@@ -214,24 +206,23 @@ export default {
     //返回上一级
     onprev() {
       if (this.tempmenuData.length) {
-        this.menulist = this.tempmenuData[this.tempmenuData.length - 1].datas;
+        let item = this.tempmenuData[this.tempmenuData.length - 1];
+        this.menulist = item.datas;
+        this.curRootid = item.curRootid;
         this.tempmenuData.splice(this.tempmenuData.length - 1, 1);
       } else {
-        if (this.prevMenuid != null) {
-          console.log("快递发了吗", this.curRoots);
-          this.prevMenuHader = this.curRoots[
-            this.curRoots.length - 1
-          ].curRootPrevname;
-          this.prevMenuid = this.curRoots[
-            this.curRoots.length - 1
-          ].curRootPrevid;
-          this.curRoots.splice(this.curRoots.length - 1, 1);
-          if (!this.curRoots.length) {
-            this.isSubmit=false
-          }
+        // if (this.prevMenuid != null) {
+          let item = this.curRoots[this.curRoots.length - 1];
+          this.curRootid = item.curRootPrevid;
+          this.prevMenuHader = item.curRootPrevname;
+          // this.prevMenuid = item.curRootPrevid;
           this.loadinit();
-          this.loadMoreFile(this.prevMenuid);
-        }
+          this.loadMoreFile(item.curRootPrevid);
+          // if (this.curRoots.length == 1) {
+          //   this.changParentid = true;
+          // }
+          this.curRoots.splice(this.curRoots.length - 1, 1);
+        // }
       }
     },
     loadinit() {
@@ -241,11 +232,10 @@ export default {
       this.listLoadend = false;
       this.allLoaded = false;
     },
-    //新建文件夹
     newFolder() {
       var url =
         "/api/bankefile/menuadd?parentid=" +
-        this.myParentid +
+        this.curRootid +
         "&bankeid=" +
         this.bankeid;
       if (this.cfrom) {
@@ -275,9 +265,8 @@ export default {
       });
     },
     submit() {
-      let moveParentid = this.myParentid;
       this.$emit("menuSelectEnd", {
-        parentid: moveParentid,
+        parentid: this.curRootid,
         menuName: this.myMenuname
       });
     },

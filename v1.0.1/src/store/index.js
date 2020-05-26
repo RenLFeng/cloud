@@ -67,7 +67,8 @@ const state = {
     schoolname: {},
 
     curcourse: {},
-
+    zuoyeNewBackState: 0,
+    zuoyeCfrom:''
 }
 
 const getters = {
@@ -266,6 +267,12 @@ const mutations = {
     },
     SET_TEDINFO(state, v) {
         state.Settedinfo = v;
+    },
+    SET_ZYNEW_BACK_STATE(state, v) {
+        state.zuoyeNewBackState = v;
+    },
+    SET_ZUOYE_CFROM(state,v){
+        state.zuoyeCfrom=v;
     },
 }
 

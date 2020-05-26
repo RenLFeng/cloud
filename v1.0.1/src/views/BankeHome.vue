@@ -12,6 +12,7 @@
             :hasbackbtn="hasbackbtn"
             :curbanke="curbanke"
             :bankename="bankename"
+            :Refresh="Refresh"
             v-if="showziyuan"
             @popupZiyuanEdit="onPopupZiyuanEdit"
           ></BankeZiyuan>
@@ -25,7 +26,7 @@
         </mt-tab-container-item>
 
         <mt-tab-container-item id="zuoye">
-          <BankeZuoye :bankeid="id" v-if="showzuoye"   :bankename="bankename"></BankeZuoye>
+          <BankeZuoye :bankeid="id" v-if="showzuoye" :bankename="bankename"></BankeZuoye>
         </mt-tab-container-item>
         <mt-tab-container-item id="hudong">
           <BankeHuDong
@@ -36,7 +37,7 @@
           />
         </mt-tab-container-item>
         <mt-tab-container-item id="tongzhi">
-          <bankeZouyeXq :bankeInfo="$t(curbanke)"/>
+          <bankeZouyeXq :bankeInfo="$t(curbanke)" />
         </mt-tab-container-item>
       </mt-tab-container>
     </div>
@@ -246,7 +247,9 @@ export default {
           banshu: 0
         },
         xqTips: 0
-      }
+      },
+      cfrompage: {},
+      Refresh: false
     };
   },
   props: {
@@ -276,8 +279,8 @@ export default {
     hasnavbar() {
       return nativecode.hasnavbar();
     },
-   showheader(){
-      if(this.selected=='ziyuan' || this.selected=='zuoye'){
+    showheader() {
+      if (this.selected == "ziyuan" || this.selected == "zuoye") {
         return false;
       }
       return true;
@@ -382,16 +385,51 @@ export default {
           if (res.data.code == 0) {
             if (res.data.data.length > 0) {
               this.curbanke = res.data.data[0];
-              this.$store.commit("banke/appendBankes", this.curbanke);
-              this.onBankeChange();
+              if (this.curbanke.funcdesc) {
+                this.curbanke.funcdesc = JSON.parse(this.curbanke.funcdesc);
+              } else {
+                this.curbanke.funcdesc = {
+                  disablejoin: true,
+                  disablequit: true
+                };
+              }
+              console.log("凡是快乐", this.curbanke);
+
+              this.Refresh = true;
+              if (this.curbanke.courseid && !this.curbanke.coursename) {
+                this.coursequery(this.curbanke);
+              } else {
+                this.$store.commit("banke/appendBankes", this.curbanke);
+                this.onBankeChange(this.curbanke);
+              }
             }
           }
         })
         .catch(() => {});
     },
-    onBankeChange() {
-      this.$store.commit("setCurBanke", this.curbanke);
-      sessionStorage.setItem("curbanke", JSON.stringify(this.curbanke));
+    coursequery(curbanke) {
+      this.$http
+        .post("/api/course/query", {
+          where: {
+            id: curbanke.courseid
+          }
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            if (res.data.data.length) {
+              let serveData = res.data.data[0];
+              curbanke.coursename = serveData.name;
+              this.$store.commit("banke/appendBankes", curbanke);
+              this.onBankeChange(curbanke);
+            }
+          } else {
+          }
+        })
+        .catch(err => {});
+    },
+    onBankeChange(banke) {
+      this.$store.commit("setCurBanke", banke);
+      sessionStorage.setItem("curbanke", JSON.stringify(banke));
       if (!this.hasnavbar) {
         document.title = this.bankename;
       }
@@ -457,7 +495,7 @@ export default {
     this.bankeid = this.id;
     if (u) {
       this.curbanke = u;
-      this.onBankeChange();
+      this.onBankeChange(this.curbanke);
     } else {
       // this.curbanke = this.$t("common.Curbanke");
       this.loadBanke();
@@ -490,6 +528,11 @@ export default {
     [TabContainer.name]: TabContainer,
     [TabContainerItem.name]: TabContainerItem,
     [Actionsheet.name]: Actionsheet
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.cfrompage = from;
+    });
   }
 };
 </script>

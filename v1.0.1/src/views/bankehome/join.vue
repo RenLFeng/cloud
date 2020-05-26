@@ -6,7 +6,7 @@
       </mt-header>
       <mt-field placeholder="请输入班课号" type="number" v-model="bankeNumber"></mt-field>
       <div class="button-worp">
-        <mt-button class="button-auto-87" @click="join">下一步</mt-button>
+        <mt-button class="button-auto-87" @click="joinsearch">下一步</mt-button>
       </div>
     </div>
     <mt-popup
@@ -24,7 +24,7 @@
           @click="goback"
         >{{$t('common.Back')}}</mt-button>
       </mt-header>
-      <Submitjoin :bankeItem="bankeItem"/>
+      <Submitjoin :bankeItem="bankeItem" />
     </mt-popup>
   </div>
 </template>
@@ -32,106 +32,97 @@
 <script>
 import { Indicator, Toast, MessageBox } from "mint-ui";
 import Submitjoin from "./submitjoin";
-import nativecode from '@/nativecode'
+import nativecode from "@/nativecode";
 export default {
   name: "Join",
   props: {
-      bankeid:{
-          default(){
-              return 0;
-          }
+    bankeid: {
+      default() {
+        return 0;
       }
+    }
   },
   data() {
     return {
       bankeNumber: "",
       popupSubmitJoin: false,
-      bankeItem:{}
+      bankeItem: {}
     };
   },
   computed: {},
   created() {
-      console.log('join vue , bankeid:'+this.bankeid);
-      if (this.bankeid != 0){
-         // nativecode.initfirst();  //! wx等平台，初始化session
-          this.bankeNumber = this.bankeid;
-          Indicator.open('加载中...');
-          this.$http
-              .post("/api/banke/searchinbanke", {
-                  "id":this.bankeid
-              })
-              .then(res => {
-                  Indicator.close();
-                  if (res.data.code == "0" ) {
-                      let rdata = res.data.data;
-                      if (rdata.isin){
-                          let tourl = "/bankehome/" + rdata.banke.id
-                          this.$store.commit("setRouterForward", true);
-                          this.$router.replace(tourl);
-                      }
-                      else{
-                          this.bankeItem=rdata.banke;
-                          this.popupSubmitJoin=true;
-                      }
-
-                  } else {
-                    //  MessageBox.alert("未找到班课");
-                      let tips = '错误:' + this.data.msg
-                      Toast(tips);
-                      let tourl = "/"
-                      this.$store.commit("setRouterForward", true);
-                      this.$router.replace(tourl);
-                  }
-              })
-              .catch(err => {
-                  Indicator.close();
-                  Toast("异常");
-                  let tourl = "/"
-                  this.$store.commit("setRouterForward", true);
-                  this.$router.replace(tourl);
-              });
-      }
+    console.log("join vue , bankeid:" + this.bankeid);
+    if (this.bankeid != 0) {
+      // nativecode.initfirst();  //! wx等平台，初始化session
+      this.bankeNumber = this.bankeid;
+      Indicator.open("加载中...");
+      this.$http
+        .post("/api/banke/searchinbanke", {
+          id: this.bankeid
+        })
+        .then(res => {
+          Indicator.close();
+          if (res.data.code == "0") {
+            let rdata = res.data.data;
+            if (rdata.isin) {
+              let tourl = "/bankehome/" + rdata.banke.id;
+              this.$store.commit("setRouterForward", true);
+              this.$router.replace(tourl);
+            } else {
+              this.bankeItem = rdata.banke;
+              this.popupSubmitJoin = true;
+            }
+          } else {
+            //  MessageBox.alert("未找到班课");
+            let tips = "错误:" + this.data.msg;
+            Toast(tips);
+            let tourl = "/";
+            this.$store.commit("setRouterForward", true);
+            this.$router.replace(tourl);
+          }
+        })
+        .catch(err => {
+          Indicator.close();
+          Toast("异常");
+          let tourl = "/";
+          this.$store.commit("setRouterForward", true);
+          this.$router.replace(tourl);
+        });
+    }
   },
-  mounted() {
-
-  },
+  mounted() {},
   watch: {},
   methods: {
-    join() {
+    joinsearch() {
       if (!this.bankeNumber) {
         Toast("请输入班课号");
         return;
       }
-        this.$http
-            .post("/api/banke/search", {
-                "id":this.bankeNumber
-            })
-            .then(res => {
-                if (res.data.code == "0" && res.data.data.length > 0) {
-                    this.bankeItem=res.data.data[0];
-                    this.popupSubmitJoin=true;
-                } else {
-                    MessageBox.alert("未找到班课");
-                }
-            })
-            .catch(err => {
-                Toast("服务异常");
-            });
-      // this.$http
-      //   .post("/api/banke/reqmemberadd", {
-      //     	"bankeid":this.bankeNumber
-      //   })
-      //   .then(res => {
-      //     if (res.data.code == "0") {
-      //       this.bankeItem=res.data.data.bankes[0];
-      //       this.popupSubmitJoin=true;
-      //     } else {
-      //       MessageBox.alert("你已加入或班课号不存在");
-      //     }
-      //   })
-      //   .catch(err => {
-      //     Toast("服务异常");
-      //   });
+      this.$http
+        .post("/api/banke/search", {
+          id: this.bankeNumber
+        })
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.length > 0) {
+            this.bankeItem = res.data.data[0];
+            if (this.bankeItem.funcdesc) {
+              this.bankeItem.funcdesc = JSON.parse(this.bankeItem.funcdesc);
+              let funcdesc = this.bankeItem.funcdesc;
+              if (!funcdesc.disablejoin) {
+                Toast("禁止加入班课");
+              } else {
+                this.popupSubmitJoin = true;
+              }
+            } else {
+              this.popupSubmitJoin = true;
+            }
+          } else {
+            MessageBox.alert("未找到班课");
+          }
+        })
+        .catch(err => {
+          Toast("服务异常");
+        });
     },
     goback() {
       if (this.popupSubmitJoin) {

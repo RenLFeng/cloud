@@ -153,6 +153,7 @@ export default {
   },
   methods: {
     loadTop() {
+      this.Average=0;
       this.loadMoreMember();
     },
     handleTopChange(status) {

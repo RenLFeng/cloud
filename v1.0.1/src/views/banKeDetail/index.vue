@@ -30,9 +30,9 @@
             <li @click="setNotice">
               <mt-cell title="发布公告" is-link></mt-cell>
             </li>
-            <!-- <li @click="classConfig">
+            <li @click="classConfigfn">
               <mt-cell title="班级设置" is-link></mt-cell>
-            </li>-->
+            </li>
             <li @click="setProportion">
               <mt-cell title="得分占比设置" is-link></mt-cell>
             </li>
@@ -92,7 +92,12 @@
       <mt-header :title="$t('bankeXingQing.EditClass')">
         <mt-button slot="left" icon="back" @click="goBack">{{$t('confirm.Cancel')}}</mt-button>
       </mt-header>
-      <edit :bankeInfo="bankeInfo" :editBkState="editBkState" @imgSrcLoad="onImgSrcLoad" />
+      <edit
+        :bankeInfo="bankeInfo"
+        :editBkState="editBkState"
+        v-if="editBkState"
+        @imgSrcLoad="onImgSrcLoad"
+      />
     </mt-popup>
 
     <mt-popup
@@ -142,29 +147,22 @@
         </div>
       </div>
     </mt-popup>
-    <!-- <mt-popup
+    <mt-popup
       v-model="popupClassConfig"
       position="right"
       class="popup-right info-popup"
       :modal="false"
       style="background:#f0f0f0"
     >
-      <mt-header :title="bankeInfo.name">
-        <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
-      </mt-header>
-      <ClassConfig
-        :bankeInfo="bankeInfo"
-        @disablequit="ondisablequit"
-        @disablejoin="ondisablejoin"
-      />
-    </mt-popup>-->
+      <ClassConfig v-if="popupClassConfig" :bankeInfo="bankeInfo" @back="goBack" />
+    </mt-popup>
   </div>
 </template>
 
 <script>
 import { MessageBox, Indicator, Toast } from "mint-ui";
 import edit from "./edit";
-// import ClassConfig from "./classConfig";
+import ClassConfig from "./classConfig";
 import Notice from "./Notice";
 import Proportion from "./Proportion";
 import nativecode from "@/nativecode";
@@ -178,7 +176,7 @@ export default {
           avatar: "",
           id: 0,
           info: "",
-          funcdesc: { disablejoin: "", disablequit: "" },
+          funcdesc: { disablejoin: true, disablequit: true },
           scorerule1: "",
           scorerule2: "",
           scorerule3: "",
@@ -192,14 +190,13 @@ export default {
   watch: {
     bankeInfo(newValue, oldValue) {
       this.bankeInfoData = newValue;
-      console.log("ggggf", newValue);
     }
   },
   components: {
     edit,
     Notice,
-    Proportion
-    // ClassConfig
+    Proportion,
+    ClassConfig
   },
   data() {
     return {
@@ -275,7 +272,7 @@ export default {
         });
     },
     //班级设置
-    classConfig() {
+    classConfigfn() {
       this.popupClassConfig = true;
     },
     //发布公告
@@ -299,21 +296,18 @@ export default {
     },
     //学情统计
     situation() {
-      let bankes = [];
-      bankes.push({
-        id: this.bankeInfo.id,
-        name: this.bankeInfo.name,
-        username: this.bankeInfo.username
-      });
       let url =
-        "http://192.168.0.237:8088/#/ClassStatistics?bankes=" +
-        encodeURIComponent(JSON.stringify(bankes));
-
+        "http://192.168.0.237:8088/#/ClassStatistics?backendid=" +
+        this.bankeInfo.id +
+        "&from=" +
+        1;
       if (process.env.NODE_ENV !== "development") {
         url = document.location.origin;
         url +=
-          "/backend/#/ClassStatistics?bankes=" +
-          encodeURIComponent(JSON.stringify(bankes));
+          "/backend/#/ClassStatistics?backendid=" +
+          this.bankeInfo.id +
+          "&from=" +
+          1;
       }
       window.location.href = url;
       sessionStorage.setItem("homelocalstate", "");
@@ -377,6 +371,10 @@ export default {
         .catch(() => {});
     },
     quitBk() {
+      if(!this.bankeInfo.funcdesc.disablequit){
+        Toast('禁止退出');
+        return;
+      }
       MessageBox.confirm("", {
         title: "提示",
         message:

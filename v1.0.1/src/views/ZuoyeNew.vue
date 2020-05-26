@@ -1,7 +1,7 @@
 <template>
   <div class="new-zuoye-wrap">
     <mt-header :title="pageTitle" class="mint-header-f">
-      <mt-button slot="left" @click="$back">取消</mt-button>
+      <mt-button slot="left" @click="back">取消</mt-button>
 
       <mt-button slot="right" :disabled="savedisable" @click="doSave">{{savebtntext}}</mt-button>
     </mt-header>
@@ -15,15 +15,15 @@
       <div class="devide"></div>
       <!-- <mt-cell title="设置最晚提交时间">
         <mt-switch v-model="hassubmittime"></mt-switch>
-      </mt-cell> -->
+      </mt-cell>-->
       <!-- <mt-cell v-if="hassubmittime" title="最晚提交时间" @click.native="onTimePicker">{{submittimedesc}}</mt-cell>
       <mt-cell v-if="hassubmittime" title="允许超时提交作业">
         <mt-switch v-model="allowpasstime"></mt-switch>
-      </mt-cell> -->
+      </mt-cell>-->
       <!-- <p
         class="tips font-xxs"
         v-if="hassubmittime"
-      >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p> -->
+      >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>-->
       <mt-cell title="答案设置" is-link @click.native="onZAnaswer">{{zanswerdesc}}</mt-cell>
       <p class="tips font-xxs">作业结束后查看参考答案，你可以随时对参考答案进行编辑。</p>
     </div>
@@ -91,7 +91,10 @@ export default {
       },
       curdatetime: new Date(),
       isEditMode: false, //! 是否编辑模式
-      pickervalue: ""
+      pickervalue: "",
+
+      cfromPath: {},
+      cfrompage: ""
     };
   },
   props: {
@@ -99,6 +102,9 @@ export default {
       default() {
         return 0;
       }
+    },
+    cfrom: {
+      default: false
     }
   },
   computed: {
@@ -182,6 +188,9 @@ export default {
           this.zuoyeitem.allowpasstime = 0;
         }
       }
+    },
+    zuoyeCfrom() {
+      return this.$store.state.zuoyeCfrom;
     }
   },
   watch: {
@@ -231,7 +240,7 @@ export default {
         this.doSaveUpload();
         return;
       }
-        this.doSaveUpload();
+      this.doSaveUpload();
       // MessageBox({
       //   message: "是否现在开始作业？",
       //   showCancelButton: true,
@@ -276,7 +285,11 @@ export default {
       // });
     },
     doSaveUpload() {
-      var url = "/api/api/bankezuoyeadd?bankeid=" + this.bankeid;
+      let bankeid = this.bankeid;
+      var url = "/api/api/bankezuoyeadd?bankeid=" + bankeid;
+      if (this.zuoyeCfrom == "course") {
+        url = "/api/api/bankezuoyeadd?bankeid=0&courseid=" + bankeid;
+      }
       Indicator.open(
         this.isEditMode
           ? this.$t("Indicator.Saving")
@@ -300,9 +313,17 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
-            let msg=this.isEditMode ? "保存成功" : "创建成功";
-            Toast(msg+'\xa0'+'请在作业库中发布作业');
-            this.$router.back();
+            let msg = this.isEditMode ? "保存成功" : "创建成功";
+            if (this.cfromPath.path.includes("zuoyeresult")) {
+              Toast("保存成功");
+              this.$router.go(-1);
+            } else {
+              Toast(msg + "\xa0" + "请在作业库中发布作业");
+              this.$router.go(-1);
+              if (this.zuoyeCfrom == "course") {
+                this.$store.commit("SET_ZYNEW_BACK_STATE", 1);
+              }
+            }
           } else {
             Toast(res.data.msg);
           }
@@ -355,10 +376,8 @@ export default {
       to.ztext = from.ztext;
       to.localfiles = maintools.localfilesFromFilelist(from.files);
     },
-    goBack() {
-      if (this.popupAnswer) {
-        this.popupAnswer = false;
-      }
+    back() {
+      this.$router.go(-1);
     }
   },
   components: {
@@ -406,6 +425,13 @@ export default {
       fn: fobj => {
         fobj.editingZuoye = null; //! 清空当前编辑的作业
       }
+    });
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.cfromPath = from;
+      vm.cfrompage = from.path;
+      console.log("师傅的说法", from);
     });
   }
 };

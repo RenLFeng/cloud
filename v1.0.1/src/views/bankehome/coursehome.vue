@@ -1,7 +1,7 @@
 <template>
   <div class="course-wrap">
-    <mt-header :title="courseName" class="mint-header-f my-height gl">
-      <mt-button icon="back" slot="left" @click="$back">{{$t('common.Back')}}</mt-button>
+    <mt-header :title="courseName" class="mint-header-f my-height gl" @click.native="guanlikec">
+      <mt-button icon="back" slot="left" @click="back()">{{$t('common.Back')}}</mt-button>
     </mt-header>
     <div class="main main-f-2">
       <ul class="tit-wrap">
@@ -22,33 +22,50 @@
           infinite-scroll-distance="10"
           infinite-scroll-immediate-check="false"
         >
-          <div v-if="allBankes.length" class="all-ankes">
-            <div class="item" v-for="(v,i) of allBankes" :key="i" @click="bankeDedail(v)">
-              <div class="info">
-                <div class="content">
-                  <p class="tit position-l font18 ellipse color0">
-                    {{v.name}}
-                    <span v-if="v.inclass" class="inclass">正在上课</span>
-                  </p>
-                  <div class="right-info font-xxs position-r">
-                    <p class="colora position-t ellipse t">{{v.membernum}}人</p>
-                    <p class="position-b ellipse b">班级号: {{v.id}}</p>
+          <mt-loadmore
+            :top-method="loadTop"
+            :top-distance="80"
+            ref="loadmore"
+            :auto-fill="autofill"
+            :class="!allBankes.length?'fileempty':''"
+          >
+            <div v-if="allBankes.length" class="all-ankes">
+              <div class="item" v-for="(v,i) of allBankes" :key="i" @click="bankeDedail(v)">
+                <div class="info">
+                  <div class="content">
+                    <p class="tit position-l font18 ellipse color0">
+                      {{v.name}}
+                      <span v-if="v.inclass" class="inclass">正在上课</span>
+                    </p>
+                    <div class="right-info font-xxs position-r">
+                      <p class="colora position-t ellipse t">{{v.membernum}}人</p>
+                      <p class="position-b ellipse b">班级号: {{v.id}}</p>
+                    </div>
                   </div>
+                  <p
+                    class="ggao position-b font-xxs colory ellipse"
+                    v-if="v.info"
+                  >公告:&nbsp;{{v.info}}</p>
                 </div>
-                <p class="ggao position-b font-xxs colory ellipse" v-if="v.info">公告:&nbsp;{{v.info}}</p>
+                <i class="iconfont iconcellyoucejiantou position-r fontnormal colora"></i>
               </div>
-              <i class="iconfont iconcellyoucejiantou position-r fontnormal colora"></i>
+              <BottomLoadmore
+                v-if="allLoaded && listLoadend"
+                showType
+                loadtext="已经加载全部了"
+                type
+                color
+              />
+              <BottomLoadmore
+                v-if="!allLoaded && loading"
+                showType="loading"
+                loadtext="加载中..."
+                type="triple-bounce"
+                color
+              />
             </div>
-            <BottomLoadmore v-if="allLoaded && listLoadend" showType loadtext="已经加载全部了" type color />
-            <BottomLoadmore
-              v-if="!allLoaded && loading"
-              showType="loading"
-              loadtext="加载中..."
-              type="triple-bounce"
-              color
-            />
-          </div>
-          <Empty v-else />
+            <Empty v-else />
+          </mt-loadmore>
         </div>
       </div>
     </div>
@@ -72,12 +89,12 @@
                 <p class="ellipse font16">教师: {{curcourse.username}}</p>
               </div>
             </div>
-            <i class="iconfont position-r iconbianji colord"></i>
+            <i class="iconfont position-r iconbianji colord" @click="edi"></i>
           </div>
-          <div class="margin">
+          <!-- <div class="margin">
             <mt-cell title="发布为示范课程模板" is-link></mt-cell>
-          </div>
-          <div class="margin">
+          </div>-->
+          <div class="margin" @click="edBk">
             <mt-cell title="归档课程" class="f00"></mt-cell>
           </div>
           <p class="colora">课程归档后无法发布资源、创建作业等，但仍可以查看已发布的资源、已结束的作业等。</p>
@@ -117,6 +134,7 @@
           v-if="popupCoursezy"
           :courseid="courseid"
           :hasbackbtn="hasbackbtn"
+          :allBankes="allBankes"
           bankename="课程资源"
           :cfrom="true"
           @calce="oncalce"
@@ -138,15 +156,32 @@
         :cfrom="true"
       ></BankeZuoye>
     </mt-popup>
+    <mt-popup
+      v-model="popupCouresNew"
+      position="right"
+      class="popup-right"
+      :modal="false"
+      style="background:#f0f0f0"
+    >
+      <CouresNew
+        :courseid="courseid"
+        v-if="popupCouresNew"
+        :curcourse="curcourse"
+        :cfrom="true"
+        @ediend="onediend"
+        @calce="oncalce"
+      ></CouresNew>
+    </mt-popup>
   </div>
 </template>
 <script>
 const BankeZiyuan = () => import("@/views/BankeZiyuan");
 const Empty = () => import("@/common/empty");
 const BankeZuoye = () => import("@/views/BankeZuoye");
-import { Indicator } from "mint-ui";
+const CouresNew = () => import("@/views/couresNew");
 import { parseURL } from "@/util";
 import nativecode from "@/nativecode";
+import { MessageBox, Indicator, Toast } from "mint-ui";
 const tititems = [
   // {
   //   id: 1,
@@ -203,7 +238,9 @@ export default {
       autofill: false,
       curcourse: null,
 
-      popupCoursezuoye: false
+      popupCoursezuoye: false,
+      popupCouresNew: false,
+      cfrompage: {}
     };
   },
   computed: {
@@ -226,21 +263,105 @@ export default {
       return true;
     },
     curcourses() {
-      return this.$store.state.banke.curbankes;
+      return this.$store.state.banke.curcourses;
+    },
+    zuoyeNewBackState() {
+      return this.$store.state.zuoyeNewBackState;
     }
   },
   created() {
     let curcourse = sessionStorage.getItem("curcourse") || "";
     if (curcourse) {
       this.curcourse = JSON.parse(curcourse);
+    } else {
+      this.coursequery(this.courseid);
     }
     this.bankequery();
+    if (this.zuoyeNewBackState) {
+      this.popupCoursezuoye = true;
+      this.$store.commit("SET_ZYNEW_BACK_STATE", 0);
+      this.$store.commit("SET_ZUOYE_CFROM", "");
+    }
   },
-  mounted() {
-    // this.coursequery();
-  },
+  mounted() {},
   watch: {},
   methods: {
+    coursequery(id) {
+      this.$http
+        .post("/api/course/query", {
+          where: {
+            id: id
+          }
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+            if (res.data.data.length) {
+              let serveData = res.data.data;
+              this.curcourse = serveData[0];
+            }
+          } else {
+          }
+        })
+        .catch(err => {});
+    },
+    edBk() {
+      var url = "/api/course/add";
+      MessageBox.confirm("", {
+        title: this.$t("confirm.Tips"),
+        message: "确定要归档吗",
+        confirmButtonText: this.$t("confirm.Ok"),
+        cancelButtonText: this.$t("confirm.Cancel"),
+        showCancelButton: true
+      })
+        .then(() => {
+          //! cjy: 二次确认
+          MessageBox.confirm("", {
+            title: this.$t("confirm.Tips"),
+            message: "归档后，只能查阅， 不可再开始该课程，是否继续？",
+            confirmButtonText: this.$t("confirm.Ok"),
+            cancelButtonText: this.$t("confirm.Cancel"),
+            showCancelButton: true
+          }).then(() => {
+            this.$http
+              .post(url, {
+                id: this.curcourse.id,
+                states: 0
+              })
+              .then(res => {
+                if (res.data.code == "0") {
+                  let coursers = JSON.parse(
+                    JSON.stringify(this.$store.state.banke.curcourses)
+                  );
+                  coursers = coursers.filter(v => {
+                    return v.id != res.data.data.id;
+                  });
+                  this.$store.commit("banke/setCourse", coursers);
+                  this.$router.push("/");
+                } else {
+                  Toast("操作失败");
+                }
+              })
+              .catch((err = {}));
+          });
+        })
+        .catch(err => {});
+    },
+    edi() {
+      this.popupCouresNew = true;
+    },
+    onediend(v) {
+      this.curcourse.name = v.name;
+      this.curcourse.avatar = v.avatar;
+      this.popupCouresNew = false;
+    },
+    loadTop() {
+      this.loading = false;
+      this.listLoadend = false;
+      this.allLoaded = false;
+      this.page = 0;
+      this.allBankes = [];
+      this.loadMore();
+    },
     loadMore() {
       this.loading = true;
       this.bankequery();
@@ -271,14 +392,13 @@ export default {
               this.allLoaded = true;
             }
             let loadData = res.data.data;
-            // loadData = res.data.data.filter(item => {
-            //   return item.states > 0;
-            // });
             this.allBankes = [...loadData, ...this.allBankes];
           }
           Indicator.close();
+          this.$refs.loadmore.onTopLoaded();
         })
         .catch(err => {
+          this.$refs.loadmore.onTopLoaded();
           Indicator.close();
         });
     },
@@ -307,6 +427,7 @@ export default {
               this.$store.commit("banke/setBankes", []);
             }
             this.popupNewbanke = false;
+            this.updateinfo(res.data.data);
           } else {
             let tipmsg = res.data.msg;
             if (tipmsg == "no privilige") {
@@ -327,6 +448,18 @@ export default {
           Indicator.close();
           Toast(this.$t("common.Exception_occurred"));
         });
+    },
+    updateinfo(banke) {
+      this.$http
+        .post("api/banke/updateinfo", {
+          id: banke.id,
+          coursename: this.curcourse.name
+        })
+        .then(res => {
+          if (res.data.code == "0") {
+          }
+        })
+        .catch(err => {});
     },
     //进入班课
     bankeDedail(item) {
@@ -355,6 +488,7 @@ export default {
           for (let v of this.allBankes) {
             bankes.push({
               id: v.id,
+              courseid: this.courseid,
               name: v.name,
               username: v.username
             });
@@ -380,14 +514,31 @@ export default {
       this.popupGuanlikc = true;
     },
     oncalce(v) {
-      this.popupCoursezy = false;
-      this.popupCoursezuoye = false;
+      if (this.popupCoursezy) {
+        this.popupCoursezy = false;
+      }
+      if (this.popupCoursezuoye) {
+        this.popupCoursezuoye = false;
+      }
+      if (this.popupCouresNew) {
+        this.popupCouresNew = false;
+      }
+    },
+    back() {
+      this.$router.push("/");
     }
   },
   components: {
     Empty,
     BankeZiyuan,
-    BankeZuoye
+    BankeZuoye,
+    CouresNew
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log("kf", from);
+      vm.cfrompage = from.name;
+    });
   }
 };
 </script>
@@ -426,10 +577,14 @@ export default {
       .list-wrap {
         height: 69vh;
         min-height: 69vh;
+        .fileempty {
+          height: 69vh;
+        }
         .all-ankes {
-          background: #fff;
-          padding: 0 10px;
+          min-height: 69vh;
           .item {
+            padding: 0 10px;
+            background: #fff;
             position: relative;
             width: 100%;
             height: 80px;
@@ -535,9 +690,10 @@ export default {
 <style >
 .course-wrap .gl .mint-header-title {
   position: relative;
+  padding-right: 24px;
 }
 .course-wrap .gl .mint-header-title::after {
-  /* display: block;
+  display: block;
   position: absolute;
   right: 0;
   top: 50%;
@@ -549,7 +705,7 @@ export default {
   border-radius: 50%;
   border: 1px solid #0089ff;
   color: #0089ff;
-  font-size: 12px; */
+  font-size: 12px;
 }
 .course-wrap .mint-cell-wrapper {
   background-image: none;

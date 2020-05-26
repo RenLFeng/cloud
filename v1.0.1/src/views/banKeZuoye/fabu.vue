@@ -35,7 +35,7 @@
           v-if="allowpasstime"
         >开启允许超时提交作业后，“老师评分”和“指定助教/学生评分”类型的作业，系统将允许超时提交作业，但会标记为超时。</p>
       </div>
-      <div>
+      <!-- <div>
         <mt-cell title="允许学生查看他人作业及评分">
           <mt-switch v-model="seeOter"></mt-switch>
         </mt-cell>
@@ -43,7 +43,7 @@
           设置作业结束后，是否允许学生查看他人作业及评分；
           班课-我的-学生访问权限设置 为 全部允许 或 作业权限开启时，该选项有效。
         </p>
-      </div>
+      </div> -->
     </div>
     <mt-datetime-picker
       ref="timepicker"

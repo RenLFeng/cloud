@@ -32,20 +32,28 @@
         </mt-tab-item>
       </mt-tabbar>
     </div>-->
-    <div class="btn-wrap" v-if="showupload && !selection || cfrom">
+    <div class="btn-wrap">
       <!-- <p class="jiaoan position-l" v-if="!cfrom && showJiaoAn" @click="jiaoan">
         <mt-button class="font16 btn">教案</mt-button>
         <i class="iconfont iconjiantou position-r colora"></i>
-      </p> -->
-
-      <div class="right-wrap position-r colora" :class="cfrom?'cfrom':''">
-        <span class="iconfont iconpaixu icons" :class="cfrom?'position-l':''" @click="onSort "></span>
+      </p>-->
+      <div
+        class="right-wrap position-r colora"
+        :class="cfrom?'cfrom':''"
+        v-if="showupload && !selection || cfrom"
+      >
+        <span class="iconfont iconpaixu icons sort" :class="cfrom?'position-l':''" @click="onSort "></span>
         <span
-          class="iconfont iconiconfontadd icons"
+          class="iconfont iconiconfontadd icons file"
           :class="cfrom?'position-r':''"
           @click="onaddFile"
         ></span>
       </div>
+      <span
+        class="iconfont iconpaixu icons position-r showupload"
+        v-if="!showupload && !cfrom"
+        @click="onSort "
+      ></span>
     </div>
     <p class="Prev-btn" v-if="tempmenuData.length" @click="onPrev">
       <i class="iconfont iconwithdraw-fill colord position-l"></i>
@@ -56,7 +64,7 @@
       <mt-tab-container v-model="selected">
         <mt-tab-container-item
           id="1"
-          :class="{'listcontainer-wrap':true,'cfrom':cfrom,'cfrom':!showJiaoAn,'showupload':showupload}"
+          :class="{'listcontainer-wrap':true,'cfrom':cfrom,'showupload':showupload}"
         >
           <!-- 
              :bottom-method="loadMore"
@@ -78,9 +86,8 @@
               @top-status-change="handleTopChange"
               :top-distance="80"
               ref="loadmore"
-              class="zyloadmore"
-              :class="filesempty?'filesempty':''"
               :auto-fill="autofill"
+              :class="filesempty?'filesempty':''"
             >
               <div class="wrap" :class="prevStyle?'prev':''">
                 <div v-for="(fitem,selindex) in arrZhiyuan" v-bind:key="selindex" class="item-wrap">
@@ -173,6 +180,24 @@
       class="popup-right info-popup"
       :modal="false"
     >
+      <!-- <div class="cfrom-view-header" v-if="cfrom">
+        <div class="header-wrap">
+          <span class="position-l colord" @click="goBack()">返回</span>
+          <p class="position-c name" @click="showallBanke()">
+            {{curcfromBanke.name}}
+            <i class="iconfont iconjiantou1 position-r"></i>
+          </p>
+        </div>
+        <ul class="bankes-wrap" :class="showallbankes?'act':''">
+          <li
+            v-for="(v,i) in allBankes"
+            :key="i"
+            :class="v.id==curcfromBanke.id?'act':''"
+            @click="select(v)"
+          >{{v.name}}</li>
+        </ul>
+        <div class="v-modal" v-if="showallbankes" @click="showallbankes=false"></div>
+      </div>-->
       <mt-header :title="editItemFile.name">
         <mt-button slot="left" icon="back" @click="goBack()">返回</mt-button>
       </mt-header>
@@ -202,9 +227,9 @@
         </ul>
       </div>
     </mt-popup>
-    <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
+    <!-- <mt-popup v-model="popupAudio" position="right" class="popup-right info-popup" :modal="false">
       <Audio :audioInfo="viewfileItem.info" @Backs="goBack" v-if="popupAudio" />
-    </mt-popup>
+    </mt-popup>-->
     <mt-popup
       v-model="popupSuperLink"
       position="right"
@@ -354,6 +379,14 @@ export default {
     },
     cfrom: {
       default: false
+    },
+    Refresh: {
+      default: false
+    },
+    allBankes: {
+      default() {
+        return [];
+      }
     }
   },
   data() {
@@ -423,7 +456,10 @@ export default {
 
       moveId: null,
 
-      popupSort: false
+      popupSort: false,
+      // changParentid: false,
+      curcfromBanke: {},
+      showallbankes: false
     };
   },
   watch: {
@@ -582,11 +618,20 @@ export default {
         return this.tempmenuData[this.tempmenuData.length - 1].curRootPrevid;
       }
       return null;
+    },
+    showViewid() {
+      if (this.curcfromBanke) {
+        return this.curcfromBanke.id;
+      }
+      return 0;
     }
 
     // ...mapState(["arrZhiyuan"])
   },
   created() {
+    if (this.cfrom) {
+      sessionStorage.setItem("cfrom", this.cfrom);
+    }
     this.$store.commit("SET_ZHIYUANS", {
       item: [],
       type: 3
@@ -601,6 +646,9 @@ export default {
     console.log("cfrom 课程ID", this.courseid);
     console.log("班课的课程ID", this.bankeCourseid);
     console.log("班课ID", this.bankeid);
+    if (this.cfrom) {
+      this.curcfromBanke = JSON.parse(JSON.stringify(this.allBankes[0]));
+    }
   },
   components: {
     BankeFileSimple,
@@ -664,6 +712,7 @@ export default {
       localarrZhiyuan = JSON.parse(JSON.stringify(localarrZhiyuan));
       this.cMenuItem = fitem;
       this.tempmenuData.push({
+        cfrom: true,
         id: fitem.id,
         curRootPrevid: fitem.parentid,
         curRootPrevname: this.menuName,
@@ -738,11 +787,20 @@ export default {
       this.dlid = this.editItemFile.id;
       // this.setSeeResources(fileitem);
     },
+    // showallBanke() {
+    //   this.showallbankes = !this.showallbankes;
+    // },
+    // select(v) {
+    //   if (v.id == this.curcfromBanke.id) return;
+    //   this.curcfromBanke = v;
+    //   this.showallbankes = false;
+    //   this.queryviews(this.editItemFile);
+    // },
     queryviews(fileitem) {
       this.$http
         .post("api/bankefile/queryviews", {
           id: fileitem.id,
-          bankeid: fileitem.bankeid
+          bankeid: this.showViewid ? this.showViewid : this.bankeid
         })
         .then(res => {
           if ((res.data.code = "0")) {
@@ -750,13 +808,14 @@ export default {
             this.noViewUserList = [];
             this.UserList = [];
             this.seeState = 0;
-
             fileitem.memberids = res.data.data.memberids;
             fileitem.users = res.data.data.users;
             fileitem.views = res.data.data.views;
 
             fileitem.noviewnum =
               fileitem.memberids.length - fileitem.views.length;
+            fileitem.noviewnum =
+              fileitem.noviewnum > 0 ? fileitem.noviewnum : 0;
           }
           if (fileitem.views.length) {
             for (let v of fileitem.views) {
@@ -803,12 +862,25 @@ export default {
       this.$http
         .post("api/bankefile/setview", {
           bankefileid: fileitem.id,
-          classid: fileitem.bankeid
+          classid: this.bankeid
         })
         .then(res => {
           if (res.data.code == "0") {
             fileitem.viewnum++;
             fileitem.eventmsgs = false;
+          } else {
+            // if (fileitem.eventmsgs) {
+            //   if (res.data.msg == "not first set view") {
+            //     fileitem.eventmsgs = false;
+            //     let arrzy = JSON.parse(
+            //       JSON.stringify(this.$store.state.arrZhiyuan)
+            //     );
+            //     this.$store.commit("SET_ZHIYUANS", {
+            //       item: serverData,
+            //       type: 2
+            //     });
+            //   }
+            // }
           }
         })
         .catch(res => {});
@@ -840,6 +912,7 @@ export default {
     //下载资源
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
+      return;
       if (fileitem.ftype == "file") {
         nativecode.fileviewSingle(this, fileitem.info);
       } else if (fileitem.ftype == "link") {
@@ -1175,6 +1248,7 @@ export default {
       }
       if (this.popupEditInfo) {
         this.popupEditInfo = false;
+        this.showallbankes = false;
       }
     },
     backHome() {
@@ -1184,7 +1258,11 @@ export default {
         if (this.miniprogram) {
           this.$router.replace("/");
         } else {
-          this.$router.go(-1);
+          if (this.Refresh) {
+            this.$router.replace("/");
+          } else {
+            this.$router.go(-1);
+          }
         }
       }
     },
@@ -1369,12 +1447,12 @@ export default {
   border-top: 1px solid #eaeaea;
 }
 .listcontainer-wrap {
-  height: calc(100vh - 143px);
-  min-height: calc(100vh - 143px);
+  height: calc(100vh - 190px);
+  min-height: calc(100vh - 190px);
   position: relative;
 }
 .listcontainer-wrap .listcontainer .wrap {
-  min-height: calc(100vh - 143px);
+  min-height: calc(100vh - 190px);
 }
 
 .listcontainer-wrap.showupload {
@@ -1409,6 +1487,9 @@ export default {
     width: 100%;
     height: 60px;
     background: #fff;
+    span.showupload {
+      font-size: 28px;
+    }
     .jiaoan {
       width: 64px;
       height: 32px;
@@ -1427,6 +1508,12 @@ export default {
     .right-wrap {
       &.cfrom {
         width: 100%;
+        .sort {
+          left: 20px;
+        }
+        .file {
+          right: 0;
+        }
       }
       .iconfont {
         font-size: 28px;
@@ -1470,6 +1557,61 @@ export default {
   }
   .info-popup {
     background: #f0f0f0;
+    .cfrom-view-header {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      .header-wrap {
+        position: relative;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        .name {
+          i {
+            font-size: 26px;
+            right: -30px;
+            color: #aaa;
+          }
+        }
+      }
+      .bankes-wrap {
+        position: absolute;
+        width: 100%;
+        height: 210px;
+        top: -160px;
+        left: 0;
+        background: #fff;
+        text-align: center;
+        opacity: 0;
+        border-top: 1px solid #f0f0f0;
+        transition: all 0.2s;
+        overflow: auto;
+        li {
+          height: 53px;
+        }
+        &.act {
+          top: 100%;
+          opacity: 1;
+          transition: all 0.2s;
+          z-index: 9998;
+        }
+        li {
+          width: 100%;
+          height: 50px;
+          border-bottom: 1px solid #f0f0f0;
+          line-height: 50px;
+          color: #000;
+          font-size: 16px;
+          &.act {
+            color: #0089ff;
+          }
+        }
+      }
+      .v-modal {
+        z-index: 9997;
+      }
+    }
     .info-list-main {
       background: #fff;
       margin-top: 15px;

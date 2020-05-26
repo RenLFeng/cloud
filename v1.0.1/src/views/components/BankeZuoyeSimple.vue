@@ -27,10 +27,11 @@
     </div>
     <div :class="{'maincontent':true,'position-l ku':zuoyeitem.state==0}">
       <div class="mainctitle ellipse">{{zuoyeitem.name}}</div>
-      <div class="maincsubtitle ellipse" v-if="zuoyeitem.state!=0">
+      <div class="maincsubtitle ellipse" v-if="zuoyeitem.state!=0 && hasedit">
         <i class="iconfont iconzu font18"></i>
         {{bankes}}
       </div>
+      <div class="maincsubtitle ellipse" :class="{'submitnum':zuoyeitem.submitnum}" v-if="!hasedit" >{{memberdesc}}</div>
     </div>
   </div>
 </template>
@@ -78,22 +79,14 @@ export default {
       if (!this.hasedit) {
         //! . html
         if (this.zuoyeitem.submitnum) {
-          return (
-            '<span class="clrok">' +
-            this.$t("bankeTask.Already_involved") +
-            "</span>"
-          );
+          return this.$t("bankeTask.Already_involved");
         } else {
           //！ 未参与
           if (this.zuoyeitem.state == 10) {
             return this.$t("bankeTask.Not_participate");
           }
 
-          return (
-            '<span class="clrdanger">' +
-            this.$t("bankeTask.Not_participate") +
-            "</span>"
-          );
+          return this.$t("bankeTask.Not_participate");
         }
       }
 
@@ -197,6 +190,9 @@ export default {
 }
 .maincsubtitle .iconfont {
   color: #68b9ff;
+}
+.maincsubtitle.submitnum {
+  color: #00c626;
 }
 
 .mainright {
