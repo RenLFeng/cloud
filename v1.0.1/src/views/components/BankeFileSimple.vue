@@ -9,13 +9,9 @@
         <p class="ellipse font-xxs colora5">{{filesizedesc}}</p>
         <p class="font-xxs colora5">{{filetimedesc}}</p>
       </div>
-      <div
-        v-if="!selection"
-        class="maincsubtitle text-ellipsis info-right position-r"
-        @click.stop="icoclick"
-      >
+      <div v-if="!selection"  @click.stop="icoclick" class="maincsubtitle text-ellipsis info-right position-r">
         <p>
-          <i v-if="seeState" class="iconfont iconjiantou1 eicotrigger colord"></i>
+          <i  class="iconfont iconjiantou1 eicotrigger colord"></i>
         </p>
         <P>
           <span class="fr" v-if="seeState">{{fileitem.viewnum}}人查看</span>
@@ -104,7 +100,7 @@ export default {
     },
 
     selectionClick(fileitem) {
-      this.$emit('selectionClick',fileitem);
+      this.$emit("selectionClick", fileitem);
     }
   },
   props: {
@@ -115,7 +111,7 @@ export default {
           filename: "++",
           filepath: "",
           filesize: 0,
-          uploadtime: "",
+          uploadtime: ""
         };
       },
       required: false
@@ -137,6 +133,9 @@ export default {
       default: 1
     },
     selection: {
+      default: false
+    },
+    cfrom: {
       default: false
     }
   }

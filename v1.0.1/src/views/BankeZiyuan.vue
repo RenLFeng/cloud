@@ -122,6 +122,7 @@
                     :arrZhiyuan="arrZhiyuan"
                     :fileInfo="fileInfo"
                     :selection="selection"
+                    :cfrom="cfrom"
                     @editclick="oneditclick"
                     @normalclick="onviewfile"
                     @selectionClick="onSelectionClick"
@@ -538,10 +539,12 @@ export default {
           name: "收藏",
           method: this.Collection
         });
-        objret.push({
-          name: "查看情况",
-          method: this.showInfo
-        });
+        if (!this.cfrom) {
+          objret.push({
+            name: "查看情况",
+            method: this.showInfo
+          });
+        }
         // if (nativecode.hassharebanke()) {
         //   objret.push({
         //     name: "转发",
@@ -797,11 +800,16 @@ export default {
     //   this.queryviews(this.editItemFile);
     // },
     queryviews(fileitem) {
+      let postdata = {
+        id: fileitem.id,
+        bankeid: this.bankeid
+      };
+      if (this.cfrom) {
+        postdata.bankeid = this.courseid;
+        postdata.banketype = 1;
+      }
       this.$http
-        .post("api/bankefile/queryviews", {
-          id: fileitem.id,
-          bankeid: this.showViewid ? this.showViewid : this.bankeid
-        })
+        .post("api/bankefile/queryviews", postdata)
         .then(res => {
           if ((res.data.code = "0")) {
             console.log("queryviews", res);
@@ -812,8 +820,7 @@ export default {
             fileitem.users = res.data.data.users;
             fileitem.views = res.data.data.views;
 
-            fileitem.noviewnum =
-              fileitem.memberids.length - fileitem.views.length;
+            fileitem.noviewnum = fileitem.users.length - fileitem.views.length;
             fileitem.noviewnum =
               fileitem.noviewnum > 0 ? fileitem.noviewnum : 0;
           }
@@ -829,6 +836,7 @@ export default {
             for (let v of fileitem.users) {
               if (!v.isView) {
                 this.noViewUserList.push(v);
+                console.log("附件是看的", v);
               }
             }
           } else {
@@ -859,11 +867,16 @@ export default {
     },
     //设置已阅读资源
     setSeeResources(fileitem) {
+      let postdata = {
+        bankefileid: fileitem.id,
+        classid: this.bankeid
+      };
+      if (this.cfrom) {
+        postdata.classid = this.courseid;
+        postdata.banketype = 1;
+      }
       this.$http
-        .post("api/bankefile/setview", {
-          bankefileid: fileitem.id,
-          classid: this.bankeid
-        })
+        .post("api/bankefile/setview", postdata)
         .then(res => {
           if (res.data.code == "0") {
             fileitem.viewnum++;
@@ -912,7 +925,6 @@ export default {
     //下载资源
     onviewfile(fileitem) {
       this.setSeeResources(fileitem);
-      return;
       if (fileitem.ftype == "file") {
         nativecode.fileviewSingle(this, fileitem.info);
       } else if (fileitem.ftype == "link") {

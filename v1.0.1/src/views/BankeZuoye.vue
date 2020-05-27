@@ -141,6 +141,9 @@ export default {
     },
     cfrom: {
       default: false
+    },
+    newZouyeSuccess: {
+      default: false
     }
   },
   data() {
@@ -247,6 +250,9 @@ export default {
         return false;
       }
       return true;
+    },
+    zuoyeNewBackState() {
+      return this.$store.state.zuoyeNewBackState;
     }
   },
   created() {
@@ -255,7 +261,13 @@ export default {
       this.zuoyelist = commontools.clone(d.zuoyelist);
     }
     //! 总是去尝试刷新；
-    this.doQueryZuoye(true);
+    if (this.zuoyeNewBackState) {
+      this.zuoyelist = [];
+      this.showZYType = 0;
+      this.doQueryZuoye(true);
+    } else {
+      this.doQueryZuoye(true);
+    }
   },
   methods: {
     Collection() {
@@ -564,8 +576,11 @@ export default {
             }
             this.eventmsgsOnactivity(res.data.data, ids, ball);
           }
+          this.$store.commit("SET_ZYNEW_BACK_STATE", 0);
         })
-        .catch(() => {});
+        .catch(() => {
+          this.$store.commit("SET_ZYNEW_BACK_STATE", 0);
+        });
     },
     //红点查询
     eventmsgsOnactivity(serverData, eventids, ball) {

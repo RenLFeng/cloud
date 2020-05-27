@@ -74,6 +74,7 @@ export default {
                 }
               }
               this.$store.commit("banke/setBankes", BankeData);
+              this.$emit("back", true);
             }
           })
           .catch(err => {});

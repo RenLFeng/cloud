@@ -114,11 +114,7 @@
           <mt-button slot="right" @click="onsave" :disabled="savedisable">创建</mt-button>
         </mt-header>
         <div class="main" style="margin-top:10px">
-          <mt-field
-            @blur.native.capture="$setInputScroll"
-            placeholder="请输入班级名称"
-            v-model="classitem.name"
-          ></mt-field>
+          <mt-field placeholder="请输入班级名称" v-model="classitem.name"></mt-field>
         </div>
       </div>
     </mt-popup>
@@ -154,6 +150,7 @@
         bankename="作业"
         @calce="oncalce"
         :cfrom="true"
+        :newZouyeSuccess="newZouyeSuccess"
       ></BankeZuoye>
     </mt-popup>
     <mt-popup
@@ -240,7 +237,8 @@ export default {
 
       popupCoursezuoye: false,
       popupCouresNew: false,
-      cfrompage: {}
+      cfrompage: {},
+      newZouyeSuccess: false
     };
   },
   computed: {
@@ -279,7 +277,6 @@ export default {
     this.bankequery();
     if (this.zuoyeNewBackState) {
       this.popupCoursezuoye = true;
-      this.$store.commit("SET_ZYNEW_BACK_STATE", 0);
       this.$store.commit("SET_ZUOYE_CFROM", "");
     }
   },
@@ -407,6 +404,7 @@ export default {
     },
     onsave() {
       Indicator.open("创建中...");
+      this.classitem.avatar = this.curcourse.avatar;
       var url = "/api/api/bankenew";
       this.$http
         .post(url, this.classitem)
@@ -414,18 +412,7 @@ export default {
           Indicator.close();
           if (res.data.code == 0) {
             this.allBankes = [...[res.data.data], ...this.allBankes];
-            let localcourses = sessionStorage.getItem("curbankes") || "";
-            if (localcourses) {
-              localcourses = JSON.parse(localcourses);
-              for (let v of localcourses) {
-                if (v.id == this.courseid) {
-                  v.bankes = [...[res.data.data], ...v.bankes];
-                }
-              }
-              this.$store.commit("banke/appendBankes", res.data.data);
-            } else {
-              this.$store.commit("banke/setBankes", []);
-            }
+            this.$store.commit("banke/appendBankes", res.data.data);
             this.popupNewbanke = false;
             this.updateinfo(res.data.data);
           } else {

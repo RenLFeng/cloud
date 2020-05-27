@@ -32,7 +32,11 @@
         </div>
       </div>
       <span class="go" v-if="!end">
-        <i class="iconfont" :class="{'iconjiantou1':!isCreate,'iconjiantou':isCreate}"  @click.stop="showMenu(classitem)"></i>
+        <i
+          class="iconfont"
+          :class="{'iconjiantou1':!isCreate,'iconjiantou':isCreate}"
+          @click.stop="showMenu(classitem)"
+        ></i>
       </span>
     </div>
   </div>
@@ -96,7 +100,9 @@ export default {
   },
   methods: {
     showMenu(item) {
-      this.$emit("showMenu", item);
+      if (!this.isCreate) {
+        this.$emit("showMenu", item);
+      }
     }
   }
 };

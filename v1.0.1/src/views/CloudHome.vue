@@ -376,11 +376,20 @@ export default {
     ) {
       this.loadcourses = this.curcourses;
       this.loadbankes = this.curbankes;
+      let bankeScorllState = sessionStorage.getItem("bankeScorllState") || "";
+      if (bankeScorllState) {
+        bankeScorllState = JSON.parse(bankeScorllState);
+        this.page = bankeScorllState.page;
+        this.allLoaded = bankeScorllState.allLoaded;
+        this.loading = bankeScorllState.loading;
+        this.listLoadend = bankeScorllState.listLoadend;
+      }
       this.initselecRoleLoad(this.loadbankes, this.isCreate, 1);
     } else {
       sessionStorage.setItem("scrolltop", 0);
       sessionStorage.setItem("homelocalstate", "");
       // this.initbanke();
+      this.loadTopInit();
       this.loadMore();
     }
     this.initmine();
@@ -410,11 +419,11 @@ export default {
       this.initbanke();
     },
     loadMore() {
-      let homelocalstate = this.gethomelocalstate();
-      if (homelocalstate) {
-        this.page = homelocalstate.page;
-        if (homelocalstate.allLoaded) return;
-      }
+      // let homelocalstate = this.gethomelocalstate();
+      // if (homelocalstate) {
+      //   this.page = homelocalstate.page;
+      //   if (homelocalstate.allLoaded) return;
+      // }
       this.loading = true;
       this.initbanke();
     },
@@ -470,6 +479,7 @@ export default {
         } else {
           this.bankeclick(this.courseitem);
         }
+        this.setbankeScorllState();
       }
     },
     bankeclick(bankeitem) {
@@ -486,8 +496,20 @@ export default {
           this.sethomelocalstate(1);
           let curbankes = this.curbankes;
           sessionStorage.setItem("curbankes", JSON.stringify(curbankes));
+          this.setbankeScorllState();
         }
       }
+    },
+    setbankeScorllState() {
+      sessionStorage.setItem(
+        "bankeScorllState",
+        JSON.stringify({
+          page: this.page,
+          allLoaded: this.allLoaded,
+          loading: this.loading,
+          listLoadend: this.listLoadend
+        })
+      );
     },
     onShowMenu(v) {
       console.log(v);

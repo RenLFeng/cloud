@@ -320,9 +320,10 @@ export default {
             } else {
               Toast(msg + "\xa0" + "请在作业库中发布作业");
               this.$router.go(-1);
-              if (this.zuoyeCfrom == "course") {
-                this.$store.commit("SET_ZYNEW_BACK_STATE", 1);
-              }
+              // if (this.zuoyeCfrom == "course") {
+              //   this.$store.commit("SET_ZYNEW_BACK_STATE", 1);
+              // }
+               this.$store.commit("SET_ZYNEW_BACK_STATE", 1);
             }
           } else {
             Toast(res.data.msg);

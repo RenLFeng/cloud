@@ -419,7 +419,9 @@ textarea {
     background-color: rgb(32, 20, 20);
 
 }
-
+.mint-popup-bottom{
+background: #fff;
+}
 .mint-msgbox-wrapper {
     z-index: 3000 !important;
 }

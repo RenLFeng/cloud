@@ -163,8 +163,6 @@ export default {
               this.$emit("ediend", this.classitem);
             } else {
               this.defaultNewBanke(res.data.data);
-              this.$store.commit("banke/setBankes", []);
-              this.$router.push("/");
             }
           } else {
             let tipmsg = res.data.msg;
@@ -233,22 +231,33 @@ export default {
         .then(res => {
           Indicator.close();
           if (res.data.code == 0) {
-            this.updateinfo(res.data.data.id,course)
+            this.updateinfo(res.data.data, course);
           }
+          this.initbnakes();
         })
-        .catch(() => {});
+        .catch(() => {
+          this.initbnakes();
+        });
     },
-    updateinfo(id, course) {
+    updateinfo(banke, course) {
       this.$http
         .post("api/banke/updateinfo", {
-          id: id,
-          coursename: course.name
+          id: banke.id,
+          coursename: course.name,
+          avatar: course.avatar
         })
         .then(res => {
           if (res.data.code == "0") {
           }
+          this.initbnakes();
         })
-        .catch(err => {});
+        .catch(err => {
+          this.initbnakes();
+        });
+    },
+    initbnakes() {
+      this.$store.commit("banke/setBankes", []);
+      this.$router.push("/");
     },
     back() {
       if (this.cfrom) {
