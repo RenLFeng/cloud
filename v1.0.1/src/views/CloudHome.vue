@@ -2,7 +2,7 @@
   <div class="fontsmall cloudHome" :class="selected=='banke'?'banke':''">
     <div class="mint-header-f mycreate-header" v-if="selected=='banke' && !order">
       <div class="lable tc position-c color1">
-        <p :class="isCreate?'act navbar colord':''" @click="selectClass(1)">
+        <p :class="isCreate?'act navbar colord':''" @click="selectClass(1)" v-if="isteacher">
           <span class="tit-name fontnormal">我创建的</span>
         </p>
         <p :class="!isCreate?'act navbar colord':''" @click="selectClass(0)">
@@ -284,7 +284,10 @@ export default {
       return this.$store.state.routerforward;
     },
     isCreate() {
-      return this.$store.state.isCreate;
+      if (this.isteacher) {
+        return this.$store.state.isCreate;
+      }
+      return 0;
     },
     CliudBar() {
       return this.$store.state.CliudBar;
@@ -373,7 +376,7 @@ export default {
     ) {
       this.loadcourses = this.curcourses;
       this.loadbankes = this.curbankes;
-      this.filterCurbankeFn(this.loadbankes, this.isCreate, 1);
+      this.initselecRoleLoad(this.loadbankes, this.isCreate, 1);
     } else {
       sessionStorage.setItem("scrolltop", 0);
       sessionStorage.setItem("homelocalstate", "");
@@ -738,12 +741,12 @@ export default {
             }
           }
           this.loadbankes = [...this.loadbankes, ...allbankes];
-          this.filterCurbankeFn(this.loadbankes, this.isCreate, 1);
+          this.initselecRoleLoad(this.loadbankes, this.isCreate, 1);
           this.isloadtop = false;
         })
         .catch(err => {
           this.loadbankes = [...this.loadbankes, ...allbankes];
-          this.filterCurbankeFn(this.loadbankes, this.isCreate, 1);
+          this.initselecRoleLoad(this.loadbankes, this.isCreate, 1);
           this.isloadtop = false;
         });
     },
@@ -798,6 +801,16 @@ export default {
             })
             .catch(err => {});
         }
+      }
+    },
+    initselecRoleLoad(loadbankes, type, first) {
+      if (this.isteacher) {
+        this.filterCurbankeFn(loadbankes, type, first);
+      } else {
+        this.filterCurbankes = loadbankes;
+        this.filterCourses = this.loadcourses;
+        this.$store.commit("banke/setBankes", loadbankes);
+        this.$store.commit("banke/setCourse", this.loadcourses);
       }
     },
     //红点班课主页

@@ -32,7 +32,7 @@
         </div>
       </div>
       <span class="go" v-if="!end">
-        <i class="iconfont iconjiantou"></i>
+        <i class="iconfont" :class="{'iconjiantou1':!isCreate,'iconjiantou':isCreate}"  @click.stop="showMenu(classitem)"></i>
       </span>
     </div>
   </div>
