@@ -80,7 +80,7 @@
               </li>
             </div>
             <div v-else>
-              <li @click="quitBk" class="dange" v-if="showbankedange">
+              <li @click="bankesearch" class="dange" v-if="showbankedange">
                 <mt-cell title="退出班课" is-link></mt-cell>
               </li>
             </div>
@@ -370,11 +370,31 @@ export default {
         })
         .catch(() => {});
     },
+    bankesearch() {
+      this.$http
+        .post("/api/banke/search", {
+          id: this.bankeInfo.id
+        })
+        .then(res => {
+          if (res.data.code == "0" && res.data.data.length > 0) {
+            let bankeItem = res.data.data[0];
+            if (bankeItem.funcdesc == "{}" || !bankeItem.funcdesc) {
+              this.quitBk();
+            } else {
+              if (bankeItem.funcdesc.includes("disablequit")) {
+                Toast("禁止退出班课");
+                return;
+              } else {
+                this.quitBk();
+              }
+            }
+          }
+        })
+        .catch(err => {
+          Toast("服务出错了");
+        });
+    },
     quitBk() {
-      if(!this.bankeInfo.funcdesc.disablequit){
-        Toast('禁止退出');
-        return;
-      }
       MessageBox.confirm("", {
         title: "提示",
         message:

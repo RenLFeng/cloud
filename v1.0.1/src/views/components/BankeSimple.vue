@@ -102,6 +102,8 @@ export default {
     showMenu(item) {
       if (!this.isCreate) {
         this.$emit("showMenu", item);
+      } else {
+        this.$emit("gocourse", item);
       }
     }
   }

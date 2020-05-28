@@ -978,10 +978,10 @@ export default {
       if (this.cfrom) {
         (postData.bankeid = this.courseid), (postData.banketype = 1);
       } else {
-        if (this.bankeCourseid) {
-          postData.bankeid = this.bankeCourseid;
-          postData.banketype = 1;
-        }
+        // if (this.bankeCourseid) {
+        //   postData.bankeid = this.bankeCourseid;
+        //   postData.banketype = 1;
+        // }
       }
       if (this.sortTime) {
         postData.ordername = "id";

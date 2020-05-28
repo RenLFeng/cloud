@@ -105,16 +105,14 @@ export default {
         .then(res => {
           if (res.data.code == "0" && res.data.data.length > 0) {
             this.bankeItem = res.data.data[0];
-            if (this.bankeItem.funcdesc) {
-              this.bankeItem.funcdesc = JSON.parse(this.bankeItem.funcdesc);
-              let funcdesc = this.bankeItem.funcdesc;
-              if (!funcdesc.disablejoin) {
+            if (this.bankeItem.funcdesc == "{}" || !this.bankeItem.funcdesc) {
+              this.popupSubmitJoin = true;
+            } else {
+              if (this.bankeItem.funcdesc.includes("disablejoin")) {
                 Toast("禁止加入班课");
               } else {
                 this.popupSubmitJoin = true;
               }
-            } else {
-              this.popupSubmitJoin = true;
             }
           } else {
             MessageBox.alert("未找到班课");

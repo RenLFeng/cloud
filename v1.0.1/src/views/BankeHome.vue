@@ -385,13 +385,13 @@ export default {
           if (res.data.code == 0) {
             if (res.data.data.length > 0) {
               this.curbanke = res.data.data[0];
-              if (this.curbanke.funcdesc) {
-                this.curbanke.funcdesc = JSON.parse(this.curbanke.funcdesc);
-              } else {
+              if (!this.curbanke.funcdesc || this.curbanke.funcdesc == "{}") {
                 this.curbanke.funcdesc = {
                   disablejoin: true,
                   disablequit: true
                 };
+              } else {
+                this.curbanke.funcdesc = JSON.parse(this.curbanke.funcdesc);
               }
               console.log("凡是快乐", this.curbanke);
 

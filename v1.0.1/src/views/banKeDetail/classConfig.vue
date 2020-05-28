@@ -42,9 +42,13 @@ export default {
     }
   },
   created() {
+
     this.funcdesc = JSON.parse(JSON.stringify(this.bankeInfo.funcdesc));
+    console.log( '分开始了吗',this.bankeInfo );
   },
-  mounted() {},
+  mounted() {
+
+  },
   watch: {},
   methods: {
     goBack() {
@@ -57,13 +61,21 @@ export default {
       }
     },
     submit() {
+      let postData = {};
+      if (!this.funcdesc.disablejoin) {
+        postData.disablejoin = false;
+      }
+      if (!this.funcdesc.disablequit) {
+        postData.disablequit = false;
+      }
+      console.log(postData);
+      // return; 
       MessageBox.confirm("你确定要修改吗").then(action => {
-        let funcdesc = JSON.stringify(this.funcdesc);
         let BankeData = this.$store.state.banke.curbankes;
         this.$http
           .post("api/banke/updateinfo", {
             id: this.bankeInfo.id,
-            funcdesc: funcdesc
+            funcdesc: JSON.stringify(postData)
           })
           .then(res => {
             if (res.data.code == "0") {

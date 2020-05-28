@@ -52,6 +52,7 @@
                     :classitem="item"
                     @click.native="courseclick(item)"
                     @showMenu="onShowMenu"
+                    @gocourse="ongocourse"
                     :homeEventmsgs="homeEventmsgs"
                     :isCreate="isCreate"
                   ></BankeSimple>
@@ -74,13 +75,14 @@
                     </div>
                   </div>
                 </div>
-                <div class v-if="isCreate">
+                <div class="NoCourseidBanke" v-if="isCreate">
                   <BankeSimple
                     v-for="(citem,i) in NoCourseidBanke()"
                     :key="i+'_index'"
                     :classitem="citem"
                     @click.native="bankeclick(citem)"
                     @showMenu="onShowMenu"
+                    @gocourse="ongocourse"
                     :homeEventmsgs="homeEventmsgs"
                     :isCreate="isCreate"
                   ></BankeSimple>
@@ -456,6 +458,13 @@ export default {
     onbackmain() {
       nativecode.ncall("jsBackMain", {});
     },
+    ongocourse(v) {
+      if (v.hasOwnProperty("courseid")) {
+        this.bankeclick(v);
+      } else {
+        this.courseclick(v);
+      }
+    },
     courseclick(courseitem) {
       this.courseitem = courseitem;
       this.courseDedail();
@@ -711,16 +720,15 @@ export default {
             for (let v of loadbankes) {
               arrId.push(v.id);
               // v.schoolid=1001
-              if (v.funcdesc) {
-                v.funcdesc = JSON.parse(v.funcdesc);
-              } else {
+              if (!v.funcdesc || v.funcdesc == "{}") {
                 v.funcdesc = {
                   disablejoin: true,
                   disablequit: true
                 };
+              } else {
+                v.funcdesc = JSON.parse(v.funcdesc);
               }
             }
-
             if (loadbankes.length >= this.pagesize) {
               this.loading = false;
               this.page++;
@@ -1100,10 +1108,10 @@ export default {
       border-top: 0.02667rem solid #f0f0f0;
       padding-right: 24px;
       .stit {
-        width: 84%;
+        width: 30%;
       }
       .ggao {
-        width: 50%;
+        width: 40%;
       }
       .sinfo-r {
         width: 16%;
@@ -1119,6 +1127,13 @@ export default {
         }
       }
     }
+  }
+}
+.NoCourseidBanke{
+  .class-banke-list{
+    width: 95%;
+    margin: 0 auto;
+    margin-bottom: 10px;
   }
 }
 .search-popup {

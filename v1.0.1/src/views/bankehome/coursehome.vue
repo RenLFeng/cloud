@@ -6,7 +6,8 @@
     <div class="main main-f-2">
       <ul class="tit-wrap">
         <li class="item" v-for="(v,i) of tititems" :key="i" @click="selectClick(v)">
-          <span class="icon" :class="`iconfont ${v.iconfont}`"></span>
+          <!-- <span class="icon" :class="`iconfont ${v.iconfont}`"></span> -->
+          <img class="icon" :src="v.iconfont"  alt />
           <span class="text font16">{{v.text}}</span>
         </li>
       </ul>
@@ -188,17 +189,17 @@ const tititems = [
   {
     id: 2,
     text: "课程资源",
-    iconfont: "iconwangyelianjie"
+    iconfont: require('../../assets/course_zy.svg'),
   },
   {
     id: 2,
     text: "作业",
-    iconfont: "iconwangyelianjie"
+   iconfont: require('../../assets/course_zouy.svg'),
   },
   {
     id: 3,
     text: "统计",
-    iconfont: "iconwangyelianjie"
+    iconfont: require('../../assets/course_tj.svg'),
   }
 ];
 export default {
@@ -621,6 +622,7 @@ export default {
               .ggao {
                 width: 100%;
                 bottom: 5px;
+                padding: 0 10px;
               }
             }
             .iconfont {

@@ -3,7 +3,7 @@
     <div class="bannertop" v-if="showloginfail" @click="uservalidate">连接失败，点击重连</div>
     <!-- <div class="bannertop" v-if="showtest">{{testtext}}</div> -->
     <transition :name="transitionName">
-      <router-view class="Router" :class="exsoftios?'exsoftios':''"></router-view>
+      <router-view class="Router" :class="{'exsoftios':exsoftios,'miniprogram':miniprogram}"></router-view>
     </transition>
     <preview
       :pshow="show"
@@ -110,6 +110,12 @@ export default {
     },
     exsoftios() {
       if (nativecode.platform == "exsoftios") {
+        return true;
+      }
+      return false;
+    },
+    miniprogram() {
+      if (nativecode.platform == "miniprogram") {
         return true;
       }
       return false;
@@ -449,17 +455,21 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f0f0;
   font-size: 14px;
   overflow: hidden;
 }
+.Router.miniprogram {
+  height: 100vh;
+  min-height: 100vh;
+}
 .Router.exsoftios {
-  height: 97vh;
-  min-height: 97vh;
+  /* height: 97vh;
+  min-height: 97vh; */
 }
 .bannertop {
   z-index: 9999;
@@ -475,22 +485,22 @@ export default {
   transform: translate(100%);
 }
 .slide-forward-enter-active {
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .slide-forward-leave-active {
   transform: translate(-100%);
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .slide-back-enter {
   transform: translate(-100%);
 }
 .slide-back-enter-active {
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .slide-back-leave-active {
   transform: translate(100%);
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .iconfont-big {
   display: block;

@@ -3,7 +3,7 @@
     <mt-header v-show="hasnavbar" :title="bankename" class="mint-header-f">
       <mt-button v-if="hasbackbtn" icon="back" slot="left" @click="goback">{{$t('common.Back')}}</mt-button>
     </mt-header>
-    <div class="controlpart tc">
+    <div class="controlpart tc" :class="{'nohasedit':!hasedit ||!showZYType,'cfrom':cfrom}" >
       <div class="temp-wrap" v-if="hasedit">
         <ul class="controlbtn-wrap">
           <li
@@ -49,7 +49,7 @@
         class="zyloadmore"
       >
         <div class="devide"></div>
-        <div class="list-wrap overflow-scroll" :class="{'cfrom':courseid}">
+        <div class="list-wrap overflow-scroll" :class="{'cfrom':courseid,'nohasedit':!hasedit}">
           <div v-for="(zitem, sindex) in zuoyelist" :key="sindex" class="zuoye">
             <BankeZuoyeSimple
               :zuoyeitem="zuoyelist[sindex]"
@@ -679,6 +679,10 @@ export default {
   height: calc(100vh - 265px);
   min-height: calc(100vh - 265px);
 }
+.zyloadmore .list-wrap.nohasedit {
+  height: calc(100vh - 208px);
+  min-height: calc(100vh - 208px);
+}
 .zyloadmore .list-wrap.cfrom {
   height: calc(100vh - 177px);
   min-height: calc(100vh - 177px);
@@ -719,13 +723,21 @@ export default {
 </style>
 <style lang="less" scoped>
 .bankezy-wrap {
+  .mint-header-f {
+    margin-bottom: 50px;
+  }
   .controlpart {
-    position: fixed;
-    left: 0;
-    top: 48px;
-    // z-index: 999;
+    // position: fixed;
+    // left: 0;
+    // top: 48px;
     width: 100%;
     height: 126px;
+    &.nohasedit {
+      height: 60px;
+    }
+    &.cfrom{
+      margin-top: 48px;
+    }
     .temp-wrap {
       position: relative;
       display: flex;
@@ -777,18 +789,18 @@ export default {
     .devide {
       height: 6px;
     }
-    padding-top: 125px;
+    // padding-top: 125px;
     &.ku {
-      padding-top: 65px;
+      // padding-top: 65px;
     }
     &.cfrom {
-      padding-top: 171px;
+      // padding-top: 171px;
     }
     &.cfrom.showZYType {
-      padding-top: 111px;
+      // padding-top: 111px;
     }
     &.nohasedit {
-      padding-top: 58px;
+      // padding-top: 58px;
     }
     .list-wrap {
       .zuoye {
